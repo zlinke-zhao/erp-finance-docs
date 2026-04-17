@@ -20,6 +20,7 @@
         .badge { display: inline-block; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 5px 15px; border-radius: 20px; font-size: 0.85em; margin-top: 15px; }
         .section { background: #fff; border-radius: 16px; padding: 30px; margin-bottom: 30px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); }
         .section-title { font-size: 1.5em; color: #2d3748; margin-bottom: 25px; padding-bottom: 15px; border-bottom: 3px solid; display: flex; align-items: center; gap: 10px; }
+        .section-budget .section-title { border-color: #1565c0; }
         .section-tax .section-title { border-color: #805ad5; }
         .section-flowcharts .section-title { border-color: #e53e3e; }
         .section-prototypes .section-title { border-color: #38a169; }
@@ -28,6 +29,7 @@
         .file-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
         .file-card { background: #f7fafc; border: 2px solid #e2e8f0; border-radius: 12px; padding: 20px; transition: all 0.3s ease; cursor: pointer; text-decoration: none; color: inherit; display: block; }
         .file-card:hover { transform: translateY(-5px); box-shadow: 0 10px 30px rgba(0,0,0,0.15); }
+        .section-budget .file-card:hover { border-color: #1565c0; background: #ebf8ff; }
         .section-tax .file-card:hover { border-color: #805ad5; background: #faf5ff; }
         .section-flowcharts .file-card:hover { border-color: #e53e3e; background: #fff5f5; }
         .section-prototypes .file-card:hover { border-color: #38a169; background: #f0fff4; }
@@ -35,6 +37,7 @@
         .file-card h3 { font-size: 1.1em; color: #2d3748; margin-bottom: 10px; }
         .file-card p { font-size: 0.9em; color: #718096; }
         .file-tag { display: inline-block; padding: 4px 12px; border-radius: 6px; font-size: 0.8em; margin-top: 12px; }
+        .section-budget .file-tag { background: #e3f2fd; color: #1565c0; }
         .section-tax .file-tag { background: #e9d8fd; color: #6b46c1; }
         .section-flowcharts .file-tag { background: #fed7d7; color: #c53030; }
         .section-prototypes .file-tag { background: #c6f6d5; color: #276749; }
@@ -42,49 +45,89 @@
         .footer { text-align: center; margin-top: 40px; color: #a0aec0; font-size: 0.9em; }
         .footer a { color: #667eea; text-decoration: none; }
         .module-list { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 15px; }
-        .module-tag { background: #805ad5; color: white; padding: 8px 16px; border-radius: 20px; font-size: 0.85em; }
+        .module-tag { background: #1565c0; color: white; padding: 8px 16px; border-radius: 20px; font-size: 0.85em; }
+        .module-tag.purple { background: #805ad5; }
         .total-badge { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>📊 ERP财务管理系统</h1>
+            <h1>ERP财务管理系统</h1>
             <p>流程图 · UI原型 · 规格说明书</p>
-            <span class="badge total-badge">共 23 个文件 · 4个模块</span>
+            <span class="badge total-badge">共 27 个文件 · 5个模块</span>
+        </div>
+
+        <!-- 预算管理模块 -->
+        <div class="section section-budget">
+            <h2 class="section-title">
+                <span class="section-icon">📊</span>
+                预算管理模块 <span style="font-size:0.6em; color:#1565c0;">(新增)</span>
+            </h2>
+            <div class="module-list">
+                <span class="module-tag">预算基础设置</span>
+                <span class="module-tag">预算编制</span>
+                <span class="module-tag">预算审批</span>
+                <span class="module-tag">预算控制</span>
+                <span class="module-tag">预算调整</span>
+                <span class="module-tag">预算分析</span>
+                <span class="module-tag">预算考核</span>
+            </div>
+            <div class="file-grid" style="margin-top: 20px;">
+                <a class="file-card" href="flowcharts/预算管理总流程图.html" target="_blank">
+                    <h3>📊 预算管理总流程图</h3>
+                    <p>编-审-控-调-分析全闭环</p>
+                    <span class="file-tag">HTML</span>
+                </a>
+                <a class="file-card" href="prototypes/预算编制UI原型.html" target="_blank">
+                    <h3>📝 预算编制UI原型</h3>
+                    <p>年度预算编制 · 数据导入 · 执行率</p>
+                    <span class="file-tag">HTML</span>
+                </a>
+                <a class="file-card" href="prototypes/预算分析UI原型.html" target="_blank">
+                    <h3>📈 预算分析UI原型</h3>
+                    <p>执行进度 · 部门对比 · 预警提示</p>
+                    <span class="file-tag">HTML</span>
+                </a>
+                <a class="file-card" href="specs/预算管理模块规格书.md" target="_blank">
+                    <h3>📚 预算管理模块规格书</h3>
+                    <p>功能详述 · 数据库设计 · 验收标准</p>
+                    <span class="file-tag">Markdown</span>
+                </a>
+            </div>
         </div>
 
         <!-- 税务管理模块 -->
         <div class="section section-tax">
             <h2 class="section-title">
                 <span class="section-icon">🏛️</span>
-                税务管理模块 <span style="font-size:0.6em; color:#805ad5;">(新增)</span>
+                税务管理模块
             </h2>
             <div class="module-list">
-                <span class="module-tag">税务组织管理</span>
-                <span class="module-tag">税种税率配置</span>
-                <span class="module-tag">税金计提</span>
-                <span class="module-tag">税务申报</span>
-                <span class="module-tag">税负分析</span>
-                <span class="module-tag">申报台账</span>
+                <span class="module-tag purple">税务组织管理</span>
+                <span class="module-tag purple">税种税率配置</span>
+                <span class="module-tag purple">税金计提</span>
+                <span class="module-tag purple">税务申报</span>
+                <span class="module-tag purple">税负分析</span>
+                <span class="module-tag purple">申报台账</span>
             </div>
             <div class="file-grid" style="margin-top: 20px;">
-                <a class="file-card" href="tax-flowcharts/税务管理总流程图.html" target="_blank">
+                <a class="file-card" href="flowcharts/税务管理总流程图.html" target="_blank">
                     <h3>🏛️ 税务管理总流程图</h3>
                     <p>业财税一体化 · 金蝶云星空对标</p>
                     <span class="file-tag">HTML</span>
                 </a>
-                <a class="file-card" href="tax-prototypes/税务申报UI原型.html" target="_blank">
+                <a class="file-card" href="prototypes/税务申报UI原型.html" target="_blank">
                     <h3>📋 税务申报UI原型</h3>
                     <p>申报日历 · 状态跟踪 · 缴款管理</p>
                     <span class="file-tag">HTML</span>
                 </a>
-                <a class="file-card" href="tax-prototypes/税金计提UI原型.html" target="_blank">
+                <a class="file-card" href="prototypes/税金计提UI原型.html" target="_blank">
                     <h3>💰 税金计提UI原型</h3>
                     <p>增值税计算 · 附加税 · 凭证生成</p>
                     <span class="file-tag">HTML</span>
                 </a>
-                <a class="file-card" href="tax-specs/税务管理模块规格书.md" target="_blank">
+                <a class="file-card" href="specs/税务管理模块规格书.md" target="_blank">
                     <h3>📚 税务管理模块规格书</h3>
                     <p>功能详述 · 数据库设计 · 验收标准</p>
                     <span class="file-tag">Markdown</span>
@@ -166,7 +209,7 @@
         <div class="section section-specs">
             <h2 class="section-title">
                 <span class="section-icon">📚</span>
-                规格说明书 (8个)
+                规格说明书 (9个)
             </h2>
             <div class="file-grid">
                 <a class="file-card" href="specs/发票查验模块规格书.md" target="_blank">
@@ -213,8 +256,8 @@
         </div>
 
         <div class="footer">
-            <p>📦 仓库地址：<a href="https://github.com/zlinke-zhao/erp-finance-docs" target="_blank">zlinke-zhao/erp-finance-docs</a></p>
-            <p style="margin-top:10px;">🚀 由 GitHub Pages 托管 · 点击即可在线预览</p>
+            <p>仓库地址：<a href="https://github.com/zlinke-zhao/erp-finance-docs" target="_blank">zlinke-zhao/erp-finance-docs</a></p>
+            <p style="margin-top:10px;">由 GitHub Pages 托管 · 点击即可在线预览</p>
         </div>
     </div>
 </body>
