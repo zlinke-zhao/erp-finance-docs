@@ -4,308 +4,127 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>海外发票管理规格书</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
-            line-height: 1.8;
-            color: #333;
-            background: #f5f7fa;
-            padding: 20px;
+            font-family: 'Noto Sans SC', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            line-height: 1.9;
+            color: #2d3748;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8ec 100%);
+            min-height: 100vh;
+            padding: 30px 20px;
         }
         .container {
-            max-width: 1200px;
+            max-width: 1100px;
             margin: 0 auto;
             background: #fff;
-            border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
         }
         .doc-header {
-            text-align: center;
-            padding-bottom: 30px;
-            border-bottom: 2px solid #e8ecf1;
-            margin-bottom: 30px;
-        }
-        .doc-header h1 {
-            font-size: 32px;
-            color: #1a1a2e;
-            margin-bottom: 15px;
-        }
-        .doc-meta {
-            display: flex;
-            justify-content: center;
-            gap: 30px;
-            flex-wrap: wrap;
-        }
-        .meta-item {
-            background: #f0f4f8;
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 14px;
-            color: #5a6c7d;
-        }
-        h2 {
-            font-size: 24px;
-            color: #1a1a2e;
-            margin: 30px 0 15px;
-            padding-bottom: 10px;
-            border-bottom: 3px solid #3498db;
-        }
-        h3 {
-            font-size: 18px;
-            color: #2c3e50;
-            margin: 25px 0 12px;
-        }
-        p {
-            margin-bottom: 15px;
-            text-align: justify;
-        }
-        
-        /* 代码块样式 */
-        .code-block {
-            margin: 20px 0;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-        .code-header {
-            background: #2d3748;
-            color: #fff;
-            padding: 8px 16px;
-            font-size: 12px;
-            font-weight: 600;
-            text-transform: uppercase;
-        }
-        .code-block pre {
-            background: #1a202c;
-            color: #e2e8f0;
-            padding: 20px;
-            overflow-x: auto;
-            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
-            font-size: 13px;
-            line-height: 1.6;
-        }
-        .code-block code {
-            font-family: inherit;
-        }
-        .inline-code {
-            background: #f0f4f8;
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-family: 'Consolas', 'Monaco', monospace;
-            font-size: 0.9em;
-            color: #e53e3e;
-        }
-        
-        /* 表格样式 */
-        .data-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 20px 0;
-            font-size: 14px;
-        }
-        .data-table th {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: #fff;
-            padding: 14px;
-            text-align: left;
-            font-weight: 600;
+            padding: 40px;
+            text-align: center;
         }
-        .data-table td {
-            padding: 12px 14px;
-            border-bottom: 1px solid #e8ecf1;
-        }
-        .data-table tr:hover {
-            background: #f8fafc;
-        }
-        
-        /* 列表样式 */
-        ul {
-            margin: 15px 0;
-            padding-left: 25px;
-        }
-        li {
-            margin-bottom: 8px;
-        }
-        
-        /* 架构图/流程图容器 */
-        .diagram-container {
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
-            border-radius: 8px;
-            padding: 20px;
-            margin: 20px 0;
-            overflow-x: auto;
-        }
-        .diagram-container pre {
-            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
-            font-size: 12px;
-            line-height: 1.4;
-            color: #2d3748;
-        }
-        
-        /* 接口卡片 */
-        .api-card {
-            background: #f8fafc;
-            border-left: 4px solid #3498db;
-            padding: 20px;
-            margin: 15px 0;
-            border-radius: 0 8px 8px 0;
-        }
-        .api-method {
-            display: inline-block;
-            padding: 4px 10px;
-            border-radius: 4px;
-            font-size: 12px;
-            font-weight: 600;
-            margin-right: 10px;
-        }
-        .api-method.get { background: #48bb78; color: #fff; }
-        .api-method.post { background: #4299e1; color: #fff; }
-        .api-method.put { background: #ed8936; color: #fff; }
-        .api-method.delete { background: #f56565; color: #fff; }
-        .api-path {
-            font-family: 'Consolas', monospace;
-            font-size: 14px;
-            color: #2d3748;
-        }
-        .api-section {
-            margin-top: 15px;
-        }
-        .api-section-title {
-            font-weight: 600;
-            color: #4a5568;
-            margin-bottom: 8px;
-            font-size: 13px;
-            text-transform: uppercase;
-        }
-        
-        /* 警告框 */
-        .alert {
-            padding: 16px 20px;
-            border-radius: 8px;
-            margin: 20px 0;
-        }
-        .alert-info {
-            background: #ebf8ff;
-            border-left: 4px solid #4299e1;
-        }
-        .alert-warning {
-            background: #fffaf0;
-            border-left: 4px solid #ed8936;
-        }
-        .alert-success {
-            background: #f0fff4;
-            border-left: 4px solid #48bb78;
-        }
-        
-        /* 状态标签 */
-        .status-badge {
-            display: inline-block;
-            padding: 4px 10px;
-            border-radius: 12px;
-            font-size: 12px;
-            font-weight: 500;
-        }
-        .status-done { background: #c6f6d5; color: #22543d; }
-        .status-pending { background: #feebc8; color: #744210; }
-        .status-deprecated { background: #fed7d7; color: #742a2a; }
+        .doc-header h1 { font-size: 28px; font-weight: 600; margin-bottom: 15px; }
+        .doc-meta { display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; }
+        .meta-item { background: rgba(255,255,255,0.2); padding: 6px 14px; border-radius: 20px; font-size: 13px; }
+        .content { padding: 40px; }
+        h2 { font-size: 22px; color: #1a202c; margin: 35px 0 18px; padding-bottom: 10px; border-bottom: 3px solid #667eea; }
+        h3 { font-size: 18px; color: #2d3748; margin: 28px 0 14px; }
+        h4 { font-size: 16px; color: #4a5568; margin: 20px 0 10px; }
+        p { margin-bottom: 12px; }
+        .md-table { width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 14px; border-radius: 8px; overflow: hidden; border: 1px solid #e2e8f0; }
+        .md-table th { background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%); color: #fff; padding: 14px 16px; text-align: left; font-weight: 600; }
+        .md-table td { padding: 12px 16px; border-bottom: 1px solid #f1f5f9; }
+        .md-table tr:hover td { background: #f8fafc; }
+        .md-table tr:last-child td { border-bottom: none; }
+        .inline-code { background: #f1f5f9; color: #e53e3e; padding: 2px 7px; border-radius: 4px; font-family: 'JetBrains Mono', monospace; font-size: 0.88em; }
+        .code-block { margin: 22px 0; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        .code-header { background: #1e293b; color: #94a3b8; padding: 8px 16px; font-size: 11px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; font-family: 'JetBrains Mono', monospace; }
+        .sql-block .code-header { background: #065f46; }
+        .code-block pre { background: #0f172a; color: #e2e8f0; padding: 20px; overflow-x: auto; font-family: 'JetBrains Mono', monospace; font-size: 13px; line-height: 1.65; }
+        .code-block code { font-family: inherit; }
+        .gherkin-block { margin: 22px 0; border-radius: 10px; overflow: hidden; background: #fefce8; border: 1px solid #fbbf24; }
+        .gherkin-header { background: #f59e0b; color: #fff; padding: 8px 16px; font-size: 12px; font-weight: 600; }
+        .gherkin-content { padding: 18px; font-family: 'JetBrains Mono', monospace; font-size: 13px; line-height: 1.7; color: #78350f; white-space: pre-wrap; }
+        .csv-block { margin: 22px 0; border-radius: 10px; overflow: hidden; background: #f0fdf4; border: 1px solid #86efac; }
+        .csv-header { background: #22c55e; color: #fff; padding: 8px 16px; font-size: 12px; font-weight: 600; }
+        .csv-content { padding: 18px; font-family: 'JetBrains Mono', monospace; font-size: 13px; line-height: 1.6; color: #166534; overflow-x: auto; }
+        .ascii-diagram { margin: 22px 0; border-radius: 10px; overflow: hidden; background: #f8fafc; border: 1px solid #cbd5e1; }
+        .ascii-header { background: #475569; color: #fff; padding: 8px 16px; font-size: 12px; font-weight: 600; }
+        .ascii-content { padding: 20px; font-family: 'JetBrains Mono', 'Consolas', monospace; font-size: 13px; line-height: 1.45; color: #1e293b; white-space: pre; overflow-x: auto; }
+        .md-quote { margin: 18px 0; padding: 16px 20px; background: #eff6ff; border-left: 4px solid #3b82f6; border-radius: 0 8px 8px 0; color: #1e40af; }
+        ul { margin: 12px 0; padding-left: 28px; }
+        li { margin-bottom: 8px; }
+        .back-link { display: inline-block; margin: 20px 40px; padding: 10px 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #fff; text-decoration: none; border-radius: 8px; font-weight: 500; }
+        @media (max-width: 768px) { .content { padding: 20px; } .doc-header { padding: 25px; } .doc-header h1 { font-size: 22px; } }
     </style>
 </head>
 <body>
+    <a href="https://zlinke-zhao.github.io/erp-finance-docs/" class="back-link">← 返回入口</a>
     <div class="container">
         <div class="doc-header">
             <h1>海外发票管理规格书</h1>
             <div class="doc-meta">
-                <span class="meta-item">📅 版本: V1.0</span>
-                <span class="meta-item">👥 产品团队</span>
+                <span class="meta-item">📅 V1.0</span>
+                <span class="meta-item">👥 Dev_Dept</span>
                 <span class="meta-item">📋 需求规格说明书</span>
             </div>
         </div>
-        <h1>海外企业发票管理模块 - 技术规格说明书</h1>
+        <div class="content"><h1>海外企业发票管理模块 - 技术规格说明书</h1>
 
-<h2>Overseas Invoice Management Module — Technical Specification</h2>
+<h2>Overseas Invoice Management Module — Technical Specification</h2>
 
-> <strong>项目</strong>: Dev_Dept ERP 财务管理系统  
-> <strong>模块</strong>: 海外企业发票管理（Overseas Invoice Management）  
-> <strong>版本</strong>: v1.0  
-> <strong>日期</strong>: 2026-04-15  
-> <strong>对标系统</strong>: 金蝶云星空 → 发票管理 → 多税制支持  
-> <strong>关联模块</strong>: 发票查验模块规格书.md v1.0 → 本文档为其海外扩展  
-> <strong>状态</strong>: P1优先级 — 跨境业务刚需  
+<blockquote class="md-quote">**项目**: Dev_Dept ERP 财务管理系统  <br>**模块**: 海外企业发票管理（Overseas Invoice Management）  <br>**版本**: v1.0  <br>**日期**: 2026-04-15  <br>**对标系统**: 金蝶云星空 → 发票管理 → 多税制支持  <br>**关联模块**: 发票查验模块规格书.md v1.0 → 本文档为其海外扩展  <br>**状态**: P1优先级 — 跨境业务刚需  </blockquote>
 
----
+<li>--</li>
 
-<h2>1. 模块概述</h2>
+<h2>1. 模块概述</h2>
 
-<h3>1.1 业务背景</h3>
+<h3>1.1 业务背景</h3>
 
-公司业务覆盖东南亚及中东4个国家，需处理海外进项（供应商开给我们的发票）和销项（我们开给客户的发票）两类场景。海外发票与国内增值税发票存在本质差异：无统一税局API验真、各国税制独立、多币种处理、"票随货走"等特殊业务模式。
+<p>公司业务覆盖东南亚及中东4个国家，需处理海外进项（供应商开给我们的发票）和销项（我们开给客户的发票）两类场景。海外发票与国内增值税发票存在本质差异：无统一税局API验真、各国税制独立、多币种处理、"票随货走"等特殊业务模式。</p>
 
-<h3>1.2 模块定位</h3>
+<h3>1.2 模块定位</h3>
 
-本模块是 <code class="inline-code">发票查验模块规格书.md</code> 的<strong>海外扩展</strong>，不独立存在。核心原则：
+<p>本模块是 <code class="inline-code">发票查验模块规格书.md</code> 的<strong>海外扩展</strong>，不独立存在。核心原则：</p>
 
-``<code class="inline-code">
-一个发票录入入口 → invoice_region 字段分流 → 国内走API验真 / 海外走人工审核
+<div class="code-block">
+  <div class="code-header">CODE</div>
+  <pre class="language-"><code>一个发票录入入口 → invoice_region 字段分流 → 国内走API验真 / 海外走人工审核
                                     ↓
-                   审核通过后 → 应收/应付挂账 + 凭证生成（完全复用）
-</code>`<code class="inline-code">
+                   审核通过后 → 应收/应付挂账 + 凭证生成（完全复用）</code></pre>
+</div>
 
-<h3>1.3 覆盖国家</h3>
+<h3>1.3 覆盖国家</h3>
 
-| 国家 | 代码 | 本位币 | 标准税率 | 税号名称 | 税号格式 | 验真渠道 | 特殊模式 |
-|:---|:---:|:---|:---:|:---|:---|:---|:---|
-| 🇻🇳 越南 | VN | VND | 10% | MST | 10位数字 | GDT电子平台(2025.6起) | 票随货走 |
-| 🇹🇭 泰国 | TH | THB | 7% | VAT/TIN | 13位数字 | 税局网站(无公开API) | 票随货走 |
-| 🇵🇭 菲律宾 | PH | PHP | 12% | TIN(BIR) | 9-12位数字 | 无统一API | — |
-| 🇸🇦 沙特 | SA | SAR | 15% | VAT Number | 15位(3XX-XXXXXXXXX-X) | ZATCA/FATOORAH | 电子发票全覆盖 |
+<table class="md-table"><thead><tr><th>国家</th><th>代码</th><th>本位币</th><th>标准税率</th><th>税号名称</th><th>税号格式</th><th>验真渠道</th><th>特殊模式</th></tr></thead><tbody><tr><td>🇻🇳 越南</td><td>VN</td><td>VND</td><td>10%</td><td>MST</td><td>10位数字</td><td>GDT电子平台(2025.6起)</td><td>票随货走</td></tr><tr><td>🇹🇭 泰国</td><td>TH</td><td>THB</td><td>7%</td><td>VAT/TIN</td><td>13位数字</td><td>税局网站(无公开API)</td><td>票随货走</td></tr><tr><td>🇵🇭 菲律宾</td><td>PH</td><td>PHP</td><td>12%</td><td>TIN(BIR)</td><td>9-12位数字</td><td>无统一API</td><td>—</td></tr><tr><td>🇸🇦 沙特</td><td>SA</td><td>SAR</td><td>15%</td><td>VAT Number</td><td>15位(3XX-XXXXXXXXX-X)</td><td>ZATCA/FATOORAH</td><td>电子发票全覆盖</td></tr></tbody></table>
 
-<h3>1.4 核心能力</h3>
+<h3>1.4 核心能力</h3>
 
-| 能力 | 描述 | 优先级 |
-|------|------|--------|
-| 🌏 多国发票录入 | 按4国合规格式录入，自动匹配发票模板 | P1 |
-| 👁️ 人工审核流程 | 附件上传、票面信息交叉比对、审核记录 | P1 |
-| 💱 多币种支持 | 外币金额 + 汇率 + 本位币折算 | P1 |
-| 📦 票随货走跟踪 | 越南/泰国场景：发票与物流绑定、中途遗失补票 | P1 |
-| 📋 销售开票 | 按客户所在国合规格式生成销售发票 | P1 |
-| 🖼️ 影像存档 | 扫描件/原件照片上传、OCR辅助录入 | P1 |
-| 🔌 验真API预留 | 沙特ZATCA/越南GDT未来对接接口预留 | P2 |
-| 📊 跨境发票台账 | 按国家/币种/供应商维度的台账与统计 | P2 |
+<table class="md-table"><thead><tr><th>能力</th><th>描述</th><th>优先级</th></tr></thead><tbody><tr><td>🌏 多国发票录入</td><td>按4国合规格式录入，自动匹配发票模板</td><td>P1</td></tr><tr><td>👁️ 人工审核流程</td><td>附件上传、票面信息交叉比对、审核记录</td><td>P1</td></tr><tr><td>💱 多币种支持</td><td>外币金额 + 汇率 + 本位币折算</td><td>P1</td></tr><tr><td>📦 票随货走跟踪</td><td>越南/泰国场景：发票与物流绑定、中途遗失补票</td><td>P1</td></tr><tr><td>📋 销售开票</td><td>按客户所在国合规格式生成销售发票</td><td>P1</td></tr><tr><td>🖼️ 影像存档</td><td>扫描件/原件照片上传、OCR辅助录入</td><td>P1</td></tr><tr><td>🔌 验真API预留</td><td>沙特ZATCA/越南GDT未来对接接口预留</td><td>P2</td></tr><tr><td>📊 跨境发票台账</td><td>按国家/币种/供应商维度的台账与统计</td><td>P2</td></tr></tbody></table>
 
----
+<li>--</li>
 
-<h2>2. 与国内发票模块的关系</h2>
+<h2>2. 与国内发票模块的关系</h2>
 
-<h3>2.1 共享部分（完全复用）</h3>
+<h3>2.1 共享部分（完全复用）</h3>
 
-| 共享内容 | 说明 |
-|:---|:---|
-| </code>invoice_verification_log<code class="inline-code"> 主表 | 通过 </code>invoice_region<code class="inline-code"> 字段区分 |
-| 查验台账查询API | 按region过滤即可 |
-| 异常池表 </code>invoice_exception_pool<code class="inline-code"> | 海外发票异常同样入池 |
-| 审核通过后的挂账逻辑 | 应收/应付模块无需感知发票来源 |
-| 凭证模板 | 总账凭证引擎通过event_key区分 |
+<table class="md-table"><thead><tr><th>共享内容</th><th>说明</th></tr></thead><tbody><tr><td><code class="inline-code">invoice_verification_log</code> 主表</td><td>通过 <code class="inline-code">invoice_region</code> 字段区分</td></tr><tr><td>查验台账查询API</td><td>按region过滤即可</td></tr><tr><td>异常池表 <code class="inline-code">invoice_exception_pool</code></td><td>海外发票异常同样入池</td></tr><tr><td>审核通过后的挂账逻辑</td><td>应收/应付模块无需感知发票来源</td></tr><tr><td>凭证模板</td><td>总账凭证引擎通过event_key区分</td></tr></tbody></table>
 
-<h3>2.2 差异部分（本模块新增）</h3>
+<h3>2.2 差异部分（本模块新增）</h3>
 
-| 差异点 | 国内发票 | 海外发票 |
-|:---|:---|:---|
-| <strong>验真方式</strong> | 腾讯云API自动 | 人工审核 + 附件比对 + 未来API预留 |
-| <strong>发票编号</strong> | 税局统一编码 | 企业自编号 |
-| <strong>发票类型</strong> | 12种票种代码 | 各国自定义类型 |
-| <strong>币种</strong> | CNY | VND/THB/PHP/SAR + 汇率 |
-| <strong>票面信息</strong> | API返回结构化数据 | 手工录入 + OCR辅助 |
-| <strong>附件</strong> | 可选 | <strong>必填</strong>（扫描件/照片） |
-| <strong>票随货走</strong> | 无 | 越南/泰国需要跟踪 |
-| <strong>销售开票</strong> | 走金税接口 | 按国别模板生成 |
+<table class="md-table"><thead><tr><th>差异点</th><th>国内发票</th><th>海外发票</th></tr></thead><tbody><tr><td><strong>验真方式</strong></td><td>腾讯云API自动</td><td>人工审核 + 附件比对 + 未来API预留</td></tr><tr><td><strong>发票编号</strong></td><td>税局统一编码</td><td>企业自编号</td></tr><tr><td><strong>发票类型</strong></td><td>12种票种代码</td><td>各国自定义类型</td></tr><tr><td><strong>币种</strong></td><td>CNY</td><td>VND/THB/PHP/SAR + 汇率</td></tr><tr><td><strong>票面信息</strong></td><td>API返回结构化数据</td><td>手工录入 + OCR辅助</td></tr><tr><td><strong>附件</strong></td><td>可选</td><td><strong>必填</strong>（扫描件/照片）</td></tr><tr><td><strong>票随货走</strong></td><td>无</td><td>越南/泰国需要跟踪</td></tr><tr><td><strong>销售开票</strong></td><td>走金税接口</td><td>按国别模板生成</td></tr></tbody></table>
 
-<h3>2.3 架构关系图</h3>
+<h3>2.3 架构关系图</h3>
 
-</code>`<code class="inline-code">
-┌─────────────────────────────────────────────────────────────────┐
+<div class="code-block">
+  <div class="code-header">CODE</div>
+  <pre class="language-"><code>┌─────────────────────────────────────────────────────────────────┐
 │                   ERP 财务管理系统 — 发票管理域                    │
 ├─────────────────────────────────────────────────────────────────┤
 │                                                                 │
@@ -333,47 +152,28 @@
 │                                                                 │
 │  上游: 采购入库单 / 销售发货单 / 手工录入 / 批量导入              │
 │  下游: 应收挂账 / 应付挂账 / 总账凭证                            │
-└─────────────────────────────────────────────────────────────────┘
-</code>`<code class="inline-code">
+└─────────────────────────────────────────────────────────────────┘</code></pre>
+</div>
 
----
+<li>--</li>
 
-<h2>3. 四国发票制度详细规范</h2>
+<h2>3. 四国发票制度详细规范</h2>
 
-<h3>3.1 🇻🇳 越南 (VN)</h3>
+<h3>3.1 🇻🇳 越南 (VN)</h3>
 
-#### 发票体系
+<h4>发票体系</h4>
 
-| 维度 | 规范 |
-|:---|:---|
-| <strong>发票名称</strong> | Hóa đơn giá trị gia tăng (VAT Invoice) |
-| <strong>标准税率</strong> | 10%（2025年7月起可能调整，需关注政策） |
-| <strong>税号名称</strong> | MST (Mã Số Thuế) |
-| <strong>税号格式</strong> | 10位数字，如 </code>0101234567<code class="inline-code"> |
-| <strong>发票编号</strong> | 电子发票：表单编号(1位) + 参考代码(6位) + 序列号(7位) = 14位 |
-| <strong>开票门槛</strong> | 年营业额 ≥ 10亿VND 必须注册VAT |
-| <strong>管控方式</strong> | 2025年6月起全面电子发票，通过GDT(General Department of Taxation)平台 |
-| <strong>票随货走</strong> | ✅ 传统模式仍存在，电子化后逐步减少 |
-| <strong>验真渠道</strong> | GDT电子平台（2025.6起可在线验证） |
+<table class="md-table"><thead><tr><th>维度</th><th>规范</th></tr></thead><tbody><tr><td><strong>发票名称</strong></td><td>Hóa đơn giá trị gia tăng (VAT Invoice)</td></tr><tr><td><strong>标准税率</strong></td><td>10%（2025年7月起可能调整，需关注政策）</td></tr><tr><td><strong>税号名称</strong></td><td>MST (Mã Số Thuế)</td></tr><tr><td><strong>税号格式</strong></td><td>10位数字，如 <code class="inline-code">0101234567</code></td></tr><tr><td><strong>发票编号</strong></td><td>电子发票：表单编号(1位) + 参考代码(6位) + 序列号(7位) = 14位</td></tr><tr><td><strong>开票门槛</strong></td><td>年营业额 ≥ 10亿VND 必须注册VAT</td></tr><tr><td><strong>管控方式</strong></td><td>2025年6月起全面电子发票，通过GDT(General Department of Taxation)平台</td></tr><tr><td><strong>票随货走</strong></td><td>✅ 传统模式仍存在，电子化后逐步减少</td></tr><tr><td><strong>验真渠道</strong></td><td>GDT电子平台（2025.6起可在线验证）</td></tr></tbody></table>
 
-#### 越南发票必须包含的信息
+<h4>越南发票必须包含的信息</h4>
 
-| 字段 | 必填 | 说明 |
-|:---|:---:|:---|
-| 发票编号 | ✅ | 14位电子发票编号 |
-| 开票日期 | ✅ | DD/MM/YYYY 格式 |
-| 卖方名称 + MST | ✅ | 卖方公司全称及10位税号 |
-| 买方名称 + MST | ✅ | 买方公司全称及税号（B2B必填） |
-| 商品/服务明细 | ✅ | 名称、数量、单价、金额 |
-| 不含税金额 | ✅ | 小计（不含VAT） |
-| VAT金额 | ✅ | 10% |
-| 价税合计 | ✅ | 总金额（VND） |
-| 发票类型代码 | ✅ | 1-9对应不同类型（1=标准VAT发票） |
+<table class="md-table"><thead><tr><th>字段</th><th>必填</th><th>说明</th></tr></thead><tbody><tr><td>发票编号</td><td>✅</td><td>14位电子发票编号</td></tr><tr><td>开票日期</td><td>✅</td><td>DD/MM/YYYY 格式</td></tr><tr><td>卖方名称 + MST</td><td>✅</td><td>卖方公司全称及10位税号</td></tr><tr><td>买方名称 + MST</td><td>✅</td><td>买方公司全称及税号（B2B必填）</td></tr><tr><td>商品/服务明细</td><td>✅</td><td>名称、数量、单价、金额</td></tr><tr><td>不含税金额</td><td>✅</td><td>小计（不含VAT）</td></tr><tr><td>VAT金额</td><td>✅</td><td>10%</td></tr><tr><td>价税合计</td><td>✅</td><td>总金额（VND）</td></tr><tr><td>发票类型代码</td><td>✅</td><td>1-9对应不同类型（1=标准VAT发票）</td></tr></tbody></table>
 
-#### 特殊场景：票随货走（越南）
+<h4>特殊场景：票随货走（越南）</h4>
 
-</code>`<code class="inline-code">
-┌─────────────────────────────────────────────────────────┐
+<div class="code-block">
+  <div class="code-header">CODE</div>
+  <pre class="language-"><code>┌─────────────────────────────────────────────────────────┐
 │  越南"票随货走"业务流程                                    │
 │                                                         │
 │  供应商 ──发货──→ 物流 ──送货──→ 我方仓库                  │
@@ -394,52 +194,32 @@
 │                                /     \                  │
 │                           票丢失    金额不符             │
 │                           补票流程  退回供应商            │
-└─────────────────────────────────────────────────────────┘
-</code>`<code class="inline-code">
+└─────────────────────────────────────────────────────────┘</code></pre>
+</div>
 
-<strong>补票流程</strong>：
-1. 在ERP中标记原票"遗失"状态
-2. 通知供应商重新开票
-3. 收到补票后，补票编号与原单据关联
-4. 补票审核通过后替换原票挂账
+<p><strong>补票流程</strong>：</p>
+<li>. 在ERP中标记原票"遗失"状态</li>
+<li>. 通知供应商重新开票</li>
+<li>. 收到补票后，补票编号与原单据关联</li>
+<li>. 补票审核通过后替换原票挂账</li>
 
----
+<li>--</li>
 
-<h3>3.2 🇹🇭 泰国 (TH)</h3>
+<h3>3.2 🇹🇭 泰国 (TH)</h3>
 
-#### 发票体系
+<h4>发票体系</h4>
 
-| 维度 | 规范 |
-|:---|:---|
-| <strong>发票名称</strong> | ใบกำกับภาษี (Tax Invoice / Receipt) |
-| <strong>标准税率</strong> | 7% |
-| <strong>税号名称</strong> | VAT Registration Number / TIN |
-| <strong>税号格式</strong> | 13位数字，如 </code>0105556000123<code class="inline-code"> |
-| <strong>发票编号</strong> | 企业自编号，连续序列 |
-| <strong>开票门槛</strong> | 年营业额 ≥ 1,800,000 THB 必须注册VAT |
-| <strong>管控方式</strong> | 税局印发发票簿 / 电子发票并存 |
-| <strong>票随货走</strong> | ✅ 常见模式，特别是中小企业 |
-| <strong>验真渠道</strong> | 泰国税务局RD网站可查，但<strong>无公开API</strong> |
-| <strong>小企业特殊</strong> | 年营业额 < 1,800,000 THB 可开Receipt（收据），不收VAT |
+<table class="md-table"><thead><tr><th>维度</th><th>规范</th></tr></thead><tbody><tr><td><strong>发票名称</strong></td><td>ใบกำกับภาษี (Tax Invoice / Receipt)</td></tr><tr><td><strong>标准税率</strong></td><td>7%</td></tr><tr><td><strong>税号名称</strong></td><td>VAT Registration Number / TIN</td></tr><tr><td><strong>税号格式</strong></td><td>13位数字，如 <code class="inline-code">0105556000123</code></td></tr><tr><td><strong>发票编号</strong></td><td>企业自编号，连续序列</td></tr><tr><td><strong>开票门槛</strong></td><td>年营业额 ≥ 1,800,000 THB 必须注册VAT</td></tr><tr><td><strong>管控方式</strong></td><td>税局印发发票簿 / 电子发票并存</td></tr><tr><td><strong>票随货走</strong></td><td>✅ 常见模式，特别是中小企业</td></tr><tr><td><strong>验真渠道</strong></td><td>泰国税务局RD网站可查，但<strong>无公开API</strong></td></tr><tr><td><strong>小企业特殊</strong></td><td>年营业额 < 1,800,000 THB 可开Receipt（收据），不收VAT</td></tr></tbody></table>
 
-#### 泰国发票必须包含的信息
+<h4>泰国发票必须包含的信息</h4>
 
-| 字段 | 必填 | 说明 |
-|:---|:---:|:---|
-| "ใบกำกับภาษี"字样 | ✅ | 发票标题必须包含此泰文字样 |
-| 卖方名称 + 地址 + 税号 | ✅ | 13位VAT号 |
-| 买方名称 + 地址 + 税号 | ✅ | B2B必填 |
-| 发票编号 + 日期 | ✅ | 连续编号 |
-| 商品/服务明细 | ✅ | 描述、数量、单价 |
-| 不含税金额 | ✅ | 小计 |
-| VAT金额 | ✅ | 7% |
-| 价税合计 | ✅ | THB |
-| 卖方签名/印章 | ✅ | 授权人签名 |
+<table class="md-table"><thead><tr><th>字段</th><th>必填</th><th>说明</th></tr></thead><tbody><tr><td>"ใบกำกับภาษี"字样</td><td>✅</td><td>发票标题必须包含此泰文字样</td></tr><tr><td>卖方名称 + 地址 + 税号</td><td>✅</td><td>13位VAT号</td></tr><tr><td>买方名称 + 地址 + 税号</td><td>✅</td><td>B2B必填</td></tr><tr><td>发票编号 + 日期</td><td>✅</td><td>连续编号</td></tr><tr><td>商品/服务明细</td><td>✅</td><td>描述、数量、单价</td></tr><tr><td>不含税金额</td><td>✅</td><td>小计</td></tr><tr><td>VAT金额</td><td>✅</td><td>7%</td></tr><tr><td>价税合计</td><td>✅</td><td>THB</td></tr><tr><td>卖方签名/印章</td><td>✅</td><td>授权人签名</td></tr></tbody></table>
 
-#### 泰国特殊：Receipt vs Tax Invoice
+<h4>泰国特殊：Receipt vs Tax Invoice</h4>
 
-</code>`<code class="inline-code">
-┌─────────────────────────────────────────────┐
+<div class="code-block">
+  <div class="code-header">CODE</div>
+  <pre class="language-"><code>┌─────────────────────────────────────────────┐
 │  供应商分类决策                                │
 │                                              │
 │  供应商是否注册VAT？                           │
@@ -450,102 +230,48 @@
 │        → 不含VAT                             │
 │        → 不能抵扣进项税                       │
 │        → 全额计入成本                         │
-└─────────────────────────────────────────────┘
-</code>`<code class="inline-code">
+└─────────────────────────────────────────────┘</code></pre>
+</div>
 
----
+<li>--</li>
 
-<h3>3.3 🇵🇭 菲律宾 (PH)</h3>
+<h3>3.3 🇵🇭 菲律宾 (PH)</h3>
 
-#### 发票体系
+<h4>发票体系</h4>
 
-| 维度 | 规范 |
-|:---|:---|
-| <strong>发票名称</strong> | Sales Invoice（商品）/ Official Receipt（服务） |
-| <strong>标准税率</strong> | 12% |
-| <strong>税号名称</strong> | TIN (Taxpayer Identification Number)，由BIR颁发 |
-| <strong>税号格式</strong> | 9-12位，常用格式如 </code>123-456-789-000<code class="inline-code"> |
-| <strong>发票编号</strong> | 企业自编号 + BIR打印授权号（PTU） |
-| <strong>开票门槛</strong> | 年营业额 ≥ 3,000,000 PHP 必须注册VAT |
-| <strong>管控方式</strong> | BIR打印授权制，发票须在BIR注册后方可打印 |
-| <strong>票随货走</strong> | ❌ 不存在此概念 |
-| <strong>验真渠道</strong> | <strong>无统一API</strong>，纯人工核验 |
-| <strong>发票类型</strong> | 销售发票(Sales Invoice)、正式收据(Official Receipt)、账单收据(Billing Invoice) |
+<table class="md-table"><thead><tr><th>维度</th><th>规范</th></tr></thead><tbody><tr><td><strong>发票名称</strong></td><td>Sales Invoice（商品）/ Official Receipt（服务）</td></tr><tr><td><strong>标准税率</strong></td><td>12%</td></tr><tr><td><strong>税号名称</strong></td><td>TIN (Taxpayer Identification Number)，由BIR颁发</td></tr><tr><td><strong>税号格式</strong></td><td>9-12位，常用格式如 <code class="inline-code">123-456-789-000</code></td></tr><tr><td><strong>发票编号</strong></td><td>企业自编号 + BIR打印授权号（PTU）</td></tr><tr><td><strong>开票门槛</strong></td><td>年营业额 ≥ 3,000,000 PHP 必须注册VAT</td></tr><tr><td><strong>管控方式</strong></td><td>BIR打印授权制，发票须在BIR注册后方可打印</td></tr><tr><td><strong>票随货走</strong></td><td>❌ 不存在此概念</td></tr><tr><td><strong>验真渠道</strong></td><td><strong>无统一API</strong>，纯人工核验</td></tr><tr><td><strong>发票类型</strong></td><td>销售发票(Sales Invoice)、正式收据(Official Receipt)、账单收据(Billing Invoice)</td></tr></tbody></table>
 
-#### 菲律宾发票必须包含的信息
+<h4>菲律宾发票必须包含的信息</h4>
 
-| 字段 | 必填 | 说明 |
-|:---|:---:|:---|
-| "VAT"字样 | ✅ | 非VAT纳税人标注"NON-VAT" |
-| TIN | ✅ | 卖方和买方双方TIN |
-| BIR授权号(PTU) | ✅ | 打印授权编号 |
-| 发票序列号 | ✅ | 唯一编号 |
-| 开票日期 | ✅ | |
-| 卖方信息 | ✅ | 名称、地址、业务性质 |
-| 买方信息 | ✅ | 名称、地址、TIN |
-| 商品/服务明细 | ✅ | 描述、数量、单价 |
-| VAT金额 | ✅ | 12%（如适用） |
-| 免税标注 | 条件 | 免税交易须标注"EXEMPT" |
-| 授权签名 | ✅ | |
+<table class="md-table"><thead><tr><th>字段</th><th>必填</th><th>说明</th></tr></thead><tbody><tr><td>"VAT"字样</td><td>✅</td><td>非VAT纳税人标注"NON-VAT"</td></tr><tr><td>TIN</td><td>✅</td><td>卖方和买方双方TIN</td></tr><tr><td>BIR授权号(PTU)</td><td>✅</td><td>打印授权编号</td></tr><tr><td>发票序列号</td><td>✅</td><td>唯一编号</td></tr><tr><td>开票日期</td><td>✅</td></tr><tr><td>卖方信息</td><td>✅</td><td>名称、地址、业务性质</td></tr><tr><td>买方信息</td><td>✅</td><td>名称、地址、TIN</td></tr><tr><td>商品/服务明细</td><td>✅</td><td>描述、数量、单价</td></tr><tr><td>VAT金额</td><td>✅</td><td>12%（如适用）</td></tr><tr><td>免税标注</td><td>条件</td><td>免税交易须标注"EXEMPT"</td></tr><tr><td>授权签名</td><td>✅</td></tr></tbody></table>
 
-#### 菲律宾违规处罚（合规提醒）
+<h4>菲律宾违规处罚（合规提醒）</h4>
 
-| 违规行为 | 首次罚款 |
-|:---|:---|
-| 未能开具发票 | ₱10,000 |
-| 故意拒绝开票 | ₱25,000 |
-| 开具不完整发票 | ₱5,000 |
-| 未单独列明VAT | ₱1,000-₱50,000 <strong>+ 可能监禁</strong> |
+<table class="md-table"><thead><tr><th>违规行为</th><th>首次罚款</th></tr></thead><tbody><tr><td>未能开具发票</td><td>₱10,000</td></tr><tr><td>故意拒绝开票</td><td>₱25,000</td></tr><tr><td>开具不完整发票</td><td>₱5,000</td></tr><tr><td>未单独列明VAT</td><td>₱1,000-₱50,000 <strong>+ 可能监禁</strong></td></tr></tbody></table>
 
----
+<li>--</li>
 
-<h3>3.4 🇸🇦 沙特阿拉伯 (SA)</h3>
+<h3>3.4 🇸🇦 沙特阿拉伯 (SA)</h3>
 
-#### 发票体系
+<h4>发票体系</h4>
 
-| 维度 | 规范 |
-|:---|:---|
-| <strong>发票名称</strong> | Tax Invoice (فاتورة ضريبية) |
-| <strong>标准税率</strong> | 15% |
-| <strong>税号名称</strong> | VAT Registration Number |
-| <strong>税号格式</strong> | 15位：</code>3XX-XXXXXXXXX-X<code class="inline-code">（前缀3XX + 9位识别码 + 1位校验码） |
-| <strong>发票编号</strong> | 企业自编号（须符合FATOORAH标准） |
-| <strong>开票门槛</strong> | 年营业额 ≥ 375,000 SAR 必须注册VAT |
-| <strong>管控方式</strong> | <strong>2025年起FATOORAH电子发票全覆盖</strong>（ZATCA） |
-| <strong>票随货走</strong> | ❌ 无此概念 |
-| <strong>验真渠道</strong> | ZATCA平台可验，<strong>有验证接口可研究对接</strong> |
-| <strong>发票类型</strong> | 简化发票(Simplified) / 标准发票(Standard) / 信用卡发票 |
+<table class="md-table"><thead><tr><th>维度</th><th>规范</th></tr></thead><tbody><tr><td><strong>发票名称</strong></td><td>Tax Invoice (فاتورة ضريبية)</td></tr><tr><td><strong>标准税率</strong></td><td>15%</td></tr><tr><td><strong>税号名称</strong></td><td>VAT Registration Number</td></tr><tr><td><strong>税号格式</strong></td><td>15位：<code class="inline-code">3XX-XXXXXXXXX-X</code>（前缀3XX + 9位识别码 + 1位校验码）</td></tr><tr><td><strong>发票编号</strong></td><td>企业自编号（须符合FATOORAH标准）</td></tr><tr><td><strong>开票门槛</strong></td><td>年营业额 ≥ 375,000 SAR 必须注册VAT</td></tr><tr><td><strong>管控方式</strong></td><td><strong>2025年起FATOORAH电子发票全覆盖</strong>（ZATCA）</td></tr><tr><td><strong>票随货走</strong></td><td>❌ 无此概念</td></tr><tr><td><strong>验真渠道</strong></td><td>ZATCA平台可验，<strong>有验证接口可研究对接</strong></td></tr><tr><td><strong>发票类型</strong></td><td>简化发票(Simplified) / 标准发票(Standard) / 信用卡发票</td></tr></tbody></table>
 
-#### 沙特电子发票（FATOORAH）体系
+<h4>沙特电子发票（FATOORAH）体系</h4>
 
-沙特是全球电子发票推进最快的国家之一，分两阶段：
+<p>沙特是全球电子发票推进最快的国家之一，分两阶段：</p>
 
-| 阶段 | 时间 | 要求 |
-|:---|:---|:---|
-| <strong>第一阶段</strong> | 2021-2023 | 生成电子发票（UBL/XML格式），生成UUID |
-| <strong>第二阶段</strong> | 2023-2025 | 集成ZATCA，发票实时上报税局，含QR Code |
-| <strong>全覆盖</strong> | 2025年起 | 所有VAT纳税人必须使用电子发票 |
+<table class="md-table"><thead><tr><th>阶段</th><th>时间</th><th>要求</th></tr></thead><tbody><tr><td><strong>第一阶段</strong></td><td>2021-2023</td><td>生成电子发票（UBL/XML格式），生成UUID</td></tr><tr><td><strong>第二阶段</strong></td><td>2023-2025</td><td>集成ZATCA，发票实时上报税局，含QR Code</td></tr><tr><td><strong>全覆盖</strong></td><td>2025年起</td><td>所有VAT纳税人必须使用电子发票</td></tr></tbody></table>
 
-#### 沙特发票必须包含的信息
+<h4>沙特发票必须包含的信息</h4>
 
-| 字段 | 必填 | 说明 |
-|:---|:---:|:---|
-| VAT发票字样 | ✅ | "فاتورة ضريبية" (Tax Invoice) |
-| 卖方VAT号 | ✅ | 15位 |
-| 买方VAT号 | ✅ | B2B必填 |
-| 发票UUID | ✅ | FATOORAH生成的唯一标识 |
-| 开票日期时间 | ✅ | 含时间戳 |
-| 商品/服务明细 | ✅ | 含VAT商品编码 |
-| 不含税金额 | ✅ | |
-| VAT金额 | ✅ | 15% |
-| 价税合计 | ✅ | SAR |
-| QR Code | ✅ | 第二阶段要求，含TLV格式加密数据 |
-| 卖方地址 | ✅ | |
+<table class="md-table"><thead><tr><th>字段</th><th>必填</th><th>说明</th></tr></thead><tbody><tr><td>VAT发票字样</td><td>✅</td><td>"فاتورة ضريبية" (Tax Invoice)</td></tr><tr><td>卖方VAT号</td><td>✅</td><td>15位</td></tr><tr><td>买方VAT号</td><td>✅</td><td>B2B必填</td></tr><tr><td>发票UUID</td><td>✅</td><td>FATOORAH生成的唯一标识</td></tr><tr><td>开票日期时间</td><td>✅</td><td>含时间戳</td></tr><tr><td>商品/服务明细</td><td>✅</td><td>含VAT商品编码</td></tr><tr><td>不含税金额</td><td>✅</td></tr><tr><td>VAT金额</td><td>✅</td><td>15%</td></tr><tr><td>价税合计</td><td>✅</td><td>SAR</td></tr><tr><td>QR Code</td><td>✅</td><td>第二阶段要求，含TLV格式加密数据</td></tr><tr><td>卖方地址</td><td>✅</td></tr></tbody></table>
 
-#### 沙特特殊：简化发票 vs 标准发票
+<h4>沙特特殊：简化发票 vs 标准发票</h4>
 
-</code>`<code class="inline-code">
-┌──────────────────────────────────────────────┐
+<div class="code-block">
+  <div class="code-header">CODE</div>
+  <pre class="language-"><code>┌──────────────────────────────────────────────┐
 │  发票类型决策                                  │
 │                                               │
 │  买方是否为VAT注册企业？                        │
@@ -558,19 +284,20 @@
 │        → 仅含卖方VAT号                        │
 │        → 含QR Code                            │
 │        → 终端消费者场景                        │
-└──────────────────────────────────────────────┘
-</code>`<code class="inline-code">
+└──────────────────────────────────────────────┘</code></pre>
+</div>
 
----
+<li>--</li>
 
-<h2>4. 数据模型设计</h2>
+<h2>4. 数据模型设计</h2>
 
-<h3>4.1 主表扩展：invoice_verification_log 增加字段</h3>
+<h3>4.1 主表扩展：invoice_verification_log 增加字段</h3>
 
-在现有国内发票查验表基础上增加海外字段：
+<p>在现有国内发票查验表基础上增加海外字段：</p>
 
-</code>`<code class="inline-code">sql
--- ============================================================
+<div class="code-block sql-block">
+  <div class="code-header">SQL</div>
+  <pre class="language-sql"><code>-- ============================================================
 -- 海外发票扩展字段（在 invoice_verification_log 上 ALTER）
 -- ============================================================
 
@@ -685,13 +412,14 @@ ALTER TABLE invoice_verification_log
   ADD INDEX idx_overseas_inv_no (overseas_inv_no);
 
 ALTER TABLE invoice_verification_log
-  ADD INDEX idx_delivery_status (invoice_delivery_status);
-</code>`<code class="inline-code">
+  ADD INDEX idx_delivery_status (invoice_delivery_status);</code></pre>
+</div>
 
-<h3>4.2 新增表：汇率管理表</h3>
+<h3>4.2 新增表：汇率管理表</h3>
 
-</code>`<code class="inline-code">sql
-CREATE TABLE fx_exchange_rate (
+<div class="code-block sql-block">
+  <div class="code-header">SQL</div>
+  <pre class="language-sql"><code>CREATE TABLE fx_exchange_rate (
     id              BIGINT PRIMARY KEY AUTO_INCREMENT,
     base_currency   VARCHAR(5)    NOT NULL        COMMENT '基准货币: CNY',
     quote_currency  VARCHAR(5)    NOT NULL        COMMENT '目标货币: VND/THB/PHP/SAR/USD',
@@ -705,13 +433,14 @@ CREATE TABLE fx_exchange_rate (
     UNIQUE KEY uk_currency_date (base_currency, quote_currency, rate_date),
     INDEX idx_quote (quote_currency, rate_date)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
-COMMENT='外汇汇率表 — 支持多币种发票折算';
-</code>`<code class="inline-code">
+COMMENT='外汇汇率表 — 支持多币种发票折算';</code></pre>
+</div>
 
-<h3>4.3 新增表：海外发票附件表</h3>
+<h3>4.3 新增表：海外发票附件表</h3>
 
-</code>`<code class="inline-code">sql
-CREATE TABLE overseas_invoice_attachment (
+<div class="code-block sql-block">
+  <div class="code-header">SQL</div>
+  <pre class="language-sql"><code>CREATE TABLE overseas_invoice_attachment (
     id              BIGINT PRIMARY KEY AUTO_INCREMENT,
     verify_log_id   BIGINT        NOT NULL        COMMENT '关联 invoice_verification_log.id',
     file_name       VARCHAR(200)  NOT NULL        COMMENT '原始文件名',
@@ -726,13 +455,14 @@ CREATE TABLE overseas_invoice_attachment (
     INDEX idx_verify_log (verify_log_id),
     INDEX idx_upload_at (upload_at)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
-COMMENT='海外发票附件表 — 扫描件/照片/电子发票PDF';
-</code>`<code class="inline-code">
+COMMENT='海外发票附件表 — 扫描件/照片/电子发票PDF';</code></pre>
+</div>
 
-<h3>4.4 新增表：海外发票模板配置表</h3>
+<h3>4.4 新增表：海外发票模板配置表</h3>
 
-</code>`<code class="inline-code">sql
-CREATE TABLE overseas_invoice_template (
+<div class="code-block sql-block">
+  <div class="code-header">SQL</div>
+  <pre class="language-sql"><code>CREATE TABLE overseas_invoice_template (
     id              BIGINT PRIMARY KEY AUTO_INCREMENT,
     country_code    VARCHAR(5)    NOT NULL        COMMENT '国家代码: VN/TH/PH/SA',
     template_name   VARCHAR(100)  NOT NULL        COMMENT '模板名称',
@@ -754,13 +484,14 @@ CREATE TABLE overseas_invoice_template (
     UNIQUE KEY uk_country_type_dir (country_code, inv_type, direction),
     INDEX idx_country (country_code)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
-COMMENT='海外发票模板配置表 — 每国每类型一个模板';
-</code>`<code class="inline-code">
+COMMENT='海外发票模板配置表 — 每国每类型一个模板';</code></pre>
+</div>
 
-<h3>4.5 新增表：销售开票记录表（海外销项）</h3>
+<h3>4.5 新增表：销售开票记录表（海外销项）</h3>
 
-</code>`<code class="inline-code">sql
-CREATE TABLE overseas_sales_invoice (
+<div class="code-block sql-block">
+  <div class="code-header">SQL</div>
+  <pre class="language-sql"><code>CREATE TABLE overseas_sales_invoice (
     id              BIGINT PRIMARY KEY AUTO_INCREMENT,
     invoice_no      VARCHAR(50)   NOT NULL        COMMENT '我方开出发票编号（按规则生成）',
     country_code    VARCHAR(5)    NOT NULL        COMMENT '客户所在国: VN/TH/PH/SA',
@@ -826,17 +557,18 @@ CREATE TABLE overseas_sales_invoice_item (
     
     INDEX idx_invoice (invoice_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
-COMMENT='海外销售发票明细表';
-</code>`<code class="inline-code">
+COMMENT='海外销售发票明细表';</code></pre>
+</div>
 
----
+<li>--</li>
 
-<h2>5. 业务流程设计</h2>
+<h2>5. 业务流程设计</h2>
 
-<h3>5.1 海外发票录入总流程</h3>
+<h3>5.1 海外发票录入总流程</h3>
 
-</code>`<code class="inline-code">
-┌──────────────────────────────────────────────────────────────────┐
+<div class="code-block">
+  <div class="code-header">CODE</div>
+  <pre class="language-"><code>┌──────────────────────────────────────────────────────────────────┐
 │                 海外发票录入 — 完整流程                              │
 └──────────────────────────────────────────────────────────────────┘
 
@@ -925,13 +657,14 @@ COMMENT='海外销售发票明细表';
 │ ✅ 通过 → 挂账入账                       │
 │ ⚠️ 退回 → 修改后重新提交                  │
 │ ❌ 拒绝 → 异常池 + 通知                   │
-└──────────────────┘
-</code>`<code class="inline-code">
+└──────────────────┘</code></pre>
+</div>
 
-<h3>5.2 人工审核流程（详细）</h3>
+<h3>5.2 人工审核流程（详细）</h3>
 
-</code>`<code class="inline-code">
-┌──────────────────────────────────────────────────────────────────┐
+<div class="code-block">
+  <div class="code-header">CODE</div>
+  <pre class="language-"><code>┌──────────────────────────────────────────────────────────────────┐
 │                     人工审核操作台                                  │
 └──────────────────────────────────────────────────────────────────┘
 
@@ -984,13 +717,14 @@ COMMENT='海外销售发票明细表';
 │  审核意见: [________________________________________]         │
 │                                                               │
 │  [✅ 通过]  [↩ 退回修改]  [❌ 拒绝]                            │
-└──────────────────────────────────────────────────────────────┘
-</code>`<code class="inline-code">
+└──────────────────────────────────────────────────────────────┘</code></pre>
+</div>
 
-<h3>5.3 票随货走跟踪流程</h3>
+<h3>5.3 票随货走跟踪流程</h3>
 
-</code>`<code class="inline-code">
-┌──────────────────────────────────────────────────────────────────┐
+<div class="code-block">
+  <div class="code-header">CODE</div>
+  <pre class="language-"><code>┌──────────────────────────────────────────────────────────────────┐
 │              票随货走 — 完整跟踪流程（越南/泰国）                     │
 └──────────────────────────────────────────────────────────────────┘
 
@@ -1046,13 +780,14 @@ COMMENT='海外销售发票明细表';
   │              │                                 │
   │              ▼                                 │
   │           LOST ──通知补票──→ REPLACED          │
-  └──────────────────────────────────────────────┘
-</code>`<code class="inline-code">
+  └──────────────────────────────────────────────┘</code></pre>
+</div>
 
-<h3>5.4 海外销售开票流程</h3>
+<h3>5.4 海外销售开票流程</h3>
 
-</code>`<code class="inline-code">
-┌──────────────────────────────────────────────────────────────────┐
+<div class="code-block">
+  <div class="code-header">CODE</div>
+  <pre class="language-"><code>┌──────────────────────────────────────────────────────────────────┐
 │                   海外销售开票 — 完整流程                          │
 └──────────────────────────────────────────────────────────────────┘
 
@@ -1126,13 +861,14 @@ COMMENT='海外销售发票明细表';
 ┌──────────────┐
 │ ⑧ 生成凭证    │  调用总账凭证引擎
 │   SO01-xx    │  event_key = "OVERSEAS_SALE"
-└──────────────┘
-</code>`<code class="inline-code">
+└──────────────┘</code></pre>
+</div>
 
-<h3>5.5 汇率处理流程</h3>
+<h3>5.5 汇率处理流程</h3>
 
-</code>`<code class="inline-code">
-┌──────────────────────────────────────────────────────────────────┐
+<div class="code-block">
+  <div class="code-header">CODE</div>
+  <pre class="language-"><code>┌──────────────────────────────────────────────────────────────────┐
 │                     多币种汇率处理流程                             │
 └──────────────────────────────────────────────────────────────────┘
 
@@ -1174,17 +910,18 @@ COMMENT='海外销售发票明细表';
 │ • 发票审核通过时锁定汇率            │
 │ • 锁定后汇率变更不影响已审核发票   │
 │ • 如需调整: 走冲销重做流程         │
-└──────────────────────────────────┘
-</code>`<code class="inline-code">
+└──────────────────────────────────┘</code></pre>
+</div>
 
----
+<li>--</li>
 
-<h2>6. 凭证模板设计</h2>
+<h2>6. 凭证模板设计</h2>
 
-<h3>6.1 海外进项发票凭证（OVERSEAS_PURCHASE）</h3>
+<h3>6.1 海外进项发票凭证（OVERSEAS_PURCHASE）</h3>
 
-</code>`<code class="inline-code">
-┌──────────────────────────────────────────────────────────────┐
+<div class="code-block">
+  <div class="code-header">CODE</div>
+  <pre class="language-"><code>┌──────────────────────────────────────────────────────────────┐
 │  事件键: OVERSEAS_PURCHASE                                    │
 │  触发: 海外进项发票审核通过                                     │
 │  模板: OP01                                                  │
@@ -1204,13 +941,14 @@ COMMENT='海外销售发票明细表';
 ├──────────────────────────────────────────────────────────────┤
 │  说明: 摘要包含 [国家][供应商][发票号][币种]                    │
 │  例: "越南-ABC公司-INV20260410-VND-50000000"                  │
-└──────────────────────────────────────────────────────────────┘
-</code>`<code class="inline-code">
+└──────────────────────────────────────────────────────────────┘</code></pre>
+</div>
 
-<h3>6.2 海外销售开票凭证（OVERSEAS_SALE）</h3>
+<h3>6.2 海外销售开票凭证（OVERSEAS_SALE）</h3>
 
-</code>`<code class="inline-code">
-┌──────────────────────────────────────────────────────────────┐
+<div class="code-block">
+  <div class="code-header">CODE</div>
+  <pre class="language-"><code>┌──────────────────────────────────────────────────────────────┐
 │  事件键: OVERSEAS_SALE                                        │
 │  触发: 海外销售发票确认开票                                     │
 │  模板: OS01                                                  │
@@ -1228,13 +966,14 @@ COMMENT='海外销售发票明细表';
 ├──────────────────────────────────────────────────────────────┤
 │  说明: 摘要包含 [国家][客户][发票号][币种]                      │
 │  例: "泰国-XYX公司-TI20260415-THB-321000"                    │
-└──────────────────────────────────────────────────────────────┘
-</code>`<code class="inline-code">
+└──────────────────────────────────────────────────────────────┘</code></pre>
+</div>
 
-<h3>6.3 汇率变动调整凭证（FX_ADJUSTMENT）</h3>
+<h3>6.3 汇率变动调整凭证（FX_ADJUSTMENT）</h3>
 
-</code>`<code class="inline-code">
-┌──────────────────────────────────────────────────────────────┐
+<div class="code-block">
+  <div class="code-header">CODE</div>
+  <pre class="language-"><code>┌──────────────────────────────────────────────────────────────┐
 │  事件键: FX_ADJUSTMENT                                        │
 │  触发: 月末汇率调整 / 付款时实际汇率与挂账汇率不同              │
 │  模板: FX01                                                  │
@@ -1245,23 +984,25 @@ COMMENT='海外销售发票明细表';
 │  贷/借: 财务费用 — 汇兑损益                       汇兑差额    │
 │                                                              │
 │  （汇率上升/下降决定借贷方向）                                  │
-└──────────────────────────────────────────────────────────────┘
-</code>`<code class="inline-code">
+└──────────────────────────────────────────────────────────────┘</code></pre>
+</div>
 
----
+<li>--</li>
 
-<h2>7. 接口设计（API）</h2>
+<h2>7. 接口设计（API）</h2>
 
-<h3>7.1 海外发票录入</h3>
+<h3>7.1 海外发票录入</h3>
 
-</code>`<code class="inline-code">
-POST /api/v1/invoice/overseas/submit
-</code>`<code class="inline-code">
+<div class="code-block">
+  <div class="code-header">CODE</div>
+  <pre class="language-"><code>POST /api/v1/invoice/overseas/submit</code></pre>
+</div>
 
-<strong>请求体：</strong>
+<p><strong>请求体：</strong></p>
 
-</code>`<code class="inline-code">json
-{
+<div class="code-block">
+  <div class="code-header">json</div>
+  <pre class="language-json"><code>{
     "invoice_region": "VN",
     "direction": "INBOUND",
     "overseas_inv_no": "INV-2026-04-001",
@@ -1293,13 +1034,14 @@ POST /api/v1/invoice/overseas/submit
         }
     ],
     "attachment_ids": ["att_001", "att_002"]
-}
-</code>`<code class="inline-code">
+}</code></pre>
+</div>
 
-<strong>响应体：</strong>
+<p><strong>响应体：</strong></p>
 
-</code>`<code class="inline-code">json
-{
+<div class="code-block">
+  <div class="code-header">json</div>
+  <pre class="language-json"><code>{
     "code": 0,
     "message": "success",
     "data": {
@@ -1313,19 +1055,21 @@ POST /api/v1/invoice/overseas/submit
         "created_at": "2026-04-15T18:00:00+08:00",
         "next_step": "等待人工审核"
     }
-}
-</code>`<code class="inline-code">
+}</code></pre>
+</div>
 
-<h3>7.2 人工审核</h3>
+<h3>7.2 人工审核</h3>
 
-</code>`<code class="inline-code">
-POST /api/v1/invoice/overseas/review
-</code>`<code class="inline-code">
+<div class="code-block">
+  <div class="code-header">CODE</div>
+  <pre class="language-"><code>POST /api/v1/invoice/overseas/review</code></pre>
+</div>
 
-<strong>请求体：</strong>
+<p><strong>请求体：</strong></p>
 
-</code>`<code class="inline-code">json
-{
+<div class="code-block">
+  <div class="code-header">json</div>
+  <pre class="language-json"><code>{
     "verify_id": 20001,
     "action": "APPROVED",
     "review_note": "票面信息与附件一致，卖方MST格式正确，金额计算无误",
@@ -1335,28 +1079,31 @@ POST /api/v1/invoice/overseas/review
         "amount_calc_correct": true,
         "buyer_info_match": true
     }
-}
-</code>`<code class="inline-code">
+}</code></pre>
+</div>
 
-<h3>7.3 附件管理</h3>
+<h3>7.3 附件管理</h3>
 
-</code>`<code class="inline-code">
-POST /api/v1/invoice/overseas/attachment/upload
+<div class="code-block">
+  <div class="code-header">CODE</div>
+  <pre class="language-"><code>POST /api/v1/invoice/overseas/attachment/upload
 Content-Type: multipart/form-data
 
-GET /api/v1/invoice/overseas/attachment/{verify_id}
-</code>`<code class="inline-code">
+GET /api/v1/invoice/overseas/attachment/{verify_id}</code></pre>
+</div>
 
-<h3>7.4 海外销售开票</h3>
+<h3>7.4 海外销售开票</h3>
 
-</code>`<code class="inline-code">
-POST /api/v1/invoice/overseas/sales/issue
-</code>`<code class="inline-code">
+<div class="code-block">
+  <div class="code-header">CODE</div>
+  <pre class="language-"><code>POST /api/v1/invoice/overseas/sales/issue</code></pre>
+</div>
 
-<strong>请求体：</strong>
+<p><strong>请求体：</strong></p>
 
-</code>`<code class="inline-code">json
-{
+<div class="code-block">
+  <div class="code-header">json</div>
+  <pre class="language-json"><code>{
     "country_code": "TH",
     "customer_id": 3001,
     "source_type": "shipment",
@@ -1373,104 +1120,86 @@ POST /api/v1/invoice/overseas/sales/issue
         }
     ],
     "remark": "出口泰国 - 2026年4月订单"
-}
-</code>`<code class="inline-code">
+}</code></pre>
+</div>
 
-<h3>7.5 汇率查询</h3>
+<h3>7.5 汇率查询</h3>
 
-</code>`<code class="inline-code">
-GET /api/v1/fx/rate?base=CNY&quote=VND&date=2026-04-15
+<div class="code-block">
+  <div class="code-header">CODE</div>
+  <pre class="language-"><code>GET /api/v1/fx/rate?base=CNY&amp;quote=VND&amp;date=2026-04-15
 
 POST /api/v1/fx/rate
-// 手动录入/更新汇率
-</code>`<code class="inline-code">
+// 手动录入/更新汇率</code></pre>
+</div>
 
-<h3>7.6 海外发票台账</h3>
+<h3>7.6 海外发票台账</h3>
 
-</code>`<code class="inline-code">
-GET /api/v1/invoice/overseas/ledger
+<div class="code-block">
+  <div class="code-header">CODE</div>
+  <pre class="language-"><code>GET /api/v1/invoice/overseas/ledger
     ?region=VN
-    &currency=VND
-    &status=APPROVED
-    &date_from=2026-04-01
-    &date_to=2026-04-30
-    &page=1&size=20
+    &amp;currency=VND
+    &amp;status=APPROVED
+    &amp;date_from=2026-04-01
+    &amp;date_to=2026-04-30
+    &amp;page=1&amp;size=20
 
 GET /api/v1/invoice/overseas/stats
-    ?period=month&group_by=country
-</code>`<code class="inline-code">
+    ?period=month&amp;group_by=country</code></pre>
+</div>
 
-<h3>7.7 待审核列表</h3>
+<h3>7.7 待审核列表</h3>
 
-</code>`<code class="inline-code">
-GET /api/v1/invoice/overseas/pending-review
+<div class="code-block">
+  <div class="code-header">CODE</div>
+  <pre class="language-"><code>GET /api/v1/invoice/overseas/pending-review
     ?region=VN
-    &assignee=current_user
-</code>`<code class="inline-code">
+    &amp;assignee=current_user</code></pre>
+</div>
 
----
+<li>--</li>
 
-<h2>8. 海外发票编号规则</h2>
+<h2>8. 海外发票编号规则</h2>
 
-<h3>8.1 进项发票</h3>
+<h3>8.1 进项发票</h3>
 
-| 国家 | 编号格式 | 示例 |
-|:---|:---|:---|
-| 🇻🇳 越南 | </code>VN-<code class="inline-code"> + </code>YYYYMMDD<code class="inline-code"> + </code>-<code class="inline-code"> + 4位序号 | </code>VN-20260410-0001<code class="inline-code"> |
-| 🇹🇭 泰国 | </code>TH-<code class="inline-code"> + </code>YYYYMMDD<code class="inline-code"> + </code>-<code class="inline-code"> + 4位序号 | </code>TH-20260410-0001<code class="inline-code"> |
-| 🇵🇭 菲律宾 | </code>PH-<code class="inline-code"> + </code>YYYYMMDD<code class="inline-code"> + </code>-<code class="inline-code"> + 4位序号 | </code>PH-20260410-0001<code class="inline-code"> |
-| 🇸🇦 沙特 | </code>SA-<code class="inline-code"> + </code>YYYYMMDD<code class="inline-code"> + </code>-<code class="inline-code"> + 4位序号 | </code>SA-20260410-0001<code class="inline-code"> |
+<table class="md-table"><thead><tr><th>国家</th><th>编号格式</th><th>示例</th></tr></thead><tbody><tr><td>🇻🇳 越南</td><td><code class="inline-code">VN-</code> + <code class="inline-code">YYYYMMDD</code> + <code class="inline-code">-</code> + 4位序号</td><td><code class="inline-code">VN-20260410-0001</code></td></tr><tr><td>🇹🇭 泰国</td><td><code class="inline-code">TH-</code> + <code class="inline-code">YYYYMMDD</code> + <code class="inline-code">-</code> + 4位序号</td><td><code class="inline-code">TH-20260410-0001</code></td></tr><tr><td>🇵🇭 菲律宾</td><td><code class="inline-code">PH-</code> + <code class="inline-code">YYYYMMDD</code> + <code class="inline-code">-</code> + 4位序号</td><td><code class="inline-code">PH-20260410-0001</code></td></tr><tr><td>🇸🇦 沙特</td><td><code class="inline-code">SA-</code> + <code class="inline-code">YYYYMMDD</code> + <code class="inline-code">-</code> + 4位序号</td><td><code class="inline-code">SA-20260410-0001</code></td></tr></tbody></table>
 
-<h3>8.2 销项发票</h3>
+<h3>8.2 销项发票</h3>
 
-| 国家 | 编号格式 | 示例 |
-|:---|:---|:---|
-| 🇻🇳 越南 | </code>SO-VN-<code class="inline-code"> + </code>YYYYMMDD<code class="inline-code"> + </code>-<code class="inline-code"> + 4位序号 | </code>SO-VN-20260415-0001<code class="inline-code"> |
-| 🇹🇭 泰国 | </code>SO-TH-<code class="inline-code"> + </code>YYYYMMDD<code class="inline-code"> + </code>-<code class="inline-code"> + 4位序号 | </code>SO-TH-20260415-0001<code class="inline-code"> |
-| 🇵🇭 菲律宾 | </code>SO-PH-<code class="inline-code"> + </code>YYYYMMDD<code class="inline-code"> + </code>-<code class="inline-code"> + 4位序号 | </code>SO-PH-20260415-0001<code class="inline-code"> |
-| 🇸🇦 沙特 | </code>SO-SA-<code class="inline-code"> + </code>YYYYMMDD<code class="inline-code"> + </code>-<code class="inline-code"> + 4位序号 | </code>SO-SA-20260415-0001<code class="inline-code"> |
+<table class="md-table"><thead><tr><th>国家</th><th>编号格式</th><th>示例</th></tr></thead><tbody><tr><td>🇻🇳 越南</td><td><code class="inline-code">SO-VN-</code> + <code class="inline-code">YYYYMMDD</code> + <code class="inline-code">-</code> + 4位序号</td><td><code class="inline-code">SO-VN-20260415-0001</code></td></tr><tr><td>🇹🇭 泰国</td><td><code class="inline-code">SO-TH-</code> + <code class="inline-code">YYYYMMDD</code> + <code class="inline-code">-</code> + 4位序号</td><td><code class="inline-code">SO-TH-20260415-0001</code></td></tr><tr><td>🇵🇭 菲律宾</td><td><code class="inline-code">SO-PH-</code> + <code class="inline-code">YYYYMMDD</code> + <code class="inline-code">-</code> + 4位序号</td><td><code class="inline-code">SO-PH-20260415-0001</code></td></tr><tr><td>🇸🇦 沙特</td><td><code class="inline-code">SO-SA-</code> + <code class="inline-code">YYYYMMDD</code> + <code class="inline-code">-</code> + 4位序号</td><td><code class="inline-code">SO-SA-20260415-0001</code></td></tr></tbody></table>
 
----
+<li>--</li>
 
-<h2>9. 风险控制</h2>
+<h2>9. 风险控制</h2>
 
-<h3>9.1 审核风控规则</h3>
+<h3>9.1 审核风控规则</h3>
 
-| 规则 | 触发条件 | 处理方式 |
-|:---|:---|:---|
-| <strong>税号格式校验</strong> | 税号不符合该国格式 | 前端拦截，不允许提交 |
-| <strong>金额合理性</strong> | 单张发票折算CNY > 100万 | 自动升级审批（需财务主管） |
-| <strong>同一供应商频率</strong> | 同一供应商一周内提交 > 10张 | 标记为高风险，需主管复核 |
-| <strong>汇率偏离预警</strong> | 手动修改汇率偏离银行中间价 > 3% | 系统警告，需备注原因 |
-| <strong>附件缺失</strong> | 提交时未上传附件 | 前端拦截，附件为必填 |
-| <strong>重复发票检查</strong> | 同一海外发票编号已存在 | 前端警告，允许关联但不允许重复挂账 |
+<table class="md-table"><thead><tr><th>规则</th><th>触发条件</th><th>处理方式</th></tr></thead><tbody><tr><td><strong>税号格式校验</strong></td><td>税号不符合该国格式</td><td>前端拦截，不允许提交</td></tr><tr><td><strong>金额合理性</strong></td><td>单张发票折算CNY > 100万</td><td>自动升级审批（需财务主管）</td></tr><tr><td><strong>同一供应商频率</strong></td><td>同一供应商一周内提交 > 10张</td><td>标记为高风险，需主管复核</td></tr><tr><td><strong>汇率偏离预警</strong></td><td>手动修改汇率偏离银行中间价 > 3%</td><td>系统警告，需备注原因</td></tr><tr><td><strong>附件缺失</strong></td><td>提交时未上传附件</td><td>前端拦截，附件为必填</td></tr><tr><td><strong>重复发票检查</strong></td><td>同一海外发票编号已存在</td><td>前端警告，允许关联但不允许重复挂账</td></tr></tbody></table>
 
-<h3>9.2 各国合规风险提示</h3>
+<h3>9.2 各国合规风险提示</h3>
 
-| 国家 | 主要风险 | 防控措施 |
-|:---|:---|:---|
-| 🇻🇳 越南 | 2025年电子发票新政，格式不合规可被处罚 | 跟踪GDT最新模板格式，定期更新invoice_template |
-| 🇹🇭 泰国 | 小供应商开收据(Receipt)不能抵扣VAT | 系统区分Tax Invoice vs Receipt，非VAT发票全额计入成本 |
-| 🇵🇭 菲律宾 | 未开票/不完整发票处罚严厉（含监禁风险） | 系统强制校验BIR要求字段，不完整不允许通过 |
-| 🇸🇦 沙特 | FATOORAH电子发票要求严格，QR Code必须合规 | 沙特销项发票须符合ZATCA XML Schema，QR Code自动生成 |
+<table class="md-table"><thead><tr><th>国家</th><th>主要风险</th><th>防控措施</th></tr></thead><tbody><tr><td>🇻🇳 越南</td><td>2025年电子发票新政，格式不合规可被处罚</td><td>跟踪GDT最新模板格式，定期更新invoice_template</td></tr><tr><td>🇹🇭 泰国</td><td>小供应商开收据(Receipt)不能抵扣VAT</td><td>系统区分Tax Invoice vs Receipt，非VAT发票全额计入成本</td></tr><tr><td>🇵🇭 菲律宾</td><td>未开票/不完整发票处罚严厉（含监禁风险）</td><td>系统强制校验BIR要求字段，不完整不允许通过</td></tr><tr><td>🇸🇦 沙特</td><td>FATOORAH电子发票要求严格，QR Code必须合规</td><td>沙特销项发票须符合ZATCA XML Schema，QR Code自动生成</td></tr></tbody></table>
 
----
+<li>--</li>
 
-<h2>10. 验真API预留设计</h2>
+<h2>10. 验真API预留设计</h2>
 
-<h3>10.1 接口抽象层</h3>
+<h3>10.1 接口抽象层</h3>
 
-</code>`<code class="inline-code">python
-class OverseasInvoiceVerifier(ABC):
+<div class="code-block">
+  <div class="code-header">python</div>
+  <pre class="language-python"><code>class OverseasInvoiceVerifier(ABC):
     """海外发票验真抽象基类"""
     
     @abstractmethod
-    def verify(self, invoice_data: dict) -> VerifyResult:
+    def verify(self, invoice_data: dict) -&gt; VerifyResult:
         """验真入口"""
         pass
     
     @abstractmethod
-    def is_available(self) -> bool:
+    def is_available(self) -&gt; bool:
         """该渠道是否可用"""
         pass
 
@@ -1497,13 +1226,14 @@ class ManualVerifier(OverseasInvoiceVerifier):
         )
     
     def is_available(self):
-        return True
-</code>`<code class="inline-code">
+        return True</code></pre>
+</div>
 
-<h3>10.2 验真策略路由</h3>
+<h3>10.2 验真策略路由</h3>
 
-</code>`<code class="inline-code">python
-class VerificationRouter:
+<div class="code-block">
+  <div class="code-header">python</div>
+  <pre class="language-python"><code>class VerificationRouter:
     """根据国家自动选择验真渠道"""
     
     STRATEGY = {
@@ -1514,72 +1244,49 @@ class VerificationRouter:
         "PH": "manual",           # 当前: 人工
     }
     
-    def get_verifier(self, region: str) -> OverseasInvoiceVerifier:
+    def get_verifier(self, region: str) -&gt; OverseasInvoiceVerifier:
         strategy = self.STRATEGY.get(region, "manual")
         # 根据策略返回对应的验真器
         # 当前阶段: SA/VN/TH/PH 都返回 ManualVerifier
-        pass
-</code>`<code class="inline-code">
+        pass</code></pre>
+</div>
 
----
+<li>--</li>
 
-<h2>11. 实施路线图</h2>
+<h2>11. 实施路线图</h2>
 
-| 阶段 | 内容 | 工期 | 交付物 |
-|:---|:---|:---|:---|
-| <strong>Phase 1</strong> | 数据模型 + 基础框架 | 3天 | 数据库表、地区枚举、汇率表、模板配置表 |
-| <strong>Phase 2</strong> | 4国发票录入 + 人工审核 | 4天 | 录入表单（动态模板）、审核操作台、附件上传 |
-| <strong>Phase 3</strong> | 多币种 + 汇率管理 | 2天 | 汇���录入/查询、自动折算、汇率锁定 |
-| <strong>Phase 4</strong> | 票随货走（VN/TH） | 2天 | 物流关联、状态跟踪、补票流程 |
-| <strong>Phase 5</strong> | 海外销售开票 | 3天 | 4国模板生成、预览打印、审批流 |
-| <strong>Phase 6</strong> | 凭证集成 + 台账 | 2天 | 3套凭证模板(OP01/OS01/FX01)、台账统计 |
-| <strong>Phase 7</strong> | 验真API对接（SA优先） | 3天 | ZATCA对接、GDT预留接口 |
+<table class="md-table"><thead><tr><th>阶段</th><th>内容</th><th>工期</th><th>交付物</th></tr></thead><tbody><tr><td><strong>Phase 1</strong></td><td>数据模型 + 基础框架</td><td>3天</td><td>数据库表、地区枚举、汇率表、模板配置表</td></tr><tr><td><strong>Phase 2</strong></td><td>4国发票录入 + 人工审核</td><td>4天</td><td>录入表单（动态模板）、审核操作台、附件上传</td></tr><tr><td><strong>Phase 3</strong></td><td>多币种 + 汇率管理</td><td>2天</td><td>汇���录入/查询、自动折算、汇率锁定</td></tr><tr><td><strong>Phase 4</strong></td><td>票随货走（VN/TH）</td><td>2天</td><td>物流关联、状态跟踪、补票流程</td></tr><tr><td><strong>Phase 5</strong></td><td>海外销售开票</td><td>3天</td><td>4国模板生成、预览打印、审批流</td></tr><tr><td><strong>Phase 6</strong></td><td>凭证集成 + 台账</td><td>2天</td><td>3套凭证模板(OP01/OS01/FX01)、台账统计</td></tr><tr><td><strong>Phase 7</strong></td><td>验真API对接（SA优先）</td><td>3天</td><td>ZATCA对接、GDT预留接口</td></tr></tbody></table>
 
-<strong>总计</strong>: 约 <strong>19个工作日</strong>（MVP Phase 1-5 约 14天）
+<p><strong>总计</strong>: 约 <strong>19个工作日</strong>（MVP Phase 1-5 约 14天）</p>
 
----
+<li>--</li>
 
-<h2>附录A: 各国币种符号与代码</h2>
+<h2>附录A: 各国币种符号与代码</h2>
 
-| 代码 | 币种 | 符号 | 对CNY大致汇率(2026.04) |
-|:---|:---|:---|:---|
-| CNY | 人民币 | ¥ | 1.000 |
-| VND | 越南盾 | ₫ | 1 CNY ≈ 3,500 VND |
-| THB | 泰铢 | ฿ | 1 CNY ≈ 5.0 THB |
-| PHP | 菲律宾比索 | ₱ | 1 CNY ≈ 7.8 PHP |
-| SAR | 沙特里亚尔 | ﷼ | 1 CNY ≈ 0.52 SAR |
-| USD | 美元 | $ | 1 CNY ≈ 0.14 USD |
+<table class="md-table"><thead><tr><th>代码</th><th>币种</th><th>符号</th><th>对CNY大致汇率(2026.04)</th></tr></thead><tbody><tr><td>CNY</td><td>人民币</td><td>¥</td><td>1.000</td></tr><tr><td>VND</td><td>越南盾</td><td>₫</td><td>1 CNY ≈ 3,500 VND</td></tr><tr><td>THB</td><td>泰铢</td><td>฿</td><td>1 CNY ≈ 5.0 THB</td></tr><tr><td>PHP</td><td>菲律宾比索</td><td>₱</td><td>1 CNY ≈ 7.8 PHP</td></tr><tr><td>SAR</td><td>沙特里亚尔</td><td>﷼</td><td>1 CNY ≈ 0.52 SAR</td></tr><tr><td>USD</td><td>美元</td><td>$</td><td>1 CNY ≈ 0.14 USD</td></tr></tbody></table>
 
-> ⚠️ 汇率实时变动，系统应支持自动更新，此处仅为参考量级。
+<blockquote class="md-quote">⚠️ 汇率实时变动，系统应支持自动更新，此处仅为参考量级。</blockquote>
 
-<h2>附录B: 各国税号格式校验规则</h2>
+<h2>附录B: 各国税号格式校验规则</h2>
 
-</code>`<code class="inline-code">python
-TAX_ID_FORMATS = {
+<div class="code-block">
+  <div class="code-header">python</div>
+  <pre class="language-python"><code>TAX_ID_FORMATS = {
     "VN": {"pattern": r"^\d{10}$", "label": "MST(10位数字)", "example": "0101234567"},
     "TH": {"pattern": r"^\d{13}$", "label": "VAT/TIN(13位数字)", "example": "0105556000123"},
     "PH": {"pattern": r"^[\d\-]{9,12}$", "label": "TIN(9-12位)", "example": "123-456-789-000"},
     "SA": {"pattern": r"^3\d{2}\d{9}\d$", "label": "VAT Number(15位,3XX开头)", "example": "310123456789001"},
-}
-</code>``
+}</code></pre>
+</div>
 
-<h2>附录C: 参考链接</h2>
+<h2>附录C: 参考链接</h2>
 
-| 资料 | 链接 |
-|:---|:---|
-| 越南第70号令（电子发票新规） | https://www.chinatax.gov.cn/chinatax/c102745/c5241419/content.html |
-| 沙特ZATCA电子发票 | https://zatca.gov.sa/en/E-Invoicing/Pages/default.aspx |
-| 菲律宾BIR发票要求 | https://www.bir.gov.ph |
-| 泰国税务局(RD) | https://www.rd.go.th |
-| 越南GDT电子发票平台 | https://hoadondientu.gdt.gov.vn |
+<table class="md-table"><thead><tr><th>资料</th><th>链接</th></tr></thead><tbody><tr><td>越南第70号令（电子发票新规）</td><td>https://www.chinatax.gov.cn/chinatax/c102745/c5241419/content.html</td></tr><tr><td>沙特ZATCA电子发票</td><td>https://zatca.gov.sa/en/E-Invoicing/Pages/default.aspx</td></tr><tr><td>菲律宾BIR发票要求</td><td>https://www.bir.gov.ph</td></tr><tr><td>泰国税务局(RD)</td><td>https://www.rd.go.th</td></tr><tr><td>越南GDT电子发票平台</td><td>https://hoadondientu.gdt.gov.vn</td></tr></tbody></table>
 
----
+<li>--</li>
 
-> <strong>文档维护</strong>: 财务追踪器 · Dev_Dept 团队  
-> <strong>最后更新</strong>: 2026-04-15 18:45  
-> <strong>关联文档</strong>: 发票查验模块规格书.md (v1.0 国内发票)  
-> <strong>下次评审</strong>: 与海外业务团队确认各国实务细节后更新
-</p>
+<blockquote class="md-quote">**文档维护**: 财务追踪器 · Dev_Dept 团队  <br>**最后更新**: 2026-04-15 18:45  <br>**关联文档**: 发票查验模块规格书.md (v1.0 国内发票)  <br>**下次评审**: 与海外业务团队确认各国实务细节后更新</blockquote>
+</div>
     </div>
 </body>
 </html>
