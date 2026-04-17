@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>票据往来模块 - 详细流程图 | ERP财务管理</title>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Microsoft YaHei', 'PingFang SC', sans-serif; background: #f0f2f5; color: #333; }
+.header { background: linear-gradient(135deg, #1a237e 0%, #283593 50%, #3949ab 100%); color: white; padding: 30px 40px; box-shadow: 0 2px 10px rgba(0,0,0,0.2); }
+.header h1 { font-size: 28px; margin-bottom: 8px; }
+.header p { font-size: 14px; opacity: 0.85; }
+.header .meta { margin-top: 10px; font-size: 12px; opacity: 0.7; }
+.container { max-width: 1400px; margin: 0 auto; padding: 30px 40px; }
+.toc { background: white; border-radius: 12px; padding: 24px 32px; margin-bottom: 30px; box-shadow: 0 1px 6px rgba(0,0,0,0.08); }
+.toc h2 { font-size: 20px; color: #1a237e; margin-bottom: 16px; border-bottom: 2px solid #e8eaf6; padding-bottom: 10px; }
+.toc-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(380px, 1fr)); gap: 10px; }
+.toc-item { display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-radius: 8px; background: #f5f5f5; cursor: pointer; transition: all 0.2s; }
+.toc-item:hover { background: #e8eaf6; transform: translateX(4px); }
+.toc-item .num { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 50%; background: #1a237e; color: white; font-size: 13px; font-weight: bold; flex-shrink: 0; }
+.toc-item .label { font-size: 14px; color: #333; }
+.section { background: white; border-radius: 12px; padding: 28px 32px; margin-bottom: 24px; box-shadow: 0 1px 6px rgba(0,0,0,0.08); }
+.section h2 { font-size: 20px; color: #1a237e; margin-bottom: 6px; display: flex; align-items: center; gap: 10px; }
+.section h2 .icon { font-size: 24px; }
+.section .desc { font-size: 13px; color: #888; margin-bottom: 20px; }
+.mermaid { display: flex; justify-content: center; padding: 10px 0; }
+.mermaid svg { max-width: 100%; }
+.summary-box { background: linear-gradient(135deg, #e8eaf6, #c5cae9); border-radius: 12px; padding: 24px 32px; margin-top: 30px; }
+.summary-box h2 { color: #1a237e; font-size: 18px; margin-bottom: 16px; }
+.summary-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
+.summary-card { background: white; border-radius: 8px; padding: 16px; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
+.summary-card .title { font-size: 13px; color: #666; margin-bottom: 6px; }
+.summary-card .value { font-size: 16px; font-weight: bold; color: #1a237e; }
+.tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; }
+.tag-red { background: #ffebee; color: #c62828; }
+.tag-orange { background: #fff3e0; color: #e65100; }
+.tag-blue { background: #e3f2fd; color: #1565c0; }
+.tag-green { background: #e8f5e9; color: #2e7d32; }
+.footer { text-align: center; padding: 20px; color: #999; font-size: 12px; }
+</style>
+</head>
+<body>
+<div class="header">
+  <h1>🏦 票据往来模块 — 详细流程图</h1>
+  <p>ERP财务管理 · 销售收款流程核心环节 · 对标金蝶云星空票据管理</p>
+  <div class="meta">Dev_Dept 自研ERP · 版本 1.0 · 2026-04-15</div>
+</div>
+
+<div class="container">
+<!-- 目录 -->
+<div class="toc">
+  <h2>📋 流程图目录</h2>
+  <div class="toc-grid">
+    <div class="toc-item" onclick="document.getElementById('s1').scrollIntoView({behavior:'smooth'})"><span class="num">①</span><span class="label">票据全生命周期总览（端到端）</span></div>
+    <div class="toc-item" onclick="document.getElementById('s2').scrollIntoView({behavior:'smooth'})"><span class="num">②</span><span class="label">票据登记与收取流程</span></div>
+    <div class="toc-item" onclick="document.getElementById('s3').scrollIntoView({behavior:'smooth'})"><span class="num">③</span><span class="label">票据背书转让流程</span></div>
+    <div class="toc-item" onclick="document.getElementById('s4').scrollIntoView({behavior:'smooth'})"><span class="num">④</span><span class="label">票据贴现与质押流程</span></div>
+    <div class="toc-item" onclick="document.getElementById('s5').scrollIntoView({behavior:'smooth'})"><span class="num">⑤</span><span class="label">票据托收（到期兑付）流程</span></div>
+    <div class="toc-item" onclick="document.getElementById('s6').scrollIntoView({behavior:'smooth'})"><span class="num">⑥</span><span class="label">票据退回与追索流程</span></div>
+    <div class="toc-item" onclick="document.getElementById('s7').scrollIntoView({behavior:'smooth'})"><span class="num">⑦</span><span class="label">票据凭证生成模板矩阵</span></div>
+    <div class="toc-item" onclick="document.getElementById('s8').scrollIntoView({behavior:'smooth'})"><span class="num">⑧</span><span class="label">票据到期预警与台账管理</span></div>
+  </div>
+</div>
+
+<!-- ① 票据全生命周期总览 -->
+<div class="section" id="s1">
+  <h2><span class="icon">🔄</span> 票据全生命周期总览</h2>
+  <div class="desc">展示一张商业汇票从收到到最终兑付/转让的完整流转过程，覆盖全部业务状态</div>
+  <div class="mermaid">
+flowchart TB
+    subgraph 外部来源["📥 外部来源"]
+        A1[客户交付<br/>银行承兑汇票]
+        A2[客户交付<br/>商业承兑汇票]
+        A3[客户交付<br/>支票/本票]
+    end
+
+    subgraph 登记入池["📝 登记入池"]
+        B1[票据信息录入<br/>票号/金额/出票人/承兑人<br/>到期日/票据类型]
+        B2[OCR识别提取<br/>票据关键要素]
+        B3[票据查验验证<br/>票面真伪+完整性]
+        B4[入池登记<br/>分配票据编号<br/>设定到期预警]
+    end
+
+    subgraph 持有管理["📋 持有管理"]
+        C1[票据台账<br/>实时状态跟踪]
+        C2[到期预警<br/>30/15/7/3天分级提醒]
+        C3[票据池统计<br/>按类型/承兑人/到期日]
+    end
+
+    subgraph 流转处置["🔀 流转处置（四选一）"]
+        D1[🔄 背书转让<br/>支付给供应商]
+        D2[💰 银行贴现<br/>提前变现]
+        D3[🔒 票据质押<br/>质押融资]
+        D4[📅 到期托收<br/>委托银行收款]
+    end
+
+    subgraph 终态["✅ 终态"]
+        E1[已转让<br/>背书完成]
+        E2[已贴现<br/>资金到账]
+        E3[已质押<br/>融资到账]
+        E4[已兑付<br/>托收到账]
+        E5[已退回<br/>追索/拒付]
+    end
+
+    subgraph 财务集成["📊 财务集成"]
+        F1[生成会计凭证<br/>自动对接总账]
+        F2[更新应收账款<br/>核销对应款项]
+    end
+
+    A1 & A2 & A3 --> B1
+    B1 --> B2
+    B2 --> B3
+    B3 --> B4
+    B4 --> C1
+    C1 --> C2
+    C1 --> C3
+    C1 --> D1 & D2 & D3 & D4
+    D1 --> E1
+    D2 --> E2
+    D3 --> E3
+    D4 --> E4
+    E1 & E2 & E3 & E4 --> F1
+    F1 --> F2
+
+    E4 -.->|拒付| E5
+    E5 -.->|追索权行使| A1
+
+    style A1 fill:#e3f2fd,stroke:#1565c0,color:#0d47a1
+    style A2 fill:#e3f2fd,stroke:#1565c0,color:#0d47a1
+    style A3 fill:#e3f2fd,stroke:#1565c0,color:#0d47a1
+    style B4 fill:#e8f5e9,stroke:#2e7d32,color:#1b5e20
+    style D1 fill:#fff3e0,stroke:#e65100,color:#bf360c
+    style D2 fill:#fff3e0,stroke:#e65100,color:#bf360c
+    style D3 fill:#fff3e0,stroke:#e65100,color:#bf360c
+    style D4 fill:#fff3e0,stroke:#e65100,color:#bf360c
+    style E5 fill:#ffebee,stroke:#c62828,color:#b71c1c
+    style F1 fill:#f3e5f5,stroke:#7b1fa2,color:#4a148c
+    style F2 fill:#f3e5f5,stroke:#7b1fa2,color:#4a148c
+  </div>
+</div>
+
+<!-- ② 票据登记与收取 -->
+<div class="section" id="s2">
+  <h2><span class="icon">📝</span> 票据登记与收取流程</h2>
+  <div class="desc">从收到票据到完成入池登记的全过程，含OCR识别、票面校验、关联核销</div>
+  <div class="mermaid">
+flowchart TD
+    START([收到客户票据]) --> A{票据类型?}
+
+    A -->|银行承兑汇票| B1[检查票据要素完整性]
+    A -->|商业承兑汇票| B1
+    A -->|支票/本票| B1
+
+    B1 --> CHECK{要素齐全?}
+    CHECK -->|缺项| ERR1[❌ 退回补全<br/>缺少必填字段]
+    CHECK -->|齐全| C1
+
+    subgraph OCR识别["🔍 OCR智能识别"]
+        C1[拍照/扫描票据]
+        C2[AI提取票面信息<br/>- 票据号码<br/>- 出票日期<br/>- 到期日期<br/>- 出票人/收款人<br/>- 承兑人<br/>- 金额<br/>- 票据类型]
+        C3[人工校对确认<br/>比对识别结果]
+    end
+
+    C1 --> C2 --> C3
+
+    C3 --> D1[关联业务单据<br/>查找对应收款单/应收单]
+    D1 --> D2{找到对应单据?}
+    D2 -->|是| E1[关联核销<br/>更新收款单票据信息]
+    D2 -->|否| E2[挂账待核销<br/>记入票据池待匹配]
+
+    E1 & E2 --> F1[票据入池登记<br/>生成票据编号 BILL+年月+序号]
+    F1 --> F2[设定到期预警规则<br/>- 30天: 首次提醒<br/>- 15天: 跟进提醒<br/>- 7天: 紧急提醒<br/>- 3天: 预警升级]
+    F2 --> F3[更新票据台账<br/>状态=持有中]
+    F3 --> G1[生成会计凭证<br/>借: 应收票据<br/>贷: 应收账款]
+    G1 --> END([✅ 入池完成])
+
+    style START fill:#e8f5e9,stroke:#2e7d32,color:#1b5e20
+    style END fill:#e8f5e9,stroke:#2e7d32,color:#1b5e20
+    style ERR1 fill:#ffebee,stroke:#c62828,color:#b71c1c
+    style G1 fill:#f3e5f5,stroke:#7b1fa2,color:#4a148c
+  </div>
+</div>
+
+<!-- ③ 票据背书转让 -->
+<div class="section" id="s3">
+  <h2><span class="icon">🔄</span> 票据背书转让流程</h2>
+  <div class="desc">将持有的票据背书转让给供应商，用于支付应付账款，完整审批与交接流程</div>
+  <div class="mermaid">
+flowchart TD
+    START([发起背书申请]) --> A[选择待背书票据<br/>从票据池-持有中选取]
+    A --> B[选择被背书人<br/>关联应付账款供应商]
+    B --> C{票据金额 ≥ 应付金额?}
+
+    C -->|全额支付| D1[票据金额=应付金额<br/>全额背书]
+    C -->|差额支付| D2[票据金额 ≠ 应付金额<br/>需拆分处理]
+    C -->|小额票据| D3[票据金额 &lt; 应付金额<br/>仅覆盖部分]
+
+    D2 --> SPLIT{支持拆分?}
+    SPLIT -->|可拆分| D4[票据拆分<br/>按应付金额切分]
+    SPLIT -->|不可拆分| D5[换大票/补差额<br/>现金+票据组合]
+
+    D1 & D4 --> E1[填写背书信息<br/>- 被背书人名称<br/>- 背书日期<br/>- 对应应付单号<br/>- 背书用途说明]
+    D3 --> E1
+    D5 --> E1
+
+    E1 --> F1[审批流程<br/>财务主管审核]
+    F1 --> APPROVE{审批通过?}
+    APPROVE -->|驳回| REJECT[❌ 退回修改<br/>记录驳回原因]
+    APPROVE -->|通过| G1
+
+    subgraph 实物交接["📦 实物交接（纸质票据）"]
+        G1[打印背书签章页]
+        G2[在票据背面<br/>盖章背书]
+        G3[交接签收单<br/>双方签字确认]
+        G4[快递/当面交接]
+        G5[对方签收回执上传]
+    end
+
+    G1 --> G2 --> G3 --> G4 --> G5
+
+    G5 --> H1[系统确认背书完成<br/>更新票据状态=已背书]
+    H1 --> H2[生成会计凭证<br/>借: 应付账款<br/>贷: 应收票据]
+    H2 --> H3[更新应付台账<br/>标记已票据支付]
+    H3 --> END([✅ 背书完成])
+
+    style START fill:#e8f5e9,stroke:#2e7d32,color:#1b5e20
+    style END fill:#e8f5e9,stroke:#2e7d32,color:#1b5e20
+    style REJECT fill:#ffebee,stroke:#c62828,color:#b71c1c
+    style H2 fill:#f3e5f5,stroke:#7b1fa2,color:#4a148c
+  </div>
+</div>
+
+<!-- ④ 票据贴现与质押 -->
+<div class="section" id="s4">
+  <h2><span class="icon">💰</span> 票据贴现与质押流程</h2>
+  <div class="desc">票据提前变现（贴现）和票据质押融资两种资金运作方式的完整流程</div>
+  <div class="mermaid">
+flowchart TD
+    START([发起融资申请]) --> CHOOSE{融资方式?}
+
+    CHOOSE -->|票据贴现| DISCOUNT
+    CHOOSE -->|票据质押| PLEDGE
+
+    subgraph DISCOUNT["💰 票据贴现流程"]
+        D1[选择票据<br/>从持有中选取]
+        D2[选择贴现银行<br/>比较贴现利率]
+        D3[贴现计算器<br/>- 票面金额<br/>- 贴现天数<br/>- 贴现利率<br/>- 贴现利息<br/>- 实得金额]
+        D4[提交贴现申请<br/>附票据扫描件]
+        D5[银行审批<br/>1-3个工作日]
+        D6[银行放款<br/>资金到账]
+        D7[确认贴现完成<br/>更新状态=已贴现]
+        D8[生成会计凭证<br/>借: 银行存款<br/>借: 财务费用-贴现息<br/>贷: 应收票据]
+    end
+
+    subgraph PLEDGE["🔒 票据质押流程"]
+        P1[选择票据<br/>从持有中选取]
+        P2[选择质押银行<br/>确定融资额度]
+        P3[计算质押率<br/>票面金额 × 质押比例]
+        P4[签订质押合同<br/>法律文本存档]
+        P5[移交质押票据<br/>银行保管]
+        P6[银行放款<br/>融资到账]
+        P7[确认质押完成<br/>更新状态=已质押]
+        P8[生成会计凭证<br/>借: 银行存款<br/>贷: 短期借款-质押借款]
+    end
+
+    D1 --> D2 --> D3 --> D4 --> D5 --> D6
+    P1 --> P2 --> P3 --> P4 --> P5 --> P6
+
+    D6 --> D7 --> D8 --> END([✅ 融资完成])
+    P6 --> P7 --> P8 --> END
+
+    D6 -.->|贴现利息=票面金额×贴现率×天数/360| D3
+    P6 -.->|到期赎回| P9[票据到期赎回<br/>偿还借款+利息]
+    P9 --> P10[更新状态=已赎回]
+
+    style START fill:#e8f5e9,stroke:#2e7d32,color:#1b5e20
+    style END fill:#e8f5e9,stroke:#2e7d32,color:#1b5e20
+    style D8 fill:#f3e5f5,stroke:#7b1fa2,color:#4a148c
+    style P8 fill:#f3e5f5,stroke:#7b1fa2,color:#4a148c
+    style DISCOUNT fill:#fff8e1,stroke:#f57f17,color:#e65100
+    style PLEDGE fill:#e8eaf6,stroke:#283593,color:#1a237e
+  </div>
+</div>
+
+<!-- ⑤ 票据托收 -->
+<div class="section" id="s5">
+  <h2><span class="icon">📅</span> 票据托收（到期兑付）流程</h2>
+  <div class="desc">票据到期后委托银行收款的全过程，含提前提醒、委托、到账、异常处理</div>
+  <div class="mermaid">
+flowchart TD
+    ALERT([到期预警触发<br/>距到期30天]) --> A[系统自动生成<br/>托收提醒任务]
+    A --> B[财务人员确认<br/>准备托收材料]
+
+    subgraph 托收准备["📋 托收准备"]
+        B --> B1[核对票据信息<br/>票号/金额/到期日]
+        B2[准备委托收款<br/>背书章+委托书]
+        B3[检查票据完整性<br/>无涂改/无折痕]
+    end
+
+    B3 --> C[提交银行托收<br/>填写委托收款凭证]
+    C --> D[银行受理<br/>寄出票据/发电子托收]
+    D --> E[等待承兑人付款<br/>到期日+2工作日内]
+
+    E --> RESULT{承兑人付款?}
+    RESULT -->|✅ 正常付款| F1
+    RESULT -->|❌ 拒付/延期| G1
+
+    subgraph 正常兑付["✅ 正常兑付"]
+        F1[银行到账通知<br/>票面全额到账]
+        F2[确认收款<br/>核对金额一致]
+        F3[更新票据状态<br/>=已兑付]
+        F4[生成凭证<br/>借: 银行存款<br/>贷: 应收票据]
+    end
+
+    subgraph 拒付处理["❌ 拒付处理"]
+        G1[收到拒付理由书]
+        G2[通知出票人/前手<br/>行使追索权]
+        G3{追索成功?}
+        G3 -->|是| G4[收到追索款项<br/>更新状态=已追索]
+        G3 -->|否| G5[计入坏账<br/>更新状态=已退回]
+        G4 & G5 --> G6[生成异常凭证<br/>调整应收票据]
+    end
+
+    F1 --> F2 --> F3 --> F4 --> END([✅ 托收完成])
+    G6 --> END
+
+    style ALERT fill:#fff3e0,stroke:#e65100,color:#bf360c
+    style END fill:#e8f5e9,stroke:#2e7d32,color:#1b5e20
+    style F4 fill:#f3e5f5,stroke:#7b1fa2,color:#4a148c
+    style G6 fill:#ffebee,stroke:#c62828,color:#b71c1c
+  </div>
+</div>
+
+<!-- ⑥ 票据退回与追索 -->
+<div class="section" id="s6">
+  <h2><span class="icon">⚠️</span> 票据退回与追索流程</h2>
+  <div class="desc">票据被拒付、退回或存在瑕疵时的异常处理流程，含追索权行使和坏账处理</div>
+  <div class="mermaid">
+flowchart TD
+    START([票据异常事件触发]) --> TYPE{异常类型?}
+
+    TYPE -->|票据拒付| A1[承兑人拒绝付款]
+    TYPE -->|票据退回| A2[被背书人退回票据]
+    TYPE -->|票据瑕疵| A3[票据损坏/遗失]
+    TYPE -->|票据挂失| A4[公示催告/挂失止付]
+
+    A1 --> B1[收集拒付证明<br/>- 拒付理由书<br/>- 银行通知<br/>- 退回票据]
+    A2 --> B2[确认退回原因<br/>- 印鉴不符<br/>- 超期提示<br/>- 金额错误]
+    A3 --> B3[评估票据状态<br/>- 可否补正<br/>- 需挂失]
+
+    B1 & B2 & B3 --> C[判断追索路径]
+    C --> D{追索对象?}
+
+    D -->|前手背书人| E1[向前手追索<br/>发送追索通知]
+    D -->|出票人| E2[向出票人追索<br/>要求重新出票/付款]
+    D -->|承兑人| E3[起诉承兑人<br/>法律途径追索]
+
+    E1 & E2 & E3 --> F{追索结果?}
+    F -->|✅ 追回款项| G1[收到追索款<br/>状态=已追索]
+    F -->|❌ 追索失败| G2[进入坏账流程]
+
+    G2 --> H1[坏账审批<br/>准备坏账材料]
+    H1 --> H2{审批结果?}
+    H2 -->|批准| H3[确认坏账损失<br/>借: 坏账准备<br/>贷: 应收票据]
+    H2 -->|继续追索| H4[转入法务处理<br/>委托律师]
+
+    G1 --> I1[生成追索凭证]
+    H3 --> I2[生成坏账凭证]
+    I1 & I2 --> END([✅ 异常处理完毕])
+
+    A4 --> J1[挂失止付<br/>通知付款银行]
+    J1 --> J2[公示催告<br/>法院申请]
+    J2 --> J3{除权判决?}
+    J3 -->|是| J4[重新开具票据<br/>或获得赔偿]
+    J3 -->|否| J5[票据作废]
+
+    style START fill:#ffebee,stroke:#c62828,color:#b71c1c
+    style END fill:#e8f5e9,stroke:#2e7d32,color:#1b5e20
+    style H3 fill:#ffebee,stroke:#c62828,color:#b71c1c
+    style I1 fill:#f3e5f5,stroke:#7b1fa2,color:#4a148c
+    style I2 fill:#f3e5f5,stroke:#7b1fa2,color:#4a148c
+  </div>
+</div>
+
+<!-- ⑦ 凭证模板矩阵 -->
+<div class="section" id="s7">
+  <h2><span class="icon">📊</span> 票据凭证生成模板矩阵</h2>
+  <div class="desc">票据各业务场景对应的会计凭证模板，自动生成时按场景匹配借贷分录</div>
+  <div class="mermaid">
+flowchart LR
+    subgraph S1["B01 票据收取"]
+        direction TB
+        S1A[借: 应收票据<br/>　- 票面金额]
+        S1B[贷: 应收账款<br/>　- 对应应收金额]
+        S1A --> S1B
+    end
+
+    subgraph S2["B02 票据背书"]
+        direction TB
+        S2A[借: 应付账款<br/>　- 应付金额]
+        S2B[贷: 应收票据<br/>　- 背书票面金额]
+        S2A --> S2B
+    end
+
+    subgraph S3["B03 票据贴现"]
+        direction TB
+        S3A[借: 银行存款<br/>　- 实得金额]
+        S3B[借: 财务费用-贴现息<br/>　- 贴现利息]
+        S3C[贷: 应收票据<br/>　- 票面金额]
+        S3A & S3B --> S3C
+    end
+
+    subgraph S4["B04 票据质押"]
+        direction TB
+        S4A[借: 银行存款<br/>　- 融资金额]
+        S4B[贷: 短期借款-质押<br/>　- 质押借款额]
+        S4A --> S4B
+    end
+
+    subgraph S5["B05 到期兑付"]
+        direction TB
+        S5A[借: 银行存款<br/>　- 票面金额]
+        S5B[贷: 应收票据<br/>　- 票面金额]
+        S5A --> S5B
+    end
+
+    subgraph S6["B06 票据退回/坏账"]
+        direction TB
+        S6A[借: 应收账款<br/>　- 追回金额]
+        S6B[贷: 应收票据<br/>　- 票面金额]
+        S6A --> S6B
+    end
+
+    style S1 fill:#e3f2fd,stroke:#1565c0
+    style S2 fill:#e8f5e9,stroke:#2e7d32
+    style S3 fill:#fff3e0,stroke:#e65100
+    style S4 fill:#e8eaf6,stroke:#283593
+    style S5 fill:#e8f5e9,stroke:#2e7d32
+    style S6 fill:#ffebee,stroke:#c62828
+  </div>
+
+  <div style="margin-top:20px;">
+    <table style="width:100%;border-collapse:collapse;font-size:13px;">
+      <thead>
+        <tr style="background:#1a237e;color:white;">
+          <th style="padding:10px 12px;text-align:left;">模板编号</th>
+          <th style="padding:10px 12px;text-align:left;">业务场景</th>
+          <th style="padding:10px 12px;text-align:left;">借方科目</th>
+          <th style="padding:10px 12px;text-align:left;">贷方科目</th>
+          <th style="padding:10px 12px;text-align:center;">凭证字</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr style="background:#f5f5f5;"><td style="padding:8px 12px;"><b>B01</b></td><td style="padding:8px 12px;">收取票据（收到客户票据）</td><td style="padding:8px 12px;">应收票据-银行承兑/商业承兑</td><td style="padding:8px 12px;">应收账款-XX客户</td><td style="padding:8px 12px;text-align:center;">收</td></tr>
+        <tr><td style="padding:8px 12px;"><b>B02</b></td><td style="padding:8px 12px;">背书转让（支付给供应商）</td><td style="padding:8px 12px;">应付账款-XX供应商</td><td style="padding:8px 12px;">应收票据-XX票据</td><td style="padding:8px 12px;text-align:center;">转</td></tr>
+        <tr style="background:#f5f5f5;"><td style="padding:8px 12px;"><b>B03</b></td><td style="padding:8px 12px;">票据贴现（提前变现）</td><td style="padding:8px 12px;">银行存款 + 财务费用-贴现息</td><td style="padding:8px 12px;">应收票据-XX票据</td><td style="padding:8px 12px;text-align:center;">收</td></tr>
+        <tr><td style="padding:8px 12px;"><b>B04</b></td><td style="padding:8px 12px;">票据质押（质押融资）</td><td style="padding:8px 12px;">银行存款</td><td style="padding:8px 12px;">短期借款-票据质押借款</td><td style="padding:8px 12px;text-align:center;">收</td></tr>
+        <tr style="background:#f5f5f5;"><td style="padding:8px 12px;"><b>B05</b></td><td style="padding:8px 12px;">到期兑付（托收到账）</td><td style="padding:8px 12px;">银行存款</td><td style="padding:8px 12px;">应收票据-XX票据</td><td style="padding:8px 12px;text-align:center;">收</td></tr>
+        <tr><td style="padding:8px 12px;"><b>B06</b></td><td style="padding:8px 12px;">票据退回/追索坏账</td><td style="padding:8px 12px;">应收账款/坏账准备</td><td style="padding:8px 12px;">应收票据-XX票据</td><td style="padding:8px 12px;text-align:center;">转</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ⑧ 到期预警与台账 -->
+<div class="section" id="s8">
+  <h2><span class="icon">🔔</span> 票据到期预警与台账管理</h2>
+  <div class="desc">票据日常管理中的台账维护、到期预警分级、票据池统计视图</div>
+  <div class="mermaid">
+flowchart TD
+    subgraph 定时任务["⏰ 定时任务（每日8:00）"]
+        A1[扫描票据到期日<br/>比对当天日期]
+        A2[计算剩余天数<br/>到期日 - 今天]
+        A3[按规则分级<br/>生成预警列表]
+    end
+
+    A1 --> A2 --> A3
+
+    subgraph 预警分级["🚨 预警分级"]
+        B1[🟢 30天<br/>常规提醒<br/>短信+站内信]
+        B2[🟡 15天<br/>跟进提醒<br/>站内信+邮件<br/>指定经办人]
+        B3[🟠 7天<br/>紧急提醒<br/>电话+短信<br/>财务主管]
+        B4[🔴 3天<br/>升级预警<br/>电话+微信<br/>部门负责人]
+    end
+
+    A3 --> B1 & B2 & B3 & B4
+
+    subgraph 预警处置["📋 预警处置"]
+        C1[查看票据详情<br/>- 承兑人信用<br/>- 票面金额<br/>- 关联单据]
+        C2{处置方式?}
+        C2 -->|发起托收| C3[进入托收流程]
+        C2 -->|发起背书| C4[进入背书流程]
+        C2 -->|发起贴现| C5[进入贴现流程]
+        C2 -->|继续持有| C6[标记已关注<br/>等待下次提醒]
+    end
+
+    B1 & B2 & B3 & B4 --> C1 --> C2
+
+    subgraph 台账统计["📊 票据台账统计"]
+        D1[票据池总览<br/>- 持有中: 金额合计<br/>- 已背书: 金额合计<br/>- 已贴现: 金额合计<br/>- 已质押: 金额合计]
+        D2[承兑人分布<br/>银行承兑 vs 商业承兑<br/>各银行占比]
+        D3[到期分布<br/>按月/按周<br/>到期待处理金额]
+        D4[票据类型分布<br/>银承/商承/支票/本票<br/>各类型占比]
+    end
+
+    style B1 fill:#e8f5e9,stroke:#2e7d32,color:#1b5e20
+    style B2 fill:#fffde7,stroke:#f9a825,color:#f57f17
+    style B3 fill:#fff3e0,stroke:#e65100,color:#bf360c
+    style B4 fill:#ffebee,stroke:#c62828,color:#b71c1c
+  </div>
+</div>
+
+<!-- 汇总 -->
+<div class="summary-box">
+  <h2>📌 票据往来模块要点汇总</h2>
+  <div class="summary-grid">
+    <div class="summary-card">
+      <div class="title">支持的票据类型</div>
+      <div class="value">银行承兑汇票 / 商业承兑汇票 / 支票 / 银行本票</div>
+    </div>
+    <div class="summary-card">
+      <div class="title">票据生命周期状态</div>
+      <div class="value">待验 → 持有中 → 已背书/已贴现/已质押/已兑付/已退回</div>
+    </div>
+    <div class="summary-card">
+      <div class="title">凭证模板数量</div>
+      <div class="value">6套标准模板（B01-B06）覆盖全部业务场景</div>
+    </div>
+    <div class="summary-card">
+      <div class="title">到期预警机制</div>
+      <div class="value">4级分级（30/15/7/3天）× 多通道（站内信/邮件/短信/电话）</div>
+    </div>
+    <div class="summary-card">
+      <div class="title">核心风险点</div>
+      <div class="value">商业承兑汇票信用风险 / 票据遗失风险 / 追索时效风险</div>
+    </div>
+    <div class="summary-card">
+      <div class="title">与金蝶差距</div>
+      <div class="value">票据池管理 / 电子票据对接 / 票据拆分 / 质押续贷</div>
+    </div>
+  </div>
+</div>
+</div>
+
+<div class="footer">Dev_Dept 自研ERP · 票据往来模块流程图 · 对标金蝶云星空 · 2026-04-15</div>
+
+<script>
+mermaid.initialize({ startOnLoad: true, theme: 'base', themeVariables: { primaryColor: '#e8eaf6', primaryTextColor: '#1a237e', primaryBorderColor: '#283593', lineColor: '#5c6bc0', fontSize: '13px' } });
+</script>
+</body>
+</html>
