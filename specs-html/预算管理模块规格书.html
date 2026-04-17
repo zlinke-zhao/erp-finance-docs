@@ -4,258 +4,113 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>预算管理模块规格书</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
-            line-height: 1.8;
-            color: #333;
-            background: #f5f7fa;
-            padding: 20px;
+            font-family: 'Noto Sans SC', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            line-height: 1.9;
+            color: #2d3748;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8ec 100%);
+            min-height: 100vh;
+            padding: 30px 20px;
         }
         .container {
-            max-width: 1200px;
+            max-width: 1100px;
             margin: 0 auto;
             background: #fff;
-            border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
         }
         .doc-header {
-            text-align: center;
-            padding-bottom: 30px;
-            border-bottom: 2px solid #e8ecf1;
-            margin-bottom: 30px;
-        }
-        .doc-header h1 {
-            font-size: 32px;
-            color: #1a1a2e;
-            margin-bottom: 15px;
-        }
-        .doc-meta {
-            display: flex;
-            justify-content: center;
-            gap: 30px;
-            flex-wrap: wrap;
-        }
-        .meta-item {
-            background: #f0f4f8;
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 14px;
-            color: #5a6c7d;
-        }
-        h2 {
-            font-size: 24px;
-            color: #1a1a2e;
-            margin: 30px 0 15px;
-            padding-bottom: 10px;
-            border-bottom: 3px solid #3498db;
-        }
-        h3 {
-            font-size: 18px;
-            color: #2c3e50;
-            margin: 25px 0 12px;
-        }
-        p {
-            margin-bottom: 15px;
-            text-align: justify;
-        }
-        
-        /* 代码块样式 */
-        .code-block {
-            margin: 20px 0;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-        .code-header {
-            background: #2d3748;
-            color: #fff;
-            padding: 8px 16px;
-            font-size: 12px;
-            font-weight: 600;
-            text-transform: uppercase;
-        }
-        .code-block pre {
-            background: #1a202c;
-            color: #e2e8f0;
-            padding: 20px;
-            overflow-x: auto;
-            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
-            font-size: 13px;
-            line-height: 1.6;
-        }
-        .code-block code {
-            font-family: inherit;
-        }
-        .inline-code {
-            background: #f0f4f8;
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-family: 'Consolas', 'Monaco', monospace;
-            font-size: 0.9em;
-            color: #e53e3e;
-        }
-        
-        /* 表格样式 */
-        .data-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 20px 0;
-            font-size: 14px;
-        }
-        .data-table th {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: #fff;
-            padding: 14px;
-            text-align: left;
-            font-weight: 600;
+            padding: 40px;
+            text-align: center;
         }
-        .data-table td {
-            padding: 12px 14px;
-            border-bottom: 1px solid #e8ecf1;
-        }
-        .data-table tr:hover {
-            background: #f8fafc;
-        }
-        
-        /* 列表样式 */
-        ul {
-            margin: 15px 0;
-            padding-left: 25px;
-        }
-        li {
-            margin-bottom: 8px;
-        }
-        
-        /* 架构图/流程图容器 */
-        .diagram-container {
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
-            border-radius: 8px;
-            padding: 20px;
-            margin: 20px 0;
-            overflow-x: auto;
-        }
-        .diagram-container pre {
-            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
-            font-size: 12px;
-            line-height: 1.4;
-            color: #2d3748;
-        }
-        
-        /* 接口卡片 */
-        .api-card {
-            background: #f8fafc;
-            border-left: 4px solid #3498db;
-            padding: 20px;
-            margin: 15px 0;
-            border-radius: 0 8px 8px 0;
-        }
-        .api-method {
-            display: inline-block;
-            padding: 4px 10px;
-            border-radius: 4px;
-            font-size: 12px;
-            font-weight: 600;
-            margin-right: 10px;
-        }
-        .api-method.get { background: #48bb78; color: #fff; }
-        .api-method.post { background: #4299e1; color: #fff; }
-        .api-method.put { background: #ed8936; color: #fff; }
-        .api-method.delete { background: #f56565; color: #fff; }
-        .api-path {
-            font-family: 'Consolas', monospace;
-            font-size: 14px;
-            color: #2d3748;
-        }
-        .api-section {
-            margin-top: 15px;
-        }
-        .api-section-title {
-            font-weight: 600;
-            color: #4a5568;
-            margin-bottom: 8px;
-            font-size: 13px;
-            text-transform: uppercase;
-        }
-        
-        /* 警告框 */
-        .alert {
-            padding: 16px 20px;
-            border-radius: 8px;
-            margin: 20px 0;
-        }
-        .alert-info {
-            background: #ebf8ff;
-            border-left: 4px solid #4299e1;
-        }
-        .alert-warning {
-            background: #fffaf0;
-            border-left: 4px solid #ed8936;
-        }
-        .alert-success {
-            background: #f0fff4;
-            border-left: 4px solid #48bb78;
-        }
-        
-        /* 状态标签 */
-        .status-badge {
-            display: inline-block;
-            padding: 4px 10px;
-            border-radius: 12px;
-            font-size: 12px;
-            font-weight: 500;
-        }
-        .status-done { background: #c6f6d5; color: #22543d; }
-        .status-pending { background: #feebc8; color: #744210; }
-        .status-deprecated { background: #fed7d7; color: #742a2a; }
+        .doc-header h1 { font-size: 28px; font-weight: 600; margin-bottom: 15px; }
+        .doc-meta { display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; }
+        .meta-item { background: rgba(255,255,255,0.2); padding: 6px 14px; border-radius: 20px; font-size: 13px; }
+        .content { padding: 40px; }
+        h2 { font-size: 22px; color: #1a202c; margin: 35px 0 18px; padding-bottom: 10px; border-bottom: 3px solid #667eea; }
+        h3 { font-size: 18px; color: #2d3748; margin: 28px 0 14px; }
+        h4 { font-size: 16px; color: #4a5568; margin: 20px 0 10px; }
+        p { margin-bottom: 12px; }
+        .md-table { width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 14px; border-radius: 8px; overflow: hidden; border: 1px solid #e2e8f0; }
+        .md-table th { background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%); color: #fff; padding: 14px 16px; text-align: left; font-weight: 600; }
+        .md-table td { padding: 12px 16px; border-bottom: 1px solid #f1f5f9; }
+        .md-table tr:hover td { background: #f8fafc; }
+        .md-table tr:last-child td { border-bottom: none; }
+        .inline-code { background: #f1f5f9; color: #e53e3e; padding: 2px 7px; border-radius: 4px; font-family: 'JetBrains Mono', monospace; font-size: 0.88em; }
+        .code-block { margin: 22px 0; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        .code-header { background: #1e293b; color: #94a3b8; padding: 8px 16px; font-size: 11px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; font-family: 'JetBrains Mono', monospace; }
+        .sql-block .code-header { background: #065f46; }
+        .code-block pre { background: #0f172a; color: #e2e8f0; padding: 20px; overflow-x: auto; font-family: 'JetBrains Mono', monospace; font-size: 13px; line-height: 1.65; }
+        .code-block code { font-family: inherit; }
+        .gherkin-block { margin: 22px 0; border-radius: 10px; overflow: hidden; background: #fefce8; border: 1px solid #fbbf24; }
+        .gherkin-header { background: #f59e0b; color: #fff; padding: 8px 16px; font-size: 12px; font-weight: 600; }
+        .gherkin-content { padding: 18px; font-family: 'JetBrains Mono', monospace; font-size: 13px; line-height: 1.7; color: #78350f; white-space: pre-wrap; }
+        .csv-block { margin: 22px 0; border-radius: 10px; overflow: hidden; background: #f0fdf4; border: 1px solid #86efac; }
+        .csv-header { background: #22c55e; color: #fff; padding: 8px 16px; font-size: 12px; font-weight: 600; }
+        .csv-content { padding: 18px; font-family: 'JetBrains Mono', monospace; font-size: 13px; line-height: 1.6; color: #166534; overflow-x: auto; }
+        .ascii-diagram { margin: 22px 0; border-radius: 10px; overflow: hidden; background: #f8fafc; border: 1px solid #cbd5e1; }
+        .ascii-header { background: #475569; color: #fff; padding: 8px 16px; font-size: 12px; font-weight: 600; }
+        .ascii-content { padding: 20px; font-family: 'JetBrains Mono', 'Consolas', monospace; font-size: 13px; line-height: 1.45; color: #1e293b; white-space: pre; overflow-x: auto; }
+        .md-quote { margin: 18px 0; padding: 16px 20px; background: #eff6ff; border-left: 4px solid #3b82f6; border-radius: 0 8px 8px 0; color: #1e40af; }
+        ul { margin: 12px 0; padding-left: 28px; }
+        li { margin-bottom: 8px; }
+        .back-link { display: inline-block; margin: 20px 40px; padding: 10px 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #fff; text-decoration: none; border-radius: 8px; font-weight: 500; }
+        @media (max-width: 768px) { .content { padding: 20px; } .doc-header { padding: 25px; } .doc-header h1 { font-size: 22px; } }
     </style>
 </head>
 <body>
+    <a href="https://zlinke-zhao.github.io/erp-finance-docs/" class="back-link">← 返回入口</a>
     <div class="container">
         <div class="doc-header">
             <h1>预算管理模块规格书</h1>
             <div class="doc-meta">
-                <span class="meta-item">📅 版本: V1.0</span>
-                <span class="meta-item">👥 产品团队</span>
+                <span class="meta-item">📅 V1.0</span>
+                <span class="meta-item">👥 Dev_Dept</span>
                 <span class="meta-item">📋 需求规格说明书</span>
             </div>
         </div>
-        <h1>预算管理模块规格书</h1>
+        <div class="content"><h1>预算管理模块规格书</h1>
 
-> ERP财务管理模块 · 对标金蝶云星空标准功能 · Dev_Dept 自研ERP
+<blockquote class="md-quote">ERP财务管理模块 · 对标金蝶云星空标准功能 · Dev_Dept 自研ERP</blockquote>
 
-<strong>版本</strong>: v1.0  
-<strong>日期</strong>: 2026-04-17  
-<strong>状态</strong>: 草稿
+<p><strong>版本</strong>: v1.0  </p>
+<p><strong>日期</strong>: 2026-04-17  </p>
+<p><strong>状态</strong>: 草稿</p>
 
----
+<li>--</li>
 
-<h2>一、模块概述</h2>
+<h2>一、模块概述</h2>
 
-预算管理是企业财务管控的核心工具，通过"编-审-控-调-分析"闭环，实现资金的事前计划、事中控制、事后分析。
+<p>预算管理是企业财务管控的核心工具，通过"编-审-控-调-分析"闭环，实现资金的事前计划、事中控制、事后分析。</p>
 
-<h3>1.1 核心价值</h3>
+<h3>1.1 核心价值</h3>
 
-| 价值点 | 说明 |
-|--------|------|
-| 资金可视化 | 事前规划资金使用，避免资金黑洞 |
-| 过程管控 | 事中控制预算执行，超限预警/阻断 |
-| 绩效考核 | 部门/项目维度预算执行率考核 |
-| 决策支撑 | 实时预算执行分析，支撑经营决策 |
+<table class="md-table"><thead><tr><th>价值点</th><th>说明</th></tr></thead><tbody><tr><td>资金可视化</td><td>事前规划资金使用，避免资金黑洞</td></tr><tr><td>过程管控</td><td>事中控制预算执行，超限预警/阻断</td></tr><tr><td>绩效考核</td><td>部门/项目维度预算执行率考核</td></tr><tr><td>决策支撑</td><td>实时预算执行分析，支撑经营决策</td></tr></tbody></table>
 
-<h3>1.2 对标金蝶云星空</h3>
+<h3>1.2 对标金蝶云星空</h3>
 
-金蝶云星空预算管理模块功能：<ul><li><strong>预算编制</strong>：支持年度/季度/月度多周期预算编制</li></ul><ul><li><strong>预算审批</strong>：多级审批流程，支持预算冻结/解冻</li></ul><ul><li><strong>预算控制</strong>：严格控制/弹性控制/不控制三种模式</li></ul><ul><li><strong>预算调整</strong>：支持预算调整申请与审批</li></ul><ul><li><strong>预算分析</strong>：执行率分析、预算与实际对比、滚动预测</li></ul><ul><li><strong>预算考核</strong>：部门/项目维度预算执行率考核</li></ul>
+<p>金蝶云星空预算管理模块功能：</p>
 
----
+<li>**预算编制**：支持年度/季度/月度多周期预算编制</li>
+<li>**预算审批**：多级审批流程，支持预算冻结/解冻</li>
+<li>**预算控制**：严格控制/弹性控制/不控制三种模式</li>
+<li>**预算调整**：支持预算调整申请与审批</li>
+<li>**预算分析**：执行率分析、预算与实际对比、滚动预测</li>
+<li>**预算考核**：部门/项目维度预算执行率考核</li>
 
-<h2>二、功能架构</h2>
+<li>--</li>
 
-``<code class="inline-code">
-预算管理模块
+<h2>二、功能架构</h2>
+
+<div class="code-block">
+  <div class="code-header">CODE</div>
+  <pre class="language-"><code>预算管理模块
 ├── 01 预算基础设置
 │   ├── 预算周期定义（年度/季度/月度）
 │   ├── 预算组织架构（部门/项目/成本中心）
@@ -296,29 +151,24 @@
     ├── 部门预算考核
     ├── 项目预算考核
     ├── 考核指标定义
-    └── 考核结果导出
-</code>`<code class="inline-code">
+    └── 考核结果导出</code></pre>
+</div>
 
----
+<li>--</li>
 
-<h2>三、详细功能说明</h2>
+<h2>三、详细功能说明</h2>
 
-<h3>3.1 预算基础设置</h3>
+<h3>3.1 预算基础设置</h3>
 
-#### 3.1.1 预算周期定义
+<h4>3.1.1 预算周期定义</h4>
 
-| 字段 | 说明 | 示例 |
-|------|------|------|
-| 周期类型 | 年度/季度/月度 | 月度 |
-| 开始月份 | 预算周期起始月 | 1月 |
-| 结束月份 | 预算周期结束月 | 12月 |
-| 编制提前期 | 提前多少天开始编制 | 30天 |
-| 锁定规则 | 何时锁定不可修改 | 审批通过后 |
+<table class="md-table"><thead><tr><th>字段</th><th>说明</th><th>示例</th></tr></thead><tbody><tr><td>周期类型</td><td>年度/季度/月度</td><td>月度</td></tr><tr><td>开始月份</td><td>预算周期起始月</td><td>1月</td></tr><tr><td>结束月份</td><td>预算周期结束月</td><td>12月</td></tr><tr><td>编制提前期</td><td>提前多少天开始编制</td><td>30天</td></tr><tr><td>锁定规则</td><td>何时锁定不可修改</td><td>审批通过后</td></tr></tbody></table>
 
-#### 3.1.2 预算组织架构
+<h4>3.1.2 预算组织架构</h4>
 
-</code>`<code class="inline-code">
-组织层级：
+<div class="code-block">
+  <div class="code-header">CODE</div>
+  <pre class="language-"><code>组织层级：
 ├── 公司级预算
 ├── 事业部/部门级预算
 │   ├── 销售部
@@ -327,79 +177,59 @@
 │   └── 管理部门
 └── 项目级预算
     ├── 项目A
-    └── 项目B
-</code>`<code class="inline-code">
+    └── 项目B</code></pre>
+</div>
 
-#### 3.1.3 预算科目体系
+<h4>3.1.3 预算科目体系</h4>
 
-| 科目类型 | 方向 | 说明 |
-|----------|------|------|
-| 收入类 | 预算增加 | 销售收入、其他收入 |
-| 成本类 | 预算减少 | 直接成本、制造费用 |
-| 费用类 | 预算减少 | 管理费用、销售费用 |
-| 资产类 | 预算变动 | 固定资产采购、在建工程 |
+<table class="md-table"><thead><tr><th>科目类型</th><th>方向</th><th>说明</th></tr></thead><tbody><tr><td>收入类</td><td>预算增加</td><td>销售收入、其他收入</td></tr><tr><td>成本类</td><td>预算减少</td><td>直接成本、制造费用</td></tr><tr><td>费用类</td><td>预算减少</td><td>管理费用、销售费用</td></tr><tr><td>资产类</td><td>预算变动</td><td>固定资产采购、在建工程</td></tr></tbody></table>
 
-<h3>3.2 预算编制</h3>
+<h3>3.2 预算编制</h3>
 
-#### 3.2.1 年度预算编制流程
+<h4>3.2.1 年度预算编制流程</h4>
 
-</code>`<code class="inline-code">
-开始 -> 选择预算年度 -> 选择编制部门 -> 选择预算模板
-  -> 按模板填报数据 -> 数据校验 -> 提交审批 -> 结束
-</code>`<code class="inline-code">
+<div class="code-block">
+  <div class="code-header">CODE</div>
+  <pre class="language-"><code>开始 -&gt; 选择预算年度 -&gt; 选择编制部门 -&gt; 选择预算模板
+  -&gt; 按模板填报数据 -&gt; 数据校验 -&gt; 提交审批 -&gt; 结束</code></pre>
+</div>
 
-#### 3.2.2 预算编制规则
+<h4>3.2.2 预算编制规则</h4>
 
-| 规则类型 | 说明 | 配置方式 |
-|----------|------|----------|
-| 零基预算 | 从零开始编制 | 每年度重置 |
-| 增量预算 | 基于上年调整 | 增量比例配置 |
-| 弹性预算 | 基于业务量调整 | 公式定义 |
+<table class="md-table"><thead><tr><th>规则类型</th><th>说明</th><th>配置方式</th></tr></thead><tbody><tr><td>零基预算</td><td>从零开始编制</td><td>每年度重置</td></tr><tr><td>增量预算</td><td>基于上年调整</td><td>增量比例配置</td></tr><tr><td>弹性预算</td><td>基于业务量调整</td><td>公式定义</td></tr></tbody></table>
 
-#### 3.2.3 预算数据来源
+<h4>3.2.3 预算数据来源</h4>
 
-| 来源 | 说明 |
-|------|------|
-| 手工录入 | 直接在系统填写 |
-| Excel导入 | 模板下载-填写-导入 |
-| 历史数据 | 基于上年实际/预算复制 |
-| 业务计划 | 关联销售计划、生产计划 |
+<table class="md-table"><thead><tr><th>来源</th><th>说明</th></tr></thead><tbody><tr><td>手工录入</td><td>直接在系统填写</td></tr><tr><td>Excel导入</td><td>模板下载-填写-导入</td></tr><tr><td>历史数据</td><td>基于上年实际/预算复制</td></tr><tr><td>业务计划</td><td>关联销售计划、生产计划</td></tr></tbody></table>
 
-<h3>3.3 预算审批</h3>
+<h3>3.3 预算审批</h3>
 
-#### 3.3.1 审批流程
+<h4>3.3.1 审批流程</h4>
 
-</code>`<code class="inline-code">
-编制人提交 -> 部门主管审批 -> 财务经理审批 -> 财务总监审批 -> 发布
+<div class="code-block">
+  <div class="code-header">CODE</div>
+  <pre class="language-"><code>编制人提交 -&gt; 部门主管审批 -&gt; 财务经理审批 -&gt; 财务总监审批 -&gt; 发布
      ↓              ↓              ↓
    驳回          驳回          驳回
      ↓              ↓              ↓
-  返回编制      返回编制      返回编制
-</code>`<code class="inline-code">
+  返回编制      返回编制      返回编制</code></pre>
+</div>
 
-#### 3.3.2 审批权限矩阵
+<h4>3.3.2 审批权限矩阵</h4>
 
-| 预算金额 | 审批层级 | 审批人 |
-|----------|----------|--------|
-| < 10万 | 1级 | 部门主管 |
-| 10-50万 | 2级 | 部门主管 + 财务经理 |
-| 50-100万 | 3级 | 部门主管 + 财务经理 + 财务总监 |
-| >= 100万 | 4级 | + 总经理 |
+<table class="md-table"><thead><tr><th>预算金额</th><th>审批层级</th><th>审批人</th></tr></thead><tbody><tr><td>< 10万</td><td>1级</td><td>部门主管</td></tr><tr><td>10-50万</td><td>2级</td><td>部门主管 + 财务经理</td></tr><tr><td>50-100万</td><td>3级</td><td>部门主管 + 财务经理 + 财务总监</td></tr><tr><td>>= 100万</td><td>4级</td><td>+ 总经理</td></tr></tbody></table>
 
-<h3>3.4 预算控制</h3>
+<h3>3.4 预算控制</h3>
 
-#### 3.4.1 控制模式
+<h4>3.4.1 控制模式</h4>
 
-| 控制模式 | 说明 | 触发动作 |
-|----------|------|----------|
-| 严格控制 | 不得超预算 | 直接拒绝报销 |
-| 弹性控制 | 可超一定比例 | 预警 + 审批升级 |
-| 不控制 | 仅记录分析 | 仅记录，无拦截 |
+<table class="md-table"><thead><tr><th>控制模式</th><th>说明</th><th>触发动作</th></tr></thead><tbody><tr><td>严格控制</td><td>不得超预算</td><td>直接拒绝报销</td></tr><tr><td>弹性控制</td><td>可超一定比例</td><td>预警 + 审批升级</td></tr><tr><td>不控制</td><td>仅记录分析</td><td>仅记录，无拦截</td></tr></tbody></table>
 
-#### 3.4.2 控制维度
+<h4>3.4.2 控制维度</h4>
 
-</code>`<code class="inline-code">
-预算控制维度：
+<div class="code-block">
+  <div class="code-header">CODE</div>
+  <pre class="language-"><code>预算控制维度：
 ├── 维度1：部门维度
 │   └── 各部门独立控制
 ├── 维度2：项目维度
@@ -407,219 +237,149 @@
 ├── 维度3：费用项维度
 │   └── 各费用项独立控制
 └── 维度4：时间维度
-    └── 月度/季度/年度控制
-</code>`<code class="inline-code">
+    └── 月度/季度/年度控制</code></pre>
+</div>
 
-#### 3.4.3 预警规则
+<h4>3.4.3 预警规则</h4>
 
-| 预警级别 | 触发条件 | 通知方式 |
-|----------|----------|----------|
-| L1 提醒 | 达到 70% | 站内信 |
-| L2 预警 | 达到 90% | 站内信 + 邮件 |
-| L3 警告 | 达到 100% | 全渠道通知 |
-| L4 超限 | 超过 100% | 全渠道 + 阻断审批 |
+<table class="md-table"><thead><tr><th>预警级别</th><th>触发条件</th><th>通知方式</th></tr></thead><tbody><tr><td>L1 提醒</td><td>达到 70%</td><td>站内信</td></tr><tr><td>L2 预警</td><td>达到 90%</td><td>站内信 + 邮件</td></tr><tr><td>L3 警告</td><td>达到 100%</td><td>全渠道通知</td></tr><tr><td>L4 超限</td><td>超过 100%</td><td>全渠道 + 阻断审批</td></tr></tbody></table>
 
-<h3>3.5 预算调整</h3>
+<h3>3.5 预算调整</h3>
 
-#### 3.5.1 调整类型
+<h4>3.5.1 调整类型</h4>
 
-| 调整类型 | 说明 |
-|----------|------|
-| 科目间调整 | A费用项调减，B费用项调增 |
-| 部门间调整 | A部门调减，B部门调增 |
-| 时间维度调整 | Q1调减，Q2调增 |
-| 追加预算 | 整体追加，需额外审批 |
+<table class="md-table"><thead><tr><th>调整类型</th><th>说明</th></tr></thead><tbody><tr><td>科目间调整</td><td>A费用项调减，B费用项调增</td></tr><tr><td>部门间调整</td><td>A部门调减，B部门调增</td></tr><tr><td>时间维度调整</td><td>Q1调减，Q2调增</td></tr><tr><td>追加预算</td><td>整体追加，需额外审批</td></tr></tbody></table>
 
-#### 3.5.2 调整流程
+<h4>3.5.2 调整流程</h4>
 
-</code>`<code class="inline-code">
-调整申请 -> 填写调整金额 -> 选择调整原因 -> 提交审批
-  -> 财务经理审批 -> 财务总监审批（>50万）-> 执行调整
-</code>`<code class="inline-code">
+<div class="code-block">
+  <div class="code-header">CODE</div>
+  <pre class="language-"><code>调整申请 -&gt; 填写调整金额 -&gt; 选择调整原因 -&gt; 提交审批
+  -&gt; 财务经理审批 -&gt; 财务总监审批（&gt;50万）-&gt; 执行调整</code></pre>
+</div>
 
-<h3>3.6 预算分析</h3>
+<h3>3.6 预算分析</h3>
 
-#### 3.6.1 分析报表
+<h4>3.6.1 分析报表</h4>
 
-| 报表名称 | 说明 |
-|----------|------|
-| 预算执行进度表 | 各部门/项目预算执行率 |
-| 预算与实际对比表 | 预算vs实际vs差异 |
-| 预算差异分析表 | 差异原因分析 |
-| 滚动预测表 | 基于执行数据的未来预测 |
-| 预算考核表 | 各部门考核结果 |
+<table class="md-table"><thead><tr><th>报表名称</th><th>说明</th></tr></thead><tbody><tr><td>预算执行进度表</td><td>各部门/项目预算执行率</td></tr><tr><td>预算与实际对比表</td><td>预算vs实际vs差异</td></tr><tr><td>预算差异分析表</td><td>差异原因分析</td></tr><tr><td>滚动预测表</td><td>基于执行数据的未来预测</td></tr><tr><td>预算考核表</td><td>各部门考核结果</td></tr></tbody></table>
 
-#### 3.6.2 分析维度
+<h4>3.6.2 分析维度</h4>
 
-</code>`<code class="inline-code">
-分析维度：
+<div class="code-block">
+  <div class="code-header">CODE</div>
+  <pre class="language-"><code>分析维度：
 ├── 时间维度：年度/季度/月度
 ├── 组织维度：公司/事业部/部门/项目
 ├── 科目维度：收入/成本/费用
-└── 对比维度：预算/实际/差异/执行率
-</code>`<code class="inline-code">
+└── 对比维度：预算/实际/差异/执行率</code></pre>
+</div>
 
----
+<li>--</li>
 
-<h2>四、数据库设计</h2>
+<h2>四、数据库设计</h2>
 
-<h3>4.1 核心表结构</h3>
+<h3>4.1 核心表结构</h3>
 
-#### 预算主表（BUDGET_MASTER）
+<h4>预算主表（BUDGET_MASTER）</h4>
 
-| 字段 | 类型 | 说明 |
-|------|------|------|
-| BUDGET_ID | VARCHAR(32) | 预算ID（PK） |
-| BUDGET_YEAR | INT | 预算年度 |
-| BUDGET_PERIOD | VARCHAR(10) | 预算周期（年度/季度/月度） |
-| ORG_ID | VARCHAR(32) | 组织ID |
-| DEPT_ID | VARCHAR(32) | 部门ID |
-| PROJECT_ID | VARCHAR(32) | 项目ID（可选） |
-| BUDGET_AMOUNT | DECIMAL(18,2) | 预算金额 |
-| STATUS | VARCHAR(20) | 状态（草稿/审批中/已发布/已锁定） |
-| CREATED_BY | VARCHAR(32) | 创建人 |
-| CREATED_TIME | DATETIME | 创建时间 |
-| UPDATED_BY | VARCHAR(32) | 更新人 |
-| UPDATED_TIME | DATETIME | 更新时间 |
+<table class="md-table"><thead><tr><th>字段</th><th>类型</th><th>说明</th></tr></thead><tbody><tr><td>BUDGET_ID</td><td>VARCHAR(32)</td><td>预算ID（PK）</td></tr><tr><td>BUDGET_YEAR</td><td>INT</td><td>预算年度</td></tr><tr><td>BUDGET_PERIOD</td><td>VARCHAR(10)</td><td>预算周期（年度/季度/月度）</td></tr><tr><td>ORG_ID</td><td>VARCHAR(32)</td><td>组织ID</td></tr><tr><td>DEPT_ID</td><td>VARCHAR(32)</td><td>部门ID</td></tr><tr><td>PROJECT_ID</td><td>VARCHAR(32)</td><td>项目ID（可选）</td></tr><tr><td>BUDGET_AMOUNT</td><td>DECIMAL(18,2)</td><td>预算金额</td></tr><tr><td>STATUS</td><td>VARCHAR(20)</td><td>状态（草稿/审批中/已发布/已锁定）</td></tr><tr><td>CREATED_BY</td><td>VARCHAR(32)</td><td>创建人</td></tr><tr><td>CREATED_TIME</td><td>DATETIME</td><td>创建时间</td></tr><tr><td>UPDATED_BY</td><td>VARCHAR(32)</td><td>更新人</td></tr><tr><td>UPDATED_TIME</td><td>DATETIME</td><td>更新时间</td></tr></tbody></table>
 
-#### 预算明细表（BUDGET_DETAIL）
+<h4>预算明细表（BUDGET_DETAIL）</h4>
 
-| 字段 | 类型 | 说明 |
-|------|------|------|
-| DETAIL_ID | VARCHAR(32) | 明细ID（PK） |
-| BUDGET_ID | VARCHAR(32) | 预算ID（FK） |
-| ACCOUNT_ID | VARCHAR(32) | 科目ID |
-| JAN_AMOUNT | DECIMAL(18,2) | 1月金额 |
-| FEB_AMOUNT | DECIMAL(18,2) | 2月金额 |
-| ... | ... | ... |
-| DEC_AMOUNT | DECIMAL(18,2) | 12月金额 |
-| ANNUAL_AMOUNT | DECIMAL(18,2) | 年度合计 |
+<table class="md-table"><thead><tr><th>字段</th><th>类型</th><th>说明</th></tr></thead><tbody><tr><td>DETAIL_ID</td><td>VARCHAR(32)</td><td>明细ID（PK）</td></tr><tr><td>BUDGET_ID</td><td>VARCHAR(32)</td><td>预算ID（FK）</td></tr><tr><td>ACCOUNT_ID</td><td>VARCHAR(32)</td><td>科目ID</td></tr><tr><td>JAN_AMOUNT</td><td>DECIMAL(18,2)</td><td>1月金额</td></tr><tr><td>FEB_AMOUNT</td><td>DECIMAL(18,2)</td><td>2月金额</td></tr><tr><td>...</td><td>...</td><td>...</td></tr><tr><td>DEC_AMOUNT</td><td>DECIMAL(18,2)</td><td>12月金额</td></tr><tr><td>ANNUAL_AMOUNT</td><td>DECIMAL(18,2)</td><td>年度合计</td></tr></tbody></table>
 
-#### 预算调整表（BUDGET_ADJUST）
+<h4>预算调整表（BUDGET_ADJUST）</h4>
 
-| 字段 | 类型 | 说明 |
-|------|------|------|
-| ADJUST_ID | VARCHAR(32) | 调整ID（PK） |
-| BUDGET_ID | VARCHAR(32) | 原预算ID |
-| ADJUST_TYPE | VARCHAR(20) | 调整类型 |
-| FROM_ACCOUNT | VARCHAR(32) | 调出科目 |
-| TO_ACCOUNT | VARCHAR(32) | 调入科目 |
-| ADJUST_AMOUNT | DECIMAL(18,2) | 调整金额 |
-| ADJUST_REASON | VARCHAR(500) | 调整原因 |
-| STATUS | VARCHAR(20) | 状态 |
-| APPROVAL_ID | VARCHAR(32) | 审批ID |
+<table class="md-table"><thead><tr><th>字段</th><th>类型</th><th>说明</th></tr></thead><tbody><tr><td>ADJUST_ID</td><td>VARCHAR(32)</td><td>调整ID（PK）</td></tr><tr><td>BUDGET_ID</td><td>VARCHAR(32)</td><td>原预算ID</td></tr><tr><td>ADJUST_TYPE</td><td>VARCHAR(20)</td><td>调整类型</td></tr><tr><td>FROM_ACCOUNT</td><td>VARCHAR(32)</td><td>调出科目</td></tr><tr><td>TO_ACCOUNT</td><td>VARCHAR(32)</td><td>调入科目</td></tr><tr><td>ADJUST_AMOUNT</td><td>DECIMAL(18,2)</td><td>调整金额</td></tr><tr><td>ADJUST_REASON</td><td>VARCHAR(500)</td><td>调整原因</td></tr><tr><td>STATUS</td><td>VARCHAR(20)</td><td>状态</td></tr><tr><td>APPROVAL_ID</td><td>VARCHAR(32)</td><td>审批ID</td></tr></tbody></table>
 
-#### 预算执行表（BUDGET_EXECUTION）
+<h4>预算执行表（BUDGET_EXECUTION）</h4>
 
-| 字段 | 类型 | 说明 |
-|------|------|------|
-| EXEC_ID | VARCHAR(32) | 执行ID（PK） |
-| BUDGET_ID | VARCHAR(32) | 预算ID |
-| BUDGET_DETAIL_ID | VARCHAR(32) | 预算明细ID |
-| DOCUMENT_TYPE | VARCHAR(20) | 单据类型（报销/采购等） |
-| DOCUMENT_ID | VARCHAR(32) | 单据ID |
-| EXEC_AMOUNT | DECIMAL(18,2) | 执行金额 |
-| EXEC_TIME | DATETIME | 执行时间 |
+<table class="md-table"><thead><tr><th>字段</th><th>类型</th><th>说明</th></tr></thead><tbody><tr><td>EXEC_ID</td><td>VARCHAR(32)</td><td>执行ID（PK）</td></tr><tr><td>BUDGET_ID</td><td>VARCHAR(32)</td><td>预算ID</td></tr><tr><td>BUDGET_DETAIL_ID</td><td>VARCHAR(32)</td><td>预算明细ID</td></tr><tr><td>DOCUMENT_TYPE</td><td>VARCHAR(20)</td><td>单据类型（报销/采购等）</td></tr><tr><td>DOCUMENT_ID</td><td>VARCHAR(32)</td><td>单据ID</td></tr><tr><td>EXEC_AMOUNT</td><td>DECIMAL(18,2)</td><td>执行金额</td></tr><tr><td>EXEC_TIME</td><td>DATETIME</td><td>执行时间</td></tr></tbody></table>
 
----
+<li>--</li>
 
-<h2>五、业务流程图</h2>
+<h2>五、业务流程图</h2>
 
-详见配套流程图文件：</code>预算管理总流程图.html<code class="inline-code">
+<p>详见配套流程图文件：<code class="inline-code">预算管理总流程图.html</code></p>
 
-<h3>5.1 核心流程</h3>
+<h3>5.1 核心流程</h3>
 
-</code>`<code class="inline-code">
-1. 预算编制流程
-   启动编制 -> 模板选择 -> 数据填报 -> 校验 -> 提交审批 -> 发布
+<div class="code-block">
+  <div class="code-header">CODE</div>
+  <pre class="language-"><code>1. 预算编制流程
+   启动编制 -&gt; 模板选择 -&gt; 数据填报 -&gt; 校验 -&gt; 提交审批 -&gt; 发布
 
 2. 预算控制流程
-   报销申请 -> 预算检查 -> 额度判断 -> 通过/预警/拒绝 -> 执行/调整
+   报销申请 -&gt; 预算检查 -&gt; 额度判断 -&gt; 通过/预警/拒绝 -&gt; 执行/调整
 
 3. 预算调整流程
-   调整申请 -> 原因填写 -> 审批 -> 执行调整 -> 更新台账
+   调整申请 -&gt; 原因填写 -&gt; 审批 -&gt; 执行调整 -&gt; 更新台账
 
 4. 预算分析流程
-   数据采集 -> 执行率计算 -> 差异分析 -> 生成报表 -> 考核评价
-</code>`<code class="inline-code">
+   数据采集 -&gt; 执行率计算 -&gt; 差异分析 -&gt; 生成报表 -&gt; 考核评价</code></pre>
+</div>
 
----
+<li>--</li>
 
-<h2>六、集成关系</h2>
+<h2>六、集成关系</h2>
 
-<h3>6.1 上游系统</h3>
+<h3>6.1 上游系统</h3>
 
-| 系统 | 数据内容 |
-|------|----------|
-| 销售管理 | 销售计划数据 |
-| 生产管理 | 生产成本预算 |
-| 人力资源 | 人工成本预算 |
+<table class="md-table"><thead><tr><th>系统</th><th>数据内容</th></tr></thead><tbody><tr><td>销售管理</td><td>销售计划数据</td></tr><tr><td>生产管理</td><td>生产成本预算</td></tr><tr><td>人力资源</td><td>人工成本预算</td></tr></tbody></table>
 
-<h3>6.2 下游系统</h3>
+<h3>6.2 下游系统</h3>
 
-| 系统 | 数据内容 |
-|------|----------|
-| 费用报销 | 预算扣减/控制 |
-| 采购管理 | 预算扣减/控制 |
-| 应付管理 | 预算执行记录 |
-| 财务总账 | 预算凭证生成 |
+<table class="md-table"><thead><tr><th>系统</th><th>数据内容</th></tr></thead><tbody><tr><td>费用报销</td><td>预算扣减/控制</td></tr><tr><td>采购管理</td><td>预算扣减/控制</td></tr><tr><td>应付管理</td><td>预算执行记录</td></tr><tr><td>财务总账</td><td>预算凭证生成</td></tr></tbody></table>
 
----
+<li>--</li>
 
-<h2>七、验收标准</h2>
+<h2>七、验收标准</h2>
 
-<h3>7.1 功能验收</h3>
+<h3>7.1 功能验收</h3>
 
-| 序号 | 验收项 | 验收标准 |
-|------|--------|----------|
-| 1 | 预算编制 | 支持按模板编制，数据校验通过 |
-| 2 | 预算审批 | 多级审批流程正常流转 |
-| 3 | 预算控制 | 超限预警/阻断功能正常 |
-| 4 | 预算调整 | 调整申请-审批-执行闭环 |
-| 5 | 预算分析 | 执行率计算准确，报表生成正确 |
+<table class="md-table"><thead><tr><th>序号</th><th>验收项</th><th>验收标准</th></tr></thead><tbody><tr><td>1</td><td>预算编制</td><td>支持按模板编制，数据校验通过</td></tr><tr><td>2</td><td>预算审批</td><td>多级审批流程正常流转</td></tr><tr><td>3</td><td>预算控制</td><td>超限预警/阻断功能正常</td></tr><tr><td>4</td><td>预算调整</td><td>调整申请-审批-执行闭环</td></tr><tr><td>5</td><td>预算分析</td><td>执行率计算准确，报表生成正确</td></tr></tbody></table>
 
-<h3>7.2 性能要求</h3>
+<h3>7.2 性能要求</h3>
 
-| 指标 | 要求 |
-|------|------|
-| 响应时间 | < 2秒 |
-| 并发用户 | >= 50 |
-| 数据准确性 | 100% |
+<table class="md-table"><thead><tr><th>指标</th><th>要求</th></tr></thead><tbody><tr><td>响应时间</td><td>< 2秒</td></tr><tr><td>并发用户</td><td>>= 50</td></tr><tr><td>数据准确性</td><td>100%</td></tr></tbody></table>
 
-<h3>7.3 报表清单</h3>
+<h3>7.3 报表清单</h3>
 
-| 报表名称 | 格式 |
-|----------|------|
-| 预算执行进度表 | Excel/PDF |
-| 预算与实际对比表 | Excel/PDF |
-| 预算差异分析表 | Excel/PDF |
-| 预算考核汇总表 | Excel/PDF |
+<table class="md-table"><thead><tr><th>报表名称</th><th>格式</th></tr></thead><tbody><tr><td>预算执行进度表</td><td>Excel/PDF</td></tr><tr><td>预算与实际对比表</td><td>Excel/PDF</td></tr><tr><td>预算差异分析表</td><td>Excel/PDF</td></tr><tr><td>预算考核汇总表</td><td>Excel/PDF</td></tr></tbody></table>
 
----
+<li>--</li>
 
-<h2>八、实施建议</h2>
+<h2>八、实施建议</h2>
 
-<h3>8.1 实施步骤</h3>
+<h3>8.1 实施步骤</h3>
 
-</code>`<code class="inline-code">
-Phase 1: 基础设置（1-2周）<ul><li>组织架构定义</li></ul><ul><li>科目体系定义</li></ul><ul><li>预算模板配置</li></ul>
+<div class="code-block">
+  <div class="code-header">CODE</div>
+  <pre class="language-"><code>Phase 1: 基础设置（1-2周）
+  - 组织架构定义
+  - 科目体系定义
+  - 预算模板配置
 
-Phase 2: 编制上线（2-3周）<ul><li>历史数据迁移</li></ul><ul><li>用户培训</li></ul><ul><li>试运行</li></ul>
+Phase 2: 编制上线（2-3周）
+  - 历史数据迁移
+  - 用户培训
+  - 试运行
 
-Phase 3: 控制启用（1-2周）<ul><li>控制规则配置</li></ul><ul><li>预警规则配置</li></ul><ul><li>正式启用</li></ul>
+Phase 3: 控制启用（1-2周）
+  - 控制规则配置
+  - 预警规则配置
+  - 正式启用
 
-Phase 4: 分析深化（持续）<ul><li>分析模型优化</li></ul><ul><li>考核体系完善</li></ul>
-</code>``
+Phase 4: 分析深化（持续）
+  - 分析模型优化
+  - 考核体系完善</code></pre>
+</div>
 
-<h3>8.2 关键成功因素</h3>
+<h3>8.2 关键成功因素</h3>
 
-| 因素 | 说明 |
-|------|------|
-| 领导支持 | 高层支持是预算管理成功的关键 |
-| 数据质量 | 基础数据准确是预算有效的前提 |
-| 持续优化 | 根据执行情况持续调整预算模型 |
-| 全员参与 | 各部门参与才能保证预算落地 |
-</p>
+<table class="md-table"><thead><tr><th>因素</th><th>说明</th></tr></thead><tbody><tr><td>领导支持</td><td>高层支持是预算管理成功的关键</td></tr><tr><td>数据质量</td><td>基础数据准确是预算有效的前提</td></tr><tr><td>持续优化</td><td>根据执行情况持续调整预算模型</td></tr><tr><td>全员参与</td><td>各部门参与才能保证预算落地</td></tr></tbody></table>
+</div>
     </div>
 </body>
 </html>
