@@ -44,63 +44,63 @@ body { font-family: 'Microsoft YaHei', 'PingFang SC', sans-serif; background: #f
 </head>
 <body>
 <div class="header">
-  <h1>📤 应付票据往来模块 — 详细流程图</h1>
-  <p>ERP财务管理 · 采购付款流程核心环节 · 对标金蝶云星空应付票据管理</p>
-  <div class="meta">Dev_Dept 自研ERP · 版本 1.0 · 2026-04-15 · 补充规格（应付端）</div>
+  <h1>应付票据往来模块 - 详细流程图</h1>
+  <p>ERP财务管理 - 采购付款流程核心环节 - 对标金蝶云星空应付票据管理</p>
+  <div class="meta">Dev_Dept 自研ERP - 版本 1.0 - 2026-04-15</div>
 </div>
 
 <div class="container">
 <!-- 目录 -->
 <div class="toc">
-  <h2>📋 流程图目录</h2>
+  <h2>流程图目录</h2>
   <div class="toc-grid">
-    <div class="toc-item" onclick="document.getElementById('s1').scrollIntoView({behavior:'smooth'})"><span class="num">①</span><span class="label">应付票据全生命周期总览（端到端）</span></div>
-    <div class="toc-item" onclick="document.getElementById('s2').scrollIntoView({behavior:'smooth'})"><span class="num">②</span><span class="label">应付票据开票与登记流程</span></div>
-    <div class="toc-item" onclick="document.getElementById('s3').scrollIntoView({behavior:'smooth'})"><span class="num">③</span><span class="label">应付票据到期付款流程</span></div>
-    <div class="toc-item" onclick="document.getElementById('s4').scrollIntoView({behavior:'smooth'})"><span class="num">④</span><span class="label">应付票据背书收票流程</span></div>
-    <div class="toc-item" onclick="document.getElementById('s5').scrollIntoView({behavior:'smooth'})"><span class="num">⑤</span><span class="label">应付票据付款方式决策</span></div>
-    <div class="toc-item" onclick="document.getElementById('s6').scrollIntoView({behavior:'smooth'})"><span class="num">⑥</span><span class="label">应付票据凭证生成模板矩阵</span></div>
-    <div class="toc-item" onclick="document.getElementById('s7').scrollIntoView({behavior:'smooth'})"><span class="num">⑦</span><span class="label">应付票据到期预警与台账管理</span></div>
-    <div class="toc-item" onclick="document.getElementById('s8').scrollIntoView({behavior:'smooth'})"><span class="num">⑧</span><span class="label">应收票据 vs 应付票据对照</span></div>
+    <div class="toc-item" onclick="document.getElementById('s1').scrollIntoView({behavior:'smooth'})"><span class="num">1</span><span class="label">应付票据全生命周期总览</span></div>
+    <div class="toc-item" onclick="document.getElementById('s2').scrollIntoView({behavior:'smooth'})"><span class="num">2</span><span class="label">应付票据开票与登记流程</span></div>
+    <div class="toc-item" onclick="document.getElementById('s3').scrollIntoView({behavior:'smooth'})"><span class="num">3</span><span class="label">应付票据到期付款流程</span></div>
+    <div class="toc-item" onclick="document.getElementById('s4').scrollIntoView({behavior:'smooth'})"><span class="num">4</span><span class="label">应付票据背书收票流程</span></div>
+    <div class="toc-item" onclick="document.getElementById('s5').scrollIntoView({behavior:'smooth'})"><span class="num">5</span><span class="label">应付票据付款方式决策</span></div>
+    <div class="toc-item" onclick="document.getElementById('s6').scrollIntoView({behavior:'smooth'})"><span class="num">6</span><span class="label">应付票据凭证生成模板</span></div>
+    <div class="toc-item" onclick="document.getElementById('s7').scrollIntoView({behavior:'smooth'})"><span class="num">7</span><span class="label">应付票据到期预警与台账</span></div>
+    <div class="toc-item" onclick="document.getElementById('s8').scrollIntoView({behavior:'smooth'})"><span class="num">8</span><span class="label">应收票据 vs 应付票据对照</span></div>
   </div>
 </div>
 
-<!-- ① 应付票据全生命周期总览 -->
+<!-- 1 应付票据全生命周期总览 -->
 <div class="section" id="s1">
-  <h2><span class="icon">🔄</span> 应付票据全生命周期总览</h2>
-  <div class="desc">展示一张应付商业汇票从我方开出到最终兑付/流转的完整过程，覆盖采购付款端的票据管理</div>
+  <h2><span class="icon">1</span> 应付票据全生命周期总览</h2>
+  <div class="desc">展示一张应付商业汇票从我方开出到最终兑付/流转的完整过程</div>
   <div class="mermaid">
 flowchart TB
-    subgraph 触发["触发来源"]
-        A1[采购入库验收<br>GR单确认]
-        A2[应付账款确认<br>AP明细生成]
-        A3[供应商协商<br>以票据支付]
+    subgraph TG["触发来源"]
+        A1["采购入库验收 GR单确认"]
+        A2["应付账款确认 AP明细"]
+        A3["供应商协商 票据支付"]
     end
 
-    subgraph 开票["开票申请"]
-        B1[选择应付账款<br>确定开票金额]
-        B2[票据信息填写<br>票据类型/到期日<br>收款人/承兑人]
-        B3[开票审批<br>金额阈值判断<br>主管→财务→总监]
-        B4[票据开立<br>分配应付票据编号<br>关联付款单]
+    subgraph KB["开票申请"]
+        B1["选择应付账款 确定金额"]
+        B2["票据信息填写"]
+        B3["开票审批 金额阈值判断"]
+        B4["票据开立 分配编号"]
     end
 
-    subgraph 持有["持有管理"]
-        C1[应付票据台账<br>实时状态跟踪]
-        C2[到期偿付预警<br>30/15/7/3天分级提醒]
-        C3[票据池统计<br>按供应商/到期日/类型]
-        C4[备付金规划<br>到期前资金头寸安排]
+    subgraph CY["持有管理"]
+        C1["应付票据台账 状态跟踪"]
+        C2["到期偿付预警 分级提醒"]
+        C3["票据池统计"]
+        C4["备付金规划"]
     end
 
-    subgraph 处置["到期处置"]
-        D1[到期付款<br>银企直连自动划款]
-        D2[票据展期<br>与供应商协商延期]
-        D3[退回/拒付<br>票据异常处理]
+    subgraph CZ["到期处置"]
+        D1["到期付款 银企直连"]
+        D2["票据展期 协商延期"]
+        D3["退回 拒付处理"]
     end
 
-    subgraph 终态["终态"]
-        E1[已兑付<br>票款已付]
-        E2[已展期<br>新票据替换]
-        E3[已退回<br>异常终止]
+    subgraph ZZ["终态"]
+        E1["已兑付"]
+        E2["已展期"]
+        E3["已退回"]
     end
 
     A1 --> B1
@@ -117,230 +117,225 @@ flowchart TB
     D1 --> E1
     D2 --> E2
     D3 --> E3
-  end</div>
+  </div>
 </div>
 
-<!-- ② 应付票据开票与登记流程 -->
+<!-- 2 应付票据开票与登记流程 -->
 <div class="section" id="s2">
-  <h2><span class="icon">📝</span> 应付票据开票与登记流程</h2>
-  <div class="desc">采购付款时，经供应商同意以商业汇票方式支付，从应付账款转为应付票据的全过程</div>
+  <h2><span class="icon">2</span> 应付票据开票与登记流程</h2>
+  <div class="desc">采购付款时以商业汇票方式支付的全过程</div>
   <div class="mermaid">
 flowchart TD
-    Start([开始: 采购付款申请]) --> Q1{付款方式?}
+    Start(["开始"]) --> Q1{"付款方式"}
+    Q1 -->|"银行转账"| Cash["走普通付款流程"]
+    Q1 -->|"商业汇票"| BillPay["进入应付票据流程"]
 
-    Q1 -->|银行转账/现金| Cash[走普通付款流程<br>详见实付付款详细流程图]
-    Q1 -->|商业汇票| BillPay[进入应付票据流程]
-
-    BillPay --> S1[Step1: 选择待付应付账款<br>从AP明细列表选取]
-
-    S1 --> S2[Step2: 确定开票信息]
-    S2 --> S2a[票据类型选择<br>银承 or 商承]
-    S2 --> S2b[到期日设定<br>协商确定]
-    S2 --> S2c[收款人信息<br>供应商名称+银行账号]
-    S2 --> S2d[承兑人信息<br>银承=开户银行 / 商承=我方企业]
+    BillPay --> S1["Step1: 选择待付应付账款"]
+    S1 --> S2["Step2: 确定开票信息"]
+    S2 --> S2a["票据类型选择 银承或商承"]
+    S2 --> S2b["到期日设定"]
+    S2 --> S2c["收款人信息"]
+    S2 --> S2d["承兑人信息"]
     S2a & S2b & S2c & S2d --> S3
 
-    S3[Step3: 开票金额校验] --> Check1{开票金额 <= 应付余额?}
-    Check1 -->|否| Err1[提示: 超出应付余额<br>请核对应付明细]
-    Check1 -->|是| S4
+    S3["Step3: 开票金额校验"] --> Check1{"金额 <= 应付余额"}
+    Check1 -->|"否"| Err1["超出应付余额"]
+    Check1 -->|"是"| S4
 
-    S4[Step4: 生成应付票据单] --> S4a[系统分配票据编号<br>PBILL+YYYYMM+序号]
-    S4a --> S4b[关联付款单ID]
-    S4b --> S4c[记录应付票据台账]
+    S4["Step4: 生成应付票据单"] --> S4a["系统分配票据编号"]
+    S4a --> S4b["关联付款单ID"]
+    S4b --> S4c["记录台账"]
 
-    S4c --> S5[Step5: 提交审批]
-    S5 --> Threshold{票据金额阈值?}
+    S4c --> S5["Step5: 提交审批"]
+    S5 --> Threshold{"票据金额阈值"}
 
-    Threshold -->|< 10万| App1[出纳制单-主管审批]
-    Threshold -->|10-50万| App2[出纳制单-主管审批<br>→ 财务审批]
-    Threshold -->|>= 50万| App3[出纳制单-主管审批<br>→ 财务审批-总经理审批]
+    Threshold -->|"< 10万"| App1["出纳-主管审批"]
+    Threshold -->|"10-50万"| App2["出纳-主管-财务审批"]
+    Threshold -->|">= 50万"| App3["出纳-主管-财务-总经理"]
 
-    App1 & App2 & App3 --> Approve{审批结果}
-    Approve -->|驳回| Reject[退回修改<br>更新状态为草稿]
+    App1 & App2 & App3 --> Approve{"审批结果"}
+    Approve -->|"驳回"| Reject["退回修改"]
     Reject --> S2
-    Approve -->|通过| S6
+    Approve -->|"通过"| S6
 
-    S6[Step6: 票据开立确认] --> S6a[状态: 开立中-待交付]
-    S6a --> S6b[生成凭证 PA01<br>借:应付账款<br>贷:应付票据]
-    S6b --> S6c[通知出纳准备票据]
+    S6["Step6: 票据开立确认"] --> S6a["状态: 开立中-待交付"]
+    S6a --> S6b["生成凭证 PA01"]
+    S6b --> S6c["通知出纳准备票据"]
 
-    S6c --> S7[Step7: 票据交付确认]
-    S7 --> S7a[纸质票: 出纳交付供应商<br>获取签收回执]
-    S7 --> S7b[电子票: ECDS系统签发<br>推送至供应商]
+    S6c --> S7["Step7: 票据交付确认"]
+    S7 --> S7a["纸质票: 交付供应商"]
+    S7 --> S7b["电子票: ECDS签发"]
 
-    S7a & S7b --> S8[Step8: 状态更新]
-    S8 --> Done([完成: 票据状态=持有中])
-    S8 --> Done2([等待到期付款])
+    S7a & S7b --> S8["Step8: 状态更新"]
+    S8 --> Done(["完成: 票据持有中"])
 
     style BillPay fill:#ffebee,stroke:#b71c1c
     style Done fill:#e8f5e9,stroke:#2e7d32
     style Err1 fill:#ffebee,stroke:#c62828
     style Reject fill:#fff3e0,stroke:#e65100
-  end</div>
+  </div>
 </div>
 
-<!-- ③ 应付票据到期付款流程 -->
+<!-- 3 应付票据到期付款流程 -->
 <div class="section" id="s3">
-  <h2><span class="icon">💰</span> 应付票据到期付款流程</h2>
-  <div class="desc">应付票据到期时，准备资金并通过银企直连完成票款偿付的全过程</div>
+  <h2><span class="icon">3</span> 应付票据到期付款流程</h2>
+  <div class="desc">应付票据到期时准备资金并完成票款偿付</div>
   <div class="mermaid">
 flowchart TD
-    Start([开始: 到期预警触发]) --> A1[系统每日扫描<br>应付票据到期日]
+    Start(["开始: 到期预警"]) --> A1["系统每日扫描应付票据到期日"]
+    A1 --> A2{"距到期 <= 3天"}
+    A2 -->|"否"| Wait["继续监控"]
+    A2 -->|"是"| Alert["触发到期紧急预警"]
 
-    A1 --> A2{距到期 <= 3天?}
-    A2 -->|否| Wait[继续监控]
-    A2 -->|是| Alert[触发到期紧急预警<br>通知出纳+财务主管+财务总监]
+    Alert --> B1["Step1: 到期确认"]
+    B1 --> B1a["核对票据信息"]
+    B1a --> B1b["确认票据状态"]
+    B1b --> B1c["确认账户余额"]
 
-    Alert --> B1[Step1: 到期确认]
-    B1 --> B1a[核对票据信息<br>票号/金额/收款人]
-    B1a --> B1b[确认票据状态<br>持有中（未退票/未展期）]
-    B1b --> B1c[确认账户余额<br>是否充足]
+    B1c --> Check1{"余额 >= 票面金额"}
+    Check1 -->|"否"| Insufficient["资金不足 头寸调拨"]
+    Check1 -->|"是"| B2
 
-    B1c --> Check1{账户余额 >= 票面金额?}
-    Check1 -->|否| Insufficient[资金不足<br>紧急申请头寸调拨]
-    Check1 -->|是| B2
+    Insufficient --> Transfer["头寸调拨完成"] --> B2
 
-    Insufficient --> Transfer[头寸调拨完成] --> B2
+    B2["Step2: 生成付款指令"] --> B2a["选择付款账户"]
+    B2a --> B2b["填写收款人信息"]
+    B2b --> B2c["生成付款摘要"]
 
-    B2[Step2: 生成付款指令] --> B2a[选择付款账户]
-    B2a --> B2b[填写收款人信息<br>供应商名称+银行+账号]
-    B2b --> B2c[生成付款摘要<br>应付票据号+到期日]
+    B2c --> B3["Step3: 付款审批确认"]
+    B3 --> Q{"银承 or 商承"}
 
-    B2c --> B3[Step3: 付款审批确认]
-    B3 --> Q{银承 or 商承?}
+    Q -->|"银行承兑汇票"| C1["银行自动扣款"]
+    Q -->|"商业承兑汇票"| C2["人工确认付款"]
 
-    Q -->|银行承兑汇票| C1[银行自动扣款<br>无需额外审批<br>承兑银行到期自动划款]
-    Q -->|商业承兑汇票| C2[需要人工确认付款<br>出纳提交-财务确认]
+    C1 --> D1["Step4: 执行付款"]
+    C2 --> C2a["银企直连发起付款"] --> D1
 
-    C1 --> D1[Step4: 执行付款]
-    C2 --> C2a[银企直连发起付款指令]
-    C2a --> D1
+    D1 --> D1a["银企系统执行划款"]
+    D1a --> D1b["等待银行回单"]
 
-    D1 --> D1a[银企系统执行划款]
-    D1a --> D1b[等待银行回单]
+    D1b --> Q2{"付款成功"}
+    Q2 -->|"成功"| E1["Step5: 付款确认"]
+    Q2 -->|"失败"| Fail["付款失败 记录原因"]
 
-    D1b --> Q2{付款成功?}
-    Q2 -->|成功| E1[Step5: 付款确认]
-    Q2 -->|失败| Fail[付款失败<br>记录失败原因<br>人工排查+重试]
+    E1 --> E1a["更新票据状态: 已兑付"]
+    E1a --> E1b["生成凭证 PA02"]
+    E1b --> E1c["归档银行回单"]
 
-    E1 --> E1a[更新票据状态: 持有中-已兑付]
-    E1a --> E1b[生成凭证 PA02<br>借:应付票据<br>贷:银行存款]
-    E1b --> E1c[归档银行回单]
+    E1c --> F1["Step6: 供应商对账"]
+    F1 --> F1a["发送付款通知"]
+    F1a --> F1b["更新台账 确认票款已清"]
 
-    E1c --> F1[Step6: 供应商对账]
-    F1 --> F1a[发送付款通知给供应商]
-    F1a --> F1b[更新应付账款台账<br>确认票款已清]
-
-    F1b --> Done([完成: 票据闭环<br>状态=已兑付])
+    F1b --> Done(["完成: 票据闭环"])
 
     style Start fill:#fff3e0,stroke:#e65100
     style Done fill:#e8f5e9,stroke:#2e7d32
     style Alert fill:#ffebee,stroke:#b71c1c
     style Insufficient fill:#ffebee,stroke:#c62828
     style Fail fill:#ffebee,stroke:#c62828
-  end</div>
+  </div>
 </div>
 
-<!-- ④ 应付票据背书收票流程 -->
+<!-- 4 应付票据背书收票流程 -->
 <div class="section" id="s4">
-  <h2><span class="icon">🔄</span> 应付票据背书收票流程</h2>
-  <div class="desc">供应商将其持有的应收票据背书转让给我方，用于抵偿我方应付账款（与应收票据模块的背书转出对应）</div>
+  <h2><span class="icon">4</span> 应付票据背书收票流程</h2>
+  <div class="desc">供应商将票据背书转让给我方用于抵偿应付账款</div>
   <div class="mermaid">
 flowchart TD
-    Start([开始: 供应商提出<br>票据背书抵付]) --> A1[供应商提供票据信息<br>票号/类型/金额/到期日]
+    Start(["开始: 供应商提出背书抵付"]) --> A1["供应商提供票据信息"]
 
-    A1 --> B1[Step1: 票据接收与登记] --> B1a[出纳接收票据实物<br>或确认电子票据推送]
-    B1a --> B1b[录入票据信息<br>进入应收票据台账<br>source_type=背书转入]
+    A1 --> B1["Step1: 票据接收与登记"]
+    B1 --> B1a["出纳接收票据"]
+    B1a --> B1b["录入票据信息 入台账"]
 
-    B1b --> C1[Step2: 票据验证] --> C1a[票面要素校验<br>完整性+合规性]
-    C1a --> C1b[票据真伪查验<br>致电出票银行确认]
-    C1b --> C1c[背书连续性检查<br>背书链是否完整]
+    B1b --> C1["Step2: 票据验证"]
+    C1 --> C1a["票面要素校验"]
+    C1a --> C1b["票据真伪查验"]
+    C1b --> C1c["背书连续性检查"]
 
-    C1c --> Q1{验证通过?}
-    Q1 -->|否| Reject[拒收票据<br>通知供应商原因<br>退回票据]
-    Q1 -->|是| D1
+    C1c --> Q1{"验证通过"}
+    Q1 -->|"否"| Reject["拒收票据 退回"]
+    Q1 -->|"是"| D1
 
-    D1[Step3: 票据评估] --> D1a{票据类型?}
-    D1a -->|银行承兑汇票| LowRisk[低风险<br>银行信用担保]
-    D1a -->|商业承兑汇票| HighRisk[需信用评估<br>承兑人资信查询]
+    D1["Step3: 票据评估"] --> D1a{"票据类型"}
+    D1a -->|"银行承兑汇票"| LowRisk["低风险 银行担保"]
+    D1a -->|"商业承兑汇票"| HighRisk["需信用评估"]
 
-    HighRisk --> D1b{承兑人信用评级 >= B?}
-    D1b -->|否| RejectCredit[信用不足<br>建议供应商换票或补担保]
-    D1b -->|是| LowRisk
+    HighRisk --> D1b{"承兑人评级 >= B"}
+    D1b -->|"否"| RejectCredit["信用不足 建议换票"]
+    D1b -->|"是"| LowRisk
 
-    LowRisk --> E1[Step4: 抵付确认]
-    E1 --> E1a[核对抵付金额<br>票据金额 <= 应付余额]
-    E1a --> E1b[选择抵付的应付明细]
-    E1b --> E1c[确认抵付分配]
+    LowRisk --> E1["Step4: 抵付确认"]
+    E1 --> E1a["核对抵付金额"]
+    E1a --> E1b["选择抵付的应付明细"]
+    E1b --> E1c["确认抵付分配"]
 
-    E1c --> F1[Step5: 审批]
-    F1 --> Threshold{票据金额?}
-    Threshold -->|< 50万| App1[财务主管审批]
-    Threshold -->|>= 50万| App2[财务主管审批-总经理审批]
+    E1c --> F1["Step5: 审批"]
+    F1 --> Threshold{"票据金额"}
+    Threshold -->|"< 50万"| App1["财务主管审批"]
+    Threshold -->|">= 50万"| App2["财务主管-总经理审批"]
 
-    App1 & App2 --> Approve{审批结果}
-    Approve -->|驳回| AppReject[退回，重新协商]
-    Approve -->|通过| G1
+    App1 & App2 --> Approve{"审批结果"}
+    Approve -->|"驳回"| AppReject["退回 重新协商"]
+    Approve -->|"通过"| G1
 
-    G1[Step6: 记账处理] --> G1a[更新应收票据台账<br>票据转入我方持有]
-    G1a --> G1b[生成凭证 PB02-Recv<br>借:应付账款-XX供应商<br>贷:应收票据-XX票据]
-    G1b --> G1c[更新应付账款台账<br>核销抵付金额]
+    G1["Step6: 记账处理"] --> G1a["更新应收票据台账"]
+    G1a --> G1b["生成凭证 PB02"]
+    G1b --> G1c["更新应付账款台账"]
 
-    G1c --> H1[Step7: 交接签收]
-    H1 --> H1a[纸质票: 双方签收确认]
-    H1 --> H1b[电子票: ECDS签收确认]
+    G1c --> H1["Step7: 交接签收"]
+    H1 --> H1a["纸质票: 双方签收"]
+    H1 --> H1b["电子票: ECDS签收"]
 
-    H1a & H1b --> Done([完成: 应付已核销<br>票据转入应收台账])
+    H1a & H1b --> Done(["完成: 应付已核销"])
 
     style Start fill:#e3f2fd,stroke:#1565c0
     style Done fill:#e8f5e9,stroke:#2e7d32
     style Reject fill:#ffebee,stroke:#c62828
     style RejectCredit fill:#ffebee,stroke:#c62828
     style AppReject fill:#fff3e0,stroke:#e65100
-  end</div>
+  </div>
 </div>
 
-<!-- ⑤ 应付票据付款方式决策 -->
+<!-- 5 应付票据付款方式决策 -->
 <div class="section" id="s5">
-  <h2><span class="icon">🔀</span> 应付票据付款方式决策</h2>
-  <div class="desc">在采购付款时，判断使用票据支付还是现金/转账支付的决策流程</div>
+  <h2><span class="icon">5</span> 应付票据付款方式决策</h2>
+  <div class="desc">采购付款时判断使用票据还是现金支付</div>
   <div class="mermaid">
 flowchart TD
-    Start([采购付款决策]) --> Q1{付款金额?}
+    Start(["采购付款决策"]) --> Q1{"付款金额"}
+    Q1 -->|">= 5万"| Q2["进入票据决策"]
+    Q1 -->|"< 5万"| Cash["建议: 银行转账"]
 
-    Q1 -->|>= 5万| Q2[进入票据决策]
-    Q1 -->|< 5万| Cash[建议: 银行转账<br>小额无需票据]
+    Q2 --> Q2a{"供应商接受票据"}
+    Q2a -->|"否"| Cash2["银行转账支付"]
+    Q2a -->|"是"| Q3
 
-    Q2 --> Q2a{供应商接受票据?}
-    Q2a -->|否| Cash2[银行转账/现金支付]
-    Q2a -->|是| Q3
-
-    Q3{我方票据额度?}
-    Q3 -->|充足| Q4{票据类型选择}
-    Q3 -->|不足| Q3a{可申请增加额度?}
-    Q3a -->|否| Cash3[银行转账]
-    Q3a -->|是| Apply[申请额度增加]
+    Q3{"我方票据额度"}
+    Q3 -->|"充足"| Q4{"票据类型选择"}
+    Q3 -->|"不足"| Q3a{"可申请增加额度"}
+    Q3a -->|"否"| Cash3["银行转账"]
+    Q3a -->|"是"| Apply["申请额度增加"]
 
     Apply --> Q4
 
-    Q4 --> Q4a{到期日协商?}
-    Q4a --> Q5{供应商偏好?}
-    Q5 -->|要求银承| Bank1[开具银行承兑汇票<br>信用高，供应商接受度好]
-    Q5 -->|接受商承| Q6{我方信用评级?}
+    Q4 --> Q5{"供应商偏好"}
+    Q5 -->|"要求银承"| Bank1["开具银行承兑汇票"]
+    Q5 -->|"接受商承"| Q6{"我方信用评级"}
 
-    Q6 -->|AAA/AA级| Comm1[开具商业承兑汇票<br>无需银行保证金<br>成本低]
-    Q6 -->|A级以下| Bank2[建议: 银行承兑汇票<br>商承可能被拒]
+    Q6 -->|"AAA/AA级"| Comm1["开具商业承兑汇票"]
+    Q6 -->|"A级以下"| Bank2["建议银行承兑汇票"]
 
     Bank1 --> Final
     Comm1 --> Final
     Bank2 --> Final
 
-    Final[决策完成] --> Compare[成本对比]
-    Compare --> T1[银承成本:<br>保证金(10-100%)+手续费]
-    Compare --> T2[商承成本:<br>几乎无直接成本<br>占用企业授信额度]
-    Compare --> T3[现金成本:<br>即时资金流出<br>无时间缓冲]
+    Final["决策完成"] --> Compare["成本对比"]
+    Compare --> T1["银承: 保证金+手续费"]
+    Compare --> T2["商承: 占用授信额度"]
+    Compare --> T3["现金: 即时资金流出"]
 
-    T1 & T2 & T3 --> Confirm[出纳确认付款方式<br>提交付款单]
+    T1 & T2 & T3 --> Confirm["出纳确认付款方式"]
 
     style Start fill:#fff3e0,stroke:#e65100
     style Cash fill:#e8f5e9,stroke:#2e7d32
@@ -350,42 +345,42 @@ flowchart TD
     style Bank2 fill:#e3f2fd,stroke:#1565c0
     style Comm1 fill:#e3f2fd,stroke:#1565c0
     style Confirm fill:#e8eaf6,stroke:#1a237e
-  end</div>
+  </div>
 </div>
 
-<!-- ⑥ 应付票据凭证生成模板矩阵 -->
+<!-- 6 应付票据凭证生成模板矩阵 -->
 <div class="section" id="s6">
-  <h2><span class="icon">🧾</span> 应付票据凭证生成模板矩阵</h2>
-  <div class="desc">应付票据全生命周期的标准凭证模板，自动匹配生成</div>
+  <h2><span class="icon">6</span> 应付票据凭证生成模板</h2>
+  <div class="desc">应付票据全生命周期的标准凭证模板</div>
   <div class="mermaid">
 flowchart LR
-    subgraph 开立["开立"]
-        PA01["PA01:借应付账款/贷应付票据"]
+    subgraph KL["开立"]
+        PA01["PA01:借应付账款贷应付票据"]
     end
 
-    subgraph 交付["交付"]
+    subgraph JF["交付"]
         PA02a["纸质票:仅更新记录"]
-        PA02b["电子票:借应付票据/贷应付票据-电票"]
+        PA02b["电子票:借应付票据贷电票"]
     end
 
-    subgraph 付款["付款"]
-        PA03["PA03:借应付票据/贷银行存款"]
+    subgraph FK["付款"]
+        PA03["PA03:借应付票据贷银行存款"]
     end
 
-    subgraph 展期["展期"]
-        PA04["PA04:借应付票据(旧)/贷应付票据(新)"]
+    subgraph ZQ["展期"]
+        PA04["PA04:借旧票贷新票"]
     end
 
-    subgraph 背书["背书收票"]
-        PA05["PA05:借应付账款/贷应收票据"]
+    subgraph BS["背书收票"]
+        PA05["PA05:借应付账款贷应收票据"]
     end
 
-    subgraph 退回["退回"]
-        PA06["PA06:借应付票据/贷应付账款"]
+    subgraph TH["退回"]
+        PA06["PA06:借应付票据贷应付账款"]
     end
 
-    subgraph 担保["担保费用"]
-        PA07["PA07:借财务费用/贷银行存款"]
+    subgraph DB["担保费用"]
+        PA07["PA07:借财务费用贷银行存款"]
     end
 
     PA01 --> PA02a
@@ -396,7 +391,7 @@ flowchart LR
     PA01 -.-> PA05
     PA01 -.-> PA06
     PA01 -.-> PA07
-  end</div>
+  </div>
 
   <div style="margin-top: 20px; overflow-x: auto;">
     <table style="width:100%; border-collapse: collapse; font-size: 13px;">
@@ -426,7 +421,7 @@ flowchart LR
         </tr>
         <tr>
           <td style="padding: 8px 12px; border: 1px solid #e0e0e0; font-weight: bold; color: #b71c1c;">PA04</td>
-          <td style="padding: 8px 12px; border: 1px solid #e0e0e0;">票据展期（新旧替换）</td>
+          <td style="padding: 8px 12px; border: 1px solid #e0e0e0;">票据展期</td>
           <td style="padding: 8px 12px; border: 1px solid #e0e0e0;">应付票据-旧票据</td>
           <td style="padding: 8px 12px; border: 1px solid #e0e0e0;">应付票据-新票据</td>
           <td style="padding: 8px 12px; border: 1px solid #e0e0e0; text-align: center;">转</td>
@@ -435,12 +430,12 @@ flowchart LR
           <td style="padding: 8px 12px; border: 1px solid #e0e0e0; font-weight: bold; color: #b71c1c;">PA05</td>
           <td style="padding: 8px 12px; border: 1px solid #e0e0e0;">背书收票抵付</td>
           <td style="padding: 8px 12px; border: 1px solid #e0e0e0;">应付账款-XX供应商</td>
-          <td style="padding: 8px 12px; border: 1px solid #e0e0e0;">应收票据-XX票据（同时收票入池）</td>
+          <td style="padding: 8px 12px; border: 1px solid #e0e0e0;">应收票据-XX票据</td>
           <td style="padding: 8px 12px; border: 1px solid #e0e0e0; text-align: center;">转</td>
         </tr>
         <tr>
           <td style="padding: 8px 12px; border: 1px solid #e0e0e0; font-weight: bold; color: #b71c1c;">PA06</td>
-          <td style="padding: 8px 12px; border: 1px solid #e0e0e0;">票据退回（恢复应付）</td>
+          <td style="padding: 8px 12px; border: 1px solid #e0e0e0;">票据退回</td>
           <td style="padding: 8px 12px; border: 1px solid #e0e0e0;">应付票据-XX票据</td>
           <td style="padding: 8px 12px; border: 1px solid #e0e0e0;">应付账款-XX供应商</td>
           <td style="padding: 8px 12px; border: 1px solid #e0e0e0; text-align: center;">转</td>
@@ -457,19 +452,19 @@ flowchart LR
   </div>
 </div>
 
-<!-- ⑦ 应付票据到期预警与台账管理 -->
+<!-- 7 应付票据到期预警与台账管理 -->
 <div class="section" id="s7">
-  <h2><span class="icon">🔔</span> 应付票据到期预警与台账管理</h2>
-  <div class="desc">应付票据到期前的资金准备预警和日常台账管理流程</div>
+  <h2><span class="icon">7</span> 应付票据到期预警与台账管理</h2>
+  <div class="desc">到期前的资金准备预警和日常台账管理</div>
   <div class="mermaid">
 flowchart TB
-    subgraph 定时["定时扫描"]
-        T1[查询所有持有中的<br>应付票据]
-        T2[计算距到期天数]
-        T3[匹配预警级别]
+    subgraph DS["定时扫描"]
+        T1["查询所有持有中的应付票据"]
+        T2["计算距到期天数"]
+        T3["匹配预警级别"]
     end
 
-    subgraph 预警["分级预警"]
+    subgraph YJ["分级预警"]
         L1["L1: 30天 站内信出纳"]
         L2["L2: 15天 站内信+邮件"]
         L3["L3: 7天 站内信+邮件+短信"]
@@ -477,19 +472,19 @@ flowchart TB
         L5["L5: 逾期 紧急升级"]
     end
 
-    subgraph 台账["台账视图"]
-        M1[全量列表<br>按到期日排序]
-        M2[状态筛选<br>开立中/持有中/已兑付/已退回]
-        M3[供应商维度<br>按供应商汇总应付票据余额]
-        M4[类型维度<br>银承 vs 商承占比]
-        M5[到期日维度<br>未来30天/60天/90天到期分布]
+    subgraph TZ["台账视图"]
+        M1["全量列表 按到期日排序"]
+        M2["状态筛选"]
+        M3["供应商维度汇总"]
+        M4["类型维度 银承vs商承"]
+        M5["到期日维度分布"]
     end
 
-    subgraph 备付金["备付金规划"]
-        F1[汇总未来30天<br>到期票据总额]
-        F2[对比可用资金头寸]
-        F3{资金缺口?}
-        F4[提前安排头寸调拨]
+    subgraph BF["备付金管理"]
+        F1["汇总未来30天到期总额"]
+        F2["对比可用资金头寸"]
+        F3{"资金缺口"}
+        F4["提前安排头寸调拨"]
     end
 
     T1 --> T2 --> T3
@@ -497,15 +492,15 @@ flowchart TB
 
     M1 & M2 & M3 & M4 & M5 --> F1
     F1 --> F2 --> F3
-    F3 -->|是| F4
-    F3 -->|否| OK[资金充足]
-  end</div>
+    F3 -->|"是"| F4
+    F3 -->|"否"| OK["资金充足"]
+  </div>
 </div>
 
-<!-- ⑧ 应收票据 vs 应付票据对照 -->
+<!-- 8 应收票据 vs 应付票据对照 -->
 <div class="section" id="s8">
-  <h2><span class="icon">⚖️</span> 应收票据 vs 应付票据对照</h2>
-  <div class="desc">同一票据管理模块在销售端（应收）和采购端（应付）的镜像关系对照</div>
+  <h2><span class="icon">8</span> 应收票据 vs 应付票据对照</h2>
+  <div class="desc">同一票据管理模块在销售端和采购端的镜像关系</div>
   <div class="compare-box">
     <table>
       <thead>
@@ -528,18 +523,18 @@ flowchart TB
         </tr>
         <tr>
           <td><strong>初始动作</strong></td>
-          <td>收到客户票据-登记入池</td>
-          <td>向供应商开票-票据开立</td>
+          <td>收到客户票据 登记入池</td>
+          <td>向供应商开票 票据开立</td>
         </tr>
         <tr style="background: #fafafa;">
           <td><strong>持有目的</strong></td>
-          <td>等待到期兑付 / 提前贴现变现</td>
-          <td>争取付款时间缓冲 / 延迟现金流出</td>
+          <td>等待到期兑付 或 提前贴现</td>
+          <td>争取付款时间缓冲</td>
         </tr>
         <tr>
           <td><strong>核心操作</strong></td>
           <td>背书转出 / 贴现 / 到期托收</td>
-          <td>到期付款 / 票据展期 / 接受背书抵付</td>
+          <td>到期付款 / 票据展期 / 收票抵付</td>
         </tr>
         <tr style="background: #fafafa;">
           <td><strong>会计科目</strong></td>
@@ -548,28 +543,18 @@ flowchart TB
         </tr>
         <tr>
           <td><strong>到期风险</strong></td>
-          <td>承兑人拒付风险（信用风险）</td>
-          <td>到期资金不足风险（流动性风险）</td>
+          <td>承兑人拒付风险</td>
+          <td>资金不足风险</td>
         </tr>
         <tr style="background: #fafafa;">
-          <td><strong>预警关注</strong></td>
-          <td>到期提醒-及时托收</td>
-          <td>到期提醒-备付金到位</td>
+          <td><strong>凭证方向</strong></td>
+          <td>借应收票据 / 贷应收账款</td>
+          <td>借应付账款 / 贷应付票据</td>
         </tr>
         <tr>
-          <td><strong>凭证方向</strong></td>
-          <td>收取: 借应收票据 / 贷应收账款</td>
-          <td>开立: 借应付账款 / 贷应付票据</td>
-        </tr>
-        <tr style="background: #fafafa;">
           <td><strong>背书关系</strong></td>
           <td>我方背书给下游供应商</td>
-          <td>上游供应商背书给我方（收票抵付）</td>
-        </tr>
-        <tr>
-          <td><strong>与付款模块关系</strong></td>
-          <td>替代实收 — 票据方式收款</td>
-          <td>替代实付 — 票据方式付款</td>
+          <td>上游供应商背书给我方</td>
         </tr>
       </tbody>
     </table>
@@ -578,7 +563,7 @@ flowchart TB
 
 <!-- 汇总 -->
 <div class="summary-box">
-  <h2>📊 应付票据往来 — 汇总统计</h2>
+  <h2>应付票据往来 - 汇总统计</h2>
   <div class="summary-grid">
     <div class="summary-card">
       <div class="title">流程图数量</div>
@@ -586,29 +571,29 @@ flowchart TB
     </div>
     <div class="summary-card">
       <div class="title">凭证模板</div>
-      <div class="value">6 套（PA01~PA07）</div>
+      <div class="value">6 套 PA01-PA07</div>
     </div>
     <div class="summary-card">
       <div class="title">票据状态</div>
-      <div class="value">6 种（开立中/待交付/持有中/已兑付/已展期/已退回）</div>
+      <div class="value">6 种状态</div>
     </div>
     <div class="summary-card">
       <div class="title">预警级别</div>
-      <div class="value">5 级（30/15/7/3天+逾期）</div>
+      <div class="value">5 级 30/15/7/3天+逾期</div>
     </div>
     <div class="summary-card">
       <div class="title">审批阈值</div>
-      <div class="value">3 档（&lt;10万 / 10-50万 / >=50万）</div>
+      <div class="value">3 档</div>
     </div>
     <div class="summary-card">
       <div class="title">票据类型</div>
-      <div class="value">2 种（银行承兑 / 商业承兑）</div>
+      <div class="value">2 种 银承/商承</div>
     </div>
   </div>
 </div>
 
 <div class="footer">
-  Dev_Dept 自研ERP · 财务管理模块 · 应付票据往来 · v1.0 · 2026-04-15
+  Dev_Dept 自研ERP - 财务管理模块 - 应付票据往来 - v1.0 - 2026-04-15
 </div>
 </div>
 
