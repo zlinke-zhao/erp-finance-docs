@@ -1,109 +1,229 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>税务管理模块规格书</title>
-<style>
-:root {
-  --bg: #f8fafc;
-  --card: #ffffff;
-  --primary: #6366f1;
-  --text: #1e293b;
-  --text-dim: #64748b;
-  --border: #e2e8f0;
-  --code-bg: #1e293b;
-  --code-text: #e2e8f0;
-}
-* { margin: 0; padding: 0; box-sizing: border-box; }
-body {
-  font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
-  background: var(--bg);
-  color: var(--text);
-  line-height: 1.7;
-  padding: 2rem;
-}
-.container {
-  max-width: 1000px;
-  margin: 0 auto;
-  background: var(--card);
-  border-radius: 12px;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-  padding: 3rem;
-}
-.header {
-  border-bottom: 2px solid var(--primary);
-  padding-bottom: 1.5rem;
-  margin-bottom: 2rem;
-}
-.header h1 {
-  font-size: 1.75rem;
-  color: var(--primary);
-  margin-bottom: 0.5rem;
-}
-.header .meta {
-  color: var(--text-dim);
-  font-size: 0.875rem;
-}
-.content h1 { font-size: 1.5rem; margin: 2rem 0 1rem; color: var(--primary); }
-.content h2 { font-size: 1.25rem; margin: 1.5rem 0 0.75rem; color: var(--text); border-bottom: 1px solid var(--border); padding-bottom: 0.5rem; }
-.content h3 { font-size: 1.1rem; margin: 1.25rem 0 0.5rem; color: var(--text); }
-.content p { margin: 0.75rem 0; }
-.content ul, .content ol { margin: 0.75rem 0; padding-left: 1.5rem; }
-.content li { margin: 0.375rem 0; }
-.content table {
-  width: 100%;
-  border-collapse: collapse;
-  margin: 1rem 0;
-  font-size: 0.9rem;
-}
-.content td, .content th {
-  border: 1px solid var(--border);
-  padding: 0.625rem 0.75rem;
-  text-align: left;
-}
-.content th {
-  background: #f1f5f9;
-  font-weight: 600;
-}
-.content pre {
-  background: var(--code-bg);
-  color: var(--code-text);
-  padding: 1rem;
-  border-radius: 8px;
-  overflow-x: auto;
-  margin: 1rem 0;
-  font-size: 0.85rem;
-}
-.content code {
-  background: #f1f5f9;
-  padding: 0.125rem 0.375rem;
-  border-radius: 4px;
-  font-size: 0.875rem;
-}
-.content pre code {
-  background: transparent;
-  padding: 0;
-}
-.back-link {
-  display: inline-block;
-  margin-bottom: 1.5rem;
-  color: var(--primary);
-  text-decoration: none;
-  font-size: 0.875rem;
-}
-.back-link:hover { text-decoration: underline; }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>税务管理模块规格书</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            line-height: 1.8;
+            color: #333;
+            background: #f5f7fa;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            padding: 40px;
+        }
+        .doc-header {
+            text-align: center;
+            padding-bottom: 30px;
+            border-bottom: 2px solid #e8ecf1;
+            margin-bottom: 30px;
+        }
+        .doc-header h1 {
+            font-size: 32px;
+            color: #1a1a2e;
+            margin-bottom: 15px;
+        }
+        .doc-meta {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+        .meta-item {
+            background: #f0f4f8;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            color: #5a6c7d;
+        }
+        h2 {
+            font-size: 24px;
+            color: #1a1a2e;
+            margin: 30px 0 15px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #3498db;
+        }
+        h3 {
+            font-size: 18px;
+            color: #2c3e50;
+            margin: 25px 0 12px;
+        }
+        p {
+            margin-bottom: 15px;
+            text-align: justify;
+        }
+        
+        /* 代码块样式 */
+        .code-block {
+            margin: 20px 0;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .code-header {
+            background: #2d3748;
+            color: #fff;
+            padding: 8px 16px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        .code-block pre {
+            background: #1a202c;
+            color: #e2e8f0;
+            padding: 20px;
+            overflow-x: auto;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+        .code-block code {
+            font-family: inherit;
+        }
+        .inline-code {
+            background: #f0f4f8;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.9em;
+            color: #e53e3e;
+        }
+        
+        /* 表格样式 */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 14px;
+        }
+        .data-table th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            padding: 14px;
+            text-align: left;
+            font-weight: 600;
+        }
+        .data-table td {
+            padding: 12px 14px;
+            border-bottom: 1px solid #e8ecf1;
+        }
+        .data-table tr:hover {
+            background: #f8fafc;
+        }
+        
+        /* 列表样式 */
+        ul {
+            margin: 15px 0;
+            padding-left: 25px;
+        }
+        li {
+            margin-bottom: 8px;
+        }
+        
+        /* 架构图/流程图容器 */
+        .diagram-container {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            overflow-x: auto;
+        }
+        .diagram-container pre {
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 12px;
+            line-height: 1.4;
+            color: #2d3748;
+        }
+        
+        /* 接口卡片 */
+        .api-card {
+            background: #f8fafc;
+            border-left: 4px solid #3498db;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        .api-method {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-right: 10px;
+        }
+        .api-method.get { background: #48bb78; color: #fff; }
+        .api-method.post { background: #4299e1; color: #fff; }
+        .api-method.put { background: #ed8936; color: #fff; }
+        .api-method.delete { background: #f56565; color: #fff; }
+        .api-path {
+            font-family: 'Consolas', monospace;
+            font-size: 14px;
+            color: #2d3748;
+        }
+        .api-section {
+            margin-top: 15px;
+        }
+        .api-section-title {
+            font-weight: 600;
+            color: #4a5568;
+            margin-bottom: 8px;
+            font-size: 13px;
+            text-transform: uppercase;
+        }
+        
+        /* 警告框 */
+        .alert {
+            padding: 16px 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .alert-info {
+            background: #ebf8ff;
+            border-left: 4px solid #4299e1;
+        }
+        .alert-warning {
+            background: #fffaf0;
+            border-left: 4px solid #ed8936;
+        }
+        .alert-success {
+            background: #f0fff4;
+            border-left: 4px solid #48bb78;
+        }
+        
+        /* 状态标签 */
+        .status-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        .status-done { background: #c6f6d5; color: #22543d; }
+        .status-pending { background: #feebc8; color: #744210; }
+        .status-deprecated { background: #fed7d7; color: #742a2a; }
+    </style>
 </head>
 <body>
-<div class="container">
-  <a href="../index.html" class="back-link">← 返回目录</a>
-  <div class="header">
-    <h1>税务管理模块规格书</h1>
-    <div class="meta">Dev_Dept · ERP财务管理系统</div>
-  </div>
-  <div class="content">
-    <h1>税务管理模块 - 技术规格说明书</h1>
+    <div class="container">
+        <div class="doc-header">
+            <h1>税务管理模块规格书</h1>
+            <div class="doc-meta">
+                <span class="meta-item">📅 版本: V1.0</span>
+                <span class="meta-item">👥 产品团队</span>
+                <span class="meta-item">📋 需求规格说明书</span>
+            </div>
+        </div>
+        <h1>税务管理模块 - 技术规格说明书</h1>
 
 <h2>Tax Management Module — Technical Specification</h2>
 
@@ -122,7 +242,7 @@ body {
 
 税务管理模块是ERP财务系统的<strong>税务数据中心</strong>，负责税务基础配置、税金自动计提、税务申报管理、税负分析等全流程税务管理工作。它与总账、应收应付、发票管理模块深度集成，实现业财税一体化。
 
-<code></code>`
+``<code class="inline-code">
 ┌─────────────────────────────────────────────────────────────────┐
 │                      🏛️ 税务管理模块                              │
 ├─────────────────────────────────────────────────────────────────┤
@@ -146,30 +266,30 @@ body {
      ┌──────────┐   ┌──────────┐   ┌──────────┐
      │ 发票管理  │   │ 应收应付  │   │  报表中心  │
      └──────────┘   └──────────┘   └──────────┘
-<code></code>`
+</code>`<code class="inline-code">
 
 <h3>1.2 核心能力</h3>
 
-<table><tr><td>能力</td><td>描述</td><td>优先级</td></tr>
-
-<tr><td>🏗️ 税务基础配置</td><td>税种、税率、申报周期、税收优惠等基础数据管理</td><td>P0</td></tr>
-<tr><td>💰 税金自动计提</td><td>根据业务数据自动计算增值税、所得税、附加税等</td><td>P0</td></tr>
-<tr><td>📋 税务申报管理</td><td>申报表自动生成、申报状态跟踪、缴款管理</td><td>P0</td></tr>
-<tr><td>📊 税负分析</td><td>税负率分析、同比环比分析、税务风险预警</td><td>P1</td></tr>
-<tr><td>🔗 业财税一体化</td><td>与发票、总账、应收应付深度集成</td><td>P0</td></tr>
-<tr><td>📑 申报台账</td><td>完整的申报记录留存，满足税务稽查要求</td><td>P0</td></tr>
+| 能力 | 描述 | 优先级 |
+|:-----|:-----|:-------|
+| 🏗️ 税务基础配置 | 税种、税率、申报周期、税收优惠等基础数据管理 | P0 |
+| 💰 税金自动计提 | 根据业务数据自动计算增值税、所得税、附加税等 | P0 |
+| 📋 税务申报管理 | 申报表自动生成、申报状态跟踪、缴款管理 | P0 |
+| 📊 税负分析 | 税负率分析、同比环比分析、税务风险预警 | P1 |
+| 🔗 业财税一体化 | 与发票、总账、应收应付深度集成 | P0 |
+| 📑 申报台账 | 完整的申报记录留存，满足税务稽查要求 | P0 |
 
 <h3>1.3 金蝶云星空对标</h3>
 
-<tr><td>金蝶云星空功能</td><td>本系统实现</td><td>说明</td></tr>
-
-<tr><td>税务组织管理</td><td>✅ 实现</td><td>支持多税务组织/分公司</td></tr>
-<tr><td>税种/税率设置</td><td>✅ 实现</td><td>增值税、所得税、附加税等</td></tr>
-<tr><td>税金及附加税计提方案</td><td>✅ 实现</td><td>自动计提规则配置</td></tr>
-<tr><td>增值税申报方案</td><td>✅ 实现</td><td>一般纳税人/小规模</td></tr>
-<tr><td>所得税预缴方案</td><td>✅ 实现</td><td>季度预缴、年度汇算</td></tr>
-<tr><td>税务申报台账</td><td>✅ 实现</td><td>申报状态全流程跟踪</td></tr>
-<tr><td>税负分析报表</td><td>✅ 实现</td><td>税负率、同比分析</td></tr>
+| 金蝶云星空功能 | 本系统实现 | 说明 |
+|:-------------|:---------|:-----|
+| 税务组织管理 | ✅ 实现 | 支持多税务组织/分公司 |
+| 税种/税率设置 | ✅ 实现 | 增值税、所得税、附加税等 |
+| 税金及附加税计提方案 | ✅ 实现 | 自动计提规则配置 |
+| 增值税申报方案 | ✅ 实现 | 一般纳税人/小规模 |
+| 所得税预缴方案 | ✅ 实现 | 季度预缴、年度汇算 |
+| 税务申报台账 | ✅ 实现 | 申报状态全流程跟踪 |
+| 税负分析报表 | ✅ 实现 | 税负率、同比分析 |
 
 ---
 
@@ -177,7 +297,7 @@ body {
 
 <h3>2.1 税务管理业务流程</h3>
 
-<code></code>`
+</code>`<code class="inline-code">
 ┌──────────────────────────────────────────────────────────────────────────┐
 │                           税务管理主流程                                   │
 └──────────────────────────────────────────────────────────────────────────┘
@@ -222,11 +342,11 @@ body {
    │ • 确认申报   │                           │ • 总账凭证   │
    │ • 状态跟踪   │                           │ • 完税凭证   │
    └─────────────┘                           └─────────────┘
-<code></code>`
+</code>`<code class="inline-code">
 
 <h3>2.2 税务管理子系统划分</h3>
 
-<code></code>`
+</code>`<code class="inline-code">
 ┌─────────────────────────────────────────────────────────────────┐
 │                     税务管理系统（TaxMS）                          │
 ├──────────────────────┬──────────────────────┬──────────────────┤
@@ -238,7 +358,7 @@ body {
 │ • 税收优惠政策       │ • 税金计提方案        │ • 缴款管理        │
 │ • 地区税率维护       │ • 税金计算引擎        │ • 申报台账        │
 └──────────────────────┴──────────────────────┴──────────────────┘
-<code></code>`
+</code>`<code class="inline-code">
 
 ---
 
@@ -248,54 +368,49 @@ body {
 
 #### 3.1.1 税务组织管理
 
-<tr><td>字段</td><td>类型</td><td>说明</td></tr>
-
-<tr><td>组织编码</td><td>String(20)</td><td>唯一编码</td></tr>
-<tr><td>组织名称</td><td>String(100)</td><td>税务登记名称</td></tr>
-<tr><td>纳税人识别号</td><td>String(20)</td><td>统一社会信用代码</td></tr>
-<tr><td>纳税人类型</td><td>Enum</td><td>一般纳税人/小规模纳税人</td></tr>
-<tr><td>主管税务机关</td><td>String(100)</td><td>所属税务局</td></tr>
-<tr><td>税务申报周期</td><td>Enum</td><td>月报/季报/年报</td></tr>
-<tr><td>启用状态</td><td>Boolean</td><td>启用/停用</td></tr>
+| 字段 | 类型 | 说明 |
+|:-----|:-----|:-----|
+| 组织编码 | String(20) | 唯一编码 |
+| 组织名称 | String(100) | 税务登记名称 |
+| 纳税人识别号 | String(20) | 统一社会信用代码 |
+| 纳税人类型 | Enum | 一般纳税人/小规模纳税人 |
+| 主管税务机关 | String(100) | 所属税务局 |
+| 税务申报周期 | Enum | 月报/季报/年报 |
+| 启用状态 | Boolean | 启用/停用 |
 
 #### 3.1.2 税种税率设置
 
-<tr><td>税种</td><td>税率类型</td><td>标准税率</td><td>适用范围</td></tr>
-
-<tr><td>增值税-一般纳税人</td><td>13%/9%/6%/0%</td><td>多档</td><td>销售货物/服务</td></tr>
-<tr><td>增值税-小规模</td><td>3%/5%/0%</td><td>3%</td><td>小规模纳税人</td></tr>
-<tr><td>企业所得税</td><td>25%/15%/20%</td><td>25%</td><td>企业利润</td></tr>
-<tr><td>个人所得税</td><td>3%-45%累进</td><td>7级累进</td><td>员工薪酬</td></tr>
-<tr><td>附加税-城建税</td><td>7%/5%/1%</td><td>7%</td><td>增值税基数</td></tr>
-<tr><td>附加税-教育费附加</td><td>3%</td><td>3%</td><td>增值税基数</td></tr>
-<tr><td>附加税-地方教育附加</td><td>2%</td><td>2%</td><td>增值税基数</td></tr>
-<tr><td>印花税</td><td>0.03%-1‰</td><td>按税目</td><td>合同/账簿</td></tr>
+| 税种 | 税率类型 | 标准税率 | 适用范围 |
+|:-----|:--------|:--------|:---------|
+| 增值税-一般纳税人 | 13%/9%/6%/0% | 多档 | 销售货物/服务 |
+| 增值税-小规模 | 3%/5%/0% | 3% | 小规模纳税人 |
+| 企业所得税 | 25%/15%/20% | 25% | 企业利润 |
+| 个人所得税 | 3%-45%累进 | 7级累进 | 员工薪酬 |
+| 附加税-城建税 | 7%/5%/1% | 7% | 增值税基数 |
+| 附加税-教育费附加 | 3% | 3% | 增值税基数 |
+| 附加税-地方教育附加 | 2% | 2% | 增值税基数 |
+| 印花税 | 0.03%-1‰ | 按税目 | 合同/账簿 |
 
 #### 3.1.3 税收优惠政策
 
-<code></code>`yaml
-优惠政策库:
-  - 名称: 小微企业所得税优惠
+</code>`<code class="inline-code">yaml
+优惠政策库:<ul><li>名称: 小微企业所得税优惠</li></ul>
     条件: 年应税所得额≤300万
     优惠: 应税所得额×20%
-    有效期: 2027-12-31
-
-  - 名称: 增值税小规模纳税人免税
+    有效期: 2027-12-31<ul><li>名称: 增值税小规模纳税人免税</li></ul>
     条件: 月销售额≤10万/季销售额≤30万
     优惠: 免征增值税
-    有效期: 长期
-
-  - 名称: 加计抵减政策
+    有效期: 长期<ul><li>名称: 加计抵减政策</li></ul>
     条件: 生产性服务业纳税人
     优惠: 可抵扣进项税额×10%加计抵减
     有效期: 2027-12-31
-<code></code>`
+</code>`<code class="inline-code">
 
 <h3>3.2 税金管理</h3>
 
 #### 3.2.1 增值税管理
 
-<code></code>`
+</code>`<code class="inline-code">
 ┌─────────────────────────────────────────────────────────────┐
 │                    增值税计算逻辑                            │
 ├─────────────────────────────────────────────────────────────┤
@@ -315,11 +430,11 @@ body {
 │  留抵税额 = MAX(可抵扣进项 - 销项税额, 0)  → 结转下期抵扣    │
 │                                                             │
 └─────────────────────────────────────────────────────────────┘
-<code></code>`
+</code>`<code class="inline-code">
 
 #### 3.2.2 所得税管理
 
-<code></code>`
+</code>`<code class="inline-code">
 ┌─────────────────────────────────────────────────────────────┐
 │                    所得税计算逻辑                            │
 ├─────────────────────────────────────────────────────────────┤
@@ -341,11 +456,11 @@ body {
 │  年度汇算 = 年度应纳所得税 - 已预缴总额                      │
 │                                                             │
 └─────────────────────────────────────────────────────────────┘
-<code></code>`
+</code>`<code class="inline-code">
 
 #### 3.2.3 附加税管理
 
-<code></code>`python
+</code>`<code class="inline-code">python
 <h1>附加税计算规则</h1>
 附加税基数 = 增值税应纳税额 + 消费税额
 
@@ -356,22 +471,22 @@ body {
 <h1>减免规则</h1>
 if 小规模纳税人 and 季度销售额 <= 30万:
     附加税 = 0  # 免征
-<code></code>`
+</code>`<code class="inline-code">
 
 #### 3.2.4 税金计提方案
 
-<tr><td>方案编码</td><td>方案名称</td><td>计提规则</td><td>凭证模板</td></tr>
-
-<tr><td>TX-001</td><td>增值税计提</td><td>应纳增值税×100%</td><td>借: 税金及附加 贷: 应交税费-增值税</td></tr>
-<tr><td>TX-002</td><td>附加税计提</td><td>附加税合计×100%</td><td>借: 税金及附加 贷: 应交税费-附加税</td></tr>
-<tr><td>TX-003</td><td>所得税计提</td><td>应纳所得税×100%</td><td>借: 所得税费用 贷: 应交税费-所得税</td></tr>
-<tr><td>TX-004</td><td>个税代扣</td><td>代扣代缴金额×100%</td><td>借: 应付职工薪酬 贷: 应交税费-个税</td></tr>
+| 方案编码 | 方案名称 | 计提规则 | 凭证模板 |
+|:--------|:--------|:--------|:---------|
+| TX-001 | 增值税计提 | 应纳增值税×100% | 借: 税金及附加 贷: 应交税费-增值税 |
+| TX-002 | 附加税计提 | 附加税合计×100% | 借: 税金及附加 贷: 应交税费-附加税 |
+| TX-003 | 所得税计提 | 应纳所得税×100% | 借: 所得税费用 贷: 应交税费-所得税 |
+| TX-004 | 个税代扣 | 代扣代缴金额×100% | 借: 应付职工薪酬 贷: 应交税费-个税 |
 
 <h3>3.3 税务申报管理</h3>
 
 #### 3.3.1 申报日历
 
-<code></code>`yaml
+</code>`<code class="inline-code">yaml
 申报周期:
   增值税:
     一般纳税人: 每月1-15日
@@ -387,11 +502,11 @@ if 小规模纳税人 and 季度销售额 <= 30万:
 
   附加税:
     与增值税同步申报
-<code></code>`
+</code>`<code class="inline-code">
 
 #### 3.3.2 申报状态流转
 
-<code></code>`
+</code>`<code class="inline-code">
 ┌──────────┐    ┌──────────┐    ┌──────────┐    ┌──────────┐
 │  待申报   │───▶│  申报中   │───▶│  已申报   │───▶│  已缴款   │
 │ PREPARE   │    │ FILING   │    │  FILED   │    │  PAID    │
@@ -400,22 +515,22 @@ if 小规模纳税人 and 季度销售额 <= 30万:
      │ 撤回                                               │ 完成
      │                                                    │
      └────────────────────────────────────────────────────┘
-<code></code>`
+</code>`<code class="inline-code">
 
 #### 3.3.3 申报台账字段
 
-<tr><td>字段</td><td>说明</td></tr>
-
-<tr><td>申报编号</td><td>自动生成，唯一标识</td></tr>
-<tr><td>申报期间</td><td>所属税务期间</td></tr>
-<tr><td>税种</td><td>增值税/所得税/附加税等</td></tr>
-<tr><td>申报类型</td><td>正常申报/更正申报/补充申报</td></tr>
-<tr><td>申报金额</td><td>本期应纳税额</td></tr>
-<tr><td>申报日期</td><td>实际申报日期</td></tr>
-<tr><td>申报状态</td><td>待申报/申报中/已申报/已缴款</td></tr>
-<tr><td>缴款期限</td><td>最迟缴款日期</td></tr>
-<tr><td>缴款日期</td><td>实际缴款日期</td></tr>
-<tr><td>电子凭证</td><td>完税凭证PDF/电子税票</td></tr>
+| 字段 | 说明 |
+|:-----|:-----|
+| 申报编号 | 自动生成，唯一标识 |
+| 申报期间 | 所属税务期间 |
+| 税种 | 增值税/所得税/附加税等 |
+| 申报类型 | 正常申报/更正申报/补充申报 |
+| 申报金额 | 本期应纳税额 |
+| 申报日期 | 实际申报日期 |
+| 申报状态 | 待申报/申报中/已申报/已缴款 |
+| 缴款期限 | 最迟缴款日期 |
+| 缴款日期 | 实际缴款日期 |
+| 电子凭证 | 完税凭证PDF/电子税票 |
 
 ---
 
@@ -423,7 +538,7 @@ if 小规模纳税人 and 季度销售额 <= 30万:
 
 <h3>4.1 模块集成关系图</h3>
 
-<code></code>`
+</code>`<code class="inline-code">
 ┌──────────────────────────────────────────────────────────────────┐
 │                                                                  │
 │  ┌─────────────┐        ┌─────────────┐        ┌─────────────┐  │
@@ -444,13 +559,13 @@ if 小规模纳税人 and 季度销售额 <= 30万:
 │                         └─────────────┘                           │
 │                                                                  │
 └──────────────────────────────────────────────────────────────────┘
-<code></code>`
+</code>`<code class="inline-code">
 
 <h3>4.2 接口规范</h3>
 
 #### 4.2.1 销项发票接口
 
-<code></code>`json
+</code>`<code class="inline-code">json
 {
   "interface": "tax_output_invoice",
   "source": "发票管理-销项发票",
@@ -465,11 +580,11 @@ if 小规模纳税人 and 季度销售额 <= 30万:
     "total_amount": "价税合计"
   }
 }
-<code></code>`
+</code>`<code class="inline-code">
 
 #### 4.2.2 进项发票接口
 
-<code></code>`json
+</code>`<code class="inline-code">json
 {
   "interface": "tax_input_invoice",
   "source": "发票管理-进项发票",
@@ -484,11 +599,11 @@ if 小规模纳税人 and 季度销售额 <= 30万:
     "deductible_amount": "可抵扣税额"
   }
 }
-<code></code>`
+</code>`<code class="inline-code">
 
 #### 4.2.3 凭证生成接口
 
-<code></code>`json
+</code>`<code class="inline-code">json
 {
   "interface": "tax_voucher_generate",
   "source": "税务管理-税金计提",
@@ -503,7 +618,7 @@ if 小规模纳税人 and 季度销售额 <= 30万:
     ]
   }
 }
-<code></code>`
+</code>`<code class="inline-code">
 
 ---
 
@@ -511,30 +626,25 @@ if 小规模纳税人 and 季度销售额 <= 30万:
 
 <h3>5.1 核心分析指标</h3>
 
-<tr><td>指标</td><td>计算公式</td><td>参考值</td></tr>
-
-<tr><td>增值税税负率</td><td>本期应纳增值税 / 本期销售收入 × 100%</td><td>1%-3%</td></tr>
-<tr><td>所得税税负率</td><td>本期应纳所得税 / 本期利润总额 × 100%</td><td>15%-25%</td></tr>
-<tr><td>综合税负率</td><td>本期总税金 / 本期销售收入 × 100%</td><td>3%-6%</td></tr>
-<tr><td>税前利润率</td><td>利润总额 / 销售收入 × 100%</td><td>行业参考</td></tr>
-<tr><td>税后利润率</td><td>净利润 / 销售收入 × 100%</td><td>行业参考</td></tr>
+| 指标 | 计算公式 | 参考值 |
+|:-----|:--------|:-------|
+| 增值税税负率 | 本期应纳增值税 / 本期销售收入 × 100% | 1%-3% |
+| 所得税税负率 | 本期应纳所得税 / 本期利润总额 × 100% | 15%-25% |
+| 综合税负率 | 本期总税金 / 本期销售收入 × 100% | 3%-6% |
+| 税前利润率 | 利润总额 / 销售收入 × 100% | 行业参考 |
+| 税后利润率 | 净利润 / 销售收入 × 100% | 行业参考 |
 
 <h3>5.2 风险预警规则</h3>
 
-<code></code>`yaml
-风险预警:
-  - 等级: 高风险
+</code>`<code class="inline-code">yaml
+风险预警:<ul><li>等级: 高风险</li></ul>
     条件: 增值税税负率 < 0.5%
-    建议: 请检查进项发票是否充分取得
-
-  - 等级: 中风险
+    建议: 请检查进项发票是否充分取得<ul><li>等级: 中风险</li></ul>
     条件: 所得税税负率 < 10%
-    建议: 请核实成本费用扣除是否合规
-
-  - 等级: 提醒
+    建议: 请核实成本费用扣除是否合规<ul><li>等级: 提醒</li></ul>
     条件: 申报截止日前3天未申报
     建议: 请尽快完成本期税务申报
-<code></code>`
+</code>`<code class="inline-code">
 
 ---
 
@@ -544,7 +654,7 @@ if 小规模纳税人 and 季度销售额 <= 30万:
 
 #### tax_org（税务组织表）
 
-<code></code>`sql
+</code>`<code class="inline-code">sql
 CREATE TABLE tax_org (
     id VARCHAR(36) PRIMARY KEY,
     org_code VARCHAR(20) NOT NULL UNIQUE,
@@ -557,11 +667,11 @@ CREATE TABLE tax_org (
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
-<code></code>`
+</code>`<code class="inline-code">
 
 #### tax_rate（税率配置表）
 
-<code></code>`sql
+</code>`<code class="inline-code">sql
 CREATE TABLE tax_rate (
     id VARCHAR(36) PRIMARY KEY,
     tax_type VARCHAR(20) NOT NULL,     -- 税种
@@ -572,11 +682,11 @@ CREATE TABLE tax_rate (
     expiry_date DATE,                   -- 失效日期
     status TINYINT DEFAULT 1
 );
-<code></code>`
+</code>`<code class="inline-code">
 
 #### tax_accrual（税金计提表）
 
-<code></code>`sql
+</code>`<code class="inline-code">sql
 CREATE TABLE tax_accrual (
     id VARCHAR(36) PRIMARY KEY,
     org_id VARCHAR(36),
@@ -591,11 +701,11 @@ CREATE TABLE tax_accrual (
     status VARCHAR(20),                 -- 状态
     remark TEXT
 );
-<code></code>`
+</code>`<code class="inline-code">
 
 #### tax_filing（申报表）
 
-<code></code>`sql
+</code>`<code class="inline-code">sql
 CREATE TABLE tax_filing (
     id VARCHAR(36) PRIMARY KEY,
     filing_no VARCHAR(30) UNIQUE,       -- 申报编号
@@ -613,7 +723,7 @@ CREATE TABLE tax_filing (
     operator VARCHAR(50),
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
-<code></code>`
+</code>``
 
 ---
 
@@ -621,34 +731,29 @@ CREATE TABLE tax_filing (
 
 <h3>7.1 功能验收</h3>
 
-<tr><td>序号</td><td>测试项</td><td>验收条件</td><td>优先级</td></tr>
-
-<tr><td>1</td><td>税务组织管理</td><td>支持增删改查、多组织切换</td><td>P0</td></tr>
-<tr><td>2</td><td>税率配置</td><td>支持多税率设置、生效失效日期</td><td>P0</td></tr>
-<tr><td>3</td><td>增值税计算</td><td>自动汇总销项/进项，计算应纳税额</td><td>P0</td></tr>
-<tr><td>4</td><td>附加税计算</td><td>基于增值税自动计算附加税</td><td>P0</td></tr>
-<tr><td>5</td><td>所得税计算</td><td>支持季度预缴、年度汇算</td><td>P0</td></tr>
-<tr><td>6</td><td>申报表生成</td><td>自动生成申报数据汇总表</td><td>P0</td></tr>
-<tr><td>7</td><td>申报状态管理</td><td>全流程状态跟踪、到期提醒</td><td>P0</td></tr>
-<tr><td>8</td><td>凭证生成</td><td>自动生成计提凭证到总账</td><td>P1</td></tr>
-<tr><td>9</td><td>税负分析</td><td>税负率、同比环比分析图表</td><td>P1</td></tr>
-<tr><td>10</td><td>发票集成</td><td>自动读取发票模块数据</td><td>P0</td></tr>
+| 序号 | 测试项 | 验收条件 | 优先级 |
+|:----:|:-------|:--------|:-------|
+| 1 | 税务组织管理 | 支持增删改查、多组织切换 | P0 |
+| 2 | 税率配置 | 支持多税率设置、生效失效日期 | P0 |
+| 3 | 增值税计算 | 自动汇总销项/进项，计算应纳税额 | P0 |
+| 4 | 附加税计算 | 基于增值税自动计算附加税 | P0 |
+| 5 | 所得税计算 | 支持季度预缴、年度汇算 | P0 |
+| 6 | 申报表生成 | 自动生成申报数据汇总表 | P0 |
+| 7 | 申报状态管理 | 全流程状态跟踪、到期提醒 | P0 |
+| 8 | 凭证生成 | 自动生成计提凭证到总账 | P1 |
+| 9 | 税负分析 | 税负率、同比环比分析图表 | P1 |
+| 10 | 发票集成 | 自动读取发票模块数据 | P0 |
 
 <h3>7.2 性能要求</h3>
 
-<tr><td>指标</td><td>要求</td></tr>
+| 指标 | 要求 |
+|:-----|:-----|
+| 页面响应时间 | ≤ 2秒 |
+| 税金计算（单期间） | ≤ 5秒 |
+| 申报表生成 | ≤ 10秒 |
+| 批量数据处理 | 支持10万条/月 |
 
-<tr><td>页面响应时间</td><td>≤ 2秒</td></tr>
-<tr><td>税金计算（单期间）</td><td>≤ 5秒</td></tr>
-<tr><td>申报表生成</td><td>≤ 10秒</td></tr>
-<tr><td>批量数据处理</td><td>支持10万条/月</td></tr>
-
-<h3>7.3 合规要求</h3>
-
-<li>申报数据保留10年</li>
-<li>支持税务稽查导出</li>
-<li>符合电子发票归档规范</li>
-<li>满足金税四期数据对接要求（预留接口）</li>
+<h3>7.3 合规要求</h3><ul><li>申报数据保留10年</li></ul><ul><li>支持税务稽查导出</li></ul><ul><li>符合电子发票归档规范</li></ul><ul><li>满足金税四期数据对接要求（预留接口）</li></ul>
 
 ---
 
@@ -656,27 +761,21 @@ CREATE TABLE tax_filing (
 
 <h3>8.1 迭代规划</h3>
 
-<tr><td>阶段</td><td>内容</td><td>工作量</td><td>优先级</td></tr>
+| 阶段 | 内容 | 工作量 | 优先级 |
+|:----:|:-----|:-------|:-------|
+| Phase 1 | 基础配置 + 增值税管理 | 2周 | P0 |
+| Phase 2 | 附加税 + 所得税管理 | 2周 | P0 |
+| Phase 3 | 申报管理 + 凭证生成 | 2周 | P0 |
+| Phase 4 | 税负分析 + 风险预警 | 1周 | P1 |
 
-<tr><td>Phase 1</td><td>基础配置 + 增值税管理</td><td>2周</td><td>P0</td></tr>
-<tr><td>Phase 2</td><td>附加税 + 所得税管理</td><td>2周</td><td>P0</td></tr>
-<tr><td>Phase 3</td><td>申报管理 + 凭证生成</td><td>2周</td><td>P0</td></tr>
-<tr><td>Phase 4</td><td>税负分析 + 风险预警</td><td>1周</td><td>P1</td></tr></table>
-
-<h3>8.2 里程碑</h3>
-
-<li><strong>M1</strong>: 税务基础配置上线</li>
-<li><strong>M2</strong>: 增值税全流程上线</li>
-<li><strong>M3</strong>: 税务申报管理上线</li>
-<li><strong>M4</strong>: 税负分析上线</li>
+<h3>8.2 里程碑</h3><ul><li><strong>M1</strong>: 税务基础配置上线</li></ul><ul><li><strong>M2</strong>: 增值税全流程上线</li></ul><ul><li><strong>M3</strong>: 税务申报管理上线</li></ul><ul><li><strong>M4</strong>: 税负分析上线</li></ul>
 
 ---
 
-<em>文档版本: v1.0</em>
-<em>最后更新: 2026-04-17</em>
-<em>编制: Dev_Dept</em>
-
-  </div>
-</div>
+*文档版本: v1.0*
+*最后更新: 2026-04-17*
+*编制: Dev_Dept*
+</p>
+    </div>
 </body>
 </html>
