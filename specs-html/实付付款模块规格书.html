@@ -4,247 +4,94 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>实付付款模块规格书</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
-            line-height: 1.8;
-            color: #333;
-            background: #f5f7fa;
-            padding: 20px;
+            font-family: 'Noto Sans SC', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            line-height: 1.9;
+            color: #2d3748;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8ec 100%);
+            min-height: 100vh;
+            padding: 30px 20px;
         }
         .container {
-            max-width: 1200px;
+            max-width: 1100px;
             margin: 0 auto;
             background: #fff;
-            border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
         }
         .doc-header {
-            text-align: center;
-            padding-bottom: 30px;
-            border-bottom: 2px solid #e8ecf1;
-            margin-bottom: 30px;
-        }
-        .doc-header h1 {
-            font-size: 32px;
-            color: #1a1a2e;
-            margin-bottom: 15px;
-        }
-        .doc-meta {
-            display: flex;
-            justify-content: center;
-            gap: 30px;
-            flex-wrap: wrap;
-        }
-        .meta-item {
-            background: #f0f4f8;
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 14px;
-            color: #5a6c7d;
-        }
-        h2 {
-            font-size: 24px;
-            color: #1a1a2e;
-            margin: 30px 0 15px;
-            padding-bottom: 10px;
-            border-bottom: 3px solid #3498db;
-        }
-        h3 {
-            font-size: 18px;
-            color: #2c3e50;
-            margin: 25px 0 12px;
-        }
-        p {
-            margin-bottom: 15px;
-            text-align: justify;
-        }
-        
-        /* 代码块样式 */
-        .code-block {
-            margin: 20px 0;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-        .code-header {
-            background: #2d3748;
-            color: #fff;
-            padding: 8px 16px;
-            font-size: 12px;
-            font-weight: 600;
-            text-transform: uppercase;
-        }
-        .code-block pre {
-            background: #1a202c;
-            color: #e2e8f0;
-            padding: 20px;
-            overflow-x: auto;
-            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
-            font-size: 13px;
-            line-height: 1.6;
-        }
-        .code-block code {
-            font-family: inherit;
-        }
-        .inline-code {
-            background: #f0f4f8;
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-family: 'Consolas', 'Monaco', monospace;
-            font-size: 0.9em;
-            color: #e53e3e;
-        }
-        
-        /* 表格样式 */
-        .data-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 20px 0;
-            font-size: 14px;
-        }
-        .data-table th {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: #fff;
-            padding: 14px;
-            text-align: left;
-            font-weight: 600;
+            padding: 40px;
+            text-align: center;
         }
-        .data-table td {
-            padding: 12px 14px;
-            border-bottom: 1px solid #e8ecf1;
-        }
-        .data-table tr:hover {
-            background: #f8fafc;
-        }
-        
-        /* 列表样式 */
-        ul {
-            margin: 15px 0;
-            padding-left: 25px;
-        }
-        li {
-            margin-bottom: 8px;
-        }
-        
-        /* 架构图/流程图容器 */
-        .diagram-container {
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
-            border-radius: 8px;
-            padding: 20px;
-            margin: 20px 0;
-            overflow-x: auto;
-        }
-        .diagram-container pre {
-            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
-            font-size: 12px;
-            line-height: 1.4;
-            color: #2d3748;
-        }
-        
-        /* 接口卡片 */
-        .api-card {
-            background: #f8fafc;
-            border-left: 4px solid #3498db;
-            padding: 20px;
-            margin: 15px 0;
-            border-radius: 0 8px 8px 0;
-        }
-        .api-method {
-            display: inline-block;
-            padding: 4px 10px;
-            border-radius: 4px;
-            font-size: 12px;
-            font-weight: 600;
-            margin-right: 10px;
-        }
-        .api-method.get { background: #48bb78; color: #fff; }
-        .api-method.post { background: #4299e1; color: #fff; }
-        .api-method.put { background: #ed8936; color: #fff; }
-        .api-method.delete { background: #f56565; color: #fff; }
-        .api-path {
-            font-family: 'Consolas', monospace;
-            font-size: 14px;
-            color: #2d3748;
-        }
-        .api-section {
-            margin-top: 15px;
-        }
-        .api-section-title {
-            font-weight: 600;
-            color: #4a5568;
-            margin-bottom: 8px;
-            font-size: 13px;
-            text-transform: uppercase;
-        }
-        
-        /* 警告框 */
-        .alert {
-            padding: 16px 20px;
-            border-radius: 8px;
-            margin: 20px 0;
-        }
-        .alert-info {
-            background: #ebf8ff;
-            border-left: 4px solid #4299e1;
-        }
-        .alert-warning {
-            background: #fffaf0;
-            border-left: 4px solid #ed8936;
-        }
-        .alert-success {
-            background: #f0fff4;
-            border-left: 4px solid #48bb78;
-        }
-        
-        /* 状态标签 */
-        .status-badge {
-            display: inline-block;
-            padding: 4px 10px;
-            border-radius: 12px;
-            font-size: 12px;
-            font-weight: 500;
-        }
-        .status-done { background: #c6f6d5; color: #22543d; }
-        .status-pending { background: #feebc8; color: #744210; }
-        .status-deprecated { background: #fed7d7; color: #742a2a; }
+        .doc-header h1 { font-size: 28px; font-weight: 600; margin-bottom: 15px; }
+        .doc-meta { display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; }
+        .meta-item { background: rgba(255,255,255,0.2); padding: 6px 14px; border-radius: 20px; font-size: 13px; }
+        .content { padding: 40px; }
+        h2 { font-size: 22px; color: #1a202c; margin: 35px 0 18px; padding-bottom: 10px; border-bottom: 3px solid #667eea; }
+        h3 { font-size: 18px; color: #2d3748; margin: 28px 0 14px; }
+        h4 { font-size: 16px; color: #4a5568; margin: 20px 0 10px; }
+        p { margin-bottom: 12px; }
+        .md-table { width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 14px; border-radius: 8px; overflow: hidden; border: 1px solid #e2e8f0; }
+        .md-table th { background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%); color: #fff; padding: 14px 16px; text-align: left; font-weight: 600; }
+        .md-table td { padding: 12px 16px; border-bottom: 1px solid #f1f5f9; }
+        .md-table tr:hover td { background: #f8fafc; }
+        .md-table tr:last-child td { border-bottom: none; }
+        .inline-code { background: #f1f5f9; color: #e53e3e; padding: 2px 7px; border-radius: 4px; font-family: 'JetBrains Mono', monospace; font-size: 0.88em; }
+        .code-block { margin: 22px 0; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        .code-header { background: #1e293b; color: #94a3b8; padding: 8px 16px; font-size: 11px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; font-family: 'JetBrains Mono', monospace; }
+        .sql-block .code-header { background: #065f46; }
+        .code-block pre { background: #0f172a; color: #e2e8f0; padding: 20px; overflow-x: auto; font-family: 'JetBrains Mono', monospace; font-size: 13px; line-height: 1.65; }
+        .code-block code { font-family: inherit; }
+        .gherkin-block { margin: 22px 0; border-radius: 10px; overflow: hidden; background: #fefce8; border: 1px solid #fbbf24; }
+        .gherkin-header { background: #f59e0b; color: #fff; padding: 8px 16px; font-size: 12px; font-weight: 600; }
+        .gherkin-content { padding: 18px; font-family: 'JetBrains Mono', monospace; font-size: 13px; line-height: 1.7; color: #78350f; white-space: pre-wrap; }
+        .csv-block { margin: 22px 0; border-radius: 10px; overflow: hidden; background: #f0fdf4; border: 1px solid #86efac; }
+        .csv-header { background: #22c55e; color: #fff; padding: 8px 16px; font-size: 12px; font-weight: 600; }
+        .csv-content { padding: 18px; font-family: 'JetBrains Mono', monospace; font-size: 13px; line-height: 1.6; color: #166534; overflow-x: auto; }
+        .ascii-diagram { margin: 22px 0; border-radius: 10px; overflow: hidden; background: #f8fafc; border: 1px solid #cbd5e1; }
+        .ascii-header { background: #475569; color: #fff; padding: 8px 16px; font-size: 12px; font-weight: 600; }
+        .ascii-content { padding: 20px; font-family: 'JetBrains Mono', 'Consolas', monospace; font-size: 13px; line-height: 1.45; color: #1e293b; white-space: pre; overflow-x: auto; }
+        .md-quote { margin: 18px 0; padding: 16px 20px; background: #eff6ff; border-left: 4px solid #3b82f6; border-radius: 0 8px 8px 0; color: #1e40af; }
+        ul { margin: 12px 0; padding-left: 28px; }
+        li { margin-bottom: 8px; }
+        .back-link { display: inline-block; margin: 20px 40px; padding: 10px 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #fff; text-decoration: none; border-radius: 8px; font-weight: 500; }
+        @media (max-width: 768px) { .content { padding: 20px; } .doc-header { padding: 25px; } .doc-header h1 { font-size: 22px; } }
     </style>
 </head>
 <body>
+    <a href="https://zlinke-zhao.github.io/erp-finance-docs/" class="back-link">← 返回入口</a>
     <div class="container">
         <div class="doc-header">
             <h1>实付付款模块规格书</h1>
             <div class="doc-meta">
-                <span class="meta-item">📅 版本: V1.0</span>
-                <span class="meta-item">👥 产品团队</span>
+                <span class="meta-item">📅 V1.0</span>
+                <span class="meta-item">👥 Dev_Dept</span>
                 <span class="meta-item">📋 需求规格说明书</span>
             </div>
         </div>
-        <h1>实付付款模块 — 需求分析与技术规格说明书</h1>
+        <div class="content"><h1>实付付款模块 — 需求分析与技术规格说明书</h1>
 
-> <strong>项目</strong>: Dev_Dept ERP 财务管理系统  
-> <strong>模块</strong>: 实付付款管理 (Payment Management, PM)  
-> <strong>版本</strong>: v1.0  
-> <strong>日期</strong>: 2026-04-15  
-> <strong>对标系统</strong>: 金蝶云星空 → 应付管理 → 付款单/核销处理  
-> <strong>优先级</strong>: P1（效率提升+资金安全） — 与实收收款同级  
-> <strong>状态</strong>: 规格设计阶段  
+<blockquote class="md-quote">**项目**: Dev_Dept ERP 财务管理系统  <br>**模块**: 实付付款管理 (Payment Management, PM)  <br>**版本**: v1.0  <br>**日期**: 2026-04-15  <br>**对标系统**: 金蝶云星空 → 应付管理 → 付款单/核销处理  <br>**优先级**: P1（效率提升+资金安全） — 与实收收款同级  <br>**状态**: 规格设计阶段  </blockquote>
 
----
+<li>--</li>
 
-<h2>1. 模块定位与业务目标</h2>
+<h2>1. 模块定位与业务目标</h2>
 
-<h3>1.1 一句话定义</h3>
+<h3>1.1 一句话定义</h3>
 
-<strong>实付付款模块是ERP系统中"资金流出"的核心枢纽，负责从采购应付款项出发，经过付款申请、多级审批、资金执行、应付核销、凭证生成，最终写入总账的全流程管理。</strong>
+<p><strong>实付付款模块是ERP系统中"资金流出"的核心枢纽，负责从采购应付款项出发，经过付款申请、多级审批、资金执行、应付核销、凭证生成，最终写入总账的全流程管理。</strong></p>
 
-<h3>1.2 在整体流程中的位置</h3>
+<h3>1.2 在整体流程中的位置</h3>
 
-``<code class="inline-code">
-采购申请 → 采购订单 → 收货验收 → 应付对账 ─┐
+<div class="code-block">
+  <div class="code-header">CODE</div>
+  <pre class="language-"><code>采购申请 → 采购订单 → 收货验收 → 应付对账 ─┐
                                           │
 进项发票 → 发票录入/查验 ────────────────┤
                                           ▼
@@ -259,39 +106,26 @@
                                   │              │
                                   │ 借:应付账款   │
                                   │ 贷:银行存款   │
-                                  └──────────────┘
-</code>`<code class="inline-code">
+                                  └──────────────┘</code></pre>
+</div>
 
-<h3>1.3 与实收收款的镜像关系</h3>
+<h3>1.3 与实收收款的镜像关系</h3>
 
-| 维度 | 实收收款（资金流入） | 实付付款（资金流出） |
-|:---|:---|:---|
-| 方向 | 钱进来 → 分配给应收 | 应付确认 → 申请审批 → 钱出去 |
-| 核心动作 | 核销（分钱） | 核销（分单） |
-| 审批需求 | 低（已到账的钱） | <strong>高（未出的钱需审批）</strong> |
-| 资金安全 | 被动接收，风险低 | <strong>主动划出，风险高</strong> |
-| 预收/预付 | 客户多付 → 预收 | 多付给供应商 → 预付 |
-| 票据 | 收到承兑汇票（应收票据） | 付出承兑汇票（应付票据） |
+<table class="md-table"><thead><tr><th>维度</th><th>实收收款（资金流入）</th><th>实付付款（资金流出）</th></tr></thead><tbody><tr><td>方向</td><td>钱进来 → 分配给应收</td><td>应付确认 → 申请审批 → 钱出去</td></tr><tr><td>核心动作</td><td>核销（分钱）</td><td>核销（分单）</td></tr><tr><td>审批需求</td><td>低（已到账的钱）</td><td><strong>高（未出的钱需审批）</strong></td></tr><tr><td>资金安全</td><td>被动接收，风险低</td><td><strong>主动划出，风险高</strong></td></tr><tr><td>预收/预付</td><td>客户多付 → 预收</td><td>多付给供应商 → 预付</td></tr><tr><td>票据</td><td>收到承兑汇票（应收票据）</td><td>付出承兑汇票（应付票据）</td></tr></tbody></table>
 
-<h3>1.4 核心业务目标</h3>
+<h3>1.4 核心业务目标</h3>
 
-| 目标 | 指标 | 当前痛点 |
-|:---|:---|:---|
-| <strong>付款可控</strong> | 100%付款经过审批流，无越权支付 | 口头通知出纳付款，无留痕 |
-| <strong>资金安全</strong> | 付款信息（账户/金额/收款方）三重校验 | 手工填网银，容易输错 |
-| <strong>核销准确</strong> | 应付余额与实际付款实时同步 | 付了款但应付余额没更新 |
-| <strong>预付透明</strong> | 预付余额实时可见，到期自动提醒 | 预付了多少钱不知道，容易遗忘 |
-| <strong>凭证自动化</strong> | 付款确认后自动生成凭证 | 手工做分录 |
-| <strong>供应商账龄</strong> | 准确的供应商应付账龄分析 | 月末才统计，平时不准 |
+<table class="md-table"><thead><tr><th>目标</th><th>指标</th><th>当前痛点</th></tr></thead><tbody><tr><td><strong>付款可控</strong></td><td>100%付款经过审批流，无越权支付</td><td>口头通知出纳付款，无留痕</td></tr><tr><td><strong>资金安全</strong></td><td>付款信息（账户/金额/收款方）三重校验</td><td>手工填网银，容易输错</td></tr><tr><td><strong>核销准确</strong></td><td>应付余额与实际付款实时同步</td><td>付了款但应付余额没更新</td></tr><tr><td><strong>预付透明</strong></td><td>预付余额实时可见，到期自动提醒</td><td>预付了多少钱不知道，容易遗忘</td></tr><tr><td><strong>凭证自动化</strong></td><td>付款确认后自动生成凭证</td><td>手工做分录</td></tr><tr><td><strong>供应商账龄</strong></td><td>准确的供应商应付账龄分析</td><td>月末才统计，平时不准</td></tr></tbody></table>
 
----
+<li>--</li>
 
-<h2>2. 功能全景图</h2>
+<h2>2. 功能全景图</h2>
 
-<h3>2.1 功能域总览（6大域，35+功能点）</h3>
+<h3>2.1 功能域总览（6大域，35+功能点）</h3>
 
-</code>`<code class="inline-code">
-┌─────────────────────────────────────────────────────────────────┐
+<div class="code-block">
+  <div class="code-header">CODE</div>
+  <pre class="language-"><code>┌─────────────────────────────────────────────────────────────────┐
 │                    实付付款模块功能全景                           │
 ├────────────┬────────────┬────────────┬────────────┬────────────┤
 │  F1 付款   │  F2 预付   │  F3 核销   │  F4 审批   │  F5 银企   │
@@ -309,60 +143,22 @@
 │                                                                 │
 │ ·付款台账  ·应付余额表  ·预付余额表  ·供应商账龄  ·付款分析报表  │
 │ ·审批效率  ·资金计划  ·到期日历  ·导出Excel  ·打印付款单         │
-└─────────────────────────────────────────────────────────────────┘
-</code>`<code class="inline-code">
+└─────────────────────────────────────────────────────────────────┘</code></pre>
+</div>
 
-<h3>2.2 功能清单与优先级</h3>
+<h3>2.2 功能清单与优先级</h3>
 
-| 编号 | 功能 | 域 | 优先级 | 说明 |
-|:---|:---|:---:|:---:|:---|
-| F1-01 | 付款申请新建 | F1 | P1-A | 支持关联应付单/采购订单/合同 |
-| F1-02 | 应付单据自动带出 | F1 | P1-A | 选择供应商后自动展示未核销应付列表 |
-| F1-03 | 付款金额校验 | F1 | P1-A | 本次付款≤应付余额（预付除外） |
-| F1-04 | 付款方式选择 | F1 | P1-A | 银行转账/承兑汇票/现金/POS |
-| F1-05 | 附件上传 | F1 | P1-B | 合同/发票/收据扫描件 |
-| F1-06 | 批量付款 | F1 | P2-A | 同一供应商多笔应付一次性合并付款 |
-| F1-07 | 草稿/提交/撤回 | F1 | P1-A | 付款申请单生命周期管理 |
-| F1-08 | 付款单编号规则 | F1 | P1-A | FK+年月+4位序号，如FK2026040001 |
-| F2-01 | 预付申请 | F2 | P1-B | 关联采购订单/合同，≤约定预付比例 |
-| F2-02 | 预付登记 | F2 | P1-A | 审批通过后登记预付账款 |
-| F2-03 | 到货自动抵扣 | F2 | P1-A | 收货验收后系统提示可用预付余额 |
-| F2-04 | 手动部分抵扣 | F2 | P1-B | 选择抵扣金额，支持部分抵扣 |
-| F2-05 | 预付余额查询 | F2 | P1-A | 按供应商汇总预付余额 |
-| F2-06 | 超期预警 | F2 | P1-B | 预付超过3个月未抵扣自动预警 |
-| F2-07 | 预付退款 | F2 | P2-A | 供应商退款冲回预付 |
-| F3-01 | 自动核销匹配 | F3 | P1-A | 四维权重算法推荐核销方案 |
-| F3-02 | 手动核销 | F3 | P1-A | 手动选择核销的应付单及金额 |
-| F3-03 | 部分核销 | F3 | P1-A | 本次只付一部分，余款保留 |
-| F3-04 | 多对多核销 | F3 | P1-B | 多笔付款对应多张应付 |
-| F3-05 | 尾差自动处理 | F3 | P1-A | ≤¥1自动计入财务费用 |
-| F3-06 | 核销冲销 | F3 | P2-A | 付错了，冲回原核销记录 |
-| F3-07 | 智能推荐弹窗 | F3 | P1-B | 置信度评分+一键采纳 |
-| F4-01 | 多级审批配置 | F4 | P1-A | 4级阈值+可自定义 |
-| F4-02 | 审批/驳回/退回 | F4 | P1-A | 审批操作+意见填写 |
-| F4-03 | 审批超时催办 | F4 | P1-B | 超过阈值自动催办通知 |
-| F4-04 | 委托审批/加签 | F4 | P2-B | 审批人不在时委托他人 |
-| F4-05 | 审批历史查询 | F4 | P1-A | 每笔付款的完整审批轨迹 |
-| F5-01 | 银企付款指令 | F5 | P2-A | 调用银企API生成转账指令 |
-| F5-02 | 付款状态回传 | F5 | P2-A | 银行处理结果自动回写 |
-| F5-03 | 银行流水查询 | F5 | P2-A | 拉取银行付款流水做对账 |
-| F5-04 | 批量代发 | F5 | P2-B | 工资/报销批量代发 |
-| F5-05 | ECDS电子汇票 | F5 | P2-B | 承兑汇票ECDS系统对接 |
-| F6-01 | 付款台账 | F6 | P1-A | 全部付款记录查询筛选 |
-| F6-02 | 应付余额表 | F6 | P1-A | 供应商应付未付余额汇总 |
-| F6-03 | 供应商账龄分析 | F6 | P1-B | 30/60/90/180天+账龄分布 |
-| F6-04 | 付款统计报表 | F6 | P1-B | 月度/季度/年度付款汇总 |
-| F6-05 | 到期日历 | F6 | P1-B | 未来30天应付到期提醒 |
-| F6-06 | 导出/打印 | F6 | P2-A | Excel导出+付款单打印 |
+<table class="md-table"><thead><tr><th>编号</th><th>功能</th><th>域</th><th>优先级</th><th>说明</th></tr></thead><tbody><tr><td>F1-01</td><td>付款申请新建</td><td>F1</td><td>P1-A</td><td>支持关联应付单/采购订单/合同</td></tr><tr><td>F1-02</td><td>应付单据自动带出</td><td>F1</td><td>P1-A</td><td>选择供应商后自动展示未核销应付列表</td></tr><tr><td>F1-03</td><td>付款金额校验</td><td>F1</td><td>P1-A</td><td>本次付款≤应付余额（预付除外）</td></tr><tr><td>F1-04</td><td>付款方式选择</td><td>F1</td><td>P1-A</td><td>银行转账/承兑汇票/现金/POS</td></tr><tr><td>F1-05</td><td>附件上传</td><td>F1</td><td>P1-B</td><td>合同/发票/收据扫描件</td></tr><tr><td>F1-06</td><td>批量付款</td><td>F1</td><td>P2-A</td><td>同一供应商多笔应付一次性合并付款</td></tr><tr><td>F1-07</td><td>草稿/提交/撤回</td><td>F1</td><td>P1-A</td><td>付款申请单生命周期管理</td></tr><tr><td>F1-08</td><td>付款单编号规则</td><td>F1</td><td>P1-A</td><td>FK+年月+4位序号，如FK2026040001</td></tr><tr><td>F2-01</td><td>预付申请</td><td>F2</td><td>P1-B</td><td>关联采购订单/合同，≤约定预付比例</td></tr><tr><td>F2-02</td><td>预付登记</td><td>F2</td><td>P1-A</td><td>审批通过后登记预付账款</td></tr><tr><td>F2-03</td><td>到货自动抵扣</td><td>F2</td><td>P1-A</td><td>收货验收后系统提示可用预付余额</td></tr><tr><td>F2-04</td><td>手动部分抵扣</td><td>F2</td><td>P1-B</td><td>选择抵扣金额，支持部分抵扣</td></tr><tr><td>F2-05</td><td>预付余额查询</td><td>F2</td><td>P1-A</td><td>按供应商汇总预付余额</td></tr><tr><td>F2-06</td><td>超期预警</td><td>F2</td><td>P1-B</td><td>预付超过3个月未抵扣自动预警</td></tr><tr><td>F2-07</td><td>预付退款</td><td>F2</td><td>P2-A</td><td>供应商退款冲回预付</td></tr><tr><td>F3-01</td><td>自动核销匹配</td><td>F3</td><td>P1-A</td><td>四维权重算法推荐核销方案</td></tr><tr><td>F3-02</td><td>手动核销</td><td>F3</td><td>P1-A</td><td>手动选择核销的应付单及金额</td></tr><tr><td>F3-03</td><td>部分核销</td><td>F3</td><td>P1-A</td><td>本次只付一部分，余款保留</td></tr><tr><td>F3-04</td><td>多对多核销</td><td>F3</td><td>P1-B</td><td>多笔付款对应多张应付</td></tr><tr><td>F3-05</td><td>尾差自动处理</td><td>F3</td><td>P1-A</td><td>≤¥1自动计入财务费用</td></tr><tr><td>F3-06</td><td>核销冲销</td><td>F3</td><td>P2-A</td><td>付错了，冲回原核销记录</td></tr><tr><td>F3-07</td><td>智能推荐弹窗</td><td>F3</td><td>P1-B</td><td>置信度评分+一键采纳</td></tr><tr><td>F4-01</td><td>多级审批配置</td><td>F4</td><td>P1-A</td><td>4级阈值+可自定义</td></tr><tr><td>F4-02</td><td>审批/驳回/退回</td><td>F4</td><td>P1-A</td><td>审批操作+意见填写</td></tr><tr><td>F4-03</td><td>审批超时催办</td><td>F4</td><td>P1-B</td><td>超过阈值自动催办通知</td></tr><tr><td>F4-04</td><td>委托审批/加签</td><td>F4</td><td>P2-B</td><td>审批人不在时委托他人</td></tr><tr><td>F4-05</td><td>审批历史查询</td><td>F4</td><td>P1-A</td><td>每笔付款的完整审批轨迹</td></tr><tr><td>F5-01</td><td>银企付款指令</td><td>F5</td><td>P2-A</td><td>调用银企API生成转账指令</td></tr><tr><td>F5-02</td><td>付款状态回传</td><td>F5</td><td>P2-A</td><td>银行处理结果自动回写</td></tr><tr><td>F5-03</td><td>银行流水查询</td><td>F5</td><td>P2-A</td><td>拉取银行付款流水做对账</td></tr><tr><td>F5-04</td><td>批量代发</td><td>F5</td><td>P2-B</td><td>工资/报销批量代发</td></tr><tr><td>F5-05</td><td>ECDS电子汇票</td><td>F5</td><td>P2-B</td><td>承兑汇票ECDS系统对接</td></tr><tr><td>F6-01</td><td>付款台账</td><td>F6</td><td>P1-A</td><td>全部付款记录查询筛选</td></tr><tr><td>F6-02</td><td>应付余额表</td><td>F6</td><td>P1-A</td><td>供应商应付未付余额汇总</td></tr><tr><td>F6-03</td><td>供应商账龄分析</td><td>F6</td><td>P1-B</td><td>30/60/90/180天+账龄分布</td></tr><tr><td>F6-04</td><td>付款统计报表</td><td>F6</td><td>P1-B</td><td>月度/季度/年度付款汇总</td></tr><tr><td>F6-05</td><td>到期日历</td><td>F6</td><td>P1-B</td><td>未来30天应付到期提醒</td></tr><tr><td>F6-06</td><td>导出/打印</td><td>F6</td><td>P2-A</td><td>Excel导出+付款单打印</td></tr></tbody></table>
 
----
+<li>--</li>
 
-<h2>3. 数据模型设计</h2>
+<h2>3. 数据模型设计</h2>
 
-<h3>3.1 ER关系图</h3>
+<h3>3.1 ER关系图</h3>
 
-</code>`<code class="inline-code">
-┌──────────────────┐       ┌──────────────────┐
+<div class="code-block">
+  <div class="code-header">CODE</div>
+  <pre class="language-"><code>┌──────────────────┐       ┌──────────────────┐
 │  payment_order   │       │  payment_writeoff │
 │  付款申请单       │ 1───N │  付款核销记录     │
 │                  │       │                  │
@@ -372,15 +168,16 @@
 │ 供应商预付余额    │       │  应付单据(引用)   │
 │                  │       │                  │
 │ SP2026040001    │       │                  │
-└──────────────────┘       └──────────────────┘
-</code>`<code class="inline-code">
+└──────────────────┘       └──────────────────┘</code></pre>
+</div>
 
-<h3>3.2 表结构DDL</h3>
+<h3>3.2 表结构DDL</h3>
 
-#### 表1: payment_order（付款申请单主表）
+<h4>表1: payment_order（付款申请单主表）</h4>
 
-</code>`<code class="inline-code">sql
-CREATE TABLE payment_order (
+<div class="code-block sql-block">
+  <div class="code-header">SQL</div>
+  <pre class="language-sql"><code>CREATE TABLE payment_order (
     id              BIGINT PRIMARY KEY AUTO_INCREMENT COMMENT '主键ID',
     payment_no      VARCHAR(20) NOT NULL UNIQUE COMMENT '付款单号 FK+年月+序号',
     
@@ -437,13 +234,14 @@ CREATE TABLE payment_order (
     INDEX idx_status (status),
     INDEX idx_plan_date (plan_pay_date),
     INDEX idx_creator (creator_id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='付款申请单';
-</code>`<code class="inline-code">
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='付款申请单';</code></pre>
+</div>
 
-#### 表2: payment_writeoff（付款核销记录表）
+<h4>表2: payment_writeoff（付款核销记录表）</h4>
 
-</code>`<code class="inline-code">sql
-CREATE TABLE payment_writeoff (
+<div class="code-block sql-block">
+  <div class="code-header">SQL</div>
+  <pre class="language-sql"><code>CREATE TABLE payment_writeoff (
     id              BIGINT PRIMARY KEY AUTO_INCREMENT COMMENT '主键ID',
     writeoff_no     VARCHAR(20) NOT NULL UNIQUE COMMENT '核销编号 WO+年月+序号',
     payment_id      BIGINT NOT NULL COMMENT '付款单ID',
@@ -476,13 +274,14 @@ CREATE TABLE payment_writeoff (
     INDEX idx_payment (payment_id),
     INDEX idx_ap_bill (ap_bill_id),
     INDEX idx_status (status)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='付款核销记录';
-</code>`<code class="inline-code">
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='付款核销记录';</code></pre>
+</div>
 
-#### 表3: supplier_prepay（供应商预付余额表）
+<h4>表3: supplier_prepay（供应商预付余额表）</h4>
 
-</code>`<code class="inline-code">sql
-CREATE TABLE supplier_prepay (
+<div class="code-block sql-block">
+  <div class="code-header">SQL</div>
+  <pre class="language-sql"><code>CREATE TABLE supplier_prepay (
     id              BIGINT PRIMARY KEY AUTO_INCREMENT COMMENT '主键ID',
     supplier_id     BIGINT NOT NULL COMMENT '供应商ID',
     supplier_name   VARCHAR(200) NOT NULL COMMENT '供应商名称(冗余)',
@@ -504,13 +303,14 @@ CREATE TABLE supplier_prepay (
     
     UNIQUE INDEX idx_supplier (supplier_id),
     INDEX idx_overdue (overdue_days)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='供应商预付余额';
-</code>`<code class="inline-code">
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='供应商预付余额';</code></pre>
+</div>
 
-#### 表4: prepay_transaction（预付流水表）
+<h4>表4: prepay_transaction（预付流水表）</h4>
 
-</code>`<code class="inline-code">sql
-CREATE TABLE prepay_transaction (
+<div class="code-block sql-block">
+  <div class="code-header">SQL</div>
+  <pre class="language-sql"><code>CREATE TABLE prepay_transaction (
     id              BIGINT PRIMARY KEY AUTO_INCREMENT COMMENT '主键ID',
     supplier_id     BIGINT NOT NULL COMMENT '供应商ID',
     transaction_no  VARCHAR(30) NOT NULL UNIQUE COMMENT '流水号',
@@ -537,25 +337,22 @@ CREATE TABLE prepay_transaction (
     INDEX idx_supplier (supplier_id),
     INDEX idx_type (trans_type),
     INDEX idx_created (created_at)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='预付流水';
-</code>`<code class="inline-code">
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='预付流水';</code></pre>
+</div>
 
----
+<li>--</li>
 
-<h2>4. 业务规则引擎</h2>
+<h2>4. 业务规则引擎</h2>
 
-<h3>4.1 编号规则</h3>
+<h3>4.1 编号规则</h3>
 
-| 单据 | 前缀 | 格式 | 示例 |
-|:---|:---|:---|:---|
-| 付款申请单 | FK | FK + yyyyMM + 4位序号 | FK2026040001 |
-| 核销记录 | WO | WO + yyyyMM + 4位序号 | WO2026040001 |
-| 预付流水 | PP | PP + yyyyMMdd + 4位序号 | PP202604150001 |
+<table class="md-table"><thead><tr><th>单据</th><th>前缀</th><th>格式</th><th>示例</th></tr></thead><tbody><tr><td>付款申请单</td><td>FK</td><td>FK + yyyyMM + 4位序号</td><td>FK2026040001</td></tr><tr><td>核销记录</td><td>WO</td><td>WO + yyyyMM + 4位序号</td><td>WO2026040001</td></tr><tr><td>预付流水</td><td>PP</td><td>PP + yyyyMMdd + 4位序号</td><td>PP202604150001</td></tr></tbody></table>
 
-<h3>4.2 付款状态机</h3>
+<h3>4.2 付款状态机</h3>
 
-</code>`<code class="inline-code">
-        ┌─── 提交 ───→ 待审
+<div class="code-block">
+  <div class="code-header">CODE</div>
+  <pre class="language-"><code>        ┌─── 提交 ───→ 待审
         │                  │
       草稿                  │ 审批中
         │                  │
@@ -569,34 +366,36 @@ CREATE TABLE prepay_transaction (
         │            │
         │         已完成 ──→ 凭证生成
         │
-        └── 取消 ──→ 已取消
-</code>`<code class="inline-code">
+        └── 取消 ──→ 已取消</code></pre>
+</div>
 
-<h3>4.3 审批阈值规则</h3>
+<h3>4.3 审批阈值规则</h3>
 
-</code>`<code class="inline-code">python
-class ApprovalThreshold:
+<div class="code-block">
+  <div class="code-header">python</div>
+  <pre class="language-python"><code>class ApprovalThreshold:
     """付款审批阈值配置"""
     LEVELS = [
         (5000,      "部门经理",   2),     # ≤5千, 部门经理, 2小时内
         (50000,     "财务主管",   4),     # ≤5万, 财务主管, 4小时内
         (200000,    "总经理",     8),     # ≤20万, 总经理, 8小时内(1工作日)
-        (float('inf'), "董事会",  16),    # >20万, 董事会, 16小时内(2工作日)
+        (float('inf'), "董事会",  16),    # &gt;20万, 董事会, 16小时内(2工作日)
     ]
     
     @staticmethod
-    def get_level(amount: float) -> tuple:
+    def get_level(amount: float) -&gt; tuple:
         """根据金额返回(角色, 超时小时数)"""
         for threshold, role, hours in ApprovalThreshold.LEVELS:
-            if amount <= threshold:
+            if amount &lt;= threshold:
                 return role, hours
-        return "董事会", 16
-</code>`<code class="inline-code">
+        return "董事会", 16</code></pre>
+</div>
 
-<h3>4.4 核销规则引擎</h3>
+<h3>4.4 核销规则引擎</h3>
 
-</code>`<code class="inline-code">python
-class PayWriteoffEngine:
+<div class="code-block">
+  <div class="code-header">python</div>
+  <pre class="language-python"><code>class PayWriteoffEngine:
     """付款核销规则引擎"""
     
     # 匹配权重
@@ -611,10 +410,10 @@ class PayWriteoffEngine:
     # 置信度等级
     CONFIDENCE_AUTO = 90     # ≥90%: 自动推荐
     CONFIDENCE_CONFIRM = 70  # ≥70%: 提示确认
-    # <70%: 手动选择
+    # &lt;70%: 手动选择
     
     @staticmethod
-    def calculate_confidence(payment, ap_bill) -> float:
+    def calculate_confidence(payment, ap_bill) -&gt; float:
         """计算核销匹配置信度"""
         score = 0.0
         # 供应商必须一致
@@ -624,117 +423,88 @@ class PayWriteoffEngine:
             return 0.0  # 供应商不同直接排除
         
         # 金额接近度
-        if payment.total_amount > 0:
+        if payment.total_amount &gt; 0:
             amount_ratio = min(ap_bill.balance / payment.total_amount, 1.0)
             score += PayWriteoffEngine.WEIGHT_AMOUNT * amount_ratio * 100
         
         # 摘要关键词匹配 (简化)
         # ...
         
-        return round(score, 2)
-</code>`<code class="inline-code">
+        return round(score, 2)</code></pre>
+</div>
 
-<h3>4.5 预付FIFO抵扣规则</h3>
+<h3>4.5 预付FIFO抵扣规则</h3>
 
-</code>`<code class="inline-code">python
-class PrepayDeductionRule:
+<div class="code-block">
+  <div class="code-header">python</div>
+  <pre class="language-python"><code>class PrepayDeductionRule:
     """预付抵扣FIFO规则"""
     
     MAX_UNVERIFIED_DAYS = 90  # 超过90天预警
     
     @staticmethod
-    def get_deduction_order(supplier_id: int) -> list:
+    def get_deduction_order(supplier_id: int) -&gt; list:
         """获取FIFO抵扣顺序（最早的先扣）"""
         # SELECT * FROM prepay_transaction 
         # WHERE supplier_id = ? AND trans_type = 1 
-        # AND amount - COALESCE(deducted, 0) > 0
+        # AND amount - COALESCE(deducted, 0) &gt; 0
         # ORDER BY created_at ASC
-        # 即：按预付入账时间升序，余额>0的排在前面
+        # 即：按预付入账时间升序，余额&gt;0的排在前面
         pass
     
     @staticmethod
-    def check_overdue(supplier_id: int) -> list:
+    def check_overdue(supplier_id: int) -&gt; list:
         """检查超期预付"""
         # 超过90天未抵扣的预付流水自动预警
-        pass
-</code>`<code class="inline-code">
+        pass</code></pre>
+</div>
 
-<h3>4.6 付款方式枚举</h3>
+<h3>4.6 付款方式枚举</h3>
 
-</code>`<code class="inline-code">python
-class PaymentMethod:
+<div class="code-block">
+  <div class="code-header">python</div>
+  <pre class="language-python"><code>class PaymentMethod:
     BANK_TRANSFER = 1    # 银行转账
     ACCEPTANCE_BILL = 2  # 承兑汇票
     CASH = 3             # 现金
     POS_SCAN = 4         # POS/扫码支付
-    OTHER = 9            # 其他
-</code>`<code class="inline-code">
+    OTHER = 9            # 其他</code></pre>
+</div>
 
----
+<li>--</li>
 
-<h2>5. 凭证模板矩阵</h2>
+<h2>5. 凭证模板矩阵</h2>
 
-<h3>5.1 八种付款场景的会计分录</h3>
+<h3>5.1 八种付款场景的会计分录</h3>
 
-| 编号 | 场景 | 借方 | 贷方 | 触发条件 |
-|:---|:---|:---|:---|:---|
-| <strong>P01</strong> | 普通银行付款 | 应付账款 | 银行存款 | 银行转账+全额核销 |
-| <strong>P02</strong> | 预付货款 | 预付账款 | 银行存款 | 付款类型=预付 |
-| <strong>P03</strong> | 预付转应付 | 应付账款 | 预付账款 | 核销时使用了预付余额抵扣 |
-| <strong>P04</strong> | 付款折扣/折让 | 应付账款 | 银行存款 + 财务费用-购货折扣 | 实付<应付，有折扣 |
-| <strong>P05</strong> | 承兑汇票背书付款 | 应付账款 | 应付票据 | 付款方式=承兑汇票 |
-| <strong>P06</strong> | 汇票到期兑付 | 应付票据 | 银行存款 | 应付票据到期付款 |
-| <strong>P07</strong> | 现金付款 | 应付账款 | 库存现金 | 付款方式=现金 |
-| <strong>P08</strong> | 付款冲销/退款 | 应付账款(红字) | 银行存款(红字) | 冲销/退货退款 |
+<table class="md-table"><thead><tr><th>编号</th><th>场景</th><th>借方</th><th>贷方</th><th>触发条件</th></tr></thead><tbody><tr><td><strong>P01</strong></td><td>普通银行付款</td><td>应付账款</td><td>银行存款</td><td>银行转账+全额核销</td></tr><tr><td><strong>P02</strong></td><td>预付货款</td><td>预付账款</td><td>银行存款</td><td>付款类型=预付</td></tr><tr><td><strong>P03</strong></td><td>预付转应付</td><td>应付账款</td><td>预付账款</td><td>核销时使用了预付余额抵扣</td></tr><tr><td><strong>P04</strong></td><td>付款折扣/折让</td><td>应付账款</td><td>银行存款 + 财务费用-购货折扣</td><td>实付<应付，有折扣</td></tr><tr><td><strong>P05</strong></td><td>承兑汇票背书付款</td><td>应付账款</td><td>应付票据</td><td>付款方式=承兑汇票</td></tr><tr><td><strong>P06</strong></td><td>汇票到期兑付</td><td>应付票据</td><td>银行存款</td><td>应付票据到期付款</td></tr><tr><td><strong>P07</strong></td><td>现金付款</td><td>应付账款</td><td>库存现金</td><td>付款方式=现金</td></tr><tr><td><strong>P08</strong></td><td>付款冲销/退款</td><td>应付账款(红字)</td><td>银行存款(红字)</td><td>冲销/退货退款</td></tr></tbody></table>
 
-<h3>5.2 凭证模板详细示例</h3>
+<h3>5.2 凭证模板详细示例</h3>
 
-<strong>P01 普通银行付款（最常用）</strong>
+<p><strong>P01 普通银行付款（最常用）</strong></p>
 
-| 摘要 | 科目代码 | 科目名称 | 借方金额 | 贷方金额 | 辅助核算 |
-|:---|:---|:---|---:|---:|:---|
-| 付[供应商名]货款-FK2026040001 | 2202 | 应付账款 | 50,000.00 | | 供应商:XX公司 |
-| 付[供应商名]货款-FK2026040001 | 1002 | 银行存款-工行XX | | 50,000.00 | |
+<table class="md-table"><thead><tr><th>摘要</th><th>科目代码</th><th>科目名称</th><th>借方金额</th><th>贷方金额</th><th>辅助核算</th></tr></thead><tbody><tr><td>付[供应商名]货款-FK2026040001</td><td>2202</td><td>应付账款</td><td>50,000.00</td><td>供应商:XX公司</td></tr><tr><td>付[供应商名]货款-FK2026040001</td><td>1002</td><td>银行存款-工行XX</td><td>50,000.00</td></tr></tbody></table>
 
-<strong>P03 预付转应付（混合核销）</strong>
+<p><strong>P03 预付转应付（混合核销）</strong></p>
 
-| 摘要 | 科目代码 | 科目名称 | 借方金额 | 贷方金额 | 辅助核算 |
-|:---|:---|:---|---:|---:|:---|
-| 付[供应商名]货款(含预付抵扣)-FK2026040002 | 2202 | 应付账款 | 80,000.00 | | 供应商:XX公司 |
-| 付[供应商名]货款(含预付抵扣)-FK2026040002 | 1123 | 预付账款 | | 30,000.00 | 供应商:XX公司 |
-| 付[供应商名]货款(含预付抵扣)-FK2026040002 | 1002 | 银行存款-工行XX | | 50,000.00 | |
+<table class="md-table"><thead><tr><th>摘要</th><th>科目代码</th><th>科目名称</th><th>借方金额</th><th>贷方金额</th><th>辅助核算</th></tr></thead><tbody><tr><td>付[供应商名]货款(含预付抵扣)-FK2026040002</td><td>2202</td><td>应付账款</td><td>80,000.00</td><td>供应商:XX公司</td></tr><tr><td>付[供应商名]货款(含预付抵扣)-FK2026040002</td><td>1123</td><td>预付账款</td><td>30,000.00</td><td>供应商:XX公司</td></tr><tr><td>付[供应商名]货款(含预付抵扣)-FK2026040002</td><td>1002</td><td>银行存款-工行XX</td><td>50,000.00</td></tr></tbody></table>
 
----
+<li>--</li>
 
-<h2>6. 内部API设计</h2>
+<h2>6. 内部API设计</h2>
 
-<h3>6.1 API列表</h3>
+<h3>6.1 API列表</h3>
 
-| 方法 | 路径 | 说明 |
-|:---|:---|:---|
-| POST | </code>/api/payment/orders<code class="inline-code"> | 新建付款申请单 |
-| GET | </code>/api/payment/orders<code class="inline-code"> | 查询付款单列表(分页+筛选) |
-| GET | </code>/api/payment/orders/:id<code class="inline-code"> | 获取付款单详情 |
-| PUT | </code>/api/payment/orders/:id<code class="inline-code"> | 更新付款单(草稿态) |
-| POST | </code>/api/payment/orders/:id/submit<code class="inline-code"> | 提交审批 |
-| POST | </code>/api/payment/orders/:id/approve<code class="inline-code"> | 审批通过 |
-| POST | </code>/api/payment/orders/:id/reject<code class="inline-code"> | 审批驳回 |
-| POST | </code>/api/payment/orders/:id/cancel<code class="inline-code"> | 取消付款单 |
-| POST | </code>/api/payment/writeoff<code class="inline-code"> | 执行核销 |
-| POST | </code>/api/payment/writeoff/suggest<code class="inline-code"> | 智能核销推荐 |
-| POST | </code>/api/payment/prepay<code class="inline-code"> | 预付申请 |
-| GET | </code>/api/payment/prepay/balance<code class="inline-code"> | 预付余额查询 |
-| POST | </code>/api/payment/prepay/deduct<code class="inline-code"> | 预付抵扣 |
-| POST | </code>/api/payment/bank/instruction<code class="inline-code"> | 生成付款指令 |
-| GET | </code>/api/payment/bank/status/:id<code class="inline-code"> | 查询付款状态 |
+<table class="md-table"><thead><tr><th>方法</th><th>路径</th><th>说明</th></tr></thead><tbody><tr><td>POST</td><td><code class="inline-code">/api/payment/orders</code></td><td>新建付款申请单</td></tr><tr><td>GET</td><td><code class="inline-code">/api/payment/orders</code></td><td>查询付款单列表(分页+筛选)</td></tr><tr><td>GET</td><td><code class="inline-code">/api/payment/orders/:id</code></td><td>获取付款单详情</td></tr><tr><td>PUT</td><td><code class="inline-code">/api/payment/orders/:id</code></td><td>更新付款单(草稿态)</td></tr><tr><td>POST</td><td><code class="inline-code">/api/payment/orders/:id/submit</code></td><td>提交审批</td></tr><tr><td>POST</td><td><code class="inline-code">/api/payment/orders/:id/approve</code></td><td>审批通过</td></tr><tr><td>POST</td><td><code class="inline-code">/api/payment/orders/:id/reject</code></td><td>审批驳回</td></tr><tr><td>POST</td><td><code class="inline-code">/api/payment/orders/:id/cancel</code></td><td>取消付款单</td></tr><tr><td>POST</td><td><code class="inline-code">/api/payment/writeoff</code></td><td>执行核销</td></tr><tr><td>POST</td><td><code class="inline-code">/api/payment/writeoff/suggest</code></td><td>智能核销推荐</td></tr><tr><td>POST</td><td><code class="inline-code">/api/payment/prepay</code></td><td>预付申请</td></tr><tr><td>GET</td><td><code class="inline-code">/api/payment/prepay/balance</code></td><td>预付余额查询</td></tr><tr><td>POST</td><td><code class="inline-code">/api/payment/prepay/deduct</code></td><td>预付抵扣</td></tr><tr><td>POST</td><td><code class="inline-code">/api/payment/bank/instruction</code></td><td>生成付款指令</td></tr><tr><td>GET</td><td><code class="inline-code">/api/payment/bank/status/:id</code></td><td>查询付款状态</td></tr></tbody></table>
 
-<h3>6.2 核心API定义</h3>
+<h3>6.2 核心API定义</h3>
 
-#### POST /api/payment/orders（新建付款申请单）
+<h4>POST /api/payment/orders（新建付款申请单）</h4>
 
-<strong>请求体：</strong>
-</code>`<code class="inline-code">json
-{
+<p><strong>请求体：</strong></p>
+<div class="code-block">
+  <div class="code-header">json</div>
+  <pre class="language-json"><code>{
   "supplierId": 1001,
   "paymentType": 1,
   "paymentMethod": 1,
@@ -759,12 +529,13 @@ class PaymentMethod:
       "amount": 20000.00
     }
   ]
-}
-</code>`<code class="inline-code">
+}</code></pre>
+</div>
 
-<strong>响应体：</strong>
-</code>`<code class="inline-code">json
-{
+<p><strong>响应体：</strong></p>
+<div class="code-block">
+  <div class="code-header">json</div>
+  <pre class="language-json"><code>{
   "code": 0,
   "message": "success",
   "data": {
@@ -776,23 +547,25 @@ class PaymentMethod:
     "approvalLevel": "财务主管",
     "createdAt": "2026-04-15T10:30:00"
   }
-}
-</code>`<code class="inline-code">
+}</code></pre>
+</div>
 
-#### POST /api/payment/writeoff/suggest（智能核销推荐）
+<h4>POST /api/payment/writeoff/suggest（智能核销推荐）</h4>
 
-<strong>请求体：</strong>
-</code>`<code class="inline-code">json
-{
+<p><strong>请求体：</strong></p>
+<div class="code-block">
+  <div class="code-header">json</div>
+  <pre class="language-json"><code>{
   "paymentId": 3001,
   "paymentAmount": 50000.00,
   "supplierId": 1001
-}
-</code>`<code class="inline-code">
+}</code></pre>
+</div>
 
-<strong>响应体：</strong>
-</code>`<code class="inline-code">json
-{
+<p><strong>响应体：</strong></p>
+<div class="code-block">
+  <div class="code-header">json</div>
+  <pre class="language-json"><code>{
   "code": 0,
   "data": {
     "suggestions": [
@@ -820,61 +593,38 @@ class PaymentMethod:
     "hasPrepay": true,
     "prepayBalance": 5000.00
   }
-}
-</code>`<code class="inline-code">
+}</code></pre>
+</div>
 
----
+<li>--</li>
 
-<h2>7. 测试用例</h2>
+<h2>7. 测试用例</h2>
 
-<h3>7.1 核心测试场景</h3>
+<h3>7.1 核心测试场景</h3>
 
-| # | 场景 | 输入 | 预期结果 | 优先级 |
-|:---|:---|:---|:---|:---:|
-| T01 | 普通付款全流程 | 供应商A应付3万→新建付款→审批→付款→核销 | 应付余额清零，凭证自动生成 | P0 |
-| T02 | 部分核销 | 应付5万→本次付3万 | 应付余额=2万，状态=部分核销 | P0 |
-| T03 | 尾差处理 | 应付30000.50→付30000.00 | 差额0.50元计入财务费用 | P1 |
-| T04 | 超额付款转预付 | 应付3万→付5万 | 应付清零，差额2万转入预付余额 | P1 |
-| T05 | 预付→到货抵扣 | 预付2万→到货应付5万→核销时选预付抵扣 | 预付余额减少2万，应付余额=3万 | P0 |
-| T06 | 预付FIFO抵扣 | 同一供应商3笔预付(1月/2月/3月)→抵扣3万 | 先扣1月那笔，再扣2月那笔 | P1 |
-| T07 | 审批驳回退回 | 付款5万→财务主管驳回 | 状态=已驳回，可修改后重新提交 | P0 |
-| T08 | 多级审批流转 | 付款25万→总经理→通过 | 经过财务主管+总经理两级审批 | P0 |
-| T09 | 承兑汇票付款 | 付款方式=承兑→关联票据号 | 凭证借:应付 贷:应付票据 | P1 |
-| T10 | 付款冲销 | 已完成付款→发现错误→冲销 | 红字凭证冲回，应付余额恢复 | P1 |
+<table class="md-table"><thead><tr><th>#</th><th>场景</th><th>输入</th><th>预期结果</th><th>优先级</th></tr></thead><tbody><tr><td>T01</td><td>普通付款全流程</td><td>供应商A应付3万→新建付款→审批→付款→核销</td><td>应付余额清零，凭证自动生成</td><td>P0</td></tr><tr><td>T02</td><td>部分核销</td><td>应付5万→本次付3万</td><td>应付余额=2万，状态=部分核销</td><td>P0</td></tr><tr><td>T03</td><td>尾差处理</td><td>应付30000.50→付30000.00</td><td>差额0.50元计入财务费用</td><td>P1</td></tr><tr><td>T04</td><td>超额付款转预付</td><td>应付3万→付5万</td><td>应付清零，差额2万转入预付余额</td><td>P1</td></tr><tr><td>T05</td><td>预付→到货抵扣</td><td>预付2万→到货应付5万→核销时选预付抵扣</td><td>预付余额减少2万，应付余额=3万</td><td>P0</td></tr><tr><td>T06</td><td>预付FIFO抵扣</td><td>同一供应商3笔预付(1月/2月/3月)→抵扣3万</td><td>先扣1月那笔，再扣2月那笔</td><td>P1</td></tr><tr><td>T07</td><td>审批驳回退回</td><td>付款5万→财务主管驳回</td><td>状态=已驳回，可修改后重新提交</td><td>P0</td></tr><tr><td>T08</td><td>多级审批流转</td><td>付款25万→总经理→通过</td><td>经过财务主管+总经理两级审批</td><td>P0</td></tr><tr><td>T09</td><td>承兑汇票付款</td><td>付款方式=承兑→关联票据号</td><td>凭证借:应付 贷:应付票据</td><td>P1</td></tr><tr><td>T10</td><td>付款冲销</td><td>已完成付款→发现错误→冲销</td><td>红字凭证冲回，应付余额恢复</td><td>P1</td></tr></tbody></table>
 
----
+<li>--</li>
 
-<h2>8. 安全与风控</h2>
+<h2>8. 安全与风控</h2>
 
-<h3>8.1 资金安全规则</h3>
+<h3>8.1 资金安全规则</h3>
 
-| 规则 | 说明 | 实现方式 |
-|:---|:---|:---|
-| <strong>三岗分离</strong> | 制单人、审批人、付款人必须不同 | 角色权限校验 |
-| <strong>大额双签</strong> | ≥10万需财务主管+总经理双签 | 审批流自动配置 |
-| <strong>收款方校验</strong> | 首次付款需供应商确认银行信息 | 供应商档案冻结前3次 |
-| <strong>重复检测</strong> | 同供应商同金额同日≤1笔自动检测 | 实时校验+预警 |
-| <strong>操作留痕</strong> | 所有操作完整记录（操作人+时间+IP） | 审计日志表 |
-| <strong>数据加密</strong> | 银行账号等敏感信息加密存储 | AES-256 |
+<table class="md-table"><thead><tr><th>规则</th><th>说明</th><th>实现方式</th></tr></thead><tbody><tr><td><strong>三岗分离</strong></td><td>制单人、审批人、付款人必须不同</td><td>角色权限校验</td></tr><tr><td><strong>大额双签</strong></td><td>≥10万需财务主管+总经理双签</td><td>审批流自动配置</td></tr><tr><td><strong>收款方校验</strong></td><td>首次付款需供应商确认银行信息</td><td>供应商档案冻结前3次</td></tr><tr><td><strong>重复检测</strong></td><td>同供应商同金额同日≤1笔自动检测</td><td>实时校验+预警</td></tr><tr><td><strong>操作留痕</strong></td><td>所有操作完整记录（操作人+时间+IP）</td><td>审计日志表</td></tr><tr><td><strong>数据加密</strong></td><td>银行账号等敏感信息加密存储</td><td>AES-256</td></tr></tbody></table>
 
-<h3>8.2 预警规则</h3>
+<h3>8.2 预警规则</h3>
 
-| 预警 | 条件 | 通知方式 |
-|:---|:---|:---|
-| 审批超时 | 超过阈值时长未审批 | 系统消息+邮件/企业微信 |
-| 预付超期 | 预付超过90天未抵扣 | 每周一推送到财务主管 |
-| 应付逾期 | 应付单超过约定付款日 | 到期前3天+到期日+逾期每天 |
-| 银行失败 | 付款指令银行返回失败 | 实时推送到出纳 |
-| 重复风险 | 检测到疑似重复付款 | 弹窗确认+需主管二次确认 |
+<table class="md-table"><thead><tr><th>预警</th><th>条件</th><th>通知方式</th></tr></thead><tbody><tr><td>审批超时</td><td>超过阈值时长未审批</td><td>系统消息+邮件/企业微信</td></tr><tr><td>预付超期</td><td>预付超过90天未抵扣</td><td>每周一推送到财务主管</td></tr><tr><td>应付逾期</td><td>应付单超过约定付款日</td><td>到期前3天+到期日+逾期每天</td></tr><tr><td>银行失败</td><td>付款指令银行返回失败</td><td>实时推送到出纳</td></tr><tr><td>重复风险</td><td>检测到疑似重复付款</td><td>弹窗确认+需主管二次确认</td></tr></tbody></table>
 
----
+<li>--</li>
 
-<h2>9. 实施路线图</h2>
+<h2>9. 实施路线图</h2>
 
-<h3>9.1 MVP阶段（约15天）</h3>
+<h3>9.1 MVP阶段（约15天）</h3>
 
-</code>`<code class="inline-code">
-┌─────────────────────────────────────────────────────────────┐
+<div class="code-block">
+  <div class="code-header">CODE</div>
+  <pre class="language-"><code>┌─────────────────────────────────────────────────────────────┐
 │                     实付付款 MVP 路线图                       │
 ├──────────┬────────────────────────────┬──────────┬──────────┤
 │ 阶段     │ 交付物                     │ 工期     │ 依赖     │
@@ -904,36 +654,20 @@ class PaymentMethod:
 │ P1-G 联调│ 与总账凭证引擎联调         │ 1天      │ P1-E     │
 │          │ 端到端测试                 │          │          │
 ├──────────┼────────────────────────────┼──────────┼──────────┤
-│          │ <strong>合计</strong>                   │ <strong>15天</strong> │          │
-└──────────┴────────────────────────────┴──────────┴──────────┘
-</code>``
+│          │ **合计**                   │ **15天** │          │
+└──────────┴────────────────────────────┴──────────┴──────────┘</code></pre>
+</div>
 
-<h3>9.2 P2阶段（后续迭代）</h3>
+<h3>9.2 P2阶段（后续迭代）</h3>
 
-| 阶段 | 内容 | 预计工期 |
-|:---|:---|:---:|
-| P2-A 银企对接 | 银企API对接+付款指令推送+状态回传 | 5天 |
-| P2-B 批量付款 | 同一供应商多笔应付合并付款 | 2天 |
-| P2-C 承兑汇票 | ECDS对接+票据池联动 | 5天 |
-| P2-D 移动审批 | 企业微信/钉钉移动端审批 | 3天 |
-| P2-E 高级报表 | 付款趋势分析+资金计划+供应商信用评分 | 5天 |
+<table class="md-table"><thead><tr><th>阶段</th><th>内容</th><th>预计工期</th></tr></thead><tbody><tr><td>P2-A 银企对接</td><td>银企API对接+付款指令推送+状态回传</td><td>5天</td></tr><tr><td>P2-B 批量付款</td><td>同一供应商多笔应付合并付款</td><td>2天</td></tr><tr><td>P2-C 承兑汇票</td><td>ECDS对接+票据池联动</td><td>5天</td></tr><tr><td>P2-D 移动审批</td><td>企业微信/钉钉移动端审批</td><td>3天</td></tr><tr><td>P2-E 高级报表</td><td>付款趋势分析+资金计划+供应商信用评分</td><td>5天</td></tr></tbody></table>
 
----
+<li>--</li>
 
-<h2>附录A：与实收收款模块的差异对照</h2>
+<h2>附录A：与实收收款模块的差异对照</h2>
 
-| 对比维度 | 实收收款 (CRM) | 实付付款 (PM) |
-|:---|:---|:---|
-| 单据前缀 | SK (收款) | FK (付款) |
-| 核销前缀 | RW (收入核销) | WO (付款核销) |
-| 预收/预付科目 | 2203 预收账款 | 1123 预付账款 |
-| 应收/应付科目 | 1122 应收账款 | 2202 应付账款 |
-| 审批复杂度 | 低（已到账） | <strong>高（多级+金额阈值）</strong> |
-| 资金安全 | 被动接收 | <strong>主动划出，需三岗分离</strong> |
-| 异常等级 | 中（少收/延迟） | <strong>高（多付/重复/错付）</strong> |
-| 银企对接 | 拉取流水（读） | <strong>推送指令（写）</strong> |
-| 票据关联 | 应收票据（收到） | 应付票据（付出） |
-</p>
+<table class="md-table"><thead><tr><th>对比维度</th><th>实收收款 (CRM)</th><th>实付付款 (PM)</th></tr></thead><tbody><tr><td>单据前缀</td><td>SK (收款)</td><td>FK (付款)</td></tr><tr><td>核销前缀</td><td>RW (收入核销)</td><td>WO (付款核销)</td></tr><tr><td>预收/预付科目</td><td>2203 预收账款</td><td>1123 预付账款</td></tr><tr><td>应收/应付科目</td><td>1122 应收账款</td><td>2202 应付账款</td></tr><tr><td>审批复杂度</td><td>低（已到账）</td><td><strong>高（多级+金额阈值）</strong></td></tr><tr><td>资金安全</td><td>被动接收</td><td><strong>主动划出，需三岗分离</strong></td></tr><tr><td>异常等级</td><td>中（少收/延迟）</td><td><strong>高（多付/重复/错付）</strong></td></tr><tr><td>银企对接</td><td>拉取流水（读）</td><td><strong>推送指令（写）</strong></td></tr><tr><td>票据关联</td><td>应收票据（收到）</td><td>应付票据（付出）</td></tr></tbody></table>
+</div>
     </div>
 </body>
 </html>
