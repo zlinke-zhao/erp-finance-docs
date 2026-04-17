@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>实收收款模块 — UI设计原型</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, "Microsoft YaHei", "Segoe UI", sans-serif;
+            background: #f0f2f5;
+            color: #333;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        .container { max-width: 1400px; margin: 0 auto; padding: 16px; }
+
+        /* Header */
+        .page-header {
+            background: linear-gradient(135deg, #1565c0 0%, #1976d2 50%, #42a5f5 100%);
+            color: white; padding: 24px 28px; border-radius: 12px; margin-bottom: 20px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .page-header h1 { font-size: 1.6em; }
+        .page-header .badge { background: rgba(255,255,255,0.2); padding: 4px 14px; border-radius: 20px; font-size: 0.85em; }
+
+        /* Screen container */
+        .screen { background: white; border-radius: 12px; margin-bottom: 20px; overflow: hidden;
+                   box-shadow: 0 2px 12px rgba(0,0,0,0.08); }
+        .screen-title {
+            background: #f8f9fa; padding: 10px 18px; border-bottom: 1px solid #e9ecef;
+            font-weight: 600; color: #495057; font-size: 0.95em;
+            display: flex; align-items: center; gap: 8px;
+        }
+        .screen-title .tag {
+            background: #e3f2fd; color: #1565c0; padding: 2px 10px; border-radius: 10px;
+            font-size: 0.8em; font-weight: normal;
+        }
+
+        /* Toolbar */
+        .toolbar { padding: 14px 18px; border-bottom: 1px solid #eee; display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+        .btn {
+            padding: 7px 16px; border-radius: 6px; border: 1px solid #d0d0d0; background: white;
+            cursor: pointer; font-size: 0.88em; transition: all 0.2s; display: inline-flex; align-items: center; gap: 4px;
+        }
+        .btn:hover { background: #f5f5f5; border-color: #bbb; }
+        .btn-primary { background: #1565c0; color: white; border-color: #1565c0; }
+        .btn-primary:hover { background: #0d47a1; border-color: #0d47a1; }
+        .btn-success { background: #2e7d32; color: white; border-color: #2e7d32; }
+        .btn-success:hover { background: #1b5e20; }
+        .btn-warning { background: #ef6c00; color: white; border-color: #ef6c00; }
+        .btn-danger { background: #c62828; color: white; border-color: #c62828; }
+        .btn-sm { padding: 4px 10px; font-size: 0.82em; }
+        .search-input {
+            padding: 6px 12px; border: 1px solid #ddd; border-radius: 6px; width: 200px;
+            font-size: 0.88em;
+        }
+        .search-input:focus { outline: none; border-color: #1565c0; box-shadow: 0 0 0 2px rgba(21,101,192,0.15); }
+
+        /* Table */
+        table { width: 100%; border-collapse: collapse; font-size: 0.88em; }
+        thead th { background: #f8f9fa; padding: 10px 12px; text-align: left; font-weight: 600; color: #555;
+                    border-bottom: 2px solid #dee2e6; white-space: nowrap; }
+        tbody td { padding: 10px 12px; border-bottom: 1px solid #f0f0f0; vertical-align: middle; }
+        tbody tr:hover { background: #f8f9ff; }
+        .status-draft { background: #fff3e0; color: #e65100; padding: 2px 10px; border-radius: 10px; font-size: 0.82em; font-weight: 500; }
+        .status-verified { background: #e8f5e9; color: #2e7d32; padding: 2px 10px; border-radius: 10px; font-size: 0.82em; font-weight: 500; }
+        .status-partial { background: #e3f2fd; color: #1565c0; padding: 2px 10px; border-radius: 10px; font-size: 0.82em; font-weight: 500; }
+        .status-cancelled { background: #fce4ec; color: #c62828; padding: 2px 10px; border-radius: 10px; font-size: 0.82em; font-weight: 500; }
+        .amount { font-family: "Consolas", monospace; font-weight: 600; color: #1565c0; }
+        .amount-green { color: #2e7d32; }
+        .amount-red { color: #c62828; }
+        .text-muted { color: #999; font-size: 0.85em; }
+        .text-center { text-align: center; }
+        .text-right { text-align: right; }
+
+        /* Form */
+        .form-section { padding: 20px 24px; }
+        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px 24px; }
+        .form-group { display: flex; flex-direction: column; gap: 4px; }
+        .form-group label { font-size: 0.85em; color: #666; font-weight: 500; }
+        .form-group label .required { color: #c62828; margin-left: 2px; }
+        .form-control {
+            padding: 8px 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 0.92em;
+            transition: all 0.2s;
+        }
+        .form-control:focus { outline: none; border-color: #1565c0; box-shadow: 0 0 0 3px rgba(21,101,192,0.1); }
+        select.form-control { cursor: pointer; appearance: auto; }
+        textarea.form-control { resize: vertical; min-height: 60px; }
+        .form-hint { font-size: 0.78em; color: #aaa; }
+
+        /* Cards / Panels */
+        .panel { border: 1px solid #e9ecef; border-radius: 8px; overflow: hidden; margin-bottom: 16px; }
+        .panel-header {
+            background: linear-gradient(to right, #f8f9fa, #fff); padding: 10px 16px;
+            font-weight: 600; font-size: 0.9em; border-bottom: 1px solid #e9ecef;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .panel-body { padding: 14px 16px; }
+
+        /* Writeoff area */
+        .writeoff-area { background: #f0f7ff; border: 2px dashed #90caf9; border-radius: 8px; padding: 16px; margin-top: 12px; }
+        .writeoff-item { 
+            display: flex; align-items: center; gap: 12px; padding: 10px 14px;
+            background: white; border-radius: 6px; margin-bottom: 8px; border-left: 3px solid #1565c0;
+        }
+        .writeoff-item.selected { border-left-color: #2e7d32; background: #f1f8e4; }
+        .writeoff-amount-input { width: 120px; text-align: right; font-weight: 600; color: #1565c0; }
+        
+        /* Summary bar */
+        .summary-bar {
+            display: flex; justify-content: space-between; align-items: center;
+            background: linear-gradient(135deg, #e8eaf6, #c5cae9); padding: 12px 20px;
+            border-radius: 8px; margin: 16px 0; font-size: 0.92em;
+        }
+        .summary-bar .total-label { color: #3949ab; font-weight: 600; }
+        .summary-bar .total-value { font-size: 1.4em; font-weight: 700; color: #1a237e; }
+
+        /* Modal overlay simulation */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.45); z-index: 100;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .modal-dialog {
+            background: white; border-radius: 12px; width: 720px; max-height: 85vh;
+            overflow-y: auto; box-shadow: 0 12px 48px rgba(0,0,0,0.25);
+        }
+        .modal-header {
+            padding: 16px 22px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center;
+            background: #fafbfc; border-radius: 12px 12px 0 0;
+        }
+        .modal-header h3 { font-size: 1.05em; }
+        .modal-body { padding: 20px 22px; }
+        .modal-footer {
+            padding: 14px 22px; border-top: 1px solid #eee; display: flex; justify-content: flex-end; gap: 10px;
+            background: #fafbfc; border-radius: 0 0 12px 12px;
+        }
+
+        /* Tags & badges */
+        .tag-blue { background: #e3f2fd; color: #1565c0; padding: 2px 8px; border-radius: 4px; font-size: 0.78em; }
+        .tag-green { background: #e8f5e9; color: #2e7d32; padding: 2px 8px; border-radius: 4px; font-size: 0.78em; }
+        .tag-orange { background: #fff3e0; color: #e65100; padding: 2px 8px; border-radius: 4px; font-size: 0.78em; }
+        .tag-red { background: #ffebee; color: #c62828; padding: 2px 8px; border-radius: 4px; font-size: 0.78em; }
+
+        /* Grid for screens side by side */
+        .screens-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        @media (max-width: 1100px) { .screens-row { grid-template-columns: 1fr; } }
+
+        /* Note callout */
+        .note-callout {
+            background: linear-gradient(135deg, #fff8e1, #ffecb3); border-left: 4px solid #ff8f00;
+            padding: 14px 18px; border-radius: 0 8px 8px 0; margin: 16px 0; font-size: 0.88em;
+        }
+        .note-callout strong { color: #e65100; }
+
+        /* Footer */
+        .footer-note { text-align: center; padding: 16px; color: #999; font-size: 0.82em; }
+    </style>
+</head>
+<body>
+<div class="container">
+
+<!-- ==================== HEADER ==================== -->
+<div class="page-header">
+    <div>
+        <h1>💰 实收收款模块 — UI设计原型</h1>
+        <div style="opacity:0.85; margin-top:4px;">交互式界面原型 · 对标金蝶云星空应收收款管理</div>
+    </div>
+    <span class="badge">📐 v1.0 Prototype · 共6个核心页面</span>
+</div>
+
+<div class="note-callout">
+    <strong>📌 设计说明：</strong>本原型展示了实收收款模块的6个核心页面布局。所有数据为示例数据，颜色/间距可根据实际开发调整。
+    核心设计原则：<b>信息密度适中</b> → <b>操作路径最短</b> → <b>核销过程可视化</b>
+</div>
+
+
+<!-- ============================================================
+     页面1：收款单列表页
+============================================================ -->
+<div class="screen">
+    <div class="screen-title">📋 页面1 — 收款单列表（主入口）<span class="tag">主页面</span></div>
+    
+    <div class="toolbar">
+        <button class="btn btn-primary">＋ 新增收款单</button>
+        <button class="btn">📥 导入银行流水</button>
+        <button class="btn">📤 导出Excel</button>
+        <span style="flex:1"></span>
+        <input type="text" class="search-input" placeholder="搜索客户名/收款单号/订单号...">
+        <select class="form-control" style="width:130px;padding:6px 8px;font-size:0.85em;">
+            <option>全部状态</option><option>草稿</option><option>已审核</option><option>部分核销</option><option>已作废</option>
+        </select>
+        <select class="form-control" style="width:120px;padding:6px 8px;font-size:0.85em;">
+            <option>本月</option><option>本周</option><option>今天</option><option>自定义</option>
+        </select>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th width="30"><input type="checkbox"></th>
+                <th>收款单号</th>
+                <th>客户名称</th>
+                <th class="text-right">收款金额</th>
+                <th>收款日期</th>
+                <th>收款方式</th>
+                <th>已核销</th>
+                <th>未核销</th>
+                <th>状态</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><input type="checkbox"></td>
+                <td><a href="#" style="color:#1565c0;text-decoration:none;font-weight:600;">SK20260400001</a></td>
+                <td>深圳XX科技有限公司</td>
+                <td class="text-right amount">¥50,000.00</td>
+                <td>2026-04-14</td>
+                <td><span class="tag-blue">银行转账</span></td>
+                <td class="text-right amount-green">¥50,000.00</td>
+                <td class="text-right">¥0.00</td>
+                <td><span class="status-verified">✅ 已审核</span></td>
+                <td><button class="btn btn-sm">查看</button></td>
+            </tr>
+            <tr>
+                <td><input type="checkbox"></td>
+                <td><a href="#" style="color:#1565c0;text-decoration:none;font-weight:600;">SK20260400002</a></td>
+                <td>广州YY电子有限公司</td>
+                <td class="text-right amount">¥128,500.00</td>
+                <td>2026-04-13</td>
+                <td><span class="tag-blue">银行转账</span></td>
+                <td class="text-right amount-green">¥80,000.00</td>
+                <td class="text-right amount-red" style="font-weight:600;">¥48,500.00</td>
+                <td><span class="status-partial">⏳ 部分核销</span></td>
+                <td><button class="btn btn-sm">继续核销</button> <button class="btn btn-sm">查看</button></td>
+            </tr>
+            <tr>
+                <td><input type="checkbox"></td>
+                <td><a href="#" style="color:#1565c0;text-decoration:none;font-weight:600;">SK20260400003</a></td>
+                <td>上海ZZ贸易公司</td>
+                <td class="text-right amount">¥35,000.00</td>
+                <td>2026-04-13</td>
+                <td><span class="tag-orange">支付宝</span></td>
+                <td class="text-right text-muted">—</td>
+                <td class="text-right amount-red" style="font-weight:600;">¥35,000.00</td>
+                <td><span class="status-draft">📝 草稿</span></td>
+                <td><button class="btn btn-sm btn-primary">编辑</button> <button class="btn btn-sm">核销</button> <button class="btn btn-sm">提交</button></td>
+            </tr>
+            <tr>
+                <td><input type="checkbox"></td>
+                <td><a href="#" style="color:#1565c0;text-decoration:none;font-weight:600;">SK20260400004</a></td>
+                <td>北京AA智能设备</td>
+                <td class="text-right amount">¥200,000.00</td>
+                <td>2026-04-12</td>
+                <td><span class="tag-green">承兑汇票</span></td>
+                <td class="text-right amount-green">¥200,000.00</td>
+                <td class="text-right">¥0.00</td>
+                <td><span class="status-verified">✅ 已审核</span></td>
+                <td><button class="btn btn-sm">查看</button></td>
+            </tr>
+            <tr>
+                <td><input type="checkbox"></td>
+                <td><a href="#" style="color:#999;text-decoration:none;">SK20260400005</a></td>
+                <td>深圳XX科技有限公司</td>
+                <td class="text-right amount" style="color:#999;text-decoration:line-through;">¥80,000.00</td>
+                <td>2026-04-11</td>
+                <td><span class="tag-blue">银行转账</span></td>
+                <td colspan="3"><span class="text-muted">—</span></td>
+                <td><span class="status-cancelled">❌ 已作废</span></td>
+                <td><button class="btn btn-sm">查看</button></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- 分页 -->
+    <div style="padding:14px 18px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid #eee;">
+        <span class="text-muted">共 127 条记录 | 显示 1-5 条</span>
+        <div style="display:flex;gap:4px;">
+            <button class="btn btn-sm" disabled>&laquo;</button>
+            <button class="btn btn-sm" style="background:#1565c0;color:white;border-color:#1565c0;">1</button>
+            <button class="btn btn-sm">2</button>
+            <button class="btn btn-sm">3</button>
+            ...
+            <button class="btn btn-sm">26</button>
+            <button class="btn btn-sm">&raquo;</button>
+        </div>
+    </div>
+</div>
+
+
+<!-- ============================================================
+     页面2：新增收款单 + 核销
+============================================================ -->
+<div class="screen">
+    <div class="screen-title">📝 页面2 — 新增收款单 + 关联核销<span class="tag">核心交互</span></div>
+
+    <div class="form-section">
+
+        <!-- === 区域A: 收款基本信息 === -->
+        <div class="panel">
+            <div class="panel-header">💵 收款信息</div>
+            <div class="panel-body">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>客户名称 <span class="required">*</span></label>
+                        <select class="form-control">
+                            <option value="">请选择客户...</option>
+                            <option selected>深圳XX科技有限公司</option>
+                            <option>广州YY电子有限公司</option>
+                            <option>上海ZZ贸易公司</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>收款金额 <span class="required">*</span></label>
+                        <input type="text" class="form-control" value="128,500.00" style="font-weight:600;color:#1565c0;">
+                    </div>
+                    <div class="form-group">
+                        <label>收款日期 <span class="required">*</span></label>
+                        <input type="date" class="form-control" value="2026-04-14">
+                    </div>
+                    <div class="form-group">
+                        <label>收款方式 <span class="required">*</span></label>
+                        <select class="form-control">
+                            <option selected>银行转账</option><option>现金</option><option>POS刷卡</option>
+                            <option>支付宝</option><option>微信支付</option>
+                            <option>承兑汇票</option><option>其他</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>收款银行账户</label>
+                        <select class="form-control">
+                            <option selected>工商银行 - 基本户 ****1234</option>
+                            <option>建设银行 - 一般户 ****5678</option>
+                            <option>招商银行 - 税务户 ****9012</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>银行流水号</label>
+                        <input type="text" class="form-control" placeholder="选填，用于银企对账" value="TXN20260414008866">
+                        <span class="form-hint">填写后可与银行流水自动匹配</span>
+                    </div>
+                    <div class="form-group" style="grid-column: span 2;">
+                        <label>备注</label>
+                        <textarea class="form-control" placeholder="选填">SO202603001 第一期货款 + SO202603002 尾款合并付款</textarea>
+                    </div>
+                    <div class="form-group" style="grid-column: span 2;">
+                        <label>附件上传</label>
+                        <div style="display:flex;gap:10px;align-items:center;margin-top:4px;">
+                            <div style="border:2px dashed #ccc;border-radius:6px;padding:16px 24px;text-align:center;color:#888;cursor:pointer;background:#fafafa;">
+                                📎 上传银行回单 (图片/PDF)
+                            </div>
+                            <span class="text-muted">未选择文件</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- === 区域B: 核销分配（关键！） === -->
+        <div class="panel">
+            <div class="panel-header">
+                🔗 应收核销分配
+                <div>
+                    <button class="btn btn-sm btn-primary">🤖 智能推荐</button>
+                    <button class="btn btn-sm">➕ 手工添加应收</button>
+                </div>
+            </div>
+            <div class="panel-body">
+                
+                <!-- 汇总条 -->
+                <div class="summary-bar">
+                    <div>
+                        <span class="total-label">本次收款金额：</span>
+                        <span class="total-value">¥128,500.00</span>
+                    </div>
+                    <div style="display:flex;gap:20px;">
+                        <div>已分配：<span class="amount-green" style="font-weight:700;">¥128,500.00</span></div>
+                        <div>剩余待分：<span class="amount-red" style="font-weight:700;">¥0.00</span></div>
+                    </div>
+                </div>
+
+                <!-- 待核销应收列表 -->
+                <div style="margin-bottom:8px;font-weight:600;color:#555;font-size:0.9em;">该客户待核销应收账款（共3笔）:</div>
+
+                <div class="writeoff-item selected">
+                    <input type="checkbox" checked style="transform:scale(1.2);">
+                    <div style="flex:1;display:flex;justify-content:space-between;align-items:center;">
+                        <div>
+                            <strong>AR202603001</strong>
+                            <span class="text-muted" style="margin-left:8px;">→ 订单 SO202603001</span>
+                            <br>
+                            <span class="text-muted" style="font-size:0.84em;">到期日: 2026-03-31 | 账龄: 14天(逾期)</span>
+                        </div>
+                        <div style="text-align:right;">
+                            <div style="font-size:0.82em;color:#888;">应收金额 ¥150,000.00</div>
+                            <div style="display:flex;align-items:center;gap:6px;margin-top:2px;">
+                                本次核销:
+                                <input type="text" class="writeoff-amount-input" value="98,500.00">
+                                <span class="text-muted">/ 剩余 ¥51,500.00</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="writeoff-item selected">
+                    <input type="checkbox" checked style="transform:scale(1.2);">
+                    <div style="flex:1;display:flex;justify-content:space-between;align-items:center;">
+                        <div>
+                            <strong>AR202603002</strong>
+                            <span class="text-muted" style="margin-left:8px;">→ 订单 SO202603002</span>
+                            <br>
+                            <span class="text-muted" style="font-size:0.84em;">到期日: 2026-04-30 | 账龄: 正常</span>
+                        </div>
+                        <div style="text-align:right;">
+                            <div style="font-size:0.82em;color:#888;">应收金额 ¥35,000.00</div>
+                            <div style="display:flex;align-items:center;gap:6px;margin-top:2px;">
+                                本次核销:
+                                <input type="text" class="writeoff-amount-input" value="30,000.00">
+                                <span class="text-muted">/ 剩余 ¥5,000.00</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 预收提示 -->
+                <div class="writeoff-item" style="border-left-color:#2e7d32;background:#f1f8e4;">
+                    <div style="flex:1;display:flex;justify-content:space-between;align-items:center;">
+                        <div>
+                            <strong style="color:#2e7d32;">💚 预收余额转存</strong>
+                            <span class="tag-green" style="margin-left:8px;">推荐使用</span>
+                            <br>
+                            <span class="text-muted" style="font-size:0.84em;">当前预收余额: ¥30,000.00</span>
+                        </div>
+                        <div style="text-align:right;">
+                            使用预收抵扣:
+                            <input type="text" class="writeoff-amount-input" style="color:#2e7d32;" value="0">
+                            <label style="font-size:0.82em;margin-left:6px;"><input type="checkbox"> 全部使用</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 操作按钮 -->
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:16px;">
+            <div>
+                <button class="btn">💾 保存草稿</button>
+                <span class="text-muted" style="margin-left:12px;">草稿状态下可随时修改</span>
+            </div>
+            <div style="display:flex;gap:10px;">
+                <button class="btn btn-warning">预览凭证</button>
+                <button class="btn btn-success" style="padding:8px 28px;font-size:0.95em;">✔ 提交核销并生成凭证</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+<!-- ============================================================
+     页面3: 收款详情页
+============================================================ -->
+<div class="screen">
+    <div class="screen-title">🔍 页面3 — 收款详情与核销明细<span class="tag">查看页</span></div>
+    
+    <div class="form-section">
+        <!-- 头部信息 -->
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px;">
+            <div>
+                <h3 style="font-size:1.2em;color:#1565c0;">SK20260400001</h3>
+                <p class="text-muted">创建于 2026-04-14 09:30 by 张会计 · 审核 2026-04-14 10:15 by 李主管</p>
+            </div>
+            <div style="display:flex;gap:8px;">
+                <span class="status-verified" style="font-size:0.95em;padding:4px 16px;">✅ 已审核</span>
+                <button class="btn btn-sm btn-danger">红字冲销</button>
+                <button class="btn btn-sm">打印回单</button>
+            </div>
+        </div>
+
+        <!-- 基本信息 -->
+        <div class="screens-row">
+            <!-- 左栏 -->
+            <div>
+                <div class="panel">
+                    <div class="panel-header">💵 收款基本信息</div>
+                    <div class="panel-body" style="font-size:0.9em;">
+                        <table style="width:100%;">
+                            <tr><td style="color:#888;width:110px;">客户名称</td><td><strong>深圳XX科技有限公司</strong></td></tr>
+                            <tr><td style="color:#888;">客户税号</td><td>91440300MA5DQ****X</td></tr>
+                            <tr><td style="color:#888;">收款金额</td><td class="amount" style="font-size:1.15em;">¥50,000.00 CNY</td></tr>
+                            <tr><td style="color:#888;">收款日期</td><td>2026-04-14</td></tr>
+                            <tr><td style="color:#888;">收款方式</td><td><span class="tag-blue">银行转账</span></td></tr>
+                            <tr><td style="color:#888;">收款账户</td><td>工商银行 ****1234</td></tr>
+                            <tr><td style="color:#888;">银行流水号</td><td>TXN20260414000123</td></tr>
+                            <tr><td style="color:#888;">来源</td><td>手工录入</td></tr>
+                            <tr><td style="color:#888;">备注</td><td>SO202603001 第一期货款</td></tr>
+                            <tr><td style="color:#888;">附件</td><td><a href="#" style="color:#1565c0;">📎 银行回单.pdf</a></td></tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 右栏：核销明细 -->
+            <div>
+                <div class="panel">
+                    <div class="panel-header">🔗 核销明细</div>
+                    <div class="panel-body">
+                        <table style="font-size:0.86em;">
+                            <thead>
+                                <tr>
+                                    <th>应收单号</th>
+                                    <th>关联订单</th>
+                                    <th class="text-right">核销金额</th>
+                                    <th>核销类型</th>
+                                    <th>核销时间</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><a href="#">AR202603001</a></td>
+                                    <td>SO202603001</td>
+                                    <td class="text-right amount">¥50,000.00</td>
+                                    <td><span class="tag-green">手工核销</span></td>
+                                    <td>04-14 09:35</td>
+                                </tr>
+                            </tbody>
+                            <tfoot>
+                                <tr style="background:#e8f5e9;">
+                                    <td colspan="2"><strong>合计核销</strong></td>
+                                    <td class="text-right" style="font-weight:700;color:#2e7d32;font-size:1.05em;">¥50,000.00</td>
+                                    <td colspan="2"></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+
+                        <div style="margin-top:16px;padding:12px;background:#f0f7ff;border-radius:6px;">
+                            <div style="font-weight:600;margin-bottom:6px;">🧾 生成的会计凭证</div>
+                            <div style="background:white;padding:12px;border-radius:4px;font-family:'Consolas',monospace;font-size:0.84em;line-height:1.8;">
+                                <div>借：100201 银行存款-工商银行 &nbsp;&nbsp;&nbsp; <strong style="color:#c62828;">50,000.00</strong></div>
+                                <div style="margin-left:24px;">贷：112201 应收账款-深圳XX科技 &nbsp; <strong style="color:#2e7d32;">50,000.00</strong></div>
+                            </div>
+                            <div style="margin-top:6px;text-align:right;"><a href="#" style="color:#1565c0;font-size:0.82em;">查看完整凭证 →</a></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- ============================================================
+     页面4: 智能匹配弹窗
+============================================================ -->
+<div class="screen">
+    <div class="screen-title">🤖 页面4 — 智能核销推荐弹窗<span class="tag">交互亮点</span></div>
+    
+    <div class="form-section">
+        <div class="panel" style="border:2px solid #90caf9;">
+            <div class="panel-header" style="background:linear-gradient(to right,#e3f2fd,#bbdefb);">
+                🤖 AI智能核销推荐
+                <span style="font-size:0.82em;font-weight:normal;">基于客户+金额+账龄+历史习惯综合分析</span>
+            </div>
+            <div class="panel-body">
+                <div style="background:#e8f5e9;border-radius:8px;padding:14px;margin-bottom:16px;display:flex;align-items:center;gap:12px;">
+                    <span style="font-size:1.8em;">🎯</span>
+                    <div>
+                        <div style="font-weight:700;color:#2e7d32;font-size:1.05em;">检测到高置信度匹配方案！置信度 96%</div>
+                        <div class="text-muted" style="font-size:0.88em;">收款 ¥128,500.00 可完美覆盖以下 2 笔应收账款</div>
+                    </div>
+                    <button class="btn btn-success" style="margin-left:auto;">✅ 一键采纳此方案</button>
+                </div>
+
+                <!-- 推荐方案表格 -->
+                <table style="font-size:0.88em;">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>推荐优先级</th>
+                            <th>应收单号</th>
+                            <th>关联订单</th>
+                            <th>应收金额</th>
+                            <th class="text-right">建议核销</th>
+                            <th>匹配依据</th>
+                            <th>置信度</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr style="background:#f1f8e4;">
+                            <td>1</td>
+                            <td><span class="tag-green">★★★ 首选</span></td>
+                            <td><strong>AR202603001</strong></td>
+                            <td>SO202603001</td>
+                            <td class="text-right">¥150,000.00</td>
+                            <td class="text-right"><input type="text" value="98,500.00" style="width:110px;text-align:right;font-weight:600;color:#1565c0;border:1px solid #ccc;border-radius:4px;padding:4px;"></td>
+                            <td><span class="text-muted">金额部分匹配<br/>同客户历史核销率98%</span></td>
+                            <td><strong style="color:#2e7d32;">96%</strong></td>
+                        </tr>
+                        <tr style="background:#f1f8e4;">
+                            <td>2</td>
+                            <td><span class="tag-green">★★★ 首选</span></td>
+                            <td><strong>AR202603002</strong></td>
+                            <td>SO202603002</td>
+                            <td class="text-right">¥35,000.00</td>
+                            <td class="text-right"><input type="text" value="30,000.00" style="width:110px;text-align:right;font-weight:600;color:#1565c0;border:1px solid #ccc;border-radius:4px;padding:4px;"></td>
+                            <td><span class="text-muted">金额部分匹配</span></td>
+                            <td><strong style="color:#2e7d32;">94%</strong></td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td><span class="tag-orange">★☆☆ 备选</span></td>
+                            <td>AR202602015</td>
+                            <td>SO202602015</td>
+                            <td class="text-right">¥8,000.00</td>
+                            <td class="text-right text-muted">不推荐</td>
+                            <td><span class="text-muted">金额过小且已逾期90天</span></td>
+                            <td style="color:#e65100;">62%</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <!-- 底部汇总 -->
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-top:16px;padding:12px 16px;background:#e3f2fd;border-radius:6px;">
+                    <div>
+                        收款总额 <strong style="font-size:1.1em;color:#0d47a1;">¥128,500.00</strong>
+                        → 推荐核销合计 <strong style="font-size:1.1em;color:#2e7d32;">¥128,500.00</strong>
+                        → 差额 <strong style="color:#2e7d32;">¥0.00</strong>
+                    </div>
+                    <div style="display:flex;gap:8px;">
+                        <button class="btn">忽略推荐，手工选择</button>
+                        <button class="btn btn-primary">采纳推荐方案</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- ============================================================
+     页面5: 预收款管理
+============================================================ -->
+<div class="screen">
+    <div class="screen-title">💚 页面5 — 预收款管理<span class="tag">预收功能</span></div>
+
+    <div class="form-section">
+        <!-- 预收概览卡片 -->
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;margin-bottom:20px;">
+            <div style="background:linear-gradient(135deg,#e8f5e9,#c8e6c9);padding:18px;border-radius:10px;text-align:center;">
+                <div style="font-size:0.85em;color:#2e7d32;">预收客户总数</div>
+                <div style="font-size:2em;font-weight:700;color:#1b5e20;margin:4px 0;">23</div>
+            </div>
+            <div style="background:linear-gradient(135deg,#e3f2fd,#bbdefb);padding:18px;border-radius:10px;text-align:center;">
+                <div style="font-size:0.85em;color:#1565c0;">预收总余额</div>
+                <div style="font-size:2em;font-weight:700;color:#0d47a1;margin:4px 0;">¥ 386,520.00</div>
+            </div>
+            <div style="background:linear-gradient(135deg,#fff8e1,#ffecb3);padding:18px;border-radius:10px;text-align:center;">
+                <div style="font-size:0.85em;color:#ef6c00;">本月新增预收</div>
+                <div style="font-size:2em;font-weight:700;color:#e65100;margin:4px 0;">¥ 125,000.00</div>
+            </div>
+            <div style="background:linear-gradient(135deg,#fce4ec,#ffcdd2);padding:18px;border-radius:10px;text-align:center;">
+                <div style="font-size:0.85em;color:#c62828;">本月预收核销</div>
+                <div style="font-size:2em;font-weight:700;color:#c62828;margin:4px 0;">¥ 89,350.00</div>
+            </div>
+        </div>
+
+        <!-- 客户预收列表 -->
+        <table style="font-size:0.88em;">
+            <thead>
+                <tr>
+                    <th>客户名称</th>
+                    <th class="text-right">预收余额</th>
+                    <th class="text-right">本月新增</th>
+                    <th class="text-right">本月使用</th>
+                    <th>最近变动</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>深圳XX科技有限公司</strong></td>
+                    <td class="text-right" style="font-size:1.05em;font-weight:700;color:#1565c0;">¥ 180,000.00</td>
+                    <td class="text-right amount-green">+¥ 100,000.00</td>
+                    <td class="text-right amount-red">-¥ 20,000.00</td>
+                    <td>04-14 存入预收 SK20260400006</td>
+                    <td><button class="btn btn-sm">查看流水</button> <button class="btn btn-sm btn-primary">手动抵扣</button></td>
+                </tr>
+                <tr>
+                    <td><strong>广州YY电子有限公司</strong></td>
+                    <td class="text-right" style="font-size:1.05em;font-weight:700;color:#1565c0;">¥ 95,000.00</td>
+                    <td class="text-right amount-green">+¥ 25,000.00</td>
+                    <td class="text-right amount-red">-¥ 55,000.00</td>
+                    <td>04-12 预收核销 AR202603010</td>
+                    <td><button class="btn btn-sm">查看流水</button> <button class="btn btn-sm btn-primary">手动抵扣</button></td>
+                </tr>
+                <tr>
+                    <td><strong>上海ZZ贸易公司</strong></td>
+                    <td class="text-right" style="font-size:1.05em;font-weight:700;color:#1565c0;">¥ 68,520.00</td>
+                    <td class="text-right">—</td>
+                    <td class="text-right">—</td>
+                    <td>03-28 存入预收 SK20260300089</td>
+                    <td><button class="btn btn-sm">查看流水</button> <button class="btn btn-sm btn-primary">手动抵扣</button></td>
+                </tr>
+                <tr>
+                    <td><strong>北京AA智能设备</strong></td>
+                    <td class="text-right" style="font-size:1.05em;font-weight:700;color:#1565c0;">¥ 43,000.00</td>
+                    <td class="text-right">—</td>
+                    <td class="text-right">—</td>
+                    <td>02-15 存入预收 SK20260200034</td>
+                    <td><button class="btn btn-sm">查看流水</button> <button class="btn btn-sm btn-primary">手动抵扣</button></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+<!-- ============================================================
+     页面6: 回款统计仪表板
+============================================================ -->
+<div class="screen">
+    <div class="screen-title">📊 页面6 — 回款统计仪表板<span class="tag">管理层视图</span></div>
+    
+    <div class="form-section">
+        <!-- 时间筛选 -->
+        <div style="display:flex;gap:12px;margin-bottom:18px;align-items:center;">
+            <span style="font-weight:600;">统计周期：</span>
+            <button class="btn btn-sm btn-primary">本月</button>
+            <button class="btn btn-sm">本季</button>
+            <button class="btn sm">本年</button>
+            <span style="color:#ddd;">|</span>
+            <input type="date" class="form-control" value="2026-04-01" style="width:145px;padding:5px 8px;font-size:0.85em;">
+            <span>至</span>
+            <input type="date" class="form-control" value="2026-04-14" style="width:145px;padding:5px 8px;font-size:0.85em;">
+        </div>
+
+        <!-- KPI 卡片行 -->
+        <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:20px;">
+            <div style="background:white;border:1px solid #e9ecef;border-radius:10px;padding:16px;text-align:center;border-top:3px solid #1565c0;">
+                <div style="font-size:0.82em;color:#888;">收款总额</div>
+                <div style="font-size:1.6em;font-weight:700;color:#1565c0;margin:4px 0;">¥ 1,256,800</div>
+                <div style="font-size:0.78em;color:#2e7d32;">↑ 12.5% vs 上月</div>
+            </div>
+            <div style="background:white;border:1px solid #e9ecef;border-radius:10px;padding:16px;text-align:center;border-top:3px solid #2e7d32;">
+                <div style="font-size:0.82em;color:#888;">核销笔数</div>
+                <div style="font-size:1.6em;font-weight:700;color:#2e7d32;margin:4px 0;">186 笔</div>
+                <div style="font-size:0.78em;">涉及 42 个客户</div>
+            </div>
+            <div style="background:white;border:1px solid #e9ecef;border-radius:10px;padding:16px;text-align:center;border-top:3px solid #e65100;">
+                <div style="font-size:0.82em;color:#888;">平均回款周期</div>
+                <div style="font-size:1.6em;font-weight:700;color:#e65100;margin:4px 0;">32 天</div>
+                <div style="font-size:0.78em;color:#2e7d32;">↓ 3天 vs 上月 🎉</div>
+            </div>
+            <div style="background:white;border:1px solid #e9ecef;border-radius:10px;padding:16px;text-align:center;border-top:3px solid #c62828;">
+                <div style="font-size:0.82em;color:#888;">逾期未收</div>
+                <div style="font-size:1.6em;font-weight:700;color:#c62828;margin:4px 0;">¥ 368,500</div>
+                <div style="font-size:0.78em;">15 笔待催收</div>
+            </div>
+            <div style="background:white;border:1px solid #e9ecef;border-radius:10px;padding:16px;text-align:center;border-top:3px solid #6a1b9a;">
+                <div style="font-size:0.82em;color:#888;">自动核销率</div>
+                <div style="font-size:1.6em;font-weight:700;color:#6a1b9a;margin:4px 0;">87.1%</div>
+                <div style="font-size:0.78em;">↑ 5% vs 上月</div>
+            </div>
+        </div>
+
+        <!-- 图表区域 -->
+        <div class="screens-row">
+            <!-- 回款趋势 -->
+            <div class="panel" style="height:280px;">
+                <div class="panel-header">📈 本月每日回款趋势</div>
+                <div class="panel-body" style="height:220px;display:flex;align-items:flex-end;gap:6px;padding:0 20px;">
+                    <!-- 模拟柱状图 -->
+                    <div style="flex:1;background:#bbdefb;border-radius:4px 4px 0 0;height:35%;position:relative;" title="04-01: ¥42k"></div>
+                    <div style="flex:1;background:#bbdefb;border-radius:4px 4px 0 0;height:55%;position:relative;" title="04-02: ¥68k"></div>
+                    <div style="flex:1;background:#bbdefb;border-radius:4px 4px 0 0;height:28%;position:relative;" title="04-03: ¥33k"></div>
+                    <div style="flex:1;background:#90caf9;border-radius:4px 4px 0 0;height:72%;position:relative;" title="04-04: ¥89k"></div>
+                    <div style="flex:1;background:#bbdefb;border-radius:4px 4px 0 0;height:45%;position:relative;" title="04-05: ¥54k"></div>
+                    <div style="flex:1;background:#64b5f6;border-radius:4px 4px 0 0;height:88%;position:relative;" title="04-06: ¥108k"></div>
+                    <div style="flex:1;background:#bbdefb;border-radius:4px 4px 0 0;height:40%;position:relative;" title="04-07: ¥48k"></div>
+                    <div style="flex:1;background:#bbdefb;border-radius:4px 4px 0 0;height:15%;position:relative;" title="04-08(周末)" title="04-08: ¥18k"></div>
+                    <div style="flex:1;background:#bbdefb;border-radius:4px 4px 0 0;height:12%;position:relative;" title="04-09(周末)" title="04-09: ¥14k"></div>
+                    <div style="flex:1;background:#42a5f5;border-radius:4px 4px 0 0;height:100%;position:relative;" title="04-10: ¥126k"></div>
+                    <div style="flex:1;background:#bbdefb;border-radius:4px 4px 0 0;height:58%;position:relative;" title="04-11: ¥70k"></div>
+                    <div style="flex:1;background:#bbdefb;border-radius:4px 4px 0 0;height:48%;position:relative;" title="04-12: ¥58k"></div>
+                    <div style="flex:1;background:#bbdefb;border-radius:4px 4px 0 0;height:52%;position-relative;" title="04-13: ¥63k"></div>
+                    <div style="flex:1;background:#1e88e5;border-radius:4px 4px 0 0;height:75%;position:relative;" title="04-14(今日): ¥91k"></div>
+                </div>
+            </div>
+
+            <!-- 客户TOP排行 -->
+            <div class="panel" style="height:280px;">
+                <div class="panel-header">🏆 本月回款 TOP5 客户</div>
+                <div class="panel-body" style="padding:12px 16px;">
+                    <div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px dashed #eee;">
+                        <span style="font-size:1.3em;">🥇</span>
+                        <div style="flex:1;"><strong>深圳XX科技有限公司</strong></div>
+                        <div style="text-align:right;"><div class="amount" style="font-size:1.05em;">¥ 326,500</div><div class="text-muted" style="font-size:0.78em;">占 26%</div></div>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px dashed #eee;">
+                        <span style="font-size:1.3em;">🥈</span>
+                        <div style="flex:1;"><strong>广州YY电子有限公司</strong></div>
+                        <div style="text-align:right;"><div class="amount" style="font-size:1.05em;">¥ 245,800</div><div class="text-muted" style="font-size:0.78em;">占 19.6%</div></div>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px dashed #eee;">
+                        <span style="font-size:1.3em;">🥉</span>
+                        <div style="flex:1;"><strong>上海ZZ贸易公司</strong></div>
+                        <div style="text-align:right;"><div class="amount" style="font-size:1.05em;">¥ 189,200</div><div class="text-muted" style="font-size:0.78em;">占 15%</div></div>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px dashed #eee;">
+                        <span style="font-size:1.1em;color:#999;">4</span>
+                        <div style="flex:1;">杭州BB供应链</div>
+                        <div style="text-align:right;"><div class="amount">¥ 156,300</div><div class="text-muted" style="font-size:0.78em;">占 12.4%</div></div>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:12px;padding:10px 0;">
+                        <span style="font-size:1.1em;color:#999;">5</span>
+                        <div style="flex:1;">成都CC制造</div>
+                        <div style="text-align:right;"><div class="amount">¥ 138,900</div><div class="text-muted" style="font-size:0.78em;">占 11%</div></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 账龄分布 -->
+        <div class="panel" style="margin-top:16px;">
+            <div class="panel-header">⏰ 应收账龄分布（截至今天）</div>
+            <div class="panel-body" style="padding:16px 24px;">
+                <div style="display:flex;align-items:center;gap:20px;">
+                    <!-- 账龄条形图模拟 -->
+                    <div style="flex:1;display:flex;align-items:center;gap:8px;">
+                        <span style="width:80px;text-align:right;font-size:0.85em;">0-30天</span>
+                        <div style="flex:1;height:28px;background:#c8e6c9;border-radius:14px;position:relative;">
+                            <div style="height:100%;width:65%;background:#43a047;border-radius:14px;"></div>
+                            <span style="position:absolute;right:8px;top:50%;transform:translateY(-50%);font-size:0.8em;font-weight:600;color:#1b5e20;">¥ 520,000 (65%)</span>
+                        </div>
+                    </div>
+                    <div style="flex:1;display:flex;align-items:center;gap:8px;">
+                        <span style="width:80px;text-align:right;font-size:0.85em;">31-60天</span>
+                        <div style="flex:1;height:28px;background:#fff9c4;border-radius:14px;position:relative;">
+                            <div style="height:100%;width:18%;background:#f9a825;border-radius:14px;"></div>
+                            <span style="position:absolute;right:-50px;top:50%;transform:translateY(-50%);font-size:0.8em;font-weight:600;color:#f57f17;">¥ 144,000 (18%)</span>
+                        </div>
+                    </div>
+                    <div style="flex:1;display:flex;align-items:center;gap:8px;">
+                        <span style="width:80px;text-align:right;font-size:0.85em;">61-90天</span>
+                        <div style="flex:1;height:28px;background:#ffe0b2;border-radius:14px;position:relative;">
+                            <div style="height:100%;width:10%;background:#ef6c00;border-radius:14px;"></div>
+                            <span style="position:absolute;right:-50px;top:50%;transform:translateY(-50%);font-size:0.8em;font-weight:600;color:#e65100;">¥ 80,000 (10%)</span>
+                        </div>
+                    </div>
+                    <div style="flex:1;display:flex;align-items:center;gap:8px;">
+                        <span style="width:80px;text-align:right;font-size:0.85em;">&gt;90天 ⚠️</span>
+                        <div style="flex:1;height:28px;background:#ffcdd2;border-radius:14px;position:relative;">
+                            <div style="height:100%;width;7%;background:#c62828;border-radius:14px;"></div>
+                            <span style="position:absolute;right:-50px;top:50%;transform:translateY(-50%);font-size:0.8em;font-weight:600;color:#c62828;">¥ 56,500 (7%)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Footer -->
+<div class="footer-note">
+    <p>📐 UI Design Prototype · ERP财务管理系统 · 实收收款模块 · Dev_Dept · 2026-04-14</p>
+    <p>对标金蝶云星空 · 设计工具：纯CSS+HTML线框图（无需Figma/Axure）</p>
+</div>
+
+</div>
+</body>
+</html>
