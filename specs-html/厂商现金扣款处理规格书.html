@@ -4,285 +4,127 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>厂商现金扣款处理规格书</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
-            line-height: 1.8;
-            color: #333;
-            background: #f5f7fa;
-            padding: 20px;
+            font-family: 'Noto Sans SC', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            line-height: 1.9;
+            color: #2d3748;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8ec 100%);
+            min-height: 100vh;
+            padding: 30px 20px;
         }
         .container {
-            max-width: 1200px;
+            max-width: 1100px;
             margin: 0 auto;
             background: #fff;
-            border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
         }
         .doc-header {
-            text-align: center;
-            padding-bottom: 30px;
-            border-bottom: 2px solid #e8ecf1;
-            margin-bottom: 30px;
-        }
-        .doc-header h1 {
-            font-size: 32px;
-            color: #1a1a2e;
-            margin-bottom: 15px;
-        }
-        .doc-meta {
-            display: flex;
-            justify-content: center;
-            gap: 30px;
-            flex-wrap: wrap;
-        }
-        .meta-item {
-            background: #f0f4f8;
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 14px;
-            color: #5a6c7d;
-        }
-        h2 {
-            font-size: 24px;
-            color: #1a1a2e;
-            margin: 30px 0 15px;
-            padding-bottom: 10px;
-            border-bottom: 3px solid #3498db;
-        }
-        h3 {
-            font-size: 18px;
-            color: #2c3e50;
-            margin: 25px 0 12px;
-        }
-        p {
-            margin-bottom: 15px;
-            text-align: justify;
-        }
-        
-        /* 代码块样式 */
-        .code-block {
-            margin: 20px 0;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-        .code-header {
-            background: #2d3748;
-            color: #fff;
-            padding: 8px 16px;
-            font-size: 12px;
-            font-weight: 600;
-            text-transform: uppercase;
-        }
-        .code-block pre {
-            background: #1a202c;
-            color: #e2e8f0;
-            padding: 20px;
-            overflow-x: auto;
-            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
-            font-size: 13px;
-            line-height: 1.6;
-        }
-        .code-block code {
-            font-family: inherit;
-        }
-        .inline-code {
-            background: #f0f4f8;
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-family: 'Consolas', 'Monaco', monospace;
-            font-size: 0.9em;
-            color: #e53e3e;
-        }
-        
-        /* 表格样式 */
-        .data-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 20px 0;
-            font-size: 14px;
-        }
-        .data-table th {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: #fff;
-            padding: 14px;
-            text-align: left;
-            font-weight: 600;
+            padding: 40px;
+            text-align: center;
         }
-        .data-table td {
-            padding: 12px 14px;
-            border-bottom: 1px solid #e8ecf1;
-        }
-        .data-table tr:hover {
-            background: #f8fafc;
-        }
-        
-        /* 列表样式 */
-        ul {
-            margin: 15px 0;
-            padding-left: 25px;
-        }
-        li {
-            margin-bottom: 8px;
-        }
-        
-        /* 架构图/流程图容器 */
-        .diagram-container {
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
-            border-radius: 8px;
-            padding: 20px;
-            margin: 20px 0;
-            overflow-x: auto;
-        }
-        .diagram-container pre {
-            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
-            font-size: 12px;
-            line-height: 1.4;
-            color: #2d3748;
-        }
-        
-        /* 接口卡片 */
-        .api-card {
-            background: #f8fafc;
-            border-left: 4px solid #3498db;
-            padding: 20px;
-            margin: 15px 0;
-            border-radius: 0 8px 8px 0;
-        }
-        .api-method {
-            display: inline-block;
-            padding: 4px 10px;
-            border-radius: 4px;
-            font-size: 12px;
-            font-weight: 600;
-            margin-right: 10px;
-        }
-        .api-method.get { background: #48bb78; color: #fff; }
-        .api-method.post { background: #4299e1; color: #fff; }
-        .api-method.put { background: #ed8936; color: #fff; }
-        .api-method.delete { background: #f56565; color: #fff; }
-        .api-path {
-            font-family: 'Consolas', monospace;
-            font-size: 14px;
-            color: #2d3748;
-        }
-        .api-section {
-            margin-top: 15px;
-        }
-        .api-section-title {
-            font-weight: 600;
-            color: #4a5568;
-            margin-bottom: 8px;
-            font-size: 13px;
-            text-transform: uppercase;
-        }
-        
-        /* 警告框 */
-        .alert {
-            padding: 16px 20px;
-            border-radius: 8px;
-            margin: 20px 0;
-        }
-        .alert-info {
-            background: #ebf8ff;
-            border-left: 4px solid #4299e1;
-        }
-        .alert-warning {
-            background: #fffaf0;
-            border-left: 4px solid #ed8936;
-        }
-        .alert-success {
-            background: #f0fff4;
-            border-left: 4px solid #48bb78;
-        }
-        
-        /* 状态标签 */
-        .status-badge {
-            display: inline-block;
-            padding: 4px 10px;
-            border-radius: 12px;
-            font-size: 12px;
-            font-weight: 500;
-        }
-        .status-done { background: #c6f6d5; color: #22543d; }
-        .status-pending { background: #feebc8; color: #744210; }
-        .status-deprecated { background: #fed7d7; color: #742a2a; }
+        .doc-header h1 { font-size: 28px; font-weight: 600; margin-bottom: 15px; }
+        .doc-meta { display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; }
+        .meta-item { background: rgba(255,255,255,0.2); padding: 6px 14px; border-radius: 20px; font-size: 13px; }
+        .content { padding: 40px; }
+        h2 { font-size: 22px; color: #1a202c; margin: 35px 0 18px; padding-bottom: 10px; border-bottom: 3px solid #667eea; }
+        h3 { font-size: 18px; color: #2d3748; margin: 28px 0 14px; }
+        h4 { font-size: 16px; color: #4a5568; margin: 20px 0 10px; }
+        p { margin-bottom: 12px; }
+        .md-table { width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 14px; border-radius: 8px; overflow: hidden; border: 1px solid #e2e8f0; }
+        .md-table th { background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%); color: #fff; padding: 14px 16px; text-align: left; font-weight: 600; }
+        .md-table td { padding: 12px 16px; border-bottom: 1px solid #f1f5f9; }
+        .md-table tr:hover td { background: #f8fafc; }
+        .md-table tr:last-child td { border-bottom: none; }
+        .inline-code { background: #f1f5f9; color: #e53e3e; padding: 2px 7px; border-radius: 4px; font-family: 'JetBrains Mono', monospace; font-size: 0.88em; }
+        .code-block { margin: 22px 0; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        .code-header { background: #1e293b; color: #94a3b8; padding: 8px 16px; font-size: 11px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; font-family: 'JetBrains Mono', monospace; }
+        .sql-block .code-header { background: #065f46; }
+        .code-block pre { background: #0f172a; color: #e2e8f0; padding: 20px; overflow-x: auto; font-family: 'JetBrains Mono', monospace; font-size: 13px; line-height: 1.65; }
+        .code-block code { font-family: inherit; }
+        .gherkin-block { margin: 22px 0; border-radius: 10px; overflow: hidden; background: #fefce8; border: 1px solid #fbbf24; }
+        .gherkin-header { background: #f59e0b; color: #fff; padding: 8px 16px; font-size: 12px; font-weight: 600; }
+        .gherkin-content { padding: 18px; font-family: 'JetBrains Mono', monospace; font-size: 13px; line-height: 1.7; color: #78350f; white-space: pre-wrap; }
+        .csv-block { margin: 22px 0; border-radius: 10px; overflow: hidden; background: #f0fdf4; border: 1px solid #86efac; }
+        .csv-header { background: #22c55e; color: #fff; padding: 8px 16px; font-size: 12px; font-weight: 600; }
+        .csv-content { padding: 18px; font-family: 'JetBrains Mono', monospace; font-size: 13px; line-height: 1.6; color: #166534; overflow-x: auto; }
+        .ascii-diagram { margin: 22px 0; border-radius: 10px; overflow: hidden; background: #f8fafc; border: 1px solid #cbd5e1; }
+        .ascii-header { background: #475569; color: #fff; padding: 8px 16px; font-size: 12px; font-weight: 600; }
+        .ascii-content { padding: 20px; font-family: 'JetBrains Mono', 'Consolas', monospace; font-size: 13px; line-height: 1.45; color: #1e293b; white-space: pre; overflow-x: auto; }
+        .md-quote { margin: 18px 0; padding: 16px 20px; background: #eff6ff; border-left: 4px solid #3b82f6; border-radius: 0 8px 8px 0; color: #1e40af; }
+        ul { margin: 12px 0; padding-left: 28px; }
+        li { margin-bottom: 8px; }
+        .back-link { display: inline-block; margin: 20px 40px; padding: 10px 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #fff; text-decoration: none; border-radius: 8px; font-weight: 500; }
+        @media (max-width: 768px) { .content { padding: 20px; } .doc-header { padding: 25px; } .doc-header h1 { font-size: 22px; } }
     </style>
 </head>
 <body>
+    <a href="https://zlinke-zhao.github.io/erp-finance-docs/" class="back-link">← 返回入口</a>
     <div class="container">
         <div class="doc-header">
             <h1>厂商现金扣款处理规格书</h1>
             <div class="doc-meta">
-                <span class="meta-item">📅 版本: V1.0</span>
-                <span class="meta-item">👥 产品团队</span>
+                <span class="meta-item">📅 V1.0</span>
+                <span class="meta-item">👥 Dev_Dept</span>
                 <span class="meta-item">📋 需求规格说明书</span>
             </div>
         </div>
-        <h1>厂商现金扣款处理模块规格书</h1>
+        <div class="content"><h1>厂商现金扣款处理模块规格书</h1>
 
-> <strong>模块名称</strong>：厂商现金扣款处理  
-> <strong>模块代码</strong>：CASH_DEDUCT  
-> <strong>版本</strong>：v1.0  
-> <strong>日期</strong>：2026-04-17  
-> <strong>作者</strong>：Dev_Dept 需求分析团队  
-> <strong>适用范围</strong>：越南/泰国海外子公司
+<blockquote class="md-quote">**模块名称**：厂商现金扣款处理  <br>**模块代码**：CASH_DEDUCT  <br>**版本**：v1.0  <br>**日期**：2026-04-17  <br>**作者**：Dev_Dept 需求分析团队  <br>**适用范围**：越南/泰国海外子公司</blockquote>
 
----
+<li>--</li>
 
-<h2>一、业务背景</h2>
+<h2>一、业务背景</h2>
 
-<h3>1.1 问题描述</h3>
+<h3>1.1 问题描述</h3>
 
-在与越南、泰国等海外供应商对账时，经常会出现品质扣款、迟延罚款等情况。传统做法是从应付账款中直接扣减，但这些国家的税法有特殊规定：
+<p>在与越南、泰国等海外供应商对账时，经常会出现品质扣款、迟延罚款等情况。传统做法是从应付账款中直接扣减，但这些国家的税法有特殊规定：</p>
 
-> <strong>核心约束</strong>：发票已开具、双方已对账确认的金额，不能再从应付账款中扣减。
+<blockquote class="md-quote">**核心约束**：发票已开具、双方已对账确认的金额，不能再从应付账款中扣减。</blockquote>
 
-因此，必须通过<strong>现金收/付款项</strong>的方式单独处理扣款项。
+<p>因此，必须通过<strong>现金收/付款项</strong>的方式单独处理扣款项。</p>
 
-<h3>1.2 业务场景</h3>
+<h3>1.2 业务场景</h3>
 
-| 场景 | 说明 | 扣款方向 |
-|------|------|----------|
-| 品质扣款 | 货物质量问题，供应商赔款 | 供应商→我方 |
-| 迟延罚款 | 供应商延期交付，被罚款 | 供应商→我方 |
-| 我方补偿 | 我方责任，主动赔偿供应商 | 我方→供应商 |
-| 其他补偿 | 价格调整、业务补偿等 | 双方均可 |
+<table class="md-table"><thead><tr><th>场景</th><th>说明</th><th>扣款方向</th></tr></thead><tbody><tr><td>品质扣款</td><td>货物质量问题，供应商赔款</td><td>供应商→我方</td></tr><tr><td>迟延罚款</td><td>供应商延期交付，被罚款</td><td>供应商→我方</td></tr><tr><td>我方补偿</td><td>我方责任，主动赔偿供应商</td><td>我方→供应商</td></tr><tr><td>其他补偿</td><td>价格调整、业务补偿等</td><td>双方均可</td></tr></tbody></table>
 
----
+<li>--</li>
 
-<h2>二、功能范围</h2>
+<h2>二、功能范围</h2>
 
-<h3>2.1 核心功能</h3>
+<h3>2.1 核心功能</h3>
 
-| 功能编号 | 功能名称 | 功能说明 | 优先级 |
-|----------|----------|----------|--------|
-| F01 | 现金扣款申请 | 发起现金扣款单，关联原应付单据 | P0 |
-| F02 | 扣款审��� | 财务人员审核扣款事项 | P0 |
-| F03 | 现金收/付款确认 | 确认现金收付，更新账户余额 | P0 |
-| F04 | 往来核销 | 核销应付/应收，生成核销记录 | P0 |
-| F05 | 凭证生成 | 生成总账凭证，传递到凭证引擎 | P0 |
-| F06 | 扣款查询 | 按供应商/日期/状态查询扣款记录 | P1 |
-| F07 | 统计报表 | 按供应商/月份/原因统计扣款 | P2 |
+<table class="md-table"><thead><tr><th>功能编号</th><th>功能名称</th><th>功能说明</th><th>优先级</th></tr></thead><tbody><tr><td>F01</td><td>现金扣款申请</td><td>发起现金扣款单，关联原应付单据</td><td>P0</td></tr><tr><td>F02</td><td>扣款审���</td><td>财务人员审核扣款事项</td><td>P0</td></tr><tr><td>F03</td><td>现金收/付款确认</td><td>确认现金收付，更新账户余额</td><td>P0</td></tr><tr><td>F04</td><td>往来核销</td><td>核销应付/应收，生成核销记录</td><td>P0</td></tr><tr><td>F05</td><td>凭证生成</td><td>生成总账凭证，传递到凭证引擎</td><td>P0</td></tr><tr><td>F06</td><td>扣款查询</td><td>按供应商/日期/状态查询扣款记录</td><td>P1</td></tr><tr><td>F07</td><td>统计报表</td><td>按供应商/月份/原因统计扣款</td><td>P2</td></tr></tbody></table>
 
-<h3>2.2 功能边界</h3>
+<h3>2.2 功能边界</h3>
 
-<strong>本模块负责：</strong><ul><li>现金扣款的申请、审核、确认</li></ul><ul><li>与应付管理的联动</li></ul><ul><li>凭证模板的生成</li></ul><ul><li>往来核销处理</li></ul>
+<p><strong>本模块负责：</strong></p>
+<li>现金扣款的申请、审核、确认</li>
+<li>与应付管理的联动</li>
+<li>凭证模板的生成</li>
+<li>往来核销处理</li>
 
-<strong>本模块不负责：</strong><ul><li>采购对账逻辑（由采购模块处理）</li></ul><ul><li>银行转账处理（由现金管理模块处理）</li></ul><ul><li>发票开具/作废（由发票模块处理）</li></ul>
+<p><strong>本模块不负责：</strong></p>
+<li>采购对账逻辑（由采购模块处理）</li>
+<li>银行转账处理（由现金管理模块处理）</li>
+<li>发票开具/作废（由发票模块处理）</li>
 
----
+<li>--</li>
 
-<h2>三、业务流程</h2>
+<h2>三、业务流程</h2>
 
-<h3>3.1 完整流程</h3>
+<h3>3.1 完整流程</h3>
 
-``<code class="inline-code">
-┌─────────────────────────────────────────────────────────────────┐
+<div class="code-block">
+  <div class="code-header">CODE</div>
+  <pre class="language-"><code>┌─────────────────────────────────────────────────────────────────┐
 │                    现金扣款处理完整流程                            │
 ├─────────────────────────────────────────────────────────────────┤
 │                                                                  │
@@ -300,33 +142,65 @@
 │         ↓                                                        │
 │  ⑦ 生成凭证                                                      │
 │                                                                  │
-└─────────────────────────────────────────────────────────────────┘
-</code>`<code class="inline-code">
+└─────────────────────────────────────────────────────────────────┘</code></pre>
+</div>
 
-<h3>3.2 流程详细说明</h3>
+<h3>3.2 流程详细说明</h3>
 
-#### 步骤1：采购对账发现扣款项<ul><li>采购人员与供应商对账</li></ul><ul><li>发现品质问题/迟延等需要扣款的情况</li></ul><ul><li>评估扣款金额是否需要走现金流程</li></ul>
+<h4>步骤1：采购对账发现扣款项</h4>
+<li>采购人员与供应商对账</li>
+<li>发现品质问题/迟延等需要扣款的情况</li>
+<li>评估扣款金额是否需要走现金流程</li>
 
-#### 步骤2：发起现金扣款申请<ul><li>采购人员进入系统，发起"现金扣款申请"</li></ul><ul><li>填写信息：</li></ul><ul><li>供应商（必填）</li></ul><ul><li>扣款方向（供应商→我方 / 我方→供应商）</li></ul><ul><li>扣款金额（必填）</li></ul><ul><li>扣款原因（必填）</li></ul><ul><li>关联单据（必填，原应付发票）</li></ul><ul><li>上传扣款协议（如有）</li></ul><ul><li>提交审核</li></ul>
+<h4>步骤2：发起现金扣款申请</h4>
+<li>采购人员进入系统，发起"现金扣款申请"</li>
+<li>填写信息：</li>
+<li>  - 供应商（必填）</li>
+<li>  - 扣款方向（供应商→我方 / 我方→供应商）</li>
+<li>  - 扣款金额（必填）</li>
+<li>  - 扣款原因（必填）</li>
+<li>  - 关联单据（必填，原应付发票）</li>
+<li>上传扣款协议（如有）</li>
+<li>提交审核</li>
 
-#### 步骤3：财务审核<ul><li>财务人员收到审核通知</li></ul><ul><li>审核内容：</li></ul><ul><li>扣款事由是否合理</li></ul><ul><li>金额是否正确</li></ul><ul><li>附件是否齐全</li></ul><ul><li>通过/驳回</li></ul>
+<h4>步骤3：财务审核</h4>
+<li>财务人员收到审核通知</li>
+<li>审核内容：</li>
+<li>  - 扣款事由是否合理</li>
+<li>  - 金额是否正确</li>
+<li>  - 附件是否齐全</li>
+<li>通过/驳回</li>
 
-#### 步骤4：生成现金扣款单<ul><li>审核通过后，系统自动生成"现金扣款单"</li></ul><ul><li>分配唯一单据编号（格式：CASH-YYYYMMDD-XXX）</li></ul><ul><li>状态更新为"待确认"</li></ul>
+<h4>步骤4：生成现金扣款单</h4>
+<li>审核通过后，系统自动生成"现金扣款单"</li>
+<li>分配唯一单据编号（格式：CASH-YYYYMMDD-XXX）</li>
+<li>状态更新为"待确认"</li>
 
-#### 步骤5：现金收/付款确认<ul><li>财务人员执行收/付款操作</li></ul><ul><li>选择支付方式：现金/银行转账</li></ul><ul><li>确认收/付款信息</li></ul><ul><li>提交确认</li></ul>
+<h4>步骤5：现金收/付款确认</h4>
+<li>财务人员执行收/付款操作</li>
+<li>选择支付方式：现金/银行转账</li>
+<li>确认收/付款信息</li>
+<li>提交确认</li>
 
-#### 步骤6：往来核销<ul><li>系统自动进行往来核销</li></ul><ul><li>更新供应商应付/应收余额</li></ul><ul><li>生成核销记录</li></ul>
+<h4>步骤6：往来核销</h4>
+<li>系统自动进行往来核销</li>
+<li>更新供应商应付/应收余额</li>
+<li>生成核销记录</li>
 
-#### 步骤7：生成凭证<ul><li>根据凭证模板生成凭证分录</li></ul><ul><li>传递到总账凭证引擎</li></ul><ul><li>完成整个流程</li></ul>
+<h4>步骤7：生成凭证</h4>
+<li>根据凭证模板生成凭证分录</li>
+<li>传递到总账凭证引擎</li>
+<li>完成整个流程</li>
 
----
+<li>--</li>
 
-<h2>四、数据模型</h2>
+<h2>四、数据模型</h2>
 
-<h3>4.1 核心表：cash_deduction</h3>
+<h3>4.1 核心表：cash_deduction</h3>
 
-</code>`<code class="inline-code">sql
-CREATE TABLE cash_deduction (
+<div class="code-block sql-block">
+  <div class="code-header">SQL</div>
+  <pre class="language-sql"><code>CREATE TABLE cash_deduction (
     -- 主键
     id              BIGINT PRIMARY KEY AUTO_INCREMENT COMMENT '主键ID',
     deduction_no    VARCHAR(50) UNIQUE NOT NULL COMMENT '扣款单编号',
@@ -378,13 +252,14 @@ CREATE TABLE cash_deduction (
     
     -- 逻辑删除
     deleted         TINYINT DEFAULT 0 COMMENT '删除标记'
-) COMMENT '现金扣款单表';
-</code>`<code class="inline-code">
+) COMMENT '现金扣款单表';</code></pre>
+</div>
 
-<h3>4.2 核销记录表：cash_deduction_writeoff</h3>
+<h3>4.2 核销记录表：cash_deduction_writeoff</h3>
 
-</code>`<code class="inline-code">sql
-CREATE TABLE cash_deduction_writeoff (
+<div class="code-block sql-block">
+  <div class="code-header">SQL</div>
+  <pre class="language-sql"><code>CREATE TABLE cash_deduction_writeoff (
     id                  BIGINT PRIMARY KEY AUTO_INCREMENT COMMENT '主键ID',
     deduction_id        BIGINT NOT NULL COMMENT '扣款单ID',
     
@@ -407,155 +282,90 @@ CREATE TABLE cash_deduction_writeoff (
     INDEX idx_deduction (deduction_id),
     INDEX idx_ap (ap_id),
     INDEX idx_voucher (voucher_id)
-) COMMENT '现金扣款核销记录表';
-</code>`<code class="inline-code">
+) COMMENT '现金扣款核销记录表';</code></pre>
+</div>
 
----
+<li>--</li>
 
-<h2>五、凭证模板</h2>
+<h2>五、凭证模板</h2>
 
-<h3>5.1 模板A：供应商→我方（我们收钱）</h3>
+<h3>5.1 模板A：供应商→我方（我们收钱）</h3>
 
-| 项目 | 内容 |
-|------|------|
-| 模板代码 | CASH_DEDUCT_A |
-| 模板名称 | 供应商赔款收款 |
-| 业务描述 | 供应商因品质问题/迟延等赔款给我们 |
-| 借方科目 | 1001（库存现金）/ 1002（银行存款） |
-| 贷方科目 | 2202（应付账款-XX供应商） |
-| 辅助核算 | 供应商、部门、项目 |
+<table class="md-table"><thead><tr><th>项目</th><th>内容</th></tr></thead><tbody><tr><td>模板代码</td><td>CASH_DEDUCT_A</td></tr><tr><td>模板名称</td><td>供应商赔款收款</td></tr><tr><td>业务描述</td><td>供应商因品质问题/迟延等赔款给我们</td></tr><tr><td>借方科目</td><td>1001（库存现金）/ 1002（银行存款）</td></tr><tr><td>贷方科目</td><td>2202（应付账款-XX供应商）</td></tr><tr><td>辅助核算</td><td>供应商、部门、项目</td></tr></tbody></table>
 
-<strong>示例分录：</strong>
-</code>`<code class="inline-code">
-借：银行存款   1,000.00
+<p><strong>示例分录：</strong></p>
+<div class="code-block">
+  <div class="code-header">CODE</div>
+  <pre class="language-"><code>借：银行存款   1,000.00
 贷：应付账款-XX供应商  1,000.00
 
 摘要：收到XX供应商品质扣款补偿
-辅助：供应商=XX公司，部门=采购部
-</code>`<code class="inline-code">
+辅助：供应商=XX公司，部门=采购部</code></pre>
+</div>
 
-<h3>5.2 模板B：我方→供应商（我们付钱）</h3>
+<h3>5.2 模板B：我方→供应商（我们付钱）</h3>
 
-| 项目 | 内容 |
-|------|------|
-| 模板代码 | CASH_DEDUCT_B |
-| 模板名称 | 我方赔款付款 |
-| 业务描述 | 我们因自身原因赔款给供应商 |
-| 借方科目 | 2202（应付账款-XX供应商） |
-| 贷方科目 | 1001（库存现金）/ 1002（银行存款） |
-| 辅助核算 | 供应商、部门、项目 |
+<table class="md-table"><thead><tr><th>项目</th><th>内容</th></tr></thead><tbody><tr><td>模板代码</td><td>CASH_DEDUCT_B</td></tr><tr><td>模板名称</td><td>我方赔款付款</td></tr><tr><td>业务描述</td><td>我们因自身原因赔款给供应商</td></tr><tr><td>借方科目</td><td>2202（应付账款-XX供应商）</td></tr><tr><td>贷方科目</td><td>1001（库存现金）/ 1002（银行存款）</td></tr><tr><td>辅助核算</td><td>供应商、部门、项目</td></tr></tbody></table>
 
-<strong>示例分录：</strong>
-</code>`<code class="inline-code">
-借：应付账款-XX供应商  500.00
+<p><strong>示例分录：</strong></p>
+<div class="code-block">
+  <div class="code-header">CODE</div>
+  <pre class="language-"><code>借：应付账款-XX供应商  500.00
 贷：银行存款    500.00
 
 摘要：支付XX供应商迟延补偿款
-辅助：供应商=XX公司，部门=生产部
-</code>`<code class="inline-code">
+辅助：供应商=XX公司，部门=生产部</code></pre>
+</div>
 
----
+<li>--</li>
 
-<h2>六、表单设计</h2>
+<h2>六、表单设计</h2>
 
-<h3>6.1 现金扣款单 - 字段说明</h3>
+<h3>6.1 现金扣款单 - 字段说明</h3>
 
-| 字段分类 | 字段名称 | 字段类型 | 必填 | 默认值 | 说明 |
-|----------|----------|----------|------|--------|------|
-| 基本信息 | 扣款单编号 | 文本 | - | 自动 | 系统自动生成 |
-| 基本信息 | 扣款日期 | 日期 | ✅ | 当天 | - |
-| 基本信息 | 供应商 | 下拉 | ✅ | - | 从供应商主数据选择 |
-| 基本信息 | 币种 | 下拉 | ✅ | CNY | 跟随供应商主数据 |
-| 扣款信息 | 扣款方向 | 单选 | ✅ | - | 1=供应商→我方,2=我方→供应商 |
-| 扣款信息 | 扣款金额 | 数字 | ✅ | - | 正数，精度2位 |
-| 扣款信息 | 扣款原因 | 下拉+文本 | ✅ | - | 品质/迟延/其他 |
-| 关联信息 | 来源单据类型 | 下拉 | ✅ | - | 采购发票/对账单 |
-| 关联信息 | 来源单据 | 关联选择 | ✅ | - | 弹出选择框 |
-| 关联信息 | 原应付金额 | 数字 | - | - | 自动填充 |
-| 支付信息 | 支付方式 | 下拉 | ✅ | - | 现金/银行转账 |
-| 支付信息 | 收付款账号 | 下拉 | ✅ | - | 从账户列表选择 |
-| 附件 | 扣款协议 | 文件上传 | ⚠️ | - | 建议上传PDF/图片 |
-| 附件 | 其他附件 | 文件上传 | - | - | 可上传多个 |
-| 审核信息 | 审核意见 | 文本 | - | - | 审核人填写 |
-| 系统信息 | 单据状态 | 文本 | - | - | 只读显示 |
+<table class="md-table"><thead><tr><th>字段分类</th><th>字段名称</th><th>字段类型</th><th>必填</th><th>默认值</th><th>说明</th></tr></thead><tbody><tr><td>基本信息</td><td>扣款单编号</td><td>文本</td><td>-</td><td>自动</td><td>系统自动生成</td></tr><tr><td>基本信息</td><td>扣款日期</td><td>日期</td><td>✅</td><td>当天</td><td>-</td></tr><tr><td>基本信息</td><td>供应商</td><td>下拉</td><td>✅</td><td>-</td><td>从供应商主数据选择</td></tr><tr><td>基本信息</td><td>币种</td><td>下拉</td><td>✅</td><td>CNY</td><td>跟随供应商主数据</td></tr><tr><td>扣款信息</td><td>扣款方向</td><td>单选</td><td>✅</td><td>-</td><td>1=供应商→我方,2=我方→供应商</td></tr><tr><td>扣款信息</td><td>扣款金额</td><td>数字</td><td>✅</td><td>-</td><td>正数，精度2位</td></tr><tr><td>扣款信息</td><td>扣款原因</td><td>下拉+文本</td><td>✅</td><td>-</td><td>品质/迟延/其他</td></tr><tr><td>关联信息</td><td>来源单据类型</td><td>下拉</td><td>✅</td><td>-</td><td>采购发票/对账单</td></tr><tr><td>关联信息</td><td>来源单据</td><td>关联选择</td><td>✅</td><td>-</td><td>弹出选择框</td></tr><tr><td>关联信息</td><td>原应付金额</td><td>数字</td><td>-</td><td>-</td><td>自动填充</td></tr><tr><td>支付信息</td><td>支付方式</td><td>下拉</td><td>✅</td><td>-</td><td>现金/银行转账</td></tr><tr><td>支付信息</td><td>收付款账号</td><td>下拉</td><td>✅</td><td>-</td><td>从账户列表选择</td></tr><tr><td>附件</td><td>扣款协议</td><td>文件上传</td><td>⚠️</td><td>-</td><td>建议上传PDF/图片</td></tr><tr><td>附件</td><td>其他附件</td><td>文件上传</td><td>-</td><td>-</td><td>可上传多个</td></tr><tr><td>审核信息</td><td>审核意见</td><td>文本</td><td>-</td><td>-</td><td>审核人填写</td></tr><tr><td>系统信息</td><td>单据状态</td><td>文本</td><td>-</td><td>-</td><td>只读显示</td></tr></tbody></table>
 
-<h3>6.2 字段校验规则</h3>
+<h3>6.2 字段校验规则</h3>
 
-| 字段 | 校验规则 |
-|------|----------|
-| 扣款金额 | > 0；≤ 原应付金额（如果设置了上限） |
-| 供应商 | 必须是有效供应商 |
-| 扣款日期 | ≤ 当前日期 |
-| 扣款方向 | 必选 |
-| 扣款原因 | 必选；选择"其他"时，备注必填 |
-| 来源单据 | 必须是该供应商的有效应付单据 |
+<table class="md-table"><thead><tr><th>字段</th><th>校验规则</th></tr></thead><tbody><tr><td>扣款金额</td><td>> 0；≤ 原应付金额（如果设置了上限）</td></tr><tr><td>供应商</td><td>必须是有效供应商</td></tr><tr><td>扣款日期</td><td>≤ 当前日期</td></tr><tr><td>扣款方向</td><td>必选</td></tr><tr><td>扣款原因</td><td>必选；选择"其他"时，备注必填</td></tr><tr><td>来源单据</td><td>必须是该供应商的有效应付单据</td></tr></tbody></table>
 
----
+<li>--</li>
 
-<h2>七、权限设计</h2>
+<h2>七、权限设计</h2>
 
-<h3>7.1 功能权限</h3>
+<h3>7.1 功能权限</h3>
 
-| 角色 | 可申请 | 可审核 | 可确认支付 | 可查询 | 可删除 |
-|------|--------|--------|------------|--------|--------|
-| 采购员 | ✅ | ❌ | ❌ | ✅(本部门) | ❌ |
-| 采购主管 | ✅ | ✅ | ❌ | ✅(全部) | ❌ |
-| 财务专员 | ❌ | ✅ | ✅ | ✅(全部) | ❌ |
-| 财务主管 | ❌ | ✅ | ✅ | ✅(全部) | ✅ |
-| 系统管理员 | ✅ | ✅ | ✅ | ✅(全部) | ✅ |
+<table class="md-table"><thead><tr><th>角色</th><th>可申请</th><th>可审核</th><th>可确认支付</th><th>可查询</th><th>可删除</th></tr></thead><tbody><tr><td>采购员</td><td>✅</td><td>❌</td><td>❌</td><td>✅(本部门)</td><td>❌</td></tr><tr><td>采购主管</td><td>✅</td><td>✅</td><td>❌</td><td>✅(全部)</td><td>❌</td></tr><tr><td>财务专员</td><td>❌</td><td>✅</td><td>✅</td><td>✅(全部)</td><td>❌</td></tr><tr><td>财务主管</td><td>❌</td><td>✅</td><td>✅</td><td>✅(全部)</td><td>✅</td></tr><tr><td>系统管理员</td><td>✅</td><td>✅</td><td>✅</td><td>✅(全部)</td><td>✅</td></tr></tbody></table>
 
-<h3>7.2 数据权限</h3>
+<h3>7.2 数据权限</h3>
 
-| 角色 | 数据范围 |
-|------|----------|
-| 采购员 | 本人创建的申请单 |
-| 采购主管 | 本部门所有数据 |
-| 财务专员/主管 | 全部数据 |
+<table class="md-table"><thead><tr><th>角色</th><th>数据范围</th></tr></thead><tbody><tr><td>采购员</td><td>本人创建的申请单</td></tr><tr><td>采购主管</td><td>本部门所有数据</td></tr><tr><td>财务专员/主管</td><td>全部数据</td></tr></tbody></table>
 
----
+<li>--</li>
 
-<h2>八、报表设计</h2>
+<h2>八、报表设计</h2>
 
-<h3>8.1 现金扣款明细表</h3>
+<h3>8.1 现金扣款明细表</h3>
 
-| 列名 | 说明 |
-|------|------|
-| 扣款单编号 | - |
-| 扣款日期 | - |
-| 供应商名称 | - |
-| 扣款方向 | 收款/付款 |
-| 扣款金额 | - |
-| 扣款原因 | - |
-| 状态 | - |
-| 审核人 | - |
-| 审核时间 | - |
+<table class="md-table"><thead><tr><th>列名</th><th>说明</th></tr></thead><tbody><tr><td>扣款单编号</td><td>-</td></tr><tr><td>扣款日期</td><td>-</td></tr><tr><td>供应商名称</td><td>-</td></tr><tr><td>扣款方向</td><td>收款/付款</td></tr><tr><td>扣款金额</td><td>-</td></tr><tr><td>扣款原因</td><td>-</td></tr><tr><td>状态</td><td>-</td></tr><tr><td>审核人</td><td>-</td></tr><tr><td>审核时间</td><td>-</td></tr></tbody></table>
 
-<h3>8.2 统计维度</h3>
+<h3>8.2 统计维度</h3>
 
-| 统计维度 | 说明 |
-|----------|------|
-| 按供应商 | 汇总各供应商的扣款总额 |
-| 按月份 | 按月统计扣款趋势 |
-| 按原因 | 按扣款原因分类统计 |
-| 按币种 | 按币种统计 |
+<table class="md-table"><thead><tr><th>统计维度</th><th>说明</th></tr></thead><tbody><tr><td>按供应商</td><td>汇总各供应商的扣款总额</td></tr><tr><td>按月份</td><td>按月统计扣款趋势</td></tr><tr><td>按原因</td><td>按扣款原因分类统计</td></tr><tr><td>按币种</td><td>按币种统计</td></tr></tbody></table>
 
----
+<li>--</li>
 
-<h2>九、接口设计</h2>
+<h2>九、接口设计</h2>
 
-<h3>9.1 对内接口</h3>
+<h3>9.1 对内接口</h3>
 
-| 模块 | 接口名称 | 说明 |
-|------|----------|------|
-| 供应商主数据 | 获取供应商信息 | 扣款时选择供应商 |
-| 应付管理 | 获取应付单据 | 关联原应付发票 |
-| 现金管理 | 确认收/付款 | 收付款确认 |
-| 总账凭证 | 生成凭证 | 传递凭证分录 |
+<table class="md-table"><thead><tr><th>模块</th><th>接口名称</th><th>说明</th></tr></thead><tbody><tr><td>供应商主数据</td><td>获取供应商信息</td><td>扣款时选择供应商</td></tr><tr><td>应付管理</td><td>获取应付单据</td><td>关联原应付发票</td></tr><tr><td>现金管理</td><td>确认收/付款</td><td>收付款确认</td></tr><tr><td>总账凭证</td><td>生成凭证</td><td>传递凭证分录</td></tr></tbody></table>
 
-<h3>9.2 API接口</h3>
+<h3>9.2 API接口</h3>
 
-</code>`<code class="inline-code">javascript
-// 创建现金扣款单
+<div class="code-block">
+  <div class="code-header">javascript</div>
+  <pre class="language-javascript"><code>// 创建现金扣款单
 POST /api/cash-deduction
 Request: {
   deduction_date: "2026-04-17",
@@ -593,46 +403,41 @@ Request: {
 }
 
 // 查询扣款单
-GET /api/cash-deduction?supplier_id=&start_date=&end_date=&status=
-</code>``
+GET /api/cash-deduction?supplier_id=&amp;start_date=&amp;end_date=&amp;status=</code></pre>
+</div>
 
----
+<li>--</li>
 
-<h2>十、非功能性需求</h2>
+<h2>十、非功能性需求</h2>
 
-<h3>10.1 性能要求</h3>
+<h3>10.1 性能要求</h3>
 
-| 指标 | 要求 |
-|------|------|
-| 单据查询响应时间 | ≤ 500ms |
-| 单据提交响应时间 | ≤ 1s |
-| 批量导出 | 支持导出1000条记录 |
+<table class="md-table"><thead><tr><th>指标</th><th>要求</th></tr></thead><tbody><tr><td>单据查询响应时间</td><td>≤ 500ms</td></tr><tr><td>单据提交响应时间</td><td>≤ 1s</td></tr><tr><td>批量导出</td><td>支持导出1000条记录</td></tr></tbody></table>
 
-<h3>10.2 安全要求</h3><ul><li>所有操作记录操作日志</li></ul><ul><li>敏感操作（如删除）需二次确认</li></ul><ul><li>审核记录永久保存，不可删除</li></ul>
+<h3>10.2 安全要求</h3>
 
-<h3>10.3 各国差异适配</h3>
+<li>所有操作记录操作日志</li>
+<li>敏感操作（如删除）需二次确认</li>
+<li>审核记录永久保存，不可删除</li>
 
-| 国家 | 特殊要求 | 实现方式 |
-|------|----------|----------|
-| 越南 | 必须通过现金处理 | 必填扣款协议附件 |
-| 泰国 | 需双方书面确认 | 支持附件上传 |
-| 菲律宾 | 无特殊要求 | 正常流程 |
-| 沙特 | VAT合规 | 与VAT模块联动 |
+<h3>10.3 各国差异适配</h3>
 
----
+<table class="md-table"><thead><tr><th>国家</th><th>特殊要求</th><th>实现方式</th></tr></thead><tbody><tr><td>越南</td><td>必须通过现金处理</td><td>必填扣款协议附件</td></tr><tr><td>泰国</td><td>需双方书面确认</td><td>支持附件上传</td></tr><tr><td>菲律宾</td><td>无特殊要求</td><td>正常流程</td></tr><tr><td>沙特</td><td>VAT合规</td><td>与VAT模块联动</td></tr></tbody></table>
 
-<h2>十一、待确认事项</h2>
+<li>--</li>
 
-1. <strong>支付方式</strong>：是否支持多种支付方式（现金/转账/微信/支付宝）？
-2. <strong>汇率处理</strong>：越南盾等小币种，是否需要汇率折算？
-3. <strong>审批流</strong>：是否需要多级审批？
-4. <strong>金额上限</strong>：单笔扣款是否需要设置上限？
-5. <strong>历史数据</strong>：是否需要支持导入历史扣款数据？
+<h2>十一、待确认事项</h2>
 
----
+<li>. **支付方式**：是否支持多种支付方式（现金/转账/微信/支付宝）？</li>
+<li>. **汇率处理**：越南盾等小币种，是否需要汇率折算？</li>
+<li>. **审批流**：是否需要多级审批？</li>
+<li>. **金额上限**：单笔扣款是否需要设置上限？</li>
+<li>. **历史数据**：是否需要支持导入历史扣款数据？</li>
 
-*本规格书由需求分析团队编制，供开发团队参考实施。具体实现方案需结合技术架构和实际情况进一步细化。*
-</p>
+<li>--</li>
+
+<p>*本规格书由需求分析团队编制，供开发团队参考实施。具体实现方案需结合技术架构和实际情况进一步细化。*</p>
+</div>
     </div>
 </body>
 </html>
