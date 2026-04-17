@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>税务申报管理 - UI原型</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+        .container { max-width: 1400px; margin: 0 auto; }
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .header h1 { color: #fff; font-size: 2em; margin-bottom: 10px; }
+        .header p { color: #a0aec0; font-size: 1.1em; }
+        .ui-container {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            gap: 20px;
+        }
+        .sidebar {
+            background: #fff;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+        .sidebar-title {
+            font-size: 1.1em;
+            font-weight: bold;
+            color: #2d3748;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #667eea;
+        }
+        .menu-item {
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            color: #4a5568;
+            transition: all 0.3s;
+        }
+        .menu-item:hover { background: #f7fafc; }
+        .menu-item.active { background: #667eea; color: white; }
+        .menu-item .icon { margin-right: 10px; }
+        .main-panel {
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+        .panel-header {
+            padding: 20px 25px;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .panel-title { font-size: 1.2em; font-weight: bold; color: #2d3748; }
+        .panel-actions { display: flex; gap: 10px; }
+        .btn {
+            padding: 10px 20px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: all 0.3s;
+        }
+        .btn-primary { background: #667eea; color: white; }
+        .btn-primary:hover { background: #5a67d8; }
+        .btn-secondary { background: #e2e8f0; color: #4a5568; }
+        .panel-body { padding: 25px; }
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+        }
+        .stat-card.green { background: linear-gradient(135deg, #48bb78 0%, #38a169 100%); }
+        .stat-card.orange { background: linear-gradient(135deg, #f6ad55 0%, #ed8936 100%); }
+        .stat-card.red { background: linear-gradient(135deg, #fc8181 0%, #e53e3e 100%); }
+        .stat-value { font-size: 2em; font-weight: bold; }
+        .stat-label { font-size: 0.9em; opacity: 0.9; margin-top: 5px; }
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        .data-table th {
+            background: #f7fafc;
+            padding: 12px 15px;
+            text-align: left;
+            font-weight: 600;
+            color: #4a5568;
+            border-bottom: 2px solid #e2e8f0;
+        }
+        .data-table td {
+            padding: 15px;
+            border-bottom: 1px solid #e2e8f0;
+            color: #2d3748;
+        }
+        .data-table tr:hover { background: #f7fafc; }
+        .status-badge {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            display: inline-block;
+        }
+        .status-pending { background: #e2e8f0; color: #4a5568; }
+        .status-filing { background: #fbd38d; color: #744210; }
+        .status-filed { background: #c6f6d5; color: #276749; }
+        .status-paid { background: #68d391; color: white; }
+        .action-link { color: #667eea; cursor: pointer; text-decoration: underline; }
+        .tabs {
+            display: flex;
+            gap: 20px;
+            border-bottom: 2px solid #e2e8f0;
+            margin-bottom: 20px;
+        }
+        .tab {
+            padding: 10px 0;
+            color: #718096;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            margin-bottom: -2px;
+        }
+        .tab.active { color: #667eea; border-color: #667eea; font-weight: bold; }
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .calendar-header {
+            text-align: center;
+            font-weight: bold;
+            color: #718096;
+            padding: 10px;
+        }
+        .calendar-day {
+            padding: 15px;
+            border-radius: 8px;
+            background: #f7fafc;
+            text-align: center;
+            min-height: 80px;
+        }
+        .calendar-day.has-task { background: #ebf8ff; border: 2px solid #667eea; }
+        .calendar-day .day-num { font-weight: bold; color: #2d3748; margin-bottom: 5px; }
+        .calendar-day .task-count { font-size: 0.8em; color: #667eea; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📋 税务申报管理 - UI原型</h1>
+            <p>申报日历 · 申报状态跟踪 · 缴款管理</p>
+        </div>
+
+        <div class="ui-container">
+            <!-- 左侧菜单 -->
+            <div class="sidebar">
+                <div class="sidebar-title">税务管理</div>
+                <div class="menu-item"><span class="icon">🏛️</span>税务组织</div>
+                <div class="menu-item"><span class="icon">📊</span>税种税率</div>
+                <div class="menu-item"><span class="icon">💰</span>税金计提</div>
+                <div class="menu-item active"><span class="icon">📋</span>税务申报</div>
+                <div class="menu-item"><span class="icon">📈</span>税负分析</div>
+                <div class="menu-item"><span class="icon">⚠️</span>风险预警</div>
+                <div class="menu-item"><span class="icon">📄</span>申报台账</div>
+            </div>
+
+            <!-- 主内容区 -->
+            <div class="main-panel">
+                <div class="panel-header">
+                    <div class="panel-title">📅 2026年4月 申报日历</div>
+                    <div class="panel-actions">
+                        <button class="btn btn-secondary">◀ 上月</button>
+                        <button class="btn btn-primary">本月申报</button>
+                        <button class="btn btn-secondary">下月 ▶</button>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <!-- 申报统计 -->
+                    <div class="stats-row">
+                        <div class="stat-card">
+                            <div class="stat-value">3</div>
+                            <div class="stat-label">待申报</div>
+                        </div>
+                        <div class="stat-card orange">
+                            <div class="stat-value">1</div>
+                            <div class="stat-label">申报中</div>
+                        </div>
+                        <div class="stat-card green">
+                            <div class="stat-value">5</div>
+                            <div class="stat-label">已完成</div>
+                        </div>
+                        <div class="stat-card red">
+                            <div class="stat-value">¥128,500</div>
+                            <div class="stat-label">应缴税款</div>
+                        </div>
+                    </div>
+
+                    <!-- 申报日历 -->
+                    <div class="tabs">
+                        <div class="tab active">📅 申报日历</div>
+                        <div class="tab">📊 申报汇总</div>
+                        <div class="tab">💳 缴款记录</div>
+                    </div>
+
+                    <div class="calendar-grid">
+                        <div class="calendar-header">日</div>
+                        <div class="calendar-header">一</div>
+                        <div class="calendar-header">二</div>
+                        <div class="calendar-header">三</div>
+                        <div class="calendar-header">四</div>
+                        <div class="calendar-header">五</div>
+                        <div class="calendar-header">六</div>
+                        
+                        <div class="calendar-day"><div class="day-num"></div></div>
+                        <div class="calendar-day"><div class="day-num"></div></div>
+                        <div class="calendar-day"><div class="day-num">1</div></div>
+                        <div class="calendar-day"><div class="day-num">2</div></div>
+                        <div class="calendar-day"><div class="day-num">3</div></div>
+                        <div class="calendar-day"><div class="day-num">4</div></div>
+                        <div class="calendar-day"><div class="day-num">5</div></div>
+                        
+                        <div class="calendar-day"><div class="day-num">6</div></div>
+                        <div class="calendar-day"><div class="day-num">7</div></div>
+                        <div class="calendar-day has-task">
+                            <div class="day-num">8</div>
+                            <div class="task-count">个人所得税</div>
+                        </div>
+                        <div class="calendar-day"><div class="day-num">9</div></div>
+                        <div class="calendar-day"><div class="day-num">10</div></div>
+                        <div class="calendar-day"><div class="day-num">11</div></div>
+                        <div class="calendar-day"><div class="day-num">12</div></div>
+                        
+                        <div class="calendar-day"><div class="day-num">13</div></div>
+                        <div class="calendar-day"><div class="day-num">14</div></div>
+                        <div class="calendar-day has-task">
+                            <div class="day-num">15 ⚠️</div>
+                            <div class="task-count">增值税/所得税</div>
+                        </div>
+                        <div class="calendar-day"><div class="day-num">16</div></div>
+                        <div class="calendar-day"><div class="day-num">17</div></div>
+                        <div class="calendar-day"><div class="day-num">18</div></div>
+                        <div class="calendar-day"><div class="day-num">19</div></div>
+                        
+                        <div class="calendar-day"><div class="day-num">20</div></div>
+                        <div class="calendar-day"><div class="day-num">21</div></div>
+                        <div class="calendar-day"><div class="day-num">22</div></div>
+                        <div class="calendar-day"><div class="day-num">23</div></div>
+                        <div class="calendar-day"><div class="day-num">24</div></div>
+                        <div class="calendar-day"><div class="day-num">25</div></div>
+                        <div class="calendar-day"><div class="day-num">26</div></div>
+                        
+                        <div class="calendar-day"><div class="day-num">27</div></div>
+                        <div class="calendar-day"><div class="day-num">28</div></div>
+                        <div class="calendar-day"><div class="day-num">29</div></div>
+                        <div class="calendar-day"><div class="day-num">30</div></div>
+                        <div class="calendar-day"><div class="day-num"></div></div>
+                        <div class="calendar-day"><div class="day-num"></div></div>
+                        <div class="calendar-day"><div class="day-num"></div></div>
+                    </div>
+
+                    <!-- 申报列表 -->
+                    <h3 style="margin-top: 30px; margin-bottom: 15px; color: #2d3748;">📋 本期申报任务</h3>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>税种</th>
+                                <th>申报期间</th>
+                                <th>计税金额</th>
+                                <th>申报税额</th>
+                                <th>缴款期限</th>
+                                <th>状态</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>增值税（一般纳税人）</td>
+                                <td>2026年4月</td>
+                                <td>¥850,000</td>
+                                <td><strong>¥110,500</strong></td>
+                                <td>2026-04-25</td>
+                                <td><span class="status-badge status-filing">申报中</span></td>
+                                <td><span class="action-link">查看详情</span></td>
+                            </tr>
+                            <tr>
+                                <td>企业所得税（季度）</td>
+                                <td>2026年Q1</td>
+                                <td>¥120,000</td>
+                                <td><strong>¥9,000</strong></td>
+                                <td>2026-04-25</td>
+                                <td><span class="status-badge status-pending">待申报</span></td>
+                                <td><span class="action-link">去申报</span></td>
+                            </tr>
+                            <tr>
+                                <td>个人所得税（工资薪金）</td>
+                                <td>2026年4月</td>
+                                <td>¥180,000</td>
+                                <td><strong>¥5,400</strong></td>
+                                <td>2026-04-08</td>
+                                <td><span class="status-badge status-filed">已申报</span></td>
+                                <td><span class="action-link">查看凭证</span></td>
+                            </tr>
+                            <tr>
+                                <td>城市维护建设税</td>
+                                <td>2026年4月</td>
+                                <td>¥110,500</td>
+                                <td><strong>¥2,310</strong></td>
+                                <td>2026-04-25</td>
+                                <td><span class="status-badge status-filing">申报中</span></td>
+                                <td><span class="action-link">查看详情</span></td>
+                            </tr>
+                            <tr>
+                                <td>教育费附加</td>
+                                <td>2026年4月</td>
+                                <td>¥110,500</td>
+                                <td><strong>¥990</strong></td>
+                                <td>2026-04-25</td>
+                                <td><span class="status-badge status-filing">申报中</span></td>
+                                <td><span class="action-link">查看详情</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
