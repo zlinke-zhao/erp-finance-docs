@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>会计科目设定 - 业务流程图</title>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<style>
+  :root {
+    --bg: #0a0e27;
+    --card-bg: #1a1f4e;
+    --primary: #6366f1;
+    --accent: #818cf8;
+    --success: #22c55e;
+    --warning: #f59e0b;
+    --danger: #ef4444;
+    --text: #e2e8f0;
+    --text-dim: #94a3b8;
+    --border: #312e81;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 2rem;
+  }
+  .container { max-width: 1400px; margin: 0 auto; }
+  .header {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+  .header h1 {
+    font-size: 1.75rem;
+    font-weight: 600;
+    color: var(--accent);
+    margin-bottom: 0.5rem;
+  }
+  .header .subtitle {
+    color: var(--text-dim);
+    font-size: 0.9rem;
+  }
+  .mermaid {
+    background: var(--card-bg);
+    border-radius: 12px;
+    padding: 2rem;
+    border: 1px solid var(--border);
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <h1>📒 会计科目设定 - 业务流程图</h1>
+    <p class="subtitle">Dev_Dept · V1.0 · 2026-04-17</p>
+  </div>
+  <div class="mermaid">
+flowchart TB
+    subgraph 管理域["📋 科目体系管理"]
+        A1(["🔍 科目列表查询"])
+        A2(["➕ 新增科目"])
+        A3(["✏️ 编辑科目"])
+        A4(["📋 辅助核算配置"])
+        A5(["🔐 受控模块绑定"])
+    end
+
+    subgraph 树形域["🌳 科目树形结构"]
+        B1{"编码合法性检查"}
+        B2{"上级科目存在?"}
+        B3{"末级标志自动设置"}
+    end
+
+    subgraph 余额域["💰 期初余额管理"]
+        C1(["📝 录入期初余额"])
+        C2(["⚖️ 试算平衡校验"])
+        C3{"平衡?"}
+        C4(["🔒 锁定期初余额(开账)"])
+    end
+
+    subgraph 批量域["📤 批量操作"]
+        D1(["📥 Excel导入科目"])
+        D2(["📤 Excel导出科目"])
+        D3(["📄 模板下载"])
+        D4(["🗂️ 科目复制"])
+        D5{"导入成功?"}
+    end
+
+    subgraph 日志域["📜 变更日志"]
+        E1(["✏️ 科目变更记录"])
+        E2(["🗑️ 删除记录"])
+        E3(["🔒 禁用记录"])
+    end
+
+    A1 --> A2
+    A1 --> A3
+    A2 --> B1
+    B1 -->|"通过"| B2
+    B1 -->|"失败: 编码格式错误"| B2
+    B2 -->|"存在"| B3
+    B2 -->|"不存在: 请选择上级科目"| B3
+    A3 --> B1
+    A2 --> A4
+    A3 --> A4
+    A4 --> A5
+
+    C1 --> C2
+    C2 --> C3
+    C3 -->|"平衡"| C4
+    C3 -->|"不平衡: 显示差异金额"| C1
+
+    D1 --> D5
+    D5 -->|"成功: 刷新列表"| A1
+    D5 -.->|"失败: 返回错误文件"| D1
+    D2 --> D3
+    D4 --> B1
+
+    E1 -.->|"科目新增/修改时触发"| A1
+    E2 -.->|"科目删除时触发"| A1
+    E3 -.->|"科目禁用时触发"| A1
+
+    style A1 fill:#6366f1,stroke:#818cf8,color:#fff
+    style A2 fill:#6366f1,stroke:#818cf8,color:#fff
+    style A3 fill:#6366f1,stroke:#818cf8,color:#fff
+    style A4 fill:#6366f1,stroke:#818cf8,color:#fff
+    style A5 fill:#6366f1,stroke:#818cf8,color:#fff
+    style C1 fill:#22c55e,stroke:#4ade80,color:#fff
+    style C2 fill:#22c55e,stroke:#4ade80,color:#fff
+    style C4 fill:#22c55e,stroke:#4ade80,color:#fff
+    style D1 fill:#f59e0b,stroke:#fbbf24,color:#fff
+    style D2 fill:#f59e0b,stroke:#fbbf24,color:#fff
+    style D3 fill:#f59e0b,stroke:#fbbf24,color:#fff
+    style D4 fill:#f59e0b,stroke:#fbbf24,color:#fff
+    style D5 fill:#ef4444,stroke:#f87171,color:#fff
+    style B1 fill:#ef4444,stroke:#f87171,color:#fff
+    style B2 fill:#ef4444,stroke:#f87171,color:#fff
+    style B3 fill:#ef4444,stroke:#f87171,color:#fff
+    style C3 fill:#ef4444,stroke:#f87171,color:#fff
+  </div>
+</div>
+<script>mermaid.initialize({ startOnLoad: true, theme: 'dark' });</script>
+</body>
+</html>
