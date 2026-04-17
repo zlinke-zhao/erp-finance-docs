@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ERP财务管理系统 - 业务流程图（对标金蝶云星空）</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, "Microsoft YaHei", "Segoe UI", sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8ec 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container { max-width: 1600px; margin: 0 auto; }
+        
+        /* Header */
+        .header {
+            text-align: center;
+            padding: 30px 20px;
+            background: linear-gradient(135deg, #1a237e 0%, #283593 50%, #1565c0 100%);
+            color: white;
+            border-radius: 16px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 32px rgba(26,35,126,0.3);
+        }
+        .header h1 { font-size: 2.2em; margin-bottom: 8px; }
+        .header p { opacity: 0.9; font-size: 1.1em; }
+        .header .badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            padding: 4px 16px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            margin-top: 12px;
+        }
+
+        /* Flow Cards */
+        .flow-section {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+        }
+        .flow-section h2 {
+            font-size: 1.5em;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .flow-subtitle {
+            color: #666;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+        
+        /* Color themes for each flow */
+        .sales-flow h2 { color: #2e7d32; }
+        .purchase-flow h2 { color: #ef6c00; }
+        .relation-flow h2 { color: #1565c0; }
+        
+        .mermaid-container {
+            overflow-x: auto;
+            padding: 20px 0;
+            text-align: center;
+        }
+        .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Table styles */
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            font-size: 0.92em;
+        }
+        .comparison-table th {
+            background: linear-gradient(135deg, #1a237e, #283593);
+            color: white;
+            padding: 14px 12px;
+            text-align: left;
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+        }
+        .comparison-table td {
+            padding: 11px 12px;
+            border-bottom: 1px solid #eee;
+            vertical-align: middle;
+        }
+        .comparison-table tr:hover { background: #f8f9ff; }
+        .comparison-table tr:nth-child(even) { background: #fafbff; }
+        
+        /* Status badges */
+        .status-done { 
+            background: #e8f5e9; color: #2e7d32; padding: 3px 10px; 
+            border-radius: 12px; font-size: 0.85em; font-weight: 600;
+        }
+        .status-partial { 
+            background: #fff8e1; color: #f9a825; padding: 3px 10px; 
+            border-radius: 12px; font-size: 0.85em; font-weight: 600;
+        }
+        .status-missing { 
+            background: #ffebee; color: #c62828; padding: 3px 10px; 
+            border-radius: 12px; font-size: 0.85em; font-weight: 600;
+        }
+
+        /* Key points */
+        .key-points {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 16px;
+            margin-top: 24px;
+        }
+        .key-point {
+            padding: 18px;
+            border-radius: 12px;
+            border-left: 4px solid;
+        }
+        .kp-green { background: #e8f5e9; border-color: #43a047; }
+        .kp-orange { background: #fff8e1; border-color: #ef6c00; }
+        .kp-blue { background: #e3f2fd; border-color: #1565c0; }
+        .kp-red { background: #ffebee; border-color: #c62828; }
+        .key-point strong { display: block; margin-bottom: 4px; }
+        .key-point span { color: #555; font-size: 0.9em; }
+
+        /* Footer note */
+        .footer-note {
+            text-align: center;
+            padding: 20px;
+            color: #888;
+            font-size: 0.9em;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 { font-size: 1.5em; }
+            .flow-section { padding: 16px; }
+            .comparison-table { font-size: 0.78em; }
+            .comparison-table th, .comparison-table td { padding: 8px 6px; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+
+<!-- Header -->
+<div class="header">
+    <h1>💰 ERP财务管理系统 · 业务流程图</h1>
+    <p>对标金蝶云星空 | 业财一体化全链路设计</p>
+    <span class="badge">📊 销售收款流程 + 🛒 采购付款流程 + 💰 税务联动</span>
+</div>
+
+<!-- Flow 1: Sales -->
+<div class="flow-section sales-flow">
+    <h2>📦 流程一：销售收款全流程（销项）</h2>
+    <p class="flow-subtitle">销售订单 → 送货单 → 应收对账 → 税务开票 → 发票录入 → 实收 → 票据往来 → 总账</p>
+    
+    <div class="mermaid-container">
+        <pre class="mermaid">
+flowchart TD
+    subgraph Sales["📦 销售收款业务流程"]
+        direction TB
+        
+        SO["<b>1. 销售订单<br/>Sales Order</b><br/>客户/商品/数量/单价<br/>含税金额/税率"]
+        
+        DN["<b>2. 送货单<br/>Delivery Note</b><br/>关联销售订单<br/>实际发货数量<br/>仓库/批次/日期"]
+        
+        AR["<b>3. 应收对账<br/>AR Reconciliation</b><br/>确认应收账款<br/>对账单生成<br/>客户确认签字"]
+        
+        INV["<b>4. 税务开票<br/>Tax Invoicing</b><br/>增值税专用发票<br/>开票信息核验<br/>税控系统对接"]
+        
+        ENTRY["<b>5. 发票录入<br/>Invoice Entry</b><br/>发票信息录入系统<br/>校验码/号码匹配<br/>与应收单据关联"]
+        
+        RCPT["<b>6. 实收收款<br/>Cash Receipt</b><br/>银行到账确认<br/>收款方式登记<br/>预收款核销"]
+        
+        BILL["<b>7. 票据往来<br/>Bill Management</b><br/>承兑汇票管理<br/>票据贴现/背书<br/>到期提醒"]
+        
+        GL["<b>8. 总账凭证<br/>General Ledger</b><br/>自动生成凭证<br/>借贷平衡校验<br/>科目账簿登记"]
+        
+        SO -->|"发货执行"| DN
+        DN -->|"确认交付"| AR
+        AR -->|"开具发票"| INV
+        INV -->|"录入系统"| ENTRY
+        ENTRY -->|"收到款项"| RCPT
+        RCPT -->|"票据结算"| BILL
+        BILL -->|"记账入账"| GL
+        
+        subgraph Checkpoints["✅ 关键控制点"]
+            C1["🔍 订单审批"]
+            C2["🔍 发货核对"]
+            C3["🔍 对账确认"]
+            C4["🔍 发票校验"]
+            C5["🔍 收款核销"]
+            C6["🔍 凭证审核"]
+        end
+        
+        SO -.->|审批| C1
+        DN -.->|核对| C2
+        AR -.->|确认| C3
+        INV -.->|校验| C4
+        RCPT -.->|核销| C5
+        GL -.->|审核| C6
+    end
+    
+    style Sales fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px
+    style Checkpoints fill:#fff3e0,stroke:#ef6c00,stroke-width:1px,stroke-dasharray: 5 5
+    style SO fill:#c8e6c9,stroke:#388e3c,stroke-width:2px
+    style GL fill:#a5d6a7,stroke:#2e7d32,stroke-width:3px
+        </pre>
+    </div>
+
+    <div class="key-points">
+        <div class="key-point kp-green"><strong>✅ 核心价值</strong><span>从订单到收款的完整闭环，每一步可追溯、可审计</span></div>
+        <div class="key-point kp-orange"><strong>⚠️ 关键风险点</strong><span>发票与应收单的匹配校验、预收款核销规则</span></div>
+        <div class="key-point kp-blue"><strong>📊 数据流向</strong><span>销售数据→库存扣减→应收增加→税务数据→现金流入→总账更新</span></div>
+        <div class="key-point kp-red"><strong>❌ 我们最大缺口</strong><span>总账凭证自动生成模块严重缺失，需优先建设</span></div>
+    </div>
+</div>
+
+<!-- Flow 2: Purchase -->
+<div class="flow-section purchase-flow">
+    <h2>🛒 流程二：采购付款全流程（进项）</h2>
+    <p class="flow-subtitle">采购申请 → 采购订单 → 收货验收 → 应付对账 → 进项发票 → 发票录入 → 付款执行 → 票据往来 → 总账</p>
+    
+    <div class="mermaid-container">
+        <pre class="mermaid">
+flowchart TD
+    subgraph Purchase["🛒 采购付款业务流程"]
+        direction TB
+        
+        PR["<b>1. 采购申请<br/>Purchase Request</b><br/>需求部门发起<br/>物料/规格/预算<br/>审批流程流转"]
+        
+        PO["<b>2. 采购订单<br/>Purchase Order</b><br/>供应商选择/比价<br/>交期/价格条款<br/>合同编号关联"]
+        
+        RV["<b>3. 收货验收<br/>Goods Receipt</b><br/>质检合格确认<br/>实收数量记录<br/>入库单生成"]
+        
+        AP["<b>4. 应付对账<br/>AP Reconciliation</b><br/>供应商对账单<br/>采购入库核对<br/>差异处理"]
+        
+        VIN["<b>5. 进项发票<br/>Input VAT Invoice</b><br/>供应商专票收取<br/>发票真伪查验<br/>认证抵扣申报"]
+        
+        VENTRY["<b>6. 发票录入<br/>Invoice Entry</b><br/>进项发票信息录入<br/>三单匹配校验<br/>应付账款挂账"]
+        
+        PAY["<b>7. 付款执行<br/>Payment Execution</b><br/>付款计划安排<br/>银行转账/支票<br/>预付款核销"]
+        
+        PBILL["<b>8. 票据往来<br/>Payable Bill Mgmt</b><br/>应付票据管理<br/>承兑汇票开出<br/>到期兑付跟踪"]
+        
+        PGL["<b>9. 总账凭证<br/>General Ledger</b><br/>自动生成凭证<br/>进项税额确认<br/>成本/费用归集"]
+        
+        PR -->|"审批通过"| PO
+        PO -->|"供应商发货"| RV
+        RV -->|"入库确认"| AP
+        AP -->|"索取发票"| VIN
+        VIN -->|"录入系统"| VENTRY
+        VENTRY -->|"安排付款"| PAY
+        PAY -->|"票据结算"| PBILL
+        PBILL -->|"记账入账"| PGL
+        
+        subgraph PCheckpoints["✅ 采购控制点"]
+            PC1["🔍 预算控制"]
+            PC2["🔍 价格审核"]
+            PC3["🔍 质检验收"]
+            PC4["🔍 三单匹配"]
+            PC5["🔍 付款审批"]
+            PC6["🔍 成本核算"]
+        end
+        
+        PR -.->|预算| PC1
+        PO -.->|比价| PC2
+        RV -.->|质检| PC3
+        VENTRY -.->|匹配| PC4
+        PAY -.->|审批| PC5
+        PGL -.->|核算| PC6
+    end
+    
+    style Purchase fill:#fff8e1,stroke:#f9a825,stroke-width:2px
+    style PCheckpoints fill:#fce4ec,stroke:#c62828,stroke-width:1px,stroke-dasharray: 5 5
+    style PR fill:#ffecb3,stroke:#ffa000,stroke-width:2px
+    style PGL fill:#ffe082,stroke:#f57f17,stroke-width:3px
+        </pre>
+    </div>
+
+    <div class="key-points">
+        <div class="key-point kp-green"><strong>✅ 核心价值</strong><span>三单匹配（订单/入库/发票）确保采购合规，防止重复付款</span></div>
+        <div class="key-point kp-orange"><strong>⚠️ 关键风险点</strong><span>进项发票认证时效性（360天）、三单不一致处理</span></div>
+        <div class="key-point kp-blue"><strong>💰 税务要点</strong><span>进项税额抵扣直接减少现金流出，发票管理至关重要</span></div>
+        <div class="key-point kp-red"><strong>❌ 我们最大缺口</strong><span>进项发票管理与认证抵扣完全缺失，存在税务风险</span></div>
+    </div>
+</div>
+
+<!-- Relation Flow -->
+<div class="flow-section relation-flow">
+    <h2>📑 两端联动：销项 ↔ 进项 → 增值税汇总</h2>
+    <p class="flow-subtitle">销售端产生的销项税额与采购端的进项税额在总账层面进行抵扣平衡</p>
+    
+    <div class="mermaid-container">
+        <pre class="mermaid">
+flowchart LR
+    subgraph SellSide["💚 销售端（销项）"]
+        S_INV["销项发票<br/>+13%税率"]
+        S_TAX["销项税额<br/>应缴增值税"]
+    end
+    
+    subgraph BuySide["💛 采购端（进项）"]
+        B_INV["进项发票<br/>+13%税率"]
+        B_TAX["进项税额<br/>可抵扣税额"]
+    end
+    
+    subgraph TaxBalance["📑 税务汇总"]
+        NET_TAX["应纳税额 = 销项 - 进项"]
+        TAX_PAY["实际缴纳金额"]
+    end
+    
+    S_INV --> S_TAX
+    B_INV --> B_TAX
+    S_TAX --> NET_TAX
+    B_TAX -->|"抵扣"| NET_TAX
+    NET_TAX --> TAX_PAY
+    
+    style SellSide fill:#e8f5e9,stroke:#43a047,stroke-width:2px
+    style BuySide fill:#fff8e1,stroke:#f9a825,stroke-width:2px
+    style TaxBalance fill:#e3f2fd,stroke:#1565c0,stroke-width:2px
+        </pre>
+    </div>
+</div>
+
+<!-- Comparison Table -->
+<div class="flow-section">
+    <h2 style="color: #1a237e;">📋 与金蝶云星空模块对照表</h2>
+    <p class="flow-subtitle">逐节点对比标准ERP功能，识别我们的差距和建设优先级</p>
+    
+    <table class="comparison-table">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>流程节点</th>
+                <th>金蝶云星空对应模块</th>
+                <th>核心功能</th>
+                <th>当前状态</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- 销售部分 -->
+            <tr style="background:#f1f8e9;"><td colspan="5"><strong>📦 销售收款流程</strong></td></tr>
+            <tr><td>1</td><td>销售订单</td><td>销售管理 → 报价→订单</td><td>价格政策、信用检查</td><td><span class="status-partial">⚠️ 已规划</span></td></tr>
+            <tr><td>2</td><td>送货单</td><td>库存管理 → 发货通知→出库</td><td>批次管理、可用量检查</td><td><span class="status-partial">⚠️ 已规划</span></td></tr>
+            <tr><td>3</td><td>应收对账</td><td>应收管理 → 应收单→对账单</td><td>账龄分析、预警</td><td><span class="status-partial">⚠️ 部分覆盖</span></td></tr>
+            <tr><td>4</td><td>税务开票</td><td>税务管理 → 开票管理</td><td>金税接口、电子发票</td><td><span class="status-missing">❌ 缺失</span></td></tr>
+            <tr><td>5</td><td>发票录入</td><td>发票管理 → 发票采集</td><td>OCR识别、查验认证</td><td><span class="status-missing">❌ 缺失</span></td></tr>
+            <tr><td>6</td><td>实收收款</td><td>应收管理 → 收款单</td><td>银企联、核销规则</td><td><span class="status-partial">⚠️ 部分覆盖</span></td></tr>
+            <tr><td>7</td><td>票据往来</td><td>票据管理</td><td>汇票池、贴现计算</td><td><span class="status-missing">❌ 缺失</span></td></tr>
+            <tr><td>8</td><td><strong>总账凭证</strong></td><td><strong>总账 → 凭证处理</strong></td><td><strong>自动凭证、期末处理</strong></td><td><span class="status-missing">❌ 严重缺失</span></td></tr>
+            <!-- 采购部分 -->
+            <tr style="background:#fffde7;"><td colspan="5"><strong>🛒 采购付款流程</strong></td></tr>
+            <tr><td>9</td><td>采购申请</td><td>采购管理 → 采购申请</td><td>请购单、预算控制</td><td><span class="status-partial">⚠️ 部分覆盖</span></td></tr>
+            <tr><td>10</td><td>采购订单</td><td>采购管理 → 采购订单</td><td>供应商管理、比价</td><td><span class="status-partial">⚠️ 部分覆盖</span></td></tr>
+            <tr><td>11</td><td>收货验收</td><td>质量管理 → 来料检验</td><td>IQC、不合格处理</td><td><span class="status-partial">⚠️ 部分覆盖</span></td></tr>
+            <tr><td>12</td><td>应付对账</td><td>应收管理 → 应付单→对账</td><td>付款条件、账龄分析</td><td><span class="status-partial">⚠️ 部分覆盖</span></td></tr>
+            <tr><td>13</td><td>进项发票</td><td>发票管理 → 进项管理</td><td>认证抵扣、台账管理</td><td><span class="status-missing">❌ 缺失</span></td></tr>
+            <tr><td>14</td><td>付款执行</td><td>应付管理 → 付款单</td><td>资金计划、审批流</td><td><span class="status-partial">⚠️ 部分覆盖</span></td></tr>
+            <tr><td>15</td><td>应付票据</td><td>票据管理 → 应付票据</td><td>汇票开出、兑付跟踪</td><td><span class="status-missing">❌ 缺失</span></td></tr>
+            <tr><td>16</td><td><strong>总账凭证</strong></td><td><strong>总账 → 凭证处理</strong></td><td><strong>成本归集、进项确认</strong></td><td><span class="status-missing">❌ 严重缺失</span></td></tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- Priority Recommendations -->
+<div class="flow-section">
+    <h2 style="color: #c62828;">🚀 建设优先级建议</h2>
+    <p class="flow-subtitle">基于财务风险和业务影响度的实施路线图</p>
+    
+    <div class="key-points">
+        <div class="key-point kp-red" style="border-left-width: 5px;">
+            <strong>🔴 P0 - 立即启动（高风险）</strong>
+            <span><b>总账凭证引擎</b> — 所有业务的最终落脚点，没有它所有前端数据都是孤岛。建议优先实现基础凭证模板+借贷平衡校验。</span>
+        </div>
+        <div class="key-point kp-red" style="border-left-width: 5px;">
+            <strong>🔴 P0 - 立即启动（合规风险）</strong>
+            <span><b>进项/销项发票管理</b> — 增值税合规底线。需要发票OCR识别、真伪查验、认证抵扣状态跟踪。</span>
+        </div>
+        <div class="key-point kp-orange" style="border-left-width: 4px;">
+            <strong>🟠 P1 - 3个月内（效率提升）</strong>
+            <span><b>应收/应付对账增强</b> — 账龄分析、自动对账单生成、逾期预警，直接影响现金流健康度。</span>
+        </div>
+        <div class="key-point kp-blue" style="border-left-width: 4px;">
+            <strong>🔵 P2 - 6个月内（战略能力）</strong>
+            <span><b>票据管理 + 金税接口</b> — 承兑汇票池管理、电子税务局对接，适合有充足资源时推进。</span>
+        </div>
+        <div class="key-point kp-green" style="border-left-width: 3px;">
+            <strong>🟢 P3 - 持续优化（体验改善）</strong>
+            <span><b>银企联 + 自动核销</b> — 银行流水自动导入、智能收款匹配，属于锦上添花的自动化功能。</span>
+        </div>
+    </div>
+</div>
+
+<div class="footer-note">
+    <p>📐 基于 Mermaid Live Editor 渲染 | 🎯 对标金蝶云星空 Cloud V8.x | ✍️ 财务追踪器 · 2026-04-14</p>
+</div>
+
+</div>
+
+<script>
+    mermaid.initialize({
+        startOnLoad: true,
+        theme: 'base',
+        themeVariables: {
+            primaryColor: '#e8f5e9',
+            primaryTextColor: '#1b5e20',
+            primaryBorderColor: '#43a047',
+            lineColor: '#666',
+            secondaryColor: '#fff8e1',
+            tertiaryColor: '#e3f2fd',
+            fontSize: '14px'
+        },
+        flowchart: {
+            htmlLabels: true,
+            curve: 'basis',
+            padding: 15,
+            nodeSpacing: 50,
+            rankSpacing: 60,
+            useMaxWidth: true
+        },
+        securityLevel: 'loose'
+    });
+</script>
+</body>
+</html>
