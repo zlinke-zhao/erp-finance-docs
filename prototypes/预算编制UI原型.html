@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>预算编制 - UI原型 | ERP预算管理</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/antd@5/dist/reset.css">
+<script src="https://cdn.jsdelivr.net/npm/antd@5"></script>
+<script src="https://cdn.jsdelivr.net/npm/react@18/umd/react.production.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@ant-design/icons@5"></script>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Microsoft YaHei', 'PingFang SC', sans-serif; background: #f0f2f5; color: #333; }
+.page-header { background: linear-gradient(135deg, #1565c0 0%, #1976d2 100%); color: white; padding: 20px 30px; }
+.page-header h1 { font-size: 22px; margin-bottom: 6px; }
+.page-header p { font-size: 13px; opacity: 0.8; }
+.container { max-width: 1200px; margin: 24px auto; padding: 0 24px; }
+.card { background: white; border-radius: 8px; padding: 24px; margin-bottom: 20px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+.card-title { font-size: 16px; font-weight: bold; color: #333; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid #f0f0f0; }
+.form-row { display: flex; gap: 16px; margin-bottom: 16px; flex-wrap: wrap; }
+.form-item { flex: 1; min-width: 200px; }
+.stat-row { display: flex; gap: 16px; margin-bottom: 20px; }
+.stat-card { flex: 1; background: #f8f9fa; border-radius: 8px; padding: 16px; text-align: center; }
+.stat-card .label { font-size: 12px; color: #666; margin-bottom: 4px; }
+.stat-card .value { font-size: 24px; font-weight: bold; }
+.stat-card .value.blue { color: #1565c0; }
+.stat-card .value.green { color: #52c41a; }
+.stat-card .value.orange { color: #fa8c16; }
+.table-title { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+.table-title span { font-size: 14px; font-weight: bold; }
+.action-bar { display: flex; gap: 8px; margin-bottom: 16px; }
+.info-box { background: #e6f7ff; border: 1px solid #91d5ff; border-radius: 6px; padding: 12px 16px; margin-bottom: 16px; }
+.info-box.warning { background: #fff7e6; border-color: #ffd591; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script>
+const { useState } = React;
+
+const BudgetCompile = () => {
+  const [selectedYear, setSelectedYear] = useState('2026');
+  const [selectedDept, setSelectedDept] = useState('all');
+  const [selectedPeriod, setSelectedPeriod] = useState('year');
+
+  const budgetData = [
+    { code: 'A001', name: '销售收入', yearBudget: 5000000, q1: 1000000, q2: 1200000, q3: 1300000, q4: 1500000, ytd: 2300000, executeRate: 46 },
+    { code: 'A002', name: '其他收入', yearBudget: 200000, q1: 40000, q2: 50000, q3: 50000, q4: 60000, ytd: 90000, executeRate: 45 },
+    { code: 'B001', name: '直接成本', yearBudget: 3000000, q1: 600000, q2: 700000, q3: 800000, q4: 900000, ytd: 1500000, executeRate: 50 },
+    { code: 'B002', name: '制造费用', yearBudget: 500000, q1: 100000, q2: 120000, q3: 130000, q4: 150000, ytd: 280000, executeRate: 56 },
+    { code: 'C001', name: '管理费用', yearBudget: 800000, q1: 160000, q2: 180000, q3: 200000, q4: 260000, ytd: 420000, executeRate: 52 },
+    { code: 'C002', name: '销售费用', yearBudget: 600000, q1: 120000, q2: 140000, q3: 160000, q4: 180000, ytd: 360000, executeRate: 60 },
+  ];
+
+  const columns = [
+    { title: '科目编码', dataIndex: 'code', width: 100 },
+    { title: '科目名称', dataIndex: 'name', width: 120 },
+    { title: '年度预算', dataIndex: 'yearBudget', width: 120, render: v => v.toLocaleString() },
+    { title: 'Q1', dataIndex: 'q1', width: 100, render: v => v.toLocaleString() },
+    { title: 'Q2', dataIndex: 'q2', width: 100, render: v => v.toLocaleString() },
+    { title: 'Q3', dataIndex: 'q3', width: 100, render: v => v.toLocaleString() },
+    { title: 'Q4', dataIndex: 'q4', width: 100, render: v => v.toLocaleString() },
+    { title: '累计执行', dataIndex: 'ytd', width: 120, render: v => v.toLocaleString() },
+    { title: '执行率', dataIndex: 'executeRate', width: 100, render: v => `${v}%` },
+    { title: '操作', width: 100, render: () => <a href="#">编辑</a> },
+  ];
+
+  return (
+    <div style={{ padding: '0' }}>
+      <div className="page-header">
+        <h1>预算编制</h1>
+        <p>ERP财务管理 - 预算管理 - 年度预算编制</p>
+      </div>
+
+      <div className="container">
+        {/* 统计卡片 */}
+        <div className="card">
+          <div className="stat-row">
+            <div className="stat-card">
+              <div className="label">年度预算总额</div>
+              <div className="value blue">10,300,000</div>
+            </div>
+            <div className="stat-card">
+              <div className="label">累计执行</div>
+              <div className="value green">5,270,000</div>
+            </div>
+            <div className="stat-card">
+              <div className="label">整体执行率</div>
+              <div className="value orange">51.2%</div>
+            </div>
+            <div className="stat-card">
+              <div className="label">预算状态</div>
+              <div className="value green">审批中</div>
+            </div>
+          </div>
+        </div>
+
+        {/* 筛选条件 */}
+        <div className="card">
+          <div className="card-title">筛选条件</div>
+          <div className="form-row">
+            <div className="form-item">
+              <label style={{ display: 'block', marginBottom: 6, fontSize: 13 }}>预算年度</label>
+              <select value={selectedYear} onChange={e => setSelectedYear(e.target.value)} style={{ width: '100%', padding: '8px 12px', borderRadius: 6, border: '1px solid #d9d9d9' }}>
+                <option value="2026">2026年</option>
+                <option value="2025">2025年</option>
+                <option value="2024">2024年</option>
+              </select>
+            </div>
+            <div className="form-item">
+              <label style={{ display: 'block', marginBottom: 6, fontSize: 13 }}>编制部门</label>
+              <select value={selectedDept} onChange={e => setSelectedDept(e.target.value)} style={{ width: '100%', padding: '8px 12px', borderRadius: 6, border: '1px solid #d9d9d9' }}>
+                <option value="all">全部部门</option>
+                <option value="sales">销售部</option>
+                <option value="purchase">采购部</option>
+                <option value="production">生产部</option>
+                <option value="admin">管理部</option>
+              </select>
+            </div>
+            <div className="form-item">
+              <label style={{ display: 'block', marginBottom: 6, fontSize: 13 }}>预算周期</label>
+              <select value={selectedPeriod} onChange={e => setSelectedPeriod(e.target.value)} style={{ width: '100%', padding: '8px 12px', borderRadius: 6, border: '1px solid #d9d9d9' }}>
+                <option value="year">年度预算</option>
+                <option value="quarter">季度预算</option>
+                <option value="month">月度预算</option>
+              </select>
+            </div>
+            <div className="form-item" style={{ display: 'flex', alignItems: 'flex-end' }}>
+              <button style={{ padding: '8px 20px', background: '#1565c0', color: 'white', border: 'none', borderRadius: 6, cursor: 'pointer', marginRight: 8 }}>查询</button>
+              <button style={{ padding: '8px 20px', background: '#fff', color: '#666', border: '1px solid #d9d9d9', borderRadius: 6, cursor: 'pointer' }}>重置</button>
+            </div>
+          </div>
+        </div>
+
+        {/* 预算数据表格 */}
+        <div className="card">
+          <div className="table-title">
+            <span>预算数据列表</span>
+            <div className="action-bar">
+              <button style={{ padding: '6px 16px', background: '#52c41a', color: 'white', border: 'none', borderRadius: 6, cursor: 'pointer', fontSize: 13 }}>+ 新增预算</button>
+              <button style={{ padding: '6px 16px', background: '#fff', color: '#666', border: '1px solid #d9d9d9', borderRadius: 6, cursor: 'pointer', fontSize: 13 }}>Excel导入</button>
+              <button style={{ padding: '6px 16px', background: '#fff', color: '#666', border: '1px solid #d9d9d9', borderRadius: 6, cursor: 'pointer', fontSize: 13 }}>从历史复制</button>
+            </div>
+          </div>
+
+          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
+            <thead>
+              <tr style={{ background: '#fafafa' }}>
+                {columns.map((col, i) => (
+                  <th key={i} style={{ padding: '10px 8px', border: '1px solid #f0f0f0', textAlign: 'left', width: col.width }}>{col.title}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {budgetData.map((row, i) => (
+                <tr key={i} style={{ background: i % 2 === 0 ? '#fff' : '#fafafa' }}>
+                  {columns.map((col, j) => (
+                    <td key={j} style={{ padding: '10px 8px', border: '1px solid #f0f0f0' }}>
+                      {col.render ? col.render(row[col.dataIndex], row) : row[col.dataIndex]}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+            <tfoot>
+              <tr style={{ background: '#e6f7ff', fontWeight: 'bold' }}>
+                <td colSpan={2} style={{ padding: '10px 8px', border: '1px solid #f0f0f0' }}>合计</td>
+                <td style={{ padding: '10px 8px', border: '1px solid #f0f0f0' }}>10,300,000</td>
+                <td style={{ padding: '10px 8px', border: '1px solid #f0f0f0' }}>2,000,000</td>
+                <td style={{ padding: '10px 8px', border: '1px solid #f0f0f0' }}>2,400,000</td>
+                <td style={{ padding: '10px 8px', border: '1px solid #f0f0f0' }}>2,800,000</td>
+                <td style={{ padding: '10px 8px', border: '1px solid #f0f0f0' }}>3,100,000</td>
+                <td style={{ padding: '10px 8px', border: '1px solid #f0f0f0' }}>5,270,000</td>
+                <td style={{ padding: '10px 8px', border: '1px solid #f0f0f0' }}>51.2%</td>
+                <td style={{ padding: '10px 8px', border: '1px solid #f0f0f0' }}>-</td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+
+        {/* 操作按钮 */}
+        <div className="card" style={{ textAlign: 'center' }}>
+          <button style={{ padding: '10px 40px', background: '#1565c0', color: 'white', border: 'none', borderRadius: 6, cursor: 'pointer', fontSize: 14, marginRight: 12 }}>提交审批</button>
+          <button style={{ padding: '10px 40px', background: '#fff', color: '#666', border: '1px solid #d9d9d9', borderRadius: 6, cursor: 'pointer', fontSize: 14, marginRight: 12 }}>保存草稿</button>
+          <button style={{ padding: '10px 40px', background: '#fff', color: '#666', border: '1px solid #d9d9d9', borderRadius: 6, cursor: 'pointer', fontSize: 14 }}>取消</button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+ReactDOM.createRoot(document.getElementById('root')).render(<BudgetCompile />);
+</script>
+</body>
+</html>
