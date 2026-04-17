@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>实收收款模块规格书</title>
+<style>
+:root {
+  --bg: #f8fafc;
+  --card: #ffffff;
+  --primary: #6366f1;
+  --text: #1e293b;
+  --text-dim: #64748b;
+  --border: #e2e8f0;
+  --code-bg: #1e293b;
+  --code-text: #e2e8f0;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.7;
+  padding: 2rem;
+}
+.container {
+  max-width: 1000px;
+  margin: 0 auto;
+  background: var(--card);
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  padding: 3rem;
+}
+.header {
+  border-bottom: 2px solid var(--primary);
+  padding-bottom: 1.5rem;
+  margin-bottom: 2rem;
+}
+.header h1 {
+  font-size: 1.75rem;
+  color: var(--primary);
+  margin-bottom: 0.5rem;
+}
+.header .meta {
+  color: var(--text-dim);
+  font-size: 0.875rem;
+}
+.content h1 { font-size: 1.5rem; margin: 2rem 0 1rem; color: var(--primary); }
+.content h2 { font-size: 1.25rem; margin: 1.5rem 0 0.75rem; color: var(--text); border-bottom: 1px solid var(--border); padding-bottom: 0.5rem; }
+.content h3 { font-size: 1.1rem; margin: 1.25rem 0 0.5rem; color: var(--text); }
+.content p { margin: 0.75rem 0; }
+.content ul, .content ol { margin: 0.75rem 0; padding-left: 1.5rem; }
+.content li { margin: 0.375rem 0; }
+.content table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1rem 0;
+  font-size: 0.9rem;
+}
+.content td, .content th {
+  border: 1px solid var(--border);
+  padding: 0.625rem 0.75rem;
+  text-align: left;
+}
+.content th {
+  background: #f1f5f9;
+  font-weight: 600;
+}
+.content pre {
+  background: var(--code-bg);
+  color: var(--code-text);
+  padding: 1rem;
+  border-radius: 8px;
+  overflow-x: auto;
+  margin: 1rem 0;
+  font-size: 0.85rem;
+}
+.content code {
+  background: #f1f5f9;
+  padding: 0.125rem 0.375rem;
+  border-radius: 4px;
+  font-size: 0.875rem;
+}
+.content pre code {
+  background: transparent;
+  padding: 0;
+}
+.back-link {
+  display: inline-block;
+  margin-bottom: 1.5rem;
+  color: var(--primary);
+  text-decoration: none;
+  font-size: 0.875rem;
+}
+.back-link:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+<div class="container">
+  <a href="../index.html" class="back-link">← 返回目录</a>
+  <div class="header">
+    <h1>实收收款模块规格书</h1>
+    <div class="meta">Dev_Dept · ERP财务管理系统</div>
+  </div>
+  <div class="content">
+    <h1>实收收款模块 — 需求分析与技术规格说明书</h1>
+
+> <strong>项目</strong>: Dev_Dept ERP 财务管理系统  
+> <strong>模块</strong>: 实收收款管理 (Cash Receipt Management, CRM)  
+> <strong>版本</strong>: v1.0  
+> <strong>日期</strong>: 2026-04-14  
+> <strong>对标系统</strong>: 金蝶云星空 → 应收管理 → 收款单/核销处理  
+> <strong>优先级</strong>: P1（效率提升） — 仅次于总账引擎和发票查验  
+> <strong>状态</strong>: 规格设计阶段  
+
+---
+
+<h2>1. 模块定位与业务目标</h2>
+
+<h3>1.1 一句话定义</h3>
+
+<strong>实收收款模块是ERP系统中"资金流入"的核心枢纽，负责从银行资金到账开始，经过收款登记、应收核销、凭证生成，最终写入总账的全流程管理。</strong>
+
+<h3>1.2 在整体流程中的位置</h3>
+
+<code></code>`
+销售订单 → 送货单 → 应收对账 → 税务开票 → 发票录入 ─┐
+                                                    │
+采购申请 → 采购订单 → 收货验收 → 应付对账 ──────────┤
+                                                    ▼
+                                            ┌──────────────┐
+                                            │ 🔄 实收收款   │ ◄── 本模块
+                                            │ (本规格书)    │
+                                            └──────┬───────┘
+                                                   │
+                                                   ▼
+                                            ┌──────────────┐
+                                            │ 🧾 总账凭证    │ ← P0待建
+                                            │              │
+                                            │ 借:银行存款   │
+                                            │ 贷:应收账款   │
+                                            └──────────────┘
+<code></code>`
+
+<h3>1.3 核心业务目标</h3>
+
+<table><tr><td>目标</td><td>指标</td><td>当前痛点</td></tr>
+
+<tr><td><strong>收款可追溯</strong></td><td>每笔收款100%关联到具体应收单据</td><td>手工Excel对账，容易漏记</td></tr>
+<tr><td><strong>核销准确率</strong></td><td>自动核销匹配率≥90%，人工确认率≤10%</td><td>全靠人眼逐笔核对</td></tr>
+<tr><td><strong>账龄准确性</strong></td><td>应收余额与实际回款实时同步</td><td>月末才调一次，平时不准</td></tr>
+<tr><td><strong>预收透明度</strong></td><td>预收余额实时可见、自动抵扣</td><td>预收款记在脑子里或散落各处</td></tr>
+<tr><td><strong>凭证自动化</strong></td><td>收款审核通过后自动生成凭证</td><td>手工做分录，容易出错</td></tr>
+<tr><td><strong>到账时效</strong></td><td>从银行到账到系统登记≤4小时</td><td>发现晚、登记不及时</td></tr>
+
+<h3>1.4 用户角色</h3>
+
+<tr><td>角色</td><td>权限范围</td><td>典型操作</td></tr>
+
+<tr><td><strong>财务会计</strong></td><td>创建/编辑/删除收款单</td><td>录入收款、核销操作、查看报表</td></tr>
+<tr><td><strong>财务主管</strong></td><td>审核所有收款单、审批异常</td><td>审核、红冲、权限审批</td></tr>
+<tr><td><strong>出纳</strong></td><td>仅录入和查询</td><td>登记到账信息（不可核销）</td></tr>
+<tr><td><strong>销售经理</strong></td><td>只读查看自己客户的收款情况</td><td>回款进度、客户欠款</td></tr>
+<tr><td><strong>系统管理员</strong></td><td>配置科目模板、核销规则、银行账户</td><td>参数配置</td></tr>
+
+---
+
+<h2>2. 功能需求清单</h2>
+
+<h3>2.1 功能全景图</h3>
+
+<code></code>`
+┌─────────────────────────────────────────────────────────────────┐
+│                    实收收款模块功能架构                           │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│  ┌────────────┐  ┌────────────┐  ┌────────────┐                │
+│  │ 🔵 收款单   │  │ 🟠 核销     │  │ 🟢 预收款   │                │
+│  │ 管理       │  │ 处理       │  │ 管理       │                │
+│  ├────────────┤  ├────────────┤  ├────────────┤                │
+│  │ • 新增收款单│  │ • 自动核销  │  │ • 预收登记  │                │
+│  │ • 编辑/删除│  │ • 半自动核销│  │ • 预收余额  │                │
+│  │ • 批量导入│  │ • 手工核销   │  │ • 预收转应收│                │
+│  │ • 银企直连│  │ • 多对多核销│  │ • 预收退款  │                │
+│  │ • 草稿箱  │  │ • 反核销    │  │            │                │
+│  └────────────┘  ├────────────┤  └────────────┘                │
+│                  │ • 尾差处理  │                                │
+│  ┌────────────┐  │ • 折扣处理  │  ┌────────────┐                │
+│  │ 🟣 银企对接  │  └────────────┘  │ 🔴 凭证     │                │
+│  ├────────────┘                 │ 生成       │                │
+│  │ • 流水拉取│                   ├────────────┤                │
+│  │ • 智能匹配│                   │ • 凭证模板  │                │
+│  │ • 待认领池│                   │ • 自动生成  │                │
+│  │ • 对账报告│                   │ • 审核过账  │                │
+│  └────────────┘                 └────────────┘                │
+│                                                                 │
+│  ┌────────────┐  ┌────────────┐  ┌────────────┐                │
+│  │ ⚫ 报表分析  │  │ ⚪ 异常处理  │  │ 🔘 配置管理  │                │
+│  ├────────────┤  ├────────────┤  ├────────────┤                │
+│  │ • 回款统计│  │ • 红字冲销  │  │ • 科目映射  │                │
+│  │ • 账龄分析│  │ • 退款处理  │  │ • 核销规则  │                │
+│  │ • 现金流量│  │ • 重复检测  │  │ • 银行账户  │                │
+│  │ • 客户排行│  │ • 差异调整  │  │ • 收款方式  │                │
+│  └────────────┘  └────────────┘  └────────────┘                │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+<code></code>`
+
+<h3>2.2 功能详细说明</h3>
+
+#### F01. 收款单管理（核心）
+
+<tr><td>功能点</td><td>描述</td><td>优先级</td></tr>
+
+<tr><td><strong>F01-01</strong> 新增收款单</td><td>支持手工录入、银企导入两种创建方式。必填：客户、金额、日期、收款方式、银行账户</td><td>P0</td></tr>
+<tr><td><strong>F01-02</strong> 收款方式支持</td><td>银行转账 / 现金 / POS刷卡 / 支付宝 / 微信支付 / 承兑汇票 / 其他</td><td>P0</td></tr>
+<tr><td><strong>F01-03</strong> 多币种</td><td>支持人民币及常用外币(USD/EUR/HKD等)，按汇率自动换算本位币</td><td>P1</td></tr>
+<tr><td><strong>F01-04</strong> 草稿机制</td><td>未审核前为草稿状态，可编辑；审核后锁定不可修改</td><td>P0</td></tr>
+<tr><td><strong>F01-05</strong> 批量导入</td><td>通过Excel模板批量导入多笔收款，支持校验和错误提示</td><td>P1</td></tr>
+<tr><td><strong>F01-06</strong> 关联附件</td><td>上传银行回单图片/电子回单PDF作为原始凭证</td><td>P1</td></tr>
+
+#### F02. 核销处理（核心中的核心）
+
+<tr><td>功能点</td><td>描述</td><td>优先级</td></tr>
+
+<tr><td><strong>F02-01</strong> 待核销列表</td><td>显示该客户所有未结清/部分核销的应收单据，含订单号、到期日、已收、未收</td><td>P0</td></tr>
+<tr><td><strong>F02-02</strong> 自动核销</td><td>当收款金额与某笔应收完全一致且仅有一笔待收时，一键自动核销</td><td>P0</td></tr>
+<tr><td><strong>F02-03</strong> 半自动核销</td><td>系统推荐最优核销方案（基于金额+账龄+历史记录），用户确认后执行</td><td>P0</td></tr>
+<tr><td><strong>F02-04</strong> 手工核销</td><td>用户手动选择一笔或多笔应收进行核销分配</td><td>P0</td></tr>
+<tr><td><strong>F02-05</strong> 1对1核销</td><td>单笔收款全额核销单笔应收</td><td>P0</td></tr>
+<tr><td><strong>F02-06</strong> 多对1核销</td><td>多笔收款累计核销同一笔大额应收（分期付款）</td><td>P0</td></tr>
+<tr><td><strong>F02-07</strong> 1对多核销</td><td>单笔大额收款分配给多笔应收（合并付款）</td><td>P0</td></tr>
+<tr><td><strong>F02-08</strong> 多对多核销</td><td>复杂场景：多笔收款分配给多笔应收，需明确指定每笔分配金额</td><td>P1</td></tr>
+<tr><td><strong>F02-09</strong> 部分核销</td><td>收款金额小于应收时，部分核销并标记剩余未收</td><td>P0</td></tr>
+<tr><td><strong>F02-10</strong> 反核销（撤销）</td><td>已核销的收款单允许反核销（需权限），恢复应收未收状态</td><td>P1</td></tr>
+<tr><td><strong>F02-11</strong> 尾差自动处理</td><td>≤¥1 或 ≤0.1%的差异自动归入财务费用-尾差调整科目</td><td>P0</td></tr>
+<tr><td><strong>F02-12</strong> 折扣处理</td><td>因提前付款享受折扣时，差额计入财务费用</td><td>P1</td></tr>
+
+#### F03. 预收款管理
+
+<tr><td>功能点</td><td>描述</td><td>优先级</td></tr>
+
+<tr><td><strong>F03-01</strong> 预收款登记</td><td>无对应订单的收款自动挂入客户预收账户</td><td>P0</td></tr>
+<tr><td><strong>F03-02</strong> 预收余额查询</td><td>每个客户的预收余额实时可见</td><td>P0</td></tr>
+<tr><td><strong>F03-03</strong> 预收自动抵扣</td><td>产生新应收时，若该客户有预收余额，提示是否使用预收核销</td><td>P0</td></tr>
+<tr><td><strong>F03-04</strong> 预收退款</td><td>超期未用或其他原因退回预收款</td><td>P2</td></tr>
+<tr><td><strong>F03-05</strong> 预收明细台账</td><td>预收的每一笔进出记录完整追溯</td><td>P1</td></tr>
+
+#### F04. 银企对接（Phase 2）
+
+<tr><td>功能点</td><td>描述</td><td>优先级</td></tr>
+
+<tr><td><strong>F04-01</strong> 流水定时拉取</td><td>通过银企接口每日凌晨自动拉取前一日的银行流水</td><td>P2</td></tr>
+<tr><td><strong>F04-02</strong> 智能匹配算法</td><td>基于对方户名+金额+摘要+历史的综合权重算法</td><td>P2</td></tr>
+<tr><td><strong>F04-03</strong> 待认领池</td><td>无法自动匹配的流水归集，定期提醒清理</td><td>P2</td></tr>
+<tr><td><strong>F04-04</strong> 对账报告</td><td>银行流水 vs 系统收款单的对账差异报告</td><td>P2</td></tr>
+
+#### F05. 凭证生成（依赖总账引擎）
+
+<tr><td>功能点</td><td>描述</td><td>优先级</td></tr>
+
+<tr><td><strong>F05-01</strong> 凭证模板配置</td><td>不同收款场景对应的借贷方科目模板（见§4）</td><td>P0</td></tr>
+<tr><td><strong>F05-02</strong> 自动生成凭证</td><td>收款审核通过后根据核销结果自动生成记账凭证</td><td>P0</td></tr>
+<tr><td><strong>F05-03</strong> 凭证摘要规则</td><td>自动生成规范的凭证摘要（含客户名、收款单号、关联订单）</td><td>P1</td></tr>
+<tr><td><strong>F05-04</strong> 合并生成凭证</td><td>同一客户同一天的多笔小金额收款合并为一张凭证</td><td>P2</td></tr>
+
+#### F06. 报表与分析
+
+<tr><td>功能点</td><td>描述</td><td>优先级</td></tr>
+
+<tr><td><strong>F06-01</strong> 回款统计</td><td>按客户/期间/销售员的回款金额、回款率排名</td><td>P1</td></tr>
+<tr><td><strong>F06-02</strong> 应收账龄分析</td><td>按账龄区间(30/60/90/180天+)分布，逾期预警</td><td>P1</td></tr>
+<tr><td><strong>F06-03</strong> 现金流量表</td><td>经营活动现金流入分类汇总</td><td>P1</td></tr>
+<tr><td><strong>F06-04</strong> 收款日报/周报</td><td>定时推送收款概况给管理层</td><td>P2</td></tr>
+
+---
+
+<h2>3. 数据模型设计</h2>
+
+<h3>3.1 ER关系图</h3>
+
+<code></code>`
+┌──────────────────┐         ┌──────────────────┐
+│   customer       │         │   bank_account   │
+│   (客户主数据)    │         │   (银行账户)      │
+├──────────────────┤         ├──────────────────┤
+│ PK id            │         │ PK id            │
+│    name          │         │    account_name   │
+│    tax_code      │◄───────┼│    account_no     │
+│    credit_limit  │  1:N   │    bank_name      │
+│    prepay_balance│         │    currency       │
+└──────────────────┘         └──────┬───────────┘
+        │                            │
+        │ 1:N                        │ 1:N
+        ▼                            ▼
+┌──────────────────┐         ┌──────────────────┐
+│  ar_invoice      │         │  receipt          │
+│  (应收发票/应收单)│         │  ★ 收款单(核心)   │
+├──────────────────┤         ├──────────────────┤
+│ PK id            │         │ PK id             │
+│    invoice_no    │         │    receipt_no     │
+│    so_ref_id     │         │    customer_id    │ FK→customer
+│    total_amount  │         │    amount         │
+│    received_amt  │         │    received_date  │
+│    balance       │         │    payment_method │
+│    status        │         │    bank_acct_id   │ FK→bank_account
+└────────┬─────────┘         │    currency       │
+         │                   │    exchange_rate  │
+         │ 1:N               │    source_type    │
+         │                   │    bank_ref_no    │
+         ▼                   │    remark         │
+┌──────────────────┐         │    attachment_url │
+│  receipt_writeoff│         │    status         │
+│  ★ 核销记录(核心) │         │    verified_by    │
+├──────────────────┤         │    verified_at    │
+│ PK id             │         │    created_at     │
+│    receipt_id     │ FK→receipt                    │
+│    ar_id          │ FK→ar_invoice                 │
+│    writeoff_amount│         └──────────────────┘
+│    writeoff_date  │
+│    writeoff_type  │  (AUTO/MANUAL/PREPAY)
+│    created_by     │
+│    created_at     │
+└──────────────────┘
+<code></code>`
+
+<h3>3.2 数据库DDL</h3>
+
+#### 表1: receipt（收款单主表）
+
+<code></code>`sql
+CREATE TABLE receipt (
+    id                BIGINT PRIMARY KEY AUTO_INCREMENT COMMENT '主键ID',
+    
+    -- === 基本信息 ===
+    receipt_no        VARCHAR(20)  NOT NULL UNIQUE  COMMENT '收款单编号(自动生成)',
+    customer_id       BIGINT       NOT NULL        COMMENT '客户ID',
+    
+    -- === 金额信息 ===
+    amount            DECIMAL(14,2) NOT NULL       COMMENT '收款金额(原币)',
+    currency          VARCHAR(6)   NOT NULL DEFAULT 'CNY' COMMENT '币种',
+    exchange_rate     DECIMAL(12,6) DEFAULT 1.000000 COMMENT '汇率',
+    amount_cny        DECIMAL(14,2) NOT NULL        COMMENT '折合人民币金额',
+    unwriteoff_amount DECIMAL(14,2) NOT NULL        COMMENT '未核销余额(初始=amount,核销后递减)',
+    
+    -- === 收款信息 ===
+    received_date     DATE         NOT NULL        COMMENT '收款日期',
+    payment_method    VARCHAR(20)  NOT NULL        COMMENT '收款方式: BANK_TRANSFER/CASH/POS/ALIPAY/WECHAT/BILL/DRAFT/OTHER',
+    bank_account_id   BIGINT       DEFAULT NULL     COMMENT '收款银行账户ID',
+    bank_ref_no       VARCHAR(50)  DEFAULT NULL     COMMENT '银行参考号/流水号',
+    
+    -- === 来源信息 ===
+    source_type       VARCHAR(20)  NOT NULL DEFAULT 'MANUAL' COMMENT '来源: MANUAL/BANK_IMPORT/BATCH/API',
+    source_ref        VARCHAR(50)  DEFAULT NULL     COMMENT '来源引用(银行流水ID等)',
+    
+    -- === 关联信息 ===
+    voucher_id        BIGINT       DEFAULT NULL     COMMENT '生成的凭证ID(关联总账模块)',
+    
+    -- === 附件与备注 ===
+    attachment_url    VARCHAR(500) DEFAULT NULL     COMMENT '银行回单附件URL',
+    remark            VARCHAR(500) DEFAULT NULL     COMMENT '备注',
+    
+    -- === 状态 ===
+    status            VARCHAR(16)  NOT NULL DEFAULT 'DRAFT' COMMENT 'DRAFT/VERIFIED/CANCELLED',
+    
+    -- === 审计 ===
+    created_by        BIGINT       DEFAULT NULL     COMMENT '创建人ID',
+    created_at        DATETIME     DEFAULT CURRENT_TIMESTAMP,
+    updated_by        BIGINT       DEFAULT NULL     COMMENT '最后修改人',
+    updated_at        DATETIME     DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    verified_by       BIGINT       DEFAULT NULL     COMMENT '审核人',
+    verified_at       DATETIME     DEFAULT NULL     COMMENT '审核时间',
+    
+    -- === 索引 ===
+    INDEX idx_customer_date (customer_id, received_date),
+    INDEX idx_status (status),
+    INDEX idx_source (source_type, source_ref),
+    INDEX idx_received_date (received_date)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 
+COMMENT='收款单主表 - 记录每一笔实收款项';
+<code></code>`
+
+#### 表2: receipt_writeoff（核销记录表）
+
+<code></code>`sql
+CREATE TABLE receipt_writeoff (
+    id                BIGINT PRIMARY KEY AUTO_INCREMENT,
+    
+    -- === 关联 ===
+    receipt_id        BIGINT       NOT NULL COMMENT '收款单ID',
+    ar_invoice_id     BIGINT       NOT NULL COMMENT '应收单ID',
+    so_ref_id         BIGINT       DEFAULT NULL COMMENT '销售订单ID(冗余,方便查询)',
+    
+    -- === 核销金额 ===
+    writeoff_amount   DECIMAL(14,2) NOT NULL       COMMENT '本次核销金额',
+    prepay_used       DECIMAL(14,2) DEFAULT 0      COMMENT '其中使用预收款的金额',
+    discount_amount   DECIMAL(14,2) DEFAULT 0      COMMENT '折扣/坏账金额(若有)',
+    
+    -- === 核销类型 ===
+    writeoff_type     VARCHAR(16)  NOT NULL DEFAULT 'MANUAL' 
+        COMMENT '核销类型: AUTO(全自动)/SEMI_AUTO(半自动)/MANUAL(手工)/PREPAY(预收抵扣)/REVERSE(反核销)',
+    
+    -- === 尾差处理 ===
+    rounding_diff     DECIMAL(8,2)  DEFAULT 0      COMMENT '尾差金额(若有)',
+    rounding_acct     VARCHAR(30)  DEFAULT NULL     COMMENT '尾差计入科目',
+    
+    -- === 时间戳 ===
+    writeoff_date     DATE         NOT NULL        COMMENT '核销日期',
+    created_by        BIGINT       NOT NULL        COMMENT '核销操作人',
+    created_at        DATETIME     DEFAULT CURRENT_TIMESTAMP,
+    
+    -- === 索引(关键!) ===
+    UNIQUE INDEX uk_receipt_ar (receipt_id, ar_invoice_id),
+    INDEX idx_ar (ar_invoice_id),
+    INDEX idx_so (so_ref_id),
+    INDEX idx_writeoff_date (writeoff_date)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 
+COMMENT='收款核销记录 - 每次核销操作一条记录,支持多次部分核销';
+<code></code>`
+
+#### 表3: customer_prepay（客户预收账户表）
+
+<code></code>`sql
+CREATE TABLE customer_prepay (
+    id                BIGINT PRIMARY KEY AUTO_INCREMENT,
+    customer_id       BIGINT       NOT NULL UNIQUE  COMMENT '客户ID',
+    
+    -- === 预收余额 ===
+    current_balance   DECIMAL(14,2) NOT NULL DEFAULT 0 COMMENT '当前可用预收余额',
+    frozen_balance    DECIMAL(14,2) NOT NULL DEFAULT 0 COMMENT '冻结余额(已关联但未最终核销)',
+    total_in          DECIMAL(14,2) NOT NULL DEFAULT 0 COMMENT '累计预收入',
+    total_out         DECIMAL(14,2) NOT NULL DEFAULT 0 COMMENT '累计预收使用/退还',
+    
+    -- === 更新时间 ===
+    last_updated_at   DATETIME     DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    
+    INDEX idx_customer (customer_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 
+COMMENT='客户预收账户余额表 - 实时维护每个客户的预收余额';
+<code></code>`
+
+#### 表4: prepay_transaction（预收流水明细表）
+
+<code></code>`sql
+CREATE TABLE prepay_transaction (
+    id                BIGINT PRIMARY KEY AUTO_INCREMENT,
+    customer_id       BIGINT       NOT NULL        COMMENT '客户ID',
+    
+    -- === 变动信息 ===
+    trans_type        VARCHAR(16)  NOT NULL        COMMENT 'IN(收到预收)/OUT(预收核销)/REFUND(退款)/ADJUST(调整)',
+    amount            DECIMAL(14,2) NOT NULL       COMMENT '变动金额(正数表示增加预收,负数表示减少)',
+    balance_after     DECIMAL(14,2) NOT NULL        COMMENT '变动后余额',
+    
+    -- === 关联来源 ===
+    ref_type          VARCHAR(20)  NOT NULL        COMMENT '关联类型: RECEIPT/AR_INVOICE/REFUND/MANUAL',
+    ref_id            BIGINT       NOT NULL        COMMENT '关联单据ID',
+    remark            VARCHAR(200) DEFAULT NULL     COMMENT '备注',
+    
+    created_at        DATETIME     DEFAULT CURRENT_TIMESTAMP,
+    
+    INDEX idx_customer (customer_id),
+    INDEX idx_trans_type (trans_type)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 
+COMMENT='预收变动流水 - 每一笔预收的增加/减少都有记录,可审计追溯';
+<code></code>`
+
+---
+
+<h2>4. 业务规则与凭证模板</h2>
+
+<h3>4.1 六种收款场景的会计分录</h3>
+
+<tr><td>场景代码</td><td>场景描述</td><td>借方</td><td>贷方</td><td>备注</td></tr>
+
+<tr><td><strong>S01</strong></td><td>正常收款核销</td><td><code>1002 银行存款-xx银行</code></td><td><code>1122 应收账款-XX客户</code></td><td>最常见的标准场景</td></tr>
+<tr><td><strong>S02</strong></td><td>纯预收款（无订单）</td><td><code>1002 银行存款-xx银行</code></td><td><code>2203 预收账款-XX客户</code></td><td>先款后货/VIP存入</td></tr>
+<tr><td><strong>S03</strong></td><td>预收转应收核销</td><td><code>2203 预收账款-XX客户</code></td><td><code>1122 应收账款-XX客户</code></td><td>新订单产生时的内部转账</td></tr>
+<tr><td><strong>S04</strong></td><td>收款+提前付款折扣</td><td><code>1002 银行存款</code> + <code>6603 财务费用-折扣支出</code></td><td><code>1122 应收账款</code></td><td>客户享早鸟折扣</td></tr>
+<tr><td><strong>S05</strong></td><td>收到承兑汇票</td><td><code>1121 应收票据-承兑汇票</code></td><td><code>1122 应收账款-XX客户</code></td><td>以票据代替现金</td></tr>
+<tr><td><strong>S06</strong></td><td>汇票贴现/兑现</td><td><code>1002 银行存款</code> + <code>6603 财务费用-贴现息</code></td><td><code>1121 应收票据-承兑汇票</code></td><td>票据到期或贴现</td></tr>
+
+<h3>4.2 核销规则引擎</h3>
+
+<code></code>`python
+class WriteoffRule:
+    """核销规则配置"""
+    
+    # 自动核销触发条件
+    AUTO_WRITEOFF_RULES = {
+        "exact_match": {
+            "condition": "单笔待收应收且金额完全相等",
+            "action": "全自动核销，无需确认"
+        },
+        "single_match_high_confidence": {
+            "condition": "置信度≥95%的智能匹配",
+            "action": "自动创建核销方案，等待财务一键确认"
+        }
+    }
+    
+    # 匹配权重配置
+    MATCH_WEIGHTS = {
+        "customer_match":      40,    # 客户匹配权重
+        "amount_exact":        30,    # 金额完全匹配
+        "amount_tolerance":    25,    # 金额容差内匹配
+        "reference_keyword":   15,    # 摘要关键词匹配
+        "history_pattern":     15,    # 历史核销习惯
+    }
+    
+    # 尾差处理规则
+    ROUNDING_RULE = {
+        "auto_threshold_cny": 1.00,       # 人民币≤1元自动尾差
+        "auto_threshold_pct": 0.001,       # ≤0.1%自动尾差
+        "rounding_account":   "660399",    # 尾差计入科目: 财务费用-其他
+    }
+    
+    # 预收抵扣规则
+    PREPAY_DEDUCT_RULE = {
+        "auto_prompt": True,               # 有新应收时自动提示
+        "allow_partial_deduct": True,      # 允许部分使用预收
+        "deduct_priority": "oldest_first", # 先进先出原则
+    }
+<code></code>`
+
+<h3>4.3 收款单编号规则</h3>
+
+<code></code>`
+格式: SK + 年月 + 5位序号
+示例: SK20260400001 ~ SK20260499999
+
+规则:
+• SK = ShouKou(收款)缩写
+• 按月份重置序号
+• 删除后不填补空号(保持连续性)
+• 作废后原号作废,新生成新号
+<code></code>`
+
+<h3>4.4 收款方式枚举</h3>
+
+<tr><td>code</td><td>名称</td><td>需填字段</td><td>特殊处理</td></tr>
+
+<tr><td><code>BANK_TRANSFER</code></td><td>银行转账</td><td>银行账户、流水号</td><td>可对接银企接口</td></tr>
+<tr><td><code>CASH</code></td><td>现金</td><td>收款人</td><td>大额现金需主管审批</td></tr>
+<tr><td><code>POS</code></td><td>POS刷卡</td><td>终端号、卡号后四位</td><td>含手续费扣减</td></tr>
+<tr><td><code>ALIPAY</code></td><td>支付宝</td><td>交易号</td><td>可对接API</td></tr>
+<tr><td><code>WECHAT</code></td><td>微信支付</td><td>交易号</td><td>可对接API</td></tr>
+<tr><td><code>BILL_DRAFT</code></td><td>银行承兑汇票</td><td>票号、到期日、出票行</td><td>走票据流程</td></tr>
+<tr><td><code>BILL_COMMERCIAL</code></td><td>商业承兑汇票</td><td>票号、到期日、出票人</td><td>风险较高需审批</td></tr>
+<tr><td><code>OTHER</code></td><td>其他</td><td>说明</td><td>需填写备注</td></tr>
+
+---
+
+<h2>5. 接口设计（RESTful API）</h2>
+
+<h3>5.1 收款单CRUD</h3>
+
+<code></code>`
+POST   /api/v1/receipt                          # 创建收款单
+GET    /api/v1/receipt/{id}                     # 查询收款单详情
+PUT    /api/v1/receipt/{id}                     # 编辑收款单(仅草稿状态)
+DELETE /api/v1/receipt/{id}                     # 删除收款单(仅草稿状态)
+GET    /api/v1/receipt?page=&size=&status=      # 分页查询列表(支持筛选)
+
+<h1>创建请求体示例:</h1>
+{
+    "customer_id": 1001,
+    "amount": 50000.00,
+    "currency": "CNY",
+    "received_date": "2026-04-14",
+    "payment_method": "BANK_TRANSFER",
+    "bank_account_id": 5,
+    "bank_ref_no": "TXN20260414000123",
+    "source_type": "MANUAL",
+    "remark": "SO202603001 第一期货款",
+    "attachment_url": "/uploads/bank_slip_001.pdf"
+}
+
+<h1>详情响应体示例:</h1>
+{
+    "code": 0,
+    "data": {
+        "id": 20086,
+        "receipt_no": "SK20260400001",
+        "customer": {"id": 1001, "name": "XX科技有限公司", "tax_code": "91440<em></em>*"},
+        "amount": 50000.00,
+        "currency": "CNY",
+        "exchange_rate": 1.000000,
+        "amount_cny": 50000.00,
+        "unwriteoff_amount": 0.00,           // 已全部核销则为0
+        "received_date": "2026-04-14",
+        "payment_method": "BANK_TRANSFER",
+        "payment_method_name": "银行转账",
+        "bank_account": {"id": 5, "name": "工商银行xxx支行", "account_no": "<strong></strong>1234"},
+        "bank_ref_no": "TXN20260414000123",
+        "status": "VERIFIED",
+        "voucher_id": 30015,
+        "writeoffs": [                          // 核销明细
+            {
+                "id": 501,
+                "ar_invoice_id": 8001,
+                "ar_invoice_no": "AR202603001",
+                "so_ref_id": 201,
+                "so_order_no": "SO202603001",
+                "ar_total_amount": 150000.00,
+                "writeoff_amount": 50000.00,
+                "writeoff_date": "2026-04-14",
+                "writeoff_type": "MANUAL"
+            }
+        ],
+        "prepay_info": {                         // 预收相关信息
+            "current_balance": 30000.00,
+            "used_in_this_receipt": 0.00
+        },
+        "created_by": {"id": 10, "name": "张会计"},
+        "created_at": "2026-04-14T09:30:00",
+        "verified_by": {"id": 11, "name": "李主管"},
+        "verified_at": "2026-04-14T10:15:00"
+    }
+}
+<code></code>`
+
+<h3>5.2 核销操作</h3>
+
+<code></code>`
+POST   /api/v1/receipt/{id}/writeoff            # 执行核销
+DELETE /api/v1/receipt/writeoff/{wo_id}         # 反核销(撤销)
+GET    /api/v1/receipt/{id}/pending-ar          # 获取待核销应收列表
+GET    /api/v1/receipt/smart-match?receipt_id={id}&amount=50000  # 智能推荐核销方案
+
+<h1>核销请求体示例(支持一对多):</h1>
+{
+    "writeoff_items": [
+        {
+            "ar_invoice_id": 8001,
+            "amount": 35000.00
+        },
+        {
+            "ar_invoice_id": 8002,
+            "amount": 15000.00
+        }
+    ],
+    "use_prepay": false,
+    "remark": "客户一次性付清两笔订单"
+}
+<code></code>`
+
+<h3>5.3 审批流程</h3>
+
+<code></code>`
+POST   /api/v1/receipt/{id}/submit              # 提交审核
+POST   /api/v1/receipt/{id}/approve             # 审核通过
+POST   /api/v1/receipt/{id}/reject              # 审核驳回
+POST   /api/v1/receipt/{id}/cancel              # 作废(红字冲销)
+<code></code>`
+
+<h3>5.4 预收款</h3>
+
+<code></code>`
+GET    /api/v1/prepay/customer/{customer_id}     # 查询客户预收余额
+GET    /api/v1/prepay/customer/{customer_id}/transactions  # 预收流水明细
+POST   /api/v1/prepay/deduct                    # 手动预收抵扣操作
+<code></code>`
+
+<h3>5.5 报表</h3>
+
+<code></code>`
+GET    /api/v1/report/collection-summary?period=month&date=2026-04
+GET    /api/v1/report/ar-aging?as_of_date=2026-04-14
+GET    /api/v1/report/collection-by-customer?from=2026-01-01&to=2026-04-14
+GET    /api/v1/report/collection-daily?month=2026-04
+<code></code>`
+
+---
+
+<h2>6. 与其他模块的集成点</h2>
+
+<tr><td>集成方向</td><td>对接模块</td><td>集成内容</td><td>方式</td></tr>
+
+<tr><td><strong>上游</strong></td><td>销售管理(SO)</td><td>销售订单发货后自动产生应收单</td><td>事件驱动/API回调</td></tr>
+<tr><td><strong>上游</strong></td><td>发票管理</td><td>发票开具后更新应收金额</td><td>API调用</td></tr>
+<tr><td><strong>下游</strong></td><td>总账引擎(GL)</td><td>收款审核通过后自动生成凭证</td><td>同步调用/消息队列</td></tr>
+<tr><td><strong>并行</strong></td><td>银行管理(BA)</td><td>银行账户字典、银企接口</td><td>共用数据/接口</td></tr>
+<tr><td><strong>并行</strong></td><td>客户管理(CM)</td><td>客户信用额度、预收余额</td><td>共用数据/读写</td></tr>
+<tr><td><strong>下游</strong></td><td>票据管理(BM)</td><td>承兑汇票收款走特殊流程</td><td>条件路由</td></tr>
+
+---
+
+<h2>7. 非功能性需求</h2>
+
+<tr><td>维度</td><td>要求</td></tr>
+
+<tr><td><strong>性能</strong></td><td>单次核销响应 < 2秒; 列表查询 < 500ms</td></tr>
+<tr><td><strong>并发</strong></td><td>支持5个财务人员同时操作不冲突</td></tr>
+<tr><td><strong>数据一致性</strong></td><td>核销操作必须在事务中完成; 收款金额+核销总额+预收余额 三者必须平衡</td></tr>
+<tr><td><strong>安全性</strong></td><td>收款单审核后不可编辑; 反核销需要独立权限; 金额变更留痕</td></tr>
+<tr><td><strong>审计追踪</strong></td><td>所有核销/反核销操作记录操作人、时间、IP、前后值</td></tr>
+<tr><td><strong>可用性</strong></td><td>核销操作失败必须可重试; 不允许出现重复核销</td></tr>
+
+---
+
+<h2>8. 测试用例要点</h2>
+
+<tr><td>用例类别</td><td>测试点</td><td>预期结果</td></tr>
+
+<tr><td><strong>正常流程</strong></td><td>1对1全额核销</td><td>应收余额清零,收款单状态=已核销</td></tr>
+<tr><td><strong>正常流程</strong></td><td>部分核销(收款<应收)</td><td>应收减少,剩余未收>0</td></tr>
+<tr><td><strong>边界测试</strong></td><td>尾差¥0.05</td><td>自动归入财务费用</td></tr>
+<tr><td><strong>边界测试</strong></td><td>核销金额恰好等于应收</td><td>余额精确为0</td></tr>
+<tr><td><strong>异常测试</strong></td><td>重复核销同一张应收</td><td>系统拦截,提示"已核销"</td></tr>
+<tr><td><strong>异常测试</strong></td><td>核销金额超过未收余额</td><td>校验拦截,"核销金额超限"</td></tr>
+<tr><td><strong>异常测试</strong></td><td>已审核收款单编辑</td><td>权限拦截,"已审核单据不可修改"</td></tr>
+<tr><td><strong>预收场景</strong></td><td>有预收时新建应收</td><td>弹窗提示"该客户有预收¥XXX,是否使用?"</td></tr>
+<tr><td><strong>预收场景</strong></td><td>预收不足抵扣全部应收</td><td>部分抵扣+部分正常核销</td></tr>
+
+---
+
+<h2>9. 实施路线图</h2>
+
+<tr><td>Phase</td><td>内容</td><td>工期</td><td>交付物</td><td>依赖</td></tr>
+
+<tr><td><strong>P1-A</strong></td><td>收款单CRUD + 四种核销模式</td><td>4天</td><td>基础收款+核销功能可用</td><td>数据库就绪</td></tr>
+<tr><td><strong>P1-B</strong></td><td>预收款管理 + 预收抵扣</td><td>2天</td><td>预收全流程闭环</td><td>依赖A</td></tr>
+<tr><td><strong>P1-C</strong></td><td>审批流 + 凭证生成</td><td>2天</td><td>收款→凭证自动化</td><td>依赖总账引擎(P0)</td></tr>
+<tr><td><strong>P1-D</strong></td><td>报表(回款/账龄)</td><td>2天</td><td>管理层看板</td><td>依赖A+B</td></tr>
+<tr><td><strong>P2-A</strong></td><td>银企对接 + 智能匹配</td><td>4天</td><td>流水自动导入+推荐核销</td><td>银企接口开通</td></tr>
+<tr><td><strong>P2-B</strong></td><td>批量导入 + Excel模板</td><td>1天</td><td>历史数据迁移能力</td><td>无</td></tr>
+<tr><td><strong>合计</strong></td><td><strong>~15天(MVP)</strong></td></tr>
+
+---
+
+<h2>附录A: 金蝶云星空功能对照</h2>
+
+<tr><td>本模块功能</td><td>金蝶对应位置</td><td>差异说明</td></tr>
+
+<tr><td>收款单</td><td>应收管理→收款单</td><td>功能基本对标</td></tr>
+<tr><td>核销处理</td><td>应收管理→结算→核销记录</td><td>金蝶核销更精细,支持按合同/项目维度</td></tr>
+<tr><td>预收款</td><td>应收管理→预收款</td><td>金蝶预收可设置"是否自动核销"</td></tr>
+<tr><td>银企对接</td><td>出纳管理→银企对账</td><td>金蝶内置多家银行直连,我们初期用导入</td></tr>
+<tr><td>收款报表</td><td>应收管理→报表中心</td><td>金蝶报表更丰富,我们MVP先做核心3张</td></tr></table>
+
+---
+
+> <strong>文档维护</strong>: 财务追踪器 · Dev_Dept 团队  
+> <strong>最后更新</strong>: 2026-04-14 17:03  
+> <strong>下一步</strong>: UI设计原型
+
+  </div>
+</div>
+</body>
+</html>
