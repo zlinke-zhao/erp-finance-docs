@@ -4,246 +4,94 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>发票查验模块规格书</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
-            line-height: 1.8;
-            color: #333;
-            background: #f5f7fa;
-            padding: 20px;
+            font-family: 'Noto Sans SC', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            line-height: 1.9;
+            color: #2d3748;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8ec 100%);
+            min-height: 100vh;
+            padding: 30px 20px;
         }
         .container {
-            max-width: 1200px;
+            max-width: 1100px;
             margin: 0 auto;
             background: #fff;
-            border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
         }
         .doc-header {
-            text-align: center;
-            padding-bottom: 30px;
-            border-bottom: 2px solid #e8ecf1;
-            margin-bottom: 30px;
-        }
-        .doc-header h1 {
-            font-size: 32px;
-            color: #1a1a2e;
-            margin-bottom: 15px;
-        }
-        .doc-meta {
-            display: flex;
-            justify-content: center;
-            gap: 30px;
-            flex-wrap: wrap;
-        }
-        .meta-item {
-            background: #f0f4f8;
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 14px;
-            color: #5a6c7d;
-        }
-        h2 {
-            font-size: 24px;
-            color: #1a1a2e;
-            margin: 30px 0 15px;
-            padding-bottom: 10px;
-            border-bottom: 3px solid #3498db;
-        }
-        h3 {
-            font-size: 18px;
-            color: #2c3e50;
-            margin: 25px 0 12px;
-        }
-        p {
-            margin-bottom: 15px;
-            text-align: justify;
-        }
-        
-        /* 代码块样式 */
-        .code-block {
-            margin: 20px 0;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-        .code-header {
-            background: #2d3748;
-            color: #fff;
-            padding: 8px 16px;
-            font-size: 12px;
-            font-weight: 600;
-            text-transform: uppercase;
-        }
-        .code-block pre {
-            background: #1a202c;
-            color: #e2e8f0;
-            padding: 20px;
-            overflow-x: auto;
-            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
-            font-size: 13px;
-            line-height: 1.6;
-        }
-        .code-block code {
-            font-family: inherit;
-        }
-        .inline-code {
-            background: #f0f4f8;
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-family: 'Consolas', 'Monaco', monospace;
-            font-size: 0.9em;
-            color: #e53e3e;
-        }
-        
-        /* 表格样式 */
-        .data-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 20px 0;
-            font-size: 14px;
-        }
-        .data-table th {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: #fff;
-            padding: 14px;
-            text-align: left;
-            font-weight: 600;
+            padding: 40px;
+            text-align: center;
         }
-        .data-table td {
-            padding: 12px 14px;
-            border-bottom: 1px solid #e8ecf1;
-        }
-        .data-table tr:hover {
-            background: #f8fafc;
-        }
-        
-        /* 列表样式 */
-        ul {
-            margin: 15px 0;
-            padding-left: 25px;
-        }
-        li {
-            margin-bottom: 8px;
-        }
-        
-        /* 架构图/流程图容器 */
-        .diagram-container {
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
-            border-radius: 8px;
-            padding: 20px;
-            margin: 20px 0;
-            overflow-x: auto;
-        }
-        .diagram-container pre {
-            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
-            font-size: 12px;
-            line-height: 1.4;
-            color: #2d3748;
-        }
-        
-        /* 接口卡片 */
-        .api-card {
-            background: #f8fafc;
-            border-left: 4px solid #3498db;
-            padding: 20px;
-            margin: 15px 0;
-            border-radius: 0 8px 8px 0;
-        }
-        .api-method {
-            display: inline-block;
-            padding: 4px 10px;
-            border-radius: 4px;
-            font-size: 12px;
-            font-weight: 600;
-            margin-right: 10px;
-        }
-        .api-method.get { background: #48bb78; color: #fff; }
-        .api-method.post { background: #4299e1; color: #fff; }
-        .api-method.put { background: #ed8936; color: #fff; }
-        .api-method.delete { background: #f56565; color: #fff; }
-        .api-path {
-            font-family: 'Consolas', monospace;
-            font-size: 14px;
-            color: #2d3748;
-        }
-        .api-section {
-            margin-top: 15px;
-        }
-        .api-section-title {
-            font-weight: 600;
-            color: #4a5568;
-            margin-bottom: 8px;
-            font-size: 13px;
-            text-transform: uppercase;
-        }
-        
-        /* 警告框 */
-        .alert {
-            padding: 16px 20px;
-            border-radius: 8px;
-            margin: 20px 0;
-        }
-        .alert-info {
-            background: #ebf8ff;
-            border-left: 4px solid #4299e1;
-        }
-        .alert-warning {
-            background: #fffaf0;
-            border-left: 4px solid #ed8936;
-        }
-        .alert-success {
-            background: #f0fff4;
-            border-left: 4px solid #48bb78;
-        }
-        
-        /* 状态标签 */
-        .status-badge {
-            display: inline-block;
-            padding: 4px 10px;
-            border-radius: 12px;
-            font-size: 12px;
-            font-weight: 500;
-        }
-        .status-done { background: #c6f6d5; color: #22543d; }
-        .status-pending { background: #feebc8; color: #744210; }
-        .status-deprecated { background: #fed7d7; color: #742a2a; }
+        .doc-header h1 { font-size: 28px; font-weight: 600; margin-bottom: 15px; }
+        .doc-meta { display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; }
+        .meta-item { background: rgba(255,255,255,0.2); padding: 6px 14px; border-radius: 20px; font-size: 13px; }
+        .content { padding: 40px; }
+        h2 { font-size: 22px; color: #1a202c; margin: 35px 0 18px; padding-bottom: 10px; border-bottom: 3px solid #667eea; }
+        h3 { font-size: 18px; color: #2d3748; margin: 28px 0 14px; }
+        h4 { font-size: 16px; color: #4a5568; margin: 20px 0 10px; }
+        p { margin-bottom: 12px; }
+        .md-table { width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 14px; border-radius: 8px; overflow: hidden; border: 1px solid #e2e8f0; }
+        .md-table th { background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%); color: #fff; padding: 14px 16px; text-align: left; font-weight: 600; }
+        .md-table td { padding: 12px 16px; border-bottom: 1px solid #f1f5f9; }
+        .md-table tr:hover td { background: #f8fafc; }
+        .md-table tr:last-child td { border-bottom: none; }
+        .inline-code { background: #f1f5f9; color: #e53e3e; padding: 2px 7px; border-radius: 4px; font-family: 'JetBrains Mono', monospace; font-size: 0.88em; }
+        .code-block { margin: 22px 0; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        .code-header { background: #1e293b; color: #94a3b8; padding: 8px 16px; font-size: 11px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; font-family: 'JetBrains Mono', monospace; }
+        .sql-block .code-header { background: #065f46; }
+        .code-block pre { background: #0f172a; color: #e2e8f0; padding: 20px; overflow-x: auto; font-family: 'JetBrains Mono', monospace; font-size: 13px; line-height: 1.65; }
+        .code-block code { font-family: inherit; }
+        .gherkin-block { margin: 22px 0; border-radius: 10px; overflow: hidden; background: #fefce8; border: 1px solid #fbbf24; }
+        .gherkin-header { background: #f59e0b; color: #fff; padding: 8px 16px; font-size: 12px; font-weight: 600; }
+        .gherkin-content { padding: 18px; font-family: 'JetBrains Mono', monospace; font-size: 13px; line-height: 1.7; color: #78350f; white-space: pre-wrap; }
+        .csv-block { margin: 22px 0; border-radius: 10px; overflow: hidden; background: #f0fdf4; border: 1px solid #86efac; }
+        .csv-header { background: #22c55e; color: #fff; padding: 8px 16px; font-size: 12px; font-weight: 600; }
+        .csv-content { padding: 18px; font-family: 'JetBrains Mono', monospace; font-size: 13px; line-height: 1.6; color: #166534; overflow-x: auto; }
+        .ascii-diagram { margin: 22px 0; border-radius: 10px; overflow: hidden; background: #f8fafc; border: 1px solid #cbd5e1; }
+        .ascii-header { background: #475569; color: #fff; padding: 8px 16px; font-size: 12px; font-weight: 600; }
+        .ascii-content { padding: 20px; font-family: 'JetBrains Mono', 'Consolas', monospace; font-size: 13px; line-height: 1.45; color: #1e293b; white-space: pre; overflow-x: auto; }
+        .md-quote { margin: 18px 0; padding: 16px 20px; background: #eff6ff; border-left: 4px solid #3b82f6; border-radius: 0 8px 8px 0; color: #1e40af; }
+        ul { margin: 12px 0; padding-left: 28px; }
+        li { margin-bottom: 8px; }
+        .back-link { display: inline-block; margin: 20px 40px; padding: 10px 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #fff; text-decoration: none; border-radius: 8px; font-weight: 500; }
+        @media (max-width: 768px) { .content { padding: 20px; } .doc-header { padding: 25px; } .doc-header h1 { font-size: 22px; } }
     </style>
 </head>
 <body>
+    <a href="https://zlinke-zhao.github.io/erp-finance-docs/" class="back-link">← 返回入口</a>
     <div class="container">
         <div class="doc-header">
             <h1>发票查验模块规格书</h1>
             <div class="doc-meta">
-                <span class="meta-item">📅 版本: V1.0</span>
-                <span class="meta-item">👥 产品团队</span>
+                <span class="meta-item">📅 V1.0</span>
+                <span class="meta-item">👥 Dev_Dept</span>
                 <span class="meta-item">📋 需求规格说明书</span>
             </div>
         </div>
-        <h1>发票查验模块 - 技术规格说明书</h1>
+        <div class="content"><h1>发票查验模块 - 技术规格说明书</h1>
 
-<h2>Invoice Verification Module — Technical Specification</h2>
+<h2>Invoice Verification Module — Technical Specification</h2>
 
-> <strong>项目</strong>: Dev_Dept ERP 财务管理系统  
-> <strong>模块</strong>: 发票查验（Invoice Verification）  
-> <strong>版本</strong>: v1.0  
-> <strong>日期</strong>: 2026-04-14  
-> <strong>对标系统</strong>: 金蝶云星空 → 发票管理 → 发票采集/查验  
-> <strong>状态</strong>: P0优先级 — 合规底线需求  
+<blockquote class="md-quote">**项目**: Dev_Dept ERP 财务管理系统  <br>**模块**: 发票查验（Invoice Verification）  <br>**版本**: v1.0  <br>**日期**: 2026-04-14  <br>**对标系统**: 金蝶云星空 → 发票管理 → 发票采集/查验  <br>**状态**: P0优先级 — 合规底线需求  </blockquote>
 
----
+<li>--</li>
 
-<h2>1. 模块概述</h2>
+<h2>1. 模块概述</h2>
 
-<h3>1.1 业务定位</h3>
+<h3>1.1 业务定位</h3>
 
-发票查验模块是ERP财务系统的<strong>合规防火墙</strong>，负责对进入系统的所有增值税发票进行真伪核验、状态检查和信息提取。它位于"发票录入"节点之后、"应付/应收挂账"之前，是业财数据质量的第一道关卡。
+<p>发票查验模块是ERP财务系统的<strong>合规防火墙</strong>，负责对进入系统的所有增值税发票进行真伪核验、状态检查和信息提取。它位于"发票录入"节点之后、"应付/应收挂账"之前，是业财数据质量的第一道关卡。</p>
 
-``<code class="inline-code">
-┌─────────────┐     ┌──────────────┐     ┌──────────────┐
+<div class="code-block">
+  <div class="code-header">CODE</div>
+  <pre class="language-"><code>┌─────────────┐     ┌──────────────┐     ┌──────────────┐
 │   OCR/手工    │────▶│  🛡️ 发票查验   │────▶│  应收/应付    │
 │   录入发票    │     │  (本模块)      │     │  挂账入账     │
 └─────────────┘     └──────────────┘     └──────────────┘
@@ -253,83 +101,59 @@
               ┌─────────┐  ┌──────────┐
               │ 真伪校验 │  │ 状态检测  │
               └─────────┘  │ 作废/红冲 │
-                           └──────────┘
-</code>`<code class="inline-code">
+                           └──────────┘</code></pre>
+</div>
 
-<h3>1.2 核心能力</h3>
+<h3>1.2 核心能力</h3>
 
-| 能力 | 描述 | 优先级 |
-|------|------|--------|
-| 🔍 发票真伪查验 | 通过税局数据库实时核验发票是否存在、信息是否匹配 | P0 |
-| ⚠️ 异常状态检测 | 自动识别作废、红冲、异常等状态发票 | P0 |
-| 📄 全票种支持 | 支持专票、普票、电子票、机动车、通行费等12种发票类型 | P0 |
-| 🔄 批量查验 | 支持Excel/图片批量导入，异步批量处理 | P1 |
-| 📊 查验台账 | 完整的查验记录留存，满足审计追溯要求 | P0 |
-| 🔗 与业务单据联动 | 查验结果自动回写采购入库单/销售发货单 | P1 |
+<table class="md-table"><thead><tr><th>能力</th><th>描述</th><th>优先级</th></tr></thead><tbody><tr><td>🔍 发票真伪查验</td><td>通过税局数据库实时核验发票是否存在、信息是否匹配</td><td>P0</td></tr><tr><td>⚠️ 异常状态检测</td><td>自动识别作废、红冲、异常等状态发票</td><td>P0</td></tr><tr><td>📄 全票种支持</td><td>支持专票、普票、电子票、机动车、通行费等12种发票类型</td><td>P0</td></tr><tr><td>🔄 批量查验</td><td>支持Excel/图片批量导入，异步批量处理</td><td>P1</td></tr><tr><td>📊 查验台账</td><td>完整的查验记录留存，满足审计追溯要求</td><td>P0</td></tr><tr><td>🔗 与业务单据联动</td><td>查验结果自动回写采购入库单/销售发货单</td><td>P1</td></tr></tbody></table>
 
----
+<li>--</li>
 
-<h2>2. 接口选型</h2>
+<h2>2. 接口选型</h2>
 
-<h3>2.1 选型结论：腾讯云 VatInvoiceVerifyNew（新版）</h3>
+<h3>2.1 选型结论：腾讯云 VatInvoiceVerifyNew（新版）</h3>
 
-> 你之前访问的老接口 </code>VatInvoiceVerify<code class="inline-code"> 已下线，<strong>新版接口为 </code>VatInvoiceVerifyNew<code class="inline-code"></strong>。
+<blockquote class="md-quote">你之前访问的老接口 `VatInvoiceVerify` 已下线，**新版接口为 `VatInvoiceVerifyNew`**。</blockquote>
 
-| 维度 | 说明 |
-|------|------|
-| <strong>服务商</strong> | 腾讯云 OCR 文字识别 |
-| <strong>接口名称</strong> | </code>VatInvoiceVerifyNew<code class="inline-code"> |
-| <strong>请求域名</strong> | </code>ocr.tencentcloudapi.com<code class="inline-code"> |
-| <strong>API版本</strong> | </code>2018-11-19<code class="inline-code"> |
-| <strong>QPS限制</strong> | 20次/秒（默认） |
-| <strong>SDK支持</strong> | Python / Java / Node.js / Go / PHP / .NET / C++ / Ruby |
-| <strong>计费方式</strong> | 按调用次数计费（需在控制台开通） |
+<table class="md-table"><thead><tr><th>维度</th><th>说明</th></tr></thead><tbody><tr><td><strong>服务商</strong></td><td>腾讯云 OCR 文字识别</td></tr><tr><td><strong>接口名称</strong></td><td><code class="inline-code">VatInvoiceVerifyNew</code></td></tr><tr><td><strong>请求域名</strong></td><td><code class="inline-code">ocr.tencentcloudapi.com</code></td></tr><tr><td><strong>API版本</strong></td><td><code class="inline-code">2018-11-19</code></td></tr><tr><td><strong>QPS限制</strong></td><td>20次/秒（默认）</td></tr><tr><td><strong>SDK支持</strong></td><td>Python / Java / Node.js / Go / PHP / .NET / C++ / Ruby</td></tr><tr><td><strong>计费方式</strong></td><td>按调用次数计费（需在控制台开通）</td></tr></tbody></table>
 
-<h3>2.2 选型理由</h3><ul><li>✅ 我们技术栈与腾讯生态天然亲近（公众号、小程序均在腾讯平台）</li></ul><ul><li>✅ 支持12种发票类型，覆盖全电发票（数电票）</li></ul><ul><li>✅ 返回完整票面信息，不仅验真还能提取结构化数据</li></ul><ul><li>✅ Python SDK 成熟，对接效率高</li></ul><ul><li>✅ 相比阿里云/百度的同类接口，文档更清晰</li></ul>
+<h3>2.2 选型理由</h3>
 
-<h3>2.3 备选方案</h3>
+<li>✅ 我们技术栈与腾讯生态天然亲近（公众号、小程序均在腾讯平台）</li>
+<li>✅ 支持12种发票类型，覆盖全电发票（数电票）</li>
+<li>✅ 返回完整票面信息，不仅验真还能提取结构化数据</li>
+<li>✅ Python SDK 成熟，对接效率高</li>
+<li>✅ 相比阿里云/百度的同类接口，文档更清晰</li>
 
-| 方案 | 适用场景 | 切换条件 |
-|------|---------|----------|
-| 阿里云 </code>VerifyVATInvoice<code class="inline-code"> | 多云容灾 | 腾讯云服务不可用时 |
-| 电子税务局直连API | 零成本、最高权威性 | 日均查验量 > 500次后考虑切换 |
-| 国税局查验平台 + RPA | 零成本但自动化程度低 | MVP阶段临时方案 |
+<h3>2.3 备选方案</h3>
 
----
+<table class="md-table"><thead><tr><th>方案</th><th>适用场景</th><th>切换条件</th></tr></thead><tbody><tr><td>阿里云 <code class="inline-code">VerifyVATInvoice</code></td><td>多云容灾</td><td>腾讯云服务不可用时</td></tr><tr><td>电子税务局直连API</td><td>零成本、最高权威性</td><td>日均查验量 > 500次后考虑切换</td></tr><tr><td>国税局查验平台 + RPA</td><td>零成本但自动化程度低</td><td>MVP阶段临时方案</td></tr></tbody></table>
 
-<h2>3. 技术规格</h2>
+<li>--</li>
 
-<h3>3.1 支持的发票类型（12种）</h3>
+<h2>3. 技术规格</h2>
 
-| 票种代码 | 发票类型 | 必填特殊字段 | 备注 |
-|:---|:---|:---|:---|
-| </code>01<code class="inline-code"> | 增值税专用发票 | Amount(不含税金额) | 最常用 |
-| </code>02<code class="inline-code"> | 货物运输业增值税专用发票 | Amount | 较少使用 |
-| </code>03<code class="inline-code"> | 机动车销售统一发票 | Amount | 含车辆信息返回 |
-| </code>04<code class="inline-code"> | 增值税普通发票 | CheckCode(后6位) | 个人消费常见 |
-| </code>08<code class="inline-code"> | 增值税电子专用发票（含全电） | Amount(全电时为价税合计) | <strong>全面推广中★</strong> |
-| </code>10<code class="inline-code"> | 增值税电子普通发票（含全电） | CheckCode(后6位) | <strong>全面推广中★</strong> |
-| </code>11<code class="inline-code"> | 增值税普通发票（卷式） | CheckCode(后6位) | 餐饮/零售常见 |
-| </code>14<code class="inline-code"> | 增值税电子（通行费）发票 | CheckCode | ETC相关 |
-| </code>15<code class="inline-code"> | 二手车销售统一发票 | Amount | 含车辆信息返回 |
-| </code>16<code class="inline-code"> | 财政发票 | Amount | 医疗票据等 |
-| </code>32<code class="inline-code"> | 区块链发票（深圳） | SellerTaxCode + Amount | 注：云南已下线 |
-| — | <strong>通用机打电子发票</strong> | RegionCode + SellerTaxCode | 地方性电子发票 |
+<h3>3.1 支持的发票类型（12种）</h3>
 
-<h3>3.2 API请求规范</h3>
+<table class="md-table"><thead><tr><th>票种代码</th><th>发票类型</th><th>必填特殊字段</th><th>备注</th></tr></thead><tbody><tr><td><code class="inline-code">01</code></td><td>增值税专用发票</td><td>Amount(不含税金额)</td><td>最常用</td></tr><tr><td><code class="inline-code">02</code></td><td>货物运输业增值税专用发票</td><td>Amount</td><td>较少使用</td></tr><tr><td><code class="inline-code">03</code></td><td>机动车销售统一发票</td><td>Amount</td><td>含车辆信息返回</td></tr><tr><td><code class="inline-code">04</code></td><td>增值税普通发票</td><td>CheckCode(后6位)</td><td>个人消费常见</td></tr><tr><td><code class="inline-code">08</code></td><td>增值税电子专用发票（含全电）</td><td>Amount(全电时为价税合计)</td><td><strong>全面推广中★</strong></td></tr><tr><td><code class="inline-code">10</code></td><td>增值税电子普通发票（含全电）</td><td>CheckCode(后6位)</td><td><strong>全面推广中★</strong></td></tr><tr><td><code class="inline-code">11</code></td><td>增值税普通发票（卷式）</td><td>CheckCode(后6位)</td><td>餐饮/零售常见</td></tr><tr><td><code class="inline-code">14</code></td><td>增值税电子（通行费）发票</td><td>CheckCode</td><td>ETC相关</td></tr><tr><td><code class="inline-code">15</code></td><td>二手车销售统一发票</td><td>Amount</td><td>含车辆信息返回</td></tr><tr><td><code class="inline-code">16</code></td><td>财政发票</td><td>Amount</td><td>医疗票据等</td></tr><tr><td><code class="inline-code">32</code></td><td>区块链发票（深圳）</td><td>SellerTaxCode + Amount</td><td>注：云南已下线</td></tr><tr><td>—</td><td><strong>通用机打电子发票</strong></td><td>RegionCode + SellerTaxCode</td><td>地方性电子发票</td></tr></tbody></table>
 
-#### 请求地址
+<h3>3.2 API请求规范</h3>
 
-</code>`<code class="inline-code">
-POST https://ocr.tencentcloudapi.com/
+<h4>请求地址</h4>
+
+<div class="code-block">
+  <div class="code-header">CODE</div>
+  <pre class="language-"><code>POST https://ocr.tencentcloudapi.com/
 Content-Type: application/json
-X-TC-Action: VatInvoiceVerifyNew
-</code>`<code class="inline-code">
+X-TC-Action: VatInvoiceVerifyNew</code></pre>
+</div>
 
-#### 公共参数
+<h4>公共参数</h4>
 
-</code>`<code class="inline-code">json
-{
+<div class="code-block">
+  <div class="code-header">json</div>
+  <pre class="language-json"><code>{
     "SecretId": "你的腾讯云SecretId",
     "SecretKey": "你的腾讯云SecretKey",
     "Action": "VatInvoiceVerifyNew",
@@ -337,30 +161,20 @@ X-TC-Action: VatInvoiceVerifyNew
     "Region": "ap-guangzhou",
     "Timestamp": 1744656000,
     "Nonce": 123456789
-}
-</code>`<code class="inline-code">
+}</code></pre>
+</div>
 
-> 公共参数由腾讯云SDK自动签名处理，手动调用需按签名算法v3生成Authorization头。
+<blockquote class="md-quote">公共参数由腾讯云SDK自动签名处理，手动调用需按签名算法v3生成Authorization头。</blockquote>
 
-#### 业务请求参数
+<h4>业务请求参数</h4>
 
-| 参数名 | 类型 | 必填 | 说明 | 示例值 |
-|:---|:---|:---:|:---|:---|
-| </code>InvoiceNo<code class="inline-code"> | String | ✅ | 发票号码（8位或20位全电票） | </code>"04138864"<code class="inline-code"> |
-| </code>InvoiceDate<code class="inline-code"> | String | ✅ | 开票日期，格式 YYYY-MM-DD，不支持当天 | </code>"2025-01-15"<code class="inline-code"> |
-| </code>InvoiceCode<code class="inline-code"> | String | 条件 | 发票代码（10或12位），<strong>全电发票为空</strong> | </code>"144002288010"<code class="inline-code"> |
-| </code>InvoiceKind<code class="inline-code"> | String | 否 | 票种类型代码 | </code>"04"<code class="inline-code"> |
-| </code>CheckCode<code class="inline-code"> | String | 条件 | 校验码后6位（普票/卷票/通行费必填） | </code>"921630"<code class="inline-code"> |
-| </code>Amount<code class="inline-code"> | String | 条件 | 不含税金额（专票必填）；全电票填<strong>价税合计</strong> | </code>"498.90"<code class="inline-code"> |
-| </code>RegionCode<code class="inline-code"> | String | 条件 | 地区编码（通用机打电子发票必填） | </code>"4400"<code class="inline-code"> |
-| </code>SellerTaxCode<code class="inline-code"> | String | 条件 | 销方税号（区块链/通用机打必填） | </code>"44078***401X"<code class="inline-code"> |
-| </code>EnableCommonElectronic<code class="inline-code"> | Boolean | 否 | 是否开启通用机打电子发票，默认false | </code>true<code class="inline-code"> |
-| </code>EnableTodayInvoice<code class="inline-code"> | Boolean | 否 | 是否允许查验当日发票，默认false | </code>true<code class="inline-code"> |
+<table class="md-table"><thead><tr><th>参数名</th><th>类型</th><th>必填</th><th>说明</th><th>示例值</th></tr></thead><tbody><tr><td><code class="inline-code">InvoiceNo</code></td><td>String</td><td>✅</td><td>发票号码（8位或20位全电票）</td><td><code class="inline-code">"04138864"</code></td></tr><tr><td><code class="inline-code">InvoiceDate</code></td><td>String</td><td>✅</td><td>开票日期，格式 YYYY-MM-DD，不支持当天</td><td><code class="inline-code">"2025-01-15"</code></td></tr><tr><td><code class="inline-code">InvoiceCode</code></td><td>String</td><td>条件</td><td>发票代码（10或12位），<strong>全电发票为空</strong></td><td><code class="inline-code">"144002288010"</code></td></tr><tr><td><code class="inline-code">InvoiceKind</code></td><td>String</td><td>否</td><td>票种类型代码</td><td><code class="inline-code">"04"</code></td></tr><tr><td><code class="inline-code">CheckCode</code></td><td>String</td><td>条件</td><td>校验码后6位（普票/卷票/通行费必填）</td><td><code class="inline-code">"921630"</code></td></tr><tr><td><code class="inline-code">Amount</code></td><td>String</td><td>条件</td><td>不含税金额（专票必填）；全电票填<strong>价税合计</strong></td><td><code class="inline-code">"498.90"</code></td></tr><tr><td><code class="inline-code">RegionCode</code></td><td>String</td><td>条件</td><td>地区编码（通用机打电子发票必填）</td><td><code class="inline-code">"4400"</code></td></tr><tr><td><code class="inline-code">SellerTaxCode</code></td><td>String</td><td>条件</td><td>销方税号（区块链/通用机打必填）</td><td><code class="inline-code">"44078***401X"</code></td></tr><tr><td><code class="inline-code">EnableCommonElectronic</code></td><td>Boolean</td><td>否</td><td>是否开启通用机打电子发票，默认false</td><td><code class="inline-code">true</code></td></tr><tr><td><code class="inline-code">EnableTodayInvoice</code></td><td>Boolean</td><td>否</td><td>是否允许查验当日发票，默认false</td><td><code class="inline-code">true</code></td></tr></tbody></table>
 
-#### 各票种参数组合速查表
+<h4>各票种参数组合速查表</h4>
 
-</code>`<code class="inline-code">
-┌──────────────────────────────────────────────────────────────┐
+<div class="code-block">
+  <div class="code-header">CODE</div>
+  <pre class="language-"><code>┌──────────────────────────────────────────────────────────────┐
 │                  参数组合决策树                                │
 ├──────────────────────────────────────────────────────────────┤
 │                                                              │
@@ -374,15 +188,16 @@ X-TC-Action: VatInvoiceVerifyNew
 │  └── 区块链(32)          → + SellerTaxCode + Amount           │
 │                                                              │
 │  ★ 所有场景共同必填: InvoiceNo(发票号码) + InvoiceDate(开票日期)│
-└──────────────────────────────────────────────────────────────┘
-</code>`<code class="inline-code">
+└──────────────────────────────────────────────────────────────┘</code></pre>
+</div>
 
-<h3>3.3 返回数据结构</h3>
+<h3>3.3 返回数据结构</h3>
 
-#### 顶层响应
+<h4>顶层响应</h4>
 
-</code>`<code class="inline-code">json
-{
+<div class="code-block">
+  <div class="code-header">json</div>
+  <pre class="language-json"><code>{
     "Response": {
         "RequestId": "f3cd280c-6d3a-41c5-8493-4ed98f8b2755",
         
@@ -407,60 +222,30 @@ X-TC-Action: VatInvoiceVerifyNew
         // 财政发票（仅16类型）
         "FinancialBill": { }
     }
-}
-</code>`<code class="inline-code">
+}</code></pre>
+</div>
 
-#### Invoice 核心字段（最重要）
+<h4>Invoice 核心字段（最重要）</h4>
 
-| 字段名 | 类型 | 说明 | 示例 |
-|:---|:---|:---|:---|
-| </code>Code<code class="inline-code"> | String | 发票代码 | </code>"144002288010"<code class="inline-code"> |
-| </code>Number<code class="inline-code"> | String | 发票号码 | </code>"04138864"<code class="inline-code"> |
-| </code>Date<code class="inline-code"> | String | 开票日期 | </code>"2025-01-15"<code class="inline-code"> |
-| </code>AmountWithTax<code class="inline-code"> | String | 价税合计（含税金额） | </code>"573.70"<code class="inline-code"> |
-| </code>AmountWithoutTax<code class="inline-code"> | String | 不含税金额 | </code>"498.90"<code class="inline-code"> |
-| </code>TaxAmount<code class="inline-code"> | String | 税额 | </code>"74.80"<code class="inline-code"> |
-| </code>BuyerName<code class="inline-code"> | String | 购方名称 | </code>"XX科技有限公司"<code class="inline-code"> |
-| </code>BuyerTaxCode<code class="inline-code"> | String | 购方税号 | </code>"91440***MA5XXX"<code class="inline-code"> |
-| </code>SellerName<code class="inline-code"> | String | 销方名称 | </code>"广州市天河区XX公司"<code class="inline-code"> |
-| </code>SellerTaxCode<code class="inline-code"> | String | 销方税号 | </code>"91440***401X"<code class="inline-code"> |
-| </code>Type<code class="inline-code"> | String | 发票类型代码 | </code>"102"<code class="inline-code"> |
-| </code>CheckCode<code class="inline-code"> | String | 校验码 | </code>"921630"<code class="inline-code"> |
-| </code>IsAbandoned<code class="inline-code"> | String | 是否作废 | </code>"Y"<code class="inline-code"> / </code>"N"<code class="inline-code"> |
-| </code>RedLetterInvoiceMark<code class="inline-code"> | Boolean | 红字标记 | </code>true<code class="inline-code"> / </code>false<code class="inline-code"> |
-| </code>Items<code class="inline-code"> | Array | 发票明细（商品行列表） | </code>[{"Name":"...","Amount":"..."}]<code class="inline-code"> |
-| </code>Remark<code class="inline-code"> | String | 备注 | </code>""<code class="inline-code"> |
-| </code>MachineNo<code class="inline-code"> | String | 机打号码 | </code>""<code class="inline-code"> |
-| </code>TrafficFreeFlag<code class="inline-code"> | String | 是否免税标志 | </code>"N"<code class="inline-code"> |
+<table class="md-table"><thead><tr><th>字段名</th><th>类型</th><th>说明</th><th>示例</th></tr></thead><tbody><tr><td><code class="inline-code">Code</code></td><td>String</td><td>发票代码</td><td><code class="inline-code">"144002288010"</code></td></tr><tr><td><code class="inline-code">Number</code></td><td>String</td><td>发票号码</td><td><code class="inline-code">"04138864"</code></td></tr><tr><td><code class="inline-code">Date</code></td><td>String</td><td>开票日期</td><td><code class="inline-code">"2025-01-15"</code></td></tr><tr><td><code class="inline-code">AmountWithTax</code></td><td>String</td><td>价税合计（含税金额）</td><td><code class="inline-code">"573.70"</code></td></tr><tr><td><code class="inline-code">AmountWithoutTax</code></td><td>String</td><td>不含税金额</td><td><code class="inline-code">"498.90"</code></td></tr><tr><td><code class="inline-code">TaxAmount</code></td><td>String</td><td>税额</td><td><code class="inline-code">"74.80"</code></td></tr><tr><td><code class="inline-code">BuyerName</code></td><td>String</td><td>购方名称</td><td><code class="inline-code">"XX科技有限公司"</code></td></tr><tr><td><code class="inline-code">BuyerTaxCode</code></td><td>String</td><td>购方税号</td><td><code class="inline-code">"91440***MA5XXX"</code></td></tr><tr><td><code class="inline-code">SellerName</code></td><td>String</td><td>销方名称</td><td><code class="inline-code">"广州市天河区XX公司"</code></td></tr><tr><td><code class="inline-code">SellerTaxCode</code></td><td>String</td><td>销方税号</td><td><code class="inline-code">"91440***401X"</code></td></tr><tr><td><code class="inline-code">Type</code></td><td>String</td><td>发票类型代码</td><td><code class="inline-code">"102"</code></td></tr><tr><td><code class="inline-code">CheckCode</code></td><td>String</td><td>校验码</td><td><code class="inline-code">"921630"</code></td></tr><tr><td><code class="inline-code">IsAbandoned</code></td><td>String</td><td>是否作废</td><td><code class="inline-code">"Y"</code> / <code class="inline-code">"N"</code></td></tr><tr><td><code class="inline-code">RedLetterInvoiceMark</code></td><td>Boolean</td><td>红字标记</td><td><code class="inline-code">true</code> / <code class="inline-code">false</code></td></tr><tr><td><code class="inline-code">Items</code></td><td>Array</td><td>发票明细（商品行列表）</td><td><code class="inline-code">[{"Name":"...","Amount":"..."}]</code></td></tr><tr><td><code class="inline-code">Remark</code></td><td>String</td><td>备注</td><td><code class="inline-code">""</code></td></tr><tr><td><code class="inline-code">MachineNo</code></td><td>String</td><td>机打号码</td><td><code class="inline-code">""</code></td></tr><tr><td><code class="inline-code">TrafficFreeFlag</code></td><td>String</td><td>是否免税标志</td><td><code class="inline-code">"N"</code></td></tr></tbody></table>
 
-<h3>3.4 关键限制条件</h3>
+<h3>3.4 关键限制条件</h3>
 
-| 限制项 | 规则 | 处理建议 |
-|:---|:---|:---|
-| <strong>时间范围</strong> | 仅支持<strong>5年内</strong>开具的发票 | 超范围提示用户走人工渠道 |
-| <strong>当日发票</strong> | 默认<strong>不支持</strong>查验当天开票 | 设置 </code>EnableTodayInvoice=true<code class="inline-code"> 可开启 |
-| <strong>查验频次</strong> | 同一发票每日最多<strong>5次</strong> | 系统内做去重缓存，重复查询直接返回缓存结果 |
-| <strong>格式要求</strong> | 日期必须 </code>YYYY-MM-DD<code class="inline-code">，金额精确到分 | 前端录入时即校验格式 |
-| <strong>全电发票</strong> | </code>InvoiceCode<code class="inline-code"> 为空，</code>Amount<code class="inline-code"> 为价税合计 | 系统根据号码长度(20位)自动识别全电票 |
+<table class="md-table"><thead><tr><th>限制项</th><th>规则</th><th>处理建议</th></tr></thead><tbody><tr><td><strong>时间范围</strong></td><td>仅支持<strong>5年内</strong>开具的发票</td><td>超范围提示用户走人工渠道</td></tr><tr><td><strong>当日发票</strong></td><td>默认<strong>不支持</strong>查验当天开票</td><td>设置 <code class="inline-code">EnableTodayInvoice=true</code> 可开启</td></tr><tr><td><strong>查验频次</strong></td><td>同一发票每日最多<strong>5次</strong></td><td>系统内做去重缓存，重复查询直接返回缓存结果</td></tr><tr><td><strong>格式要求</strong></td><td>日期必须 <code class="inline-code">YYYY-MM-DD</code>，金额精确到分</td><td>前端录入时即校验格式</td></tr><tr><td><strong>全电发票</strong></td><td><code class="inline-code">InvoiceCode</code> 为空，<code class="inline-code">Amount</code> 为价税合计</td><td>系统根据号码长度(20位)自动识别全电票</td></tr></tbody></table>
 
-<h3>3.5 错误码映射</h3>
+<h3>3.5 错误码映射</h3>
 
-| 错误码 | 含义 | 用户提示文案 | 系统处理 |
-|:---|:---|:---|:---|
-| </code>ResourceNotFound.NoInvoice<code class="inline-code"> | 发票不存在 | ❌ 该发票在税务局系统中未找到，可能为假票 | <strong>拦截</strong>，标记为可疑 |
-| </code>FailedOperation.InvoiceMismatch<code class="inline-code"> | 发票数据不一致 | ❌ 发票信息与税局记录不匹配，请核对输入 | <strong>拦截</strong>，标记为异常 |
-| </code>FailedOperation.CountLimitError<code class="inline-code"> | 今日次数达限 | ⚠️ 该发票今日查验次数已达上限(5次)，请明日再试 | 缓存上次结果返回 |
-| </code>ResourceUnavailable.TaxNetworkError<code class="inline-code"> | 税务局网络异常 | ⚠️ 税务局系统繁忙，请稍后重试 | 加入重试队列 |
-| </code>InvalidParameterValue.Ticket*<code class="inline-code"> | 参数格式错误 | 请检查发票代码/号码/日期是否正确 | 前端校验拦截 |
+<table class="md-table"><thead><tr><th>错误码</th><th>含义</th><th>用户提示文案</th><th>系统处理</th></tr></thead><tbody><tr><td><code class="inline-code">ResourceNotFound.NoInvoice</code></td><td>发票不存在</td><td>❌ 该发票在税务局系统中未找到，可能为假票</td><td><strong>拦截</strong>，标记为可疑</td></tr><tr><td><code class="inline-code">FailedOperation.InvoiceMismatch</code></td><td>发票数据不一致</td><td>❌ 发票信息与税局记录不匹配，请核对输入</td><td><strong>拦截</strong>，标记为异常</td></tr><tr><td><code class="inline-code">FailedOperation.CountLimitError</code></td><td>今日次数达限</td><td>⚠️ 该发票今日查验次数已达上限(5次)，请明日再试</td><td>缓存上次结果返回</td></tr><tr><td><code class="inline-code">ResourceUnavailable.TaxNetworkError</code></td><td>税务局网络异常</td><td>⚠️ 税务局系统繁忙，请稍后重试</td><td>加入重试队列</td></tr><tr><td><code class="inline-code">InvalidParameterValue.Ticket*</code></td><td>参数格式错误</td><td>请检查发票代码/号码/日期是否正确</td><td>前端校验拦截</td></tr></tbody></table>
 
----
+<li>--</li>
 
-<h2>4. 系统架构设计</h2>
+<h2>4. 系统架构设计</h2>
 
-<h3>4.1 模块架构图</h3>
+<h3>4.1 模块架构图</h3>
 
-</code>`<code class="inline-code">
-┌────────────────────────────────────────────────────────────────┐
+<div class="code-block">
+  <div class="code-header">CODE</div>
+  <pre class="language-"><code>┌────────────────────────────────────────────────────────────────┐
 │                     ERP 财务管理系统                            │
 ├────────────────────────────────────────────────────────────────┤
 │                                                                │
@@ -519,15 +304,16 @@ X-TC-Action: VatInvoiceVerifyNew
                  │  腾讯云 API Gateway      │
                  │  ocr.tencentcloudapi.com │
                  │  Action: VatInvoiceVerifyNew │
-                 └─────────────────────────┘
-</code>`<code class="inline-code">
+                 └─────────────────────────┘</code></pre>
+</div>
 
-<h3>4.2 数据库设计</h3>
+<h3>4.2 数据库设计</h3>
 
-#### 主表：invoice_verification_log（查验记录）
+<h4>主表：invoice_verification_log（查验记录）</h4>
 
-</code>`<code class="inline-code">sql
-CREATE TABLE invoice_verification_log (
+<div class="code-block sql-block">
+  <div class="code-header">SQL</div>
+  <pre class="language-sql"><code>CREATE TABLE invoice_verification_log (
     id              BIGINT PRIMARY KEY AUTO_INCREMENT COMMENT '主键ID',
     
     -- 发票基本信息
@@ -580,13 +366,14 @@ CREATE TABLE invoice_verification_log (
     INDEX idx_verified_at (verified_at),
     INDEX idx_seller_tax (seller_tax_code)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 
-COMMENT='发票查验记录主表 - 每张发票每次查验一条记录';
-</code>`<code class="inline-code">
+COMMENT='发票查验记录主表 - 每张发票每次查验一条记录';</code></pre>
+</div>
 
-#### 异常池表：invoice_exception_pool
+<h4>异常池表：invoice_exception_pool</h4>
 
-</code>`<code class="inline-code">sql
-CREATE TABLE invoice_exception_pool (
+<div class="code-block sql-block">
+  <div class="code-header">SQL</div>
+  <pre class="language-sql"><code>CREATE TABLE invoice_exception_pool (
     id              BIGINT PRIMARY KEY AUTO_INCREMENT,
     verify_log_id   BIGINT        NOT NULL        COMMENT '关联查验记录ID',
     exception_type  VARCHAR(30)   NOT NULL        COMMENT '异常类型',
@@ -601,17 +388,18 @@ CREATE TABLE invoice_exception_pool (
     INDEX idx_risk_level (risk_level),
     INDEX idx_status (status)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 
-COMMENT='发票异常处理池';
-</code>`<code class="inline-code">
+COMMENT='发票异常处理池';</code></pre>
+</div>
 
----
+<li>--</li>
 
-<h2>5. 业务流程设计</h2>
+<h2>5. 业务流程设计</h2>
 
-<h3>5.1 单张发票查验流程</h3>
+<h3>5.1 单张发票查验流程</h3>
 
-</code>`<code class="inline-code">
-┌──────────────────────────────────────────────────────────────────┐
+<div class="code-block">
+  <div class="code-header">CODE</div>
+  <pre class="language-"><code>┌──────────────────────────────────────────────────────────────────┐
 │                    单张发票查验标准流程                             │
 └──────────────────────────────────────────────────────────────────┘
 
@@ -673,13 +461,14 @@ COMMENT='发票异常处理池';
       │         │             │
       ▼         ▼             ▼
    写入台账   写入异常池     写入日志
-   返回成功   发送通知       返回失败原因
-</code>`<code class="inline-code">
+   返回成功   发送通知       返回失败原因</code></pre>
+</div>
 
-<h3>5.2 查验状态定义</h3>
+<h3>5.2 查验状态定义</h3>
 
-</code>`<code class="inline-code">python
-class VerifyStatus:
+<div class="code-block">
+  <div class="code-header">python</div>
+  <pre class="language-python"><code>class VerifyStatus:
     """发票查验状态枚举"""
     PENDING = 0      # 待查验（排队中）
     PASSED = 1       # ✅ 通过 — 发票真实且状态正常
@@ -704,13 +493,14 @@ class RiskLevel:
     LOW = 1      # 低风险 — 信息小偏差，可忽略
     MEDIUM = 2   # 中风险 — 需要财务人工审核
     HIGH = 3     # 高风险 — 可能涉及虚假发票
-    CRITICAL = 4 # 严重 — 确认异常，必须阻止入账
-</code>`<code class="inline-code">
+    CRITICAL = 4 # 严重 — 确认异常，必须阻止入账</code></pre>
+</div>
 
-<h3>5.3 批量查验流程</h3>
+<h3>5.3 批量查验流程</h3>
 
-</code>`<code class="inline-code">
-批量导入 (Excel/图片多张)
+<div class="code-block">
+  <div class="code-header">CODE</div>
+  <pre class="language-"><code>批量导入 (Excel/图片多张)
        │
        ▼
 ┌──────────────┐
@@ -737,23 +527,25 @@ class RiskLevel:
 │  • 总数/通过/异常/拒绝 │
 │  • 异常清单    │
 │  • 导出Excel   │
-└──────────────┘
-</code>`<code class="inline-code">
+└──────────────┘</code></pre>
+</div>
 
----
+<li>--</li>
 
-<h2>6. 接口设计（内部API）</h2>
+<h2>6. 接口设计（内部API）</h2>
 
-<h3>6.1 查验接口</h3>
+<h3>6.1 查验接口</h3>
 
-</code>`<code class="inline-code">
-POST /api/v1/invoice/verify
-</code>`<code class="inline-code">
+<div class="code-block">
+  <div class="code-header">CODE</div>
+  <pre class="language-"><code>POST /api/v1/invoice/verify</code></pre>
+</div>
 
-<strong>请求体：</strong>
+<p><strong>请求体：</strong></p>
 
-</code>`<code class="inline-code">json
-{
+<div class="code-block">
+  <div class="code-header">json</div>
+  <pre class="language-json"><code>{
     "invoice_code": "144002288010",
     "invoice_no": "04138864",
     "invoice_date": "2025-01-15",
@@ -763,13 +555,14 @@ POST /api/v1/invoice/verify
     "source_type": "purchase",
     "source_ref_id": 10023,
     "force_refresh": false
-}
-</code>`<code class="inline-code">
+}</code></pre>
+</div>
 
-<strong>响应体：</strong>
+<p><strong>响应体：</strong></p>
 
-</code>`<code class="inline-code">json
-{
+<div class="code-block">
+  <div class="code-header">json</div>
+  <pre class="language-json"><code>{
     "code": 0,
     "message": "success",
     "data": {
@@ -794,44 +587,48 @@ POST /api/v1/invoice/verify
         "verified_at": "2026-04-14T16:30:00+08:00",
         "cache_until": "2026-04-15T16:30:00+08:00"
     }
-}
-</code>`<code class="inline-code">
+}</code></pre>
+</div>
 
-<h3>6.2 查验结果查询</h3>
+<h3>6.2 查验结果查询</h3>
 
-</code>`<code class="inline-code">
-GET /api/v1/invoice/verify/{verify_id}
-GET /api/v1/invoice/verify?invoice_no=xxx&invoice_code=xxx
-</code>`<code class="inline-code">
+<div class="code-block">
+  <div class="code-header">CODE</div>
+  <pre class="language-"><code>GET /api/v1/invoice/verify/{verify_id}
+GET /api/v1/invoice/verify?invoice_no=xxx&amp;invoice_code=xxx</code></pre>
+</div>
 
-<h3>6.3 异常处理</h3>
+<h3>6.3 异常处理</h3>
 
-</code>`<code class="inline-code">
-POST /api/v1/invoice/exception/{exception_id}/resolve
+<div class="code-block">
+  <div class="code-header">CODE</div>
+  <pre class="language-"><code>POST /api/v1/invoice/exception/{exception_id}/resolve
 // 人工处理异常
 
 GET /api/v1/invoice/exception/pending
-// 获取待处理的异常列表
-</code>`<code class="inline-code">
+// 获取待处理的异常列表</code></pre>
+</div>
 
-<h3>6.4 查验台账</h3>
+<h3>6.4 查验台账</h3>
 
-</code>`<code class="inline-code">
-GET /api/v1/invoice/verification/log?page=1&size=20&status=PASSED&date_from=2026-01-01
+<div class="code-block">
+  <div class="code-header">CODE</div>
+  <pre class="language-"><code>GET /api/v1/invoice/verification/log?page=1&amp;size=20&amp;status=PASSED&amp;date_from=2026-01-01
 // 分页查询查验记录
 
 GET /api/v1/invoice/verification/stats?period=month
-// 查验统计: 通过率/异常率/各类型分布
-</code>`<code class="inline-code">
+// 查验统计: 通过率/异常率/各类型分布</code></pre>
+</div>
 
----
+<li>--</li>
 
-<h2>7. Python实现参考</h2>
+<h2>7. Python实现参考</h2>
 
-<h3>7.1 核心调用封装</h3>
+<h3>7.1 核心调用封装</h3>
 
-</code>`<code class="inline-code">python
-"""
+<div class="code-block">
+  <div class="code-header">python</div>
+  <pre class="language-python"><code>"""
 发票查验核心模块 - Dev_Dept ERP Finance Module
 基于腾讯云 VatInvoiceVerifyNew 接口
 """
@@ -844,15 +641,15 @@ from typing import Optional, Dict, Any
 from dataclasses import dataclass, field
 from enum import IntEnum
 
-<h1>=== 依赖说明 ===</h1>
-<h1>pip install tencentcloud-sdk-python-ocr</h1>
-<h1>或: pip install tencentcloud-sdk-python</h1>
+# === 依赖说明 ===
+# pip install tencentcloud-sdk-python-ocr
+# 或: pip install tencentcloud-sdk-python
 from tencentcloud.common.exception import TencentCloudSDKException
 from tencentcloud.common.profile import ClientProfile
 from tencentcloud.ocr.v20181119 import ocr_client, models
 
 
-<h1>==================== 数据模型 ====================</h1>
+# ==================== 数据模型 ====================
 
 class VerifyStatus(IntEnum):
     """查验状态"""
@@ -900,7 +697,7 @@ class VerifyResult:
     cached_at: Optional[datetime] = None
 
 
-<h1>==================== 核心查验引擎 ====================</h1>
+# ==================== 核心查验引擎 ====================
 
 class InvoiceVerifier:
     """
@@ -959,18 +756,18 @@ class InvoiceVerifier:
         )
         
         # 内存缓存 (生产环境应替换为Redis)
-        self._cache: Dict[str, tuple] = {}  # key -> (result_json, timestamp)
+        self._cache: Dict[str, tuple] = {}  # key -&gt; (result_json, timestamp)
     
-    def _make_cache_key(self, inp: InvoiceInput) -> str:
+    def _make_cache_key(self, inp: InvoiceInput) -&gt; str:
         """生成缓存key"""
         raw = f"{inp.invoice_code}|{inp.invoice_no}|{inp.invoice_date}"
         return hashlib.md5(raw.encode()).hexdigest()
     
-    def _get_from_cache(self, cache_key: str) -> Optional[Dict]:
+    def _get_from_cache(self, cache_key: str) -&gt; Optional[Dict]:
         """从缓存获取结果"""
         if cache_key in self._cache:
             result_data, ts = self._cache[cache_key]
-            if datetime.now() - ts < self.cache_ttl:
+            if datetime.now() - ts &lt; self.cache_ttl:
                 return result_data
             else:
                 del self._cache[cache_key]
@@ -980,21 +777,21 @@ class InvoiceVerifier:
         """写入缓存"""
         self._cache[cache_key] = (data, datetime.now())
     
-    def _pre_validate(self, inp: InvoiceInput) -> tuple[bool, str]:
+    def _pre_validate(self, inp: InvoiceInput) -&gt; tuple[bool, str]:
         """
         本地预校验
         Returns: (is_valid, error_message)
         """
         # 1. 发票号码校验
-        if not inp.invoice_no or len(inp.invoice_no) < 8:
+        if not inp.invoice_no or len(inp.invoice_no) &lt; 8:
             return False, f"发票号码格式错误: '{inp.invoice_no}'，应为8位或20位"
         
         # 2. 日期格式校验
         try:
             dt = datetime.strptime(inp.invoice_date, "%Y-%m-%d")
-            if dt > datetime.now():
+            if dt &gt; datetime.now():
                 return False, "开票日期不能晚于今天"
-            if (datetime.now() - dt).days > 365 * 5:
+            if (datetime.now() - dt).days &gt; 365 * 5:
                 return False, "仅支持查验5年内的发票"
         except ValueError:
             return False, f"日期格式错误: '{inp.invoice_date}'，应为YYYY-MM-DD"
@@ -1013,7 +810,7 @@ class InvoiceVerifier:
         
         return True, ""
     
-    def _parse_api_result(self, response: Dict) -> VerifyResult:
+    def _parse_api_result(self, response: Dict) -&gt; VerifyResult:
         """解析API响应为标准化结果"""
         resp_data = response.get("Response", {})
         invoice = resp_data.get("Invoice", {})
@@ -1056,7 +853,7 @@ class InvoiceVerifier:
         result.warnings = warnings
         return result
     
-    def verify(self, inp: InvoiceInput, force_refresh: bool = False) -> VerifyResult:
+    def verify(self, inp: InvoiceInput, force_refresh: bool = False) -&gt; VerifyResult:
         """
         执行发票查验 (主入口)
         
@@ -1174,7 +971,7 @@ class InvoiceVerifier:
             )
 
 
-<h1>==================== 使用示例 ====================</h1>
+# ==================== 使用示例 ====================
 
 if __name__ == "__main__":
     # 初始化查验器
@@ -1208,17 +1005,18 @@ if __name__ == "__main__":
         invoice_date="2025-06-01",
         amount="1130.00",  # 全电票这里填价税合计
     ))
-    print(f"\n全电票查验: {result2.status.name}")
-</code>`<code class="inline-code">
+    print(f"\n全电票查验: {result2.status.name}")</code></pre>
+</div>
 
----
+<li>--</li>
 
-<h2>8. 前端交互原型</h2>
+<h2>8. 前端交互原型</h2>
 
-<h3>8.1 发票录入+查验页面布局</h3>
+<h3>8.1 发票录入+查验页面布局</h3>
 
-</code>`<code class="inline-code">
-╔══════════════════════════════════════════════════════════════╗
+<div class="code-block">
+  <div class="code-header">CODE</div>
+  <pre class="language-"><code>╔══════════════════════════════════════════════════════════════╗
 ║  📄 发票查验                                                ║
 ╠══════════════════════════════════════════════════════════════╣
 ║                                                             ║
@@ -1261,13 +1059,14 @@ if __name__ == "__main__":
 ║  │  [✔ 确认入账]  [📋 导出结果]  [↻ 重新查验]            │   ║
 ║  └──────────────────────────────────────────────────────┘   ║
 ║                                                             ║
-╚══════════════════════════════════════════════════════════════╝
-</code>`<code class="inline-code">
+╚══════════════════════════════════════════════════════════════╝</code></pre>
+</div>
 
-<h3>8.2 异常发票处理界面</h3>
+<h3>8.2 异常发票处理界面</h3>
 
-</code>`<code class="inline-code">
-╔═════════════════════════════════════════════════════════╗
+<div class="code-block">
+  <div class="code-header">CODE</div>
+  <pre class="language-"><code>╔═════════════════════════════════════════════════════════╗
 ║  ⚠️ 发票异常 — 需人工处理                                ║
 ╠═════════════════════════════════════════════════════════╣
 ║                                                         ║
@@ -1288,69 +1087,52 @@ if __name__ == "__main__":
 ║  处理备注: [________________________________________]  ║
 ║                                                         ║
 ║              [提交处理]    [查看税局原文]                ║
-╚═════════════════════════════════════════════════════════╝
-</code>`<code class="inline-code">
+╚═════════════════════════════════════════════════════════╝</code></pre>
+</div>
 
----
+<li>--</li>
 
-<h2>9. 成本估算</h2>
+<h2>9. 成本估算</h2>
 
-<h3>9.1 腾讯云计费参考</h3>
+<h3>9.1 腾讯云计费参考</h3>
 
-| 项目 | 说明 | 参考价格 |
-|:---|:---|:---|
-| 按次计费 | 每次API调用 | ~¥0.05 - 0.15/次 (以官方实际定价为准) |
-| 免费额度 | 新用户通常有 | 1000次/月免费试用 |
-| OCR识别 | 如果同时使用发票OCR识别 | 另计费 ~¥0.02-0.05/次 |
-| 包月套餐 | 大用量优惠 | 需联系商务 |
+<table class="md-table"><thead><tr><th>项目</th><th>说明</th><th>参考价格</th></tr></thead><tbody><tr><td>按次计费</td><td>每次API调用</td><td>~¥0.05 - 0.15/次 (以官方实际定价为准)</td></tr><tr><td>免费额度</td><td>新用户通常有</td><td>1000次/月免费试用</td></tr><tr><td>OCR识别</td><td>如果同时使用发票OCR识别</td><td>另计费 ~¥0.02-0.05/次</td></tr><tr><td>包月套餐</td><td>大用量优惠</td><td>需联系商务</td></tr></tbody></table>
 
-<h3>9.2 月度成本预估（按业务规模）</h3>
+<h3>9.2 月度成本预估（按业务规模）</h3>
 
-| 月查验量 | 预估费用 | 适用企业 |
-|:---|:---|:---|
-| ≤1,000次 | 免费期内 ¥0 | 初创/小微企业 |
-| 5,000次 | ~¥250-750 | 小型企业 |
-| 20,000次 | ~¥1,000-3,000 | 中型企业 |
-| 100,000次+ | 走包月/商务议价 | 中大型企业 |
+<table class="md-table"><thead><tr><th>月查验量</th><th>预估费用</th><th>适用企业</th></tr></thead><tbody><tr><td>≤1,000次</td><td>免费期内 ¥0</td><td>初创/小微企业</td></tr><tr><td>5,000次</td><td>~¥250-750</td><td>小型企业</td></tr><tr><td>20,000次</td><td>~¥1,000-3,000</td><td>中型企业</td></tr><tr><td>100,000次+</td><td>走包月/商务议价</td><td>中大型企业</td></tr></tbody></table>
 
----
+<li>--</li>
 
-<h2>10. 实施路线图</h2>
+<h2>10. 实施路线图</h2>
 
-| 阶段 | 内容 | 工期 | 交付物 |
-|:---|:---|:---|:---|
-| <strong>Phase 1</strong> | 核心查验功能 | 3天 | 单张发票查验、结果展示、台账写入 |
-| <strong>Phase 2</strong> | 异常处理机制 | 2天 | 异常池、人工审核流程、通知机制 |
-| <strong>Phase 3</strong> | OCR集成 | 2天 | 图片/PDF上传→OCR提取→自动查验 |
-| <strong>Phase 4</strong> | 批量处理 | 2天 | Excel导入、并发队列、汇总报告 |
-| <strong>Phase 5</strong> | 业务联动 | 2天 | 与采购/销售单据自动关联、入账触发 |
-| <strong>Phase 6</strong> | 统计与监控 | 2天 | 查验统计仪表板、异常趋势分析、预警规则 |
+<table class="md-table"><thead><tr><th>阶段</th><th>内容</th><th>工期</th><th>交付物</th></tr></thead><tbody><tr><td><strong>Phase 1</strong></td><td>核心查验功能</td><td>3天</td><td>单张发票查验、结果展示、台账写入</td></tr><tr><td><strong>Phase 2</strong></td><td>异常处理机制</td><td>2天</td><td>异常池、人工审核流程、通知机制</td></tr><tr><td><strong>Phase 3</strong></td><td>OCR集成</td><td>2天</td><td>图片/PDF上传→OCR提取→自动查验</td></tr><tr><td><strong>Phase 4</strong></td><td>批量处理</td><td>2天</td><td>Excel导入、并发队列、汇总报告</td></tr><tr><td><strong>Phase 5</strong></td><td>业务联动</td><td>2天</td><td>与采购/销售单据自动关联、入账触发</td></tr><tr><td><strong>Phase 6</strong></td><td>统计与监控</td><td>2天</td><td>查验统计仪表板、异常趋势分析、预警规则</td></tr></tbody></table>
 
-<strong>总计</strong>: 约 <strong>13个工作日</strong> 可完成MVP版本（Phase 1-3）
+<p><strong>总计</strong>: 约 <strong>13个工作日</strong> 可完成MVP版本（Phase 1-3）</p>
 
----
+<li>--</li>
 
-<h2>附录A: 快速接入清单</h2><ul><li>[ ] 注册腾讯云账号 → https://cloud.tencent.com</li></ul><ul><li>[ ] 开通「文字识别 OCR」服务 → 控制台搜索「OCR」</li></ul><ul><li>[ ] 子产品中选择「增值税发票核验」并开通</li></ul><ul><li>[ ] 获取 SecretId 和 SecretKey → 访问管理(CAM)</li></ul><ul><li>[ ] 安装Python SDK: </code>pip install tencentcloud-sdk-python`</li></ul><ul><li>[ ] 配置环境变量或配置文件存放密钥</li></ul><ul><li>[ ] 用仿真发票数据测试接口连通性</li></ul><ul><li>[ ] 对接本模块代码框架</li></ul>
+<h2>附录A: 快速接入清单</h2>
 
----
+<li>[ ] 注册腾讯云账号 → https://cloud.tencent.com</li>
+<li>[ ] 开通「文字识别 OCR」服务 → 控制台搜索「OCR」</li>
+<li>[ ] 子产品中选择「增值税发票核验」并开通</li>
+<li>[ ] 获取 SecretId 和 SecretKey → 访问管理(CAM)</li>
+<li>[ ] 安装Python SDK: `pip install tencentcloud-sdk-python`</li>
+<li>[ ] 配置环境变量或配置文件存放密钥</li>
+<li>[ ] 用仿真发票数据测试接口连通性</li>
+<li>[ ] 对接本模块代码框架</li>
 
-<h2>附录B: 参考资料</h2>
+<li>--</li>
 
-| 资料 | 链接 |
-|:---|:---|
-| 腾讯云增值税发票核验(新版)文档 | https://cloud.tencent.com/document/product/866/73674 |
-| 腾讯云VTIV产品页 | https://cloud.tencent.com/product/vtiv |
-| 腾讯云OCR SDK下载 | https://cloud.tencent.com/document/sdk |
-| 国家税务总局全国查验平台 | https://inv-veri.chinatax.gov.cn |
-| 国家税务总局查验仿真平台 | https://fz.chinaive.com/fpcy/ |
-| 增值税发票数据接口规范(2021年第31号公告) |国家税务总局官网 |
+<h2>附录B: 参考资料</h2>
 
----
+<table class="md-table"><thead><tr><th>资料</th><th>链接</th></tr></thead><tbody><tr><td>腾讯云增值税发票核验(新版)文档</td><td>https://cloud.tencent.com/document/product/866/73674</td></tr><tr><td>腾讯云VTIV产品页</td><td>https://cloud.tencent.com/product/vtiv</td></tr><tr><td>腾讯云OCR SDK下载</td><td>https://cloud.tencent.com/document/sdk</td></tr><tr><td>国家税务总局全国查验平台</td><td>https://inv-veri.chinatax.gov.cn</td></tr><tr><td>国家税务总局查验仿真平台</td><td>https://fz.chinaive.com/fpcy/</td></tr><tr><td>增值税发票数据接口规范(2021年第31号公告)</td><td>国家税务总局官网</td></tr></tbody></table>
 
-> <strong>文档维护</strong>: 财务追踪器 · Dev_Dept 团队  
-> <strong>最后更新</strong>: 2026-04-14 16:30  
-> <strong>下次评审</strong>: 与开发团队同步后更新Phase实施细节
-</p>
+<li>--</li>
+
+<blockquote class="md-quote">**文档维护**: 财务追踪器 · Dev_Dept 团队  <br>**最后更新**: 2026-04-14 16:30  <br>**下次评审**: 与开发团队同步后更新Phase实施细节</blockquote>
+</div>
     </div>
 </body>
 </html>
