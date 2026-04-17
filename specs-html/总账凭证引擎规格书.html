@@ -1,109 +1,229 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>总账凭证引擎规格书</title>
-<style>
-:root {
-  --bg: #f8fafc;
-  --card: #ffffff;
-  --primary: #6366f1;
-  --text: #1e293b;
-  --text-dim: #64748b;
-  --border: #e2e8f0;
-  --code-bg: #1e293b;
-  --code-text: #e2e8f0;
-}
-* { margin: 0; padding: 0; box-sizing: border-box; }
-body {
-  font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
-  background: var(--bg);
-  color: var(--text);
-  line-height: 1.7;
-  padding: 2rem;
-}
-.container {
-  max-width: 1000px;
-  margin: 0 auto;
-  background: var(--card);
-  border-radius: 12px;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-  padding: 3rem;
-}
-.header {
-  border-bottom: 2px solid var(--primary);
-  padding-bottom: 1.5rem;
-  margin-bottom: 2rem;
-}
-.header h1 {
-  font-size: 1.75rem;
-  color: var(--primary);
-  margin-bottom: 0.5rem;
-}
-.header .meta {
-  color: var(--text-dim);
-  font-size: 0.875rem;
-}
-.content h1 { font-size: 1.5rem; margin: 2rem 0 1rem; color: var(--primary); }
-.content h2 { font-size: 1.25rem; margin: 1.5rem 0 0.75rem; color: var(--text); border-bottom: 1px solid var(--border); padding-bottom: 0.5rem; }
-.content h3 { font-size: 1.1rem; margin: 1.25rem 0 0.5rem; color: var(--text); }
-.content p { margin: 0.75rem 0; }
-.content ul, .content ol { margin: 0.75rem 0; padding-left: 1.5rem; }
-.content li { margin: 0.375rem 0; }
-.content table {
-  width: 100%;
-  border-collapse: collapse;
-  margin: 1rem 0;
-  font-size: 0.9rem;
-}
-.content td, .content th {
-  border: 1px solid var(--border);
-  padding: 0.625rem 0.75rem;
-  text-align: left;
-}
-.content th {
-  background: #f1f5f9;
-  font-weight: 600;
-}
-.content pre {
-  background: var(--code-bg);
-  color: var(--code-text);
-  padding: 1rem;
-  border-radius: 8px;
-  overflow-x: auto;
-  margin: 1rem 0;
-  font-size: 0.85rem;
-}
-.content code {
-  background: #f1f5f9;
-  padding: 0.125rem 0.375rem;
-  border-radius: 4px;
-  font-size: 0.875rem;
-}
-.content pre code {
-  background: transparent;
-  padding: 0;
-}
-.back-link {
-  display: inline-block;
-  margin-bottom: 1.5rem;
-  color: var(--primary);
-  text-decoration: none;
-  font-size: 0.875rem;
-}
-.back-link:hover { text-decoration: underline; }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>总账凭证引擎规格书</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            line-height: 1.8;
+            color: #333;
+            background: #f5f7fa;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            padding: 40px;
+        }
+        .doc-header {
+            text-align: center;
+            padding-bottom: 30px;
+            border-bottom: 2px solid #e8ecf1;
+            margin-bottom: 30px;
+        }
+        .doc-header h1 {
+            font-size: 32px;
+            color: #1a1a2e;
+            margin-bottom: 15px;
+        }
+        .doc-meta {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+        .meta-item {
+            background: #f0f4f8;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            color: #5a6c7d;
+        }
+        h2 {
+            font-size: 24px;
+            color: #1a1a2e;
+            margin: 30px 0 15px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #3498db;
+        }
+        h3 {
+            font-size: 18px;
+            color: #2c3e50;
+            margin: 25px 0 12px;
+        }
+        p {
+            margin-bottom: 15px;
+            text-align: justify;
+        }
+        
+        /* 代码块样式 */
+        .code-block {
+            margin: 20px 0;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .code-header {
+            background: #2d3748;
+            color: #fff;
+            padding: 8px 16px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        .code-block pre {
+            background: #1a202c;
+            color: #e2e8f0;
+            padding: 20px;
+            overflow-x: auto;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+        .code-block code {
+            font-family: inherit;
+        }
+        .inline-code {
+            background: #f0f4f8;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.9em;
+            color: #e53e3e;
+        }
+        
+        /* 表格样式 */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 14px;
+        }
+        .data-table th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            padding: 14px;
+            text-align: left;
+            font-weight: 600;
+        }
+        .data-table td {
+            padding: 12px 14px;
+            border-bottom: 1px solid #e8ecf1;
+        }
+        .data-table tr:hover {
+            background: #f8fafc;
+        }
+        
+        /* 列表样式 */
+        ul {
+            margin: 15px 0;
+            padding-left: 25px;
+        }
+        li {
+            margin-bottom: 8px;
+        }
+        
+        /* 架构图/流程图容器 */
+        .diagram-container {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            overflow-x: auto;
+        }
+        .diagram-container pre {
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 12px;
+            line-height: 1.4;
+            color: #2d3748;
+        }
+        
+        /* 接口卡片 */
+        .api-card {
+            background: #f8fafc;
+            border-left: 4px solid #3498db;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        .api-method {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-right: 10px;
+        }
+        .api-method.get { background: #48bb78; color: #fff; }
+        .api-method.post { background: #4299e1; color: #fff; }
+        .api-method.put { background: #ed8936; color: #fff; }
+        .api-method.delete { background: #f56565; color: #fff; }
+        .api-path {
+            font-family: 'Consolas', monospace;
+            font-size: 14px;
+            color: #2d3748;
+        }
+        .api-section {
+            margin-top: 15px;
+        }
+        .api-section-title {
+            font-weight: 600;
+            color: #4a5568;
+            margin-bottom: 8px;
+            font-size: 13px;
+            text-transform: uppercase;
+        }
+        
+        /* 警告框 */
+        .alert {
+            padding: 16px 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .alert-info {
+            background: #ebf8ff;
+            border-left: 4px solid #4299e1;
+        }
+        .alert-warning {
+            background: #fffaf0;
+            border-left: 4px solid #ed8936;
+        }
+        .alert-success {
+            background: #f0fff4;
+            border-left: 4px solid #48bb78;
+        }
+        
+        /* 状态标签 */
+        .status-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        .status-done { background: #c6f6d5; color: #22543d; }
+        .status-pending { background: #feebc8; color: #744210; }
+        .status-deprecated { background: #fed7d7; color: #742a2a; }
+    </style>
 </head>
 <body>
-<div class="container">
-  <a href="../index.html" class="back-link">← 返回目录</a>
-  <div class="header">
-    <h1>总账凭证引擎规格书</h1>
-    <div class="meta">Dev_Dept · ERP财务管理系统</div>
-  </div>
-  <div class="content">
-    <h1>总账凭证引擎 — 需求分析规格书</h1>
+    <div class="container">
+        <div class="doc-header">
+            <h1>总账凭证引擎规格书</h1>
+            <div class="doc-meta">
+                <span class="meta-item">📅 版本: V1.0</span>
+                <span class="meta-item">👥 产品团队</span>
+                <span class="meta-item">📋 需求规格说明书</span>
+            </div>
+        </div>
+        <h1>总账凭证引擎 — 需求分析规格书</h1>
 
 > <strong>项目</strong>: Dev_Dept ERP 财务管理系统  
 > <strong>模块</strong>: 总账凭证引擎 (General Ledger Voucher Engine, GLE)  
@@ -123,7 +243,7 @@ body {
 
 <h3>1.2 在整体架构中的位置</h3>
 
-<code></code>`
+``<code class="inline-code">
 ┌──────────────┐ ┌──────────────┐ ┌──────────────┐ ┌──────────────┐
 │   发票查验    │ │   实收收款    │ │   实付付款    │ │   票据往来    │
 │   (IV)       │ │   (CRM)      │ │   (PM)       │ │   (BM)       │
@@ -143,28 +263,28 @@ body {
              │  资产负债表 │  │  利润表    │  │  现金流量表 │
              │  (BS)     │  │  (PL)     │  │  (CF)     │
              └───────────┘  └───────────┘  └───────────┘
-<code></code>`
+</code>`<code class="inline-code">
 
 <h3>1.3 核心业务目标</h3>
 
-<table><tr><td>目标</td><td>指标</td><td>当前痛点</td></tr>
-
-<tr><td><strong>凭证准确率</strong></td><td>借贷平衡率 100%，辅助核算完整率 ≥99%</td><td>手工做分录容易出错漏项</td></tr>
-<tr><td><strong>过账时效</strong></td><td>业务审核通过 → 凭证过账 ≤ 1秒</td><td>手工入账延迟，月末突击</td></tr>
-<tr><td><strong>科目规范</strong></td><td>统一科目体系，禁用未授权科目</td><td>科目代码混乱，各自为政</td></tr>
-<tr><td><strong>期末结账</strong></td><td>月末结账从3天缩短到半天</td><td>手工结转耗时长、易遗漏</td></tr>
-<tr><td><strong>审计追溯</strong></td><td>每笔凭证100%可追溯来源业务单据</td><td>缺乏业务凭证关联</td></tr>
-<tr><td><strong>多维度查询</strong></td><td>按科目/辅助核算/期间多维度查余额</td><td>只能看科目总余额</td></tr>
+| 目标 | 指标 | 当前痛点 |
+|:---|:---|:---|
+| <strong>凭证准确率</strong> | 借贷平衡率 100%，辅助核算完整率 ≥99% | 手工做分录容易出错漏项 |
+| <strong>过账时效</strong> | 业务审核通过 → 凭证过账 ≤ 1秒 | 手工入账延迟，月末突击 |
+| <strong>科目规范</strong> | 统一科目体系，禁用未授权科目 | 科目代码混乱，各自为政 |
+| <strong>期末结账</strong> | 月末结账从3天缩短到半天 | 手工结转耗时长、易遗漏 |
+| <strong>审计追溯</strong> | 每笔凭证100%可追溯来源业务单据 | 缺乏业务凭证关联 |
+| <strong>多维度查询</strong> | 按科目/辅助核算/期间多维度查余额 | 只能看科目总余额 |
 
 <h3>1.4 用户角色</h3>
 
-<tr><td>角色</td><td>权限范围</td><td>典型操作</td></tr>
-
-<tr><td><strong>财务会计</strong></td><td>创建/编辑草稿凭证</td><td>手工录入凭证、查看明细账</td></tr>
-<tr><td><strong>财务主管</strong></td><td>审核所有凭证、反审核</td><td>凭证审核、科目管理</td></tr>
-<tr><td><strong>出纳</strong></td><td>仅查看银行相关凭证</td><td>查询银行存款明细账</td></tr>
-<tr><td><strong>财务总监</strong></td><td>反结账、科目变更审批</td><td>期末管理、科目调整</td></tr>
-<tr><td><strong>系统管理员</strong></td><td>科目体系配置、凭证模板维护</td><td>参数配置、模板管理</td></tr>
+| 角色 | 权限范围 | 典型操作 |
+|:---|:---|:---|
+| <strong>财务会计</strong> | 创建/编辑草稿凭证 | 手工录入凭证、查看明细账 |
+| <strong>财务主管</strong> | 审核所有凭证、反审核 | 凭证审核、科目管理 |
+| <strong>出纳</strong> | 仅查看银行相关凭证 | 查询银行存款明细账 |
+| <strong>财务总监</strong> | 反结账、科目变更审批 | 期末管理、科目调整 |
+| <strong>系统管理员</strong> | 科目体系配置、凭证模板维护 | 参数配置、模板管理 |
 
 ---
 
@@ -172,7 +292,7 @@ body {
 
 <h3>2.1 六大功能域</h3>
 
-<code></code>`
+</code>`<code class="inline-code">
 总账凭证引擎
 ├── F1 科目管理
 │   ├── F1.1 科目树CRUD（4级：4-2-2-2）
@@ -223,36 +343,36 @@ body {
     ├── F6.5 辅助核算余额表
     ├── F6.6 凭证汇总表
     └── F6.7 科目汇总表
-<code></code>`
+</code>`<code class="inline-code">
 
 <h3>2.2 功能清单（按优先级）</h3>
 
-<tr><td>编号</td><td>功能</td><td>域</td><td>优先级</td><td>说明</td></tr>
-
-<tr><td>F1.1</td><td>科目树CRUD</td><td>F1</td><td><strong>P0</strong></td><td>核心基础</td></tr>
-<tr><td>F1.2</td><td>科目属性配置</td><td>F1</td><td><strong>P0</strong></td><td>辅助核算、余额方向</td></tr>
-<tr><td>F1.3</td><td>科目启用/停用</td><td>F1</td><td>P1</td><td>已使用不可删</td></tr>
-<tr><td>F1.4</td><td>期初余额录入</td><td>F1</td><td><strong>P0</strong></td><td>首次启用必须</td></tr>
-<tr><td>F2.1</td><td>手工创建凭证</td><td>F2</td><td><strong>P0</strong></td><td>基础录入</td></tr>
-<tr><td>F2.2</td><td>自动生成凭证</td><td>F2</td><td><strong>P0</strong></td><td>模板引擎</td></tr>
-<tr><td>F2.3</td><td>凭证编辑/删除</td><td>F2</td><td><strong>P0</strong></td><td>草稿态</td></tr>
-<tr><td>F2.4</td><td>凭证审核/反审核</td><td>F2</td><td><strong>P0</strong></td><td>制审分离</td></tr>
-<tr><td>F2.5</td><td>凭证过账</td><td>F2</td><td><strong>P0</strong></td><td>余额更新</td></tr>
-<tr><td>F2.6</td><td>凭证查询</td><td>F2</td><td><strong>P0</strong></td><td>多维条件</td></tr>
-<tr><td>F3.1</td><td>客户往来核算</td><td>F3</td><td><strong>P0</strong></td><td>应收/预收</td></tr>
-<tr><td>F3.2</td><td>供应商往来核算</td><td>F3</td><td><strong>P0</strong></td><td>应付/预付</td></tr>
-<tr><td>F3.3</td><td>银行账户核算</td><td>F3</td><td><strong>P0</strong></td><td>银行存款</td></tr>
-<tr><td>F3.4</td><td>部门核算</td><td>F3</td><td>P1</td><td>费用分摊</td></tr>
-<tr><td>F4.1</td><td>过账校验</td><td>F4</td><td><strong>P0</strong></td><td>平衡性</td></tr>
-<tr><td>F4.2</td><td>科目余额更新</td><td>F4</td><td><strong>P0</strong></td><td>核心逻辑</td></tr>
-<tr><td>F4.3</td><td>辅助核算余额更新</td><td>F4</td><td><strong>P0</strong></td><td>核心逻辑</td></tr>
-<tr><td>F5.1</td><td>会计期间管理</td><td>F5</td><td><strong>P0</strong></td><td>开/结/反结</td></tr>
-<tr><td>F5.2</td><td>损益自动结转</td><td>F5</td><td>P1</td><td>月末自动</td></tr>
-<tr><td>F5.4</td><td>试算平衡表</td><td>F5</td><td><strong>P0</strong></td><td>结账前必须</td></tr>
-<tr><td>F5.5</td><td>期末结账</td><td>F5</td><td><strong>P0</strong></td><td>期间锁定</td></tr>
-<tr><td>F6.1</td><td>总账查询</td><td>F6</td><td><strong>P0</strong></td><td>科目余额表</td></tr>
-<tr><td>F6.2</td><td>明细账查询</td><td>F6</td><td><strong>P0</strong></td><td>分录明细</td></tr>
-<tr><td>F6.3</td><td>日记账查询</td><td>F6</td><td>P1</td><td>按日期排序</td></tr>
+| 编号 | 功能 | 域 | 优先级 | 说明 |
+|:---|:---|:---:|:---:|:---|
+| F1.1 | 科目树CRUD | F1 | <strong>P0</strong> | 核心基础 |
+| F1.2 | 科目属性配置 | F1 | <strong>P0</strong> | 辅助核算、余额方向 |
+| F1.3 | 科目启用/停用 | F1 | P1 | 已使用不可删 |
+| F1.4 | 期初余额录入 | F1 | <strong>P0</strong> | 首次启用必须 |
+| F2.1 | 手工创建凭证 | F2 | <strong>P0</strong> | 基础录入 |
+| F2.2 | 自动生成凭证 | F2 | <strong>P0</strong> | 模板引擎 |
+| F2.3 | 凭证编辑/删除 | F2 | <strong>P0</strong> | 草稿态 |
+| F2.4 | 凭证审核/反审核 | F2 | <strong>P0</strong> | 制审分离 |
+| F2.5 | 凭证过账 | F2 | <strong>P0</strong> | 余额更新 |
+| F2.6 | 凭证查询 | F2 | <strong>P0</strong> | 多维条件 |
+| F3.1 | 客户往来核算 | F3 | <strong>P0</strong> | 应收/预收 |
+| F3.2 | 供应商往来核算 | F3 | <strong>P0</strong> | 应付/预付 |
+| F3.3 | 银行账户核算 | F3 | <strong>P0</strong> | 银行存款 |
+| F3.4 | 部门核算 | F3 | P1 | 费用分摊 |
+| F4.1 | 过账校验 | F4 | <strong>P0</strong> | 平衡性 |
+| F4.2 | 科目余额更新 | F4 | <strong>P0</strong> | 核心逻辑 |
+| F4.3 | 辅助核算余额更新 | F4 | <strong>P0</strong> | 核心逻辑 |
+| F5.1 | 会计期间管理 | F5 | <strong>P0</strong> | 开/结/反结 |
+| F5.2 | 损益自动结转 | F5 | P1 | 月末自动 |
+| F5.4 | 试算平衡表 | F5 | <strong>P0</strong> | 结账前必须 |
+| F5.5 | 期末结账 | F5 | <strong>P0</strong> | 期间锁定 |
+| F6.1 | 总账查询 | F6 | <strong>P0</strong> | 科目余额表 |
+| F6.2 | 明细账查询 | F6 | <strong>P0</strong> | 分录明细 |
+| F6.3 | 日记账查询 | F6 | P1 | 按日期排序 |
 
 ---
 
@@ -260,7 +380,7 @@ body {
 
 <h3>3.1 核心ER关系</h3>
 
-<code></code>`
+</code>`<code class="inline-code">
 ┌──────────────────┐         ┌──────────────────┐
 │  gl_account       │         │  gl_voucher       │
 │  会计科目(树形)    │ 1───N   │  ★ 记账凭证(核心) │
@@ -280,13 +400,13 @@ body {
 │                  │         │  2026-04 已结账   │
 │  客户A 应收3万   │         │                  │
 └──────────────────┘         └──────────────────┘
-<code></code>`
+</code>`<code class="inline-code">
 
 <h3>3.2 表结构DDL</h3>
 
 #### 表1: gl_period（会计期间表）
 
-<code></code>`sql
+</code>`<code class="inline-code">sql
 CREATE TABLE gl_period (
     id              BIGINT PRIMARY KEY AUTO_INCREMENT,
     period_year     INT          NOT NULL COMMENT '会计年度 2026',
@@ -312,11 +432,11 @@ CREATE TABLE gl_period (
     
     UNIQUE KEY uk_period (period_year, period_month)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='会计期间表';
-<code></code>`
+</code>`<code class="inline-code">
 
 #### 表2: gl_account（会计科目表）
 
-<code></code>`sql
+</code>`<code class="inline-code">sql
 CREATE TABLE gl_account (
     id              BIGINT PRIMARY KEY AUTO_INCREMENT,
     account_code    VARCHAR(20)  NOT NULL COMMENT '科目代码(4-2-2-2)',
@@ -357,11 +477,11 @@ CREATE TABLE gl_account (
     INDEX idx_type (account_type),
     INDEX idx_enabled (is_enabled)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='会计科目表 - 树形结构存储';
-<code></code>`
+</code>`<code class="inline-code">
 
 #### 表3: gl_voucher（记账凭证主表）
 
-<code></code>`sql
+</code>`<code class="inline-code">sql
 CREATE TABLE gl_voucher (
     id              BIGINT PRIMARY KEY AUTO_INCREMENT,
     voucher_no      VARCHAR(20)  NOT NULL UNIQUE COMMENT '凭证编号 GL+年月+6位序号',
@@ -411,11 +531,11 @@ CREATE TABLE gl_voucher (
     INDEX idx_source (source_module, source_bill_id),
     INDEX idx_created (created_by)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='记账凭证主表';
-<code></code>`
+</code>`<code class="inline-code">
 
 #### 表4: gl_voucher_entry（凭证分录表）
 
-<code></code>`sql
+</code>`<code class="inline-code">sql
 CREATE TABLE gl_voucher_entry (
     id              BIGINT PRIMARY KEY AUTO_INCREMENT,
     voucher_id      BIGINT       NOT NULL COMMENT '凭证ID',
@@ -455,11 +575,11 @@ CREATE TABLE gl_voucher_entry (
     INDEX idx_bank (aux_bank_id),
     FOREIGN KEY (voucher_id) REFERENCES gl_voucher(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='凭证分录表 - 每笔借贷一个分录行';
-<code></code>`
+</code>`<code class="inline-code">
 
 #### 表5: gl_account_balance（科目余额表）
 
-<code></code>`sql
+</code>`<code class="inline-code">sql
 CREATE TABLE gl_account_balance (
     id              BIGINT PRIMARY KEY AUTO_INCREMENT,
     
@@ -483,11 +603,11 @@ CREATE TABLE gl_account_balance (
     UNIQUE KEY uk_account_period (account_code, period_name),
     INDEX idx_period (period_name)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='科目余额表 - 按期间+科目存储';
-<code></code>`
+</code>`<code class="inline-code">
 
 #### 表6: gl_aux_balance（辅助核算余额表）
 
-<code></code>`sql
+</code>`<code class="inline-code">sql
 CREATE TABLE gl_aux_balance (
     id              BIGINT PRIMARY KEY AUTO_INCREMENT,
     
@@ -514,7 +634,7 @@ CREATE TABLE gl_aux_balance (
     INDEX idx_aux (aux_type, aux_id),
     INDEX idx_period (period_name)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='辅助核算余额表';
-<code></code>`
+</code>`<code class="inline-code">
 
 ---
 
@@ -522,7 +642,7 @@ CREATE TABLE gl_aux_balance (
 
 <h3>4.1 凭证编号规则</h3>
 
-<code></code>`
+</code>`<code class="inline-code">
 格式: GL + YYYYMM + 6位序号
 示例: GL202604000001 ~ GL202604999999
 
@@ -532,18 +652,18 @@ CREATE TABLE gl_aux_balance (
 • 冲销凭证追加 -R 后缀: GL202604000005-R
 • 删除后不填补空号
 • 作废后原号作废，新生成新号
-<code></code>`
+</code>`<code class="inline-code">
 
 <h3>4.2 凭证字规则</h3>
 
-<tr><td>凭证字</td><td>使用场景</td><td>典型分录</td></tr>
-
-<tr><td><strong>收</strong></td><td>涉及现金/银行存款借方的凭证</td><td>收款、票据贴现、票据到期兑付</td></tr>
-<tr><td><strong>付</strong></td><td>涉及现金/银行存款贷方的凭证</td><td>付款、票据到期付款、质押赎回</td></tr>
-<tr><td><strong>转</strong></td><td>不涉及现金/银行存款的凭证</td><td>预收转应收、票据背书、损益结转</td></tr>
+| 凭证字 | 使用场景 | 典型分录 |
+|:---:|:---|:---|
+| <strong>收</strong> | 涉及现金/银行存款借方的凭证 | 收款、票据贴现、票据到期兑付 |
+| <strong>付</strong> | 涉及现金/银行存款贷方的凭证 | 付款、票据到期付款、质押赎回 |
+| <strong>转</strong> | 不涉及现金/银行存款的凭证 | 预收转应收、票据背书、损益结转 |
 
 凭证字由系统根据分录中的科目自动判断：
-<code></code>`python
+</code>`<code class="inline-code">python
 def auto_detect_voucher_word(entries: list) -> str:
     """根据分录自动判断凭证字"""
     has_cash_or_bank_debit = any(
@@ -563,7 +683,7 @@ def auto_detect_voucher_word(entries: list) -> str:
         return '付'
     else:
         return '转'
-<code></code>`
+</code>`<code class="inline-code">
 
 <h3>4.3 全量凭证模板矩阵</h3>
 
@@ -571,63 +691,63 @@ def auto_detect_voucher_word(entries: list) -> str:
 
 #### 实收收款模块 (6套)
 
-<tr><td>编号</td><td>场景</td><td>借方</td><td>贷方</td><td>凭证字</td></tr>
-
-<tr><td>S01</td><td>正常收款核销</td><td>1002 银行存款-xx银行</td><td>1122 应收账款-XX客户</td><td>收</td></tr>
-<tr><td>S02</td><td>纯预收款</td><td>1002 银行存款-xx银行</td><td>2203 预收账款-XX客户</td><td>收</td></tr>
-<tr><td>S03</td><td>预收转应收</td><td>2203 预收账款-XX客户</td><td>1122 应收账款-XX客户</td><td>转</td></tr>
-<tr><td>S04</td><td>提前付款折扣</td><td>1002 银行存款 + 6603 财务费用</td><td>1122 应收账款</td><td>收</td></tr>
-<tr><td>S05</td><td>收到承兑汇票</td><td>1121 应收票据-承兑汇票</td><td>1122 应收账款-XX客户</td><td>转</td></tr>
-<tr><td>S06</td><td>汇票贴现/兑现</td><td>1002 银行存款 + 6603 财务费用</td><td>1121 应收票据</td><td>收</td></tr>
+| 编号 | 场景 | 借方 | 贷方 | 凭证字 |
+|:---:|:---|:---|:---|:---:|
+| S01 | 正常收款核销 | 1002 银行存款-xx银行 | 1122 应收账款-XX客户 | 收 |
+| S02 | 纯预收款 | 1002 银行存款-xx银行 | 2203 预收账款-XX客户 | 收 |
+| S03 | 预收转应收 | 2203 预收账款-XX客户 | 1122 应收账款-XX客户 | 转 |
+| S04 | 提前付款折扣 | 1002 银行存款 + 6603 财务费用 | 1122 应收账款 | 收 |
+| S05 | 收到承兑汇票 | 1121 应收票据-承兑汇票 | 1122 应收账款-XX客户 | 转 |
+| S06 | 汇票贴现/兑现 | 1002 银行存款 + 6603 财务费用 | 1121 应收票据 | 收 |
 
 #### 实付付款模块 (8套)
 
-<tr><td>编号</td><td>场景</td><td>借方</td><td>贷方</td><td>凭证字</td></tr>
-
-<tr><td>P01</td><td>普通银行付款</td><td>2202 应付账款</td><td>1002 银行存款-xx银行</td><td>付</td></tr>
-<tr><td>P02</td><td>预付货款</td><td>1123 预付账款</td><td>1002 银行存款</td><td>付</td></tr>
-<tr><td>P03</td><td>预付转应付</td><td>2202 应付账款</td><td>1123 预付账款</td><td>转</td></tr>
-<tr><td>P04</td><td>付款折扣/折让</td><td>2202 应付账款</td><td>1002 银行存款 + 6603 财务费用</td><td>付</td></tr>
-<tr><td>P05</td><td>承兑背书付款</td><td>2202 应付账款</td><td>2201 应付票据</td><td>转</td></tr>
-<tr><td>P06</td><td>汇票到期兑付</td><td>2201 应付票据</td><td>1002 银行存款</td><td>付</td></tr>
-<tr><td>P07</td><td>现金付款</td><td>2202 应付账款</td><td>1001 库存现金</td><td>付</td></tr>
-<tr><td>P08</td><td>付款冲销/退款</td><td>2202 应付账款(红字)</td><td>1002 银行存款(红字)</td><td>付</td></tr>
+| 编号 | 场景 | 借方 | 贷方 | 凭证字 |
+|:---:|:---|:---|:---|:---:|
+| P01 | 普通银行付款 | 2202 应付账款 | 1002 银行存款-xx银行 | 付 |
+| P02 | 预付货款 | 1123 预付账款 | 1002 银行存款 | 付 |
+| P03 | 预付转应付 | 2202 应付账款 | 1123 预付账款 | 转 |
+| P04 | 付款折扣/折让 | 2202 应付账款 | 1002 银行存款 + 6603 财务费用 | 付 |
+| P05 | 承兑背书付款 | 2202 应付账款 | 2201 应付票据 | 转 |
+| P06 | 汇票到期兑付 | 2201 应付票据 | 1002 银行存款 | 付 |
+| P07 | 现金付款 | 2202 应付账款 | 1001 库存现金 | 付 |
+| P08 | 付款冲销/退款 | 2202 应付账款(红字) | 1002 银行存款(红字) | 付 |
 
 #### 应收票据模块 (8套)
 
-<tr><td>编号</td><td>场景</td><td>借方</td><td>贷方</td><td>凭证字</td></tr>
-
-<tr><td>B01</td><td>票据收取</td><td>1121 应收票据</td><td>1122 应收账款</td><td>转</td></tr>
-<tr><td>B02</td><td>票据背书</td><td>2202 应付账款</td><td>1121 应收票据</td><td>转</td></tr>
-<tr><td>B03</td><td>票据贴现</td><td>1002 银行存款 + 6603 财务费用</td><td>1121 应收票据</td><td>收</td></tr>
-<tr><td>B04</td><td>票据质押</td><td>1002 银行存款</td><td>2001 短期借款</td><td>收</td></tr>
-<tr><td>B05</td><td>质押赎回</td><td>2001 短期借款 + 6603 财务费用</td><td>1002 银行存款</td><td>付</td></tr>
-<tr><td>B06</td><td>到期兑付</td><td>1002 银行存款</td><td>1121 应收票据</td><td>收</td></tr>
-<tr><td>B07</td><td>票据退回/追索</td><td>1122 应收账款</td><td>1121 应收票据</td><td>转</td></tr>
-<tr><td>B08</td><td>坏账核销</td><td>1231 坏账准备</td><td>1121 应收票据</td><td>转</td></tr>
+| 编号 | 场景 | 借方 | 贷方 | 凭证字 |
+|:---:|:---|:---|:---|:---:|
+| B01 | 票据收取 | 1121 应收票据 | 1122 应收账款 | 转 |
+| B02 | 票据背书 | 2202 应付账款 | 1121 应收票据 | 转 |
+| B03 | 票据贴现 | 1002 银行存款 + 6603 财务费用 | 1121 应收票据 | 收 |
+| B04 | 票据质押 | 1002 银行存款 | 2001 短期借款 | 收 |
+| B05 | 质押赎回 | 2001 短期借款 + 6603 财务费用 | 1002 银行存款 | 付 |
+| B06 | 到期兑付 | 1002 银行存款 | 1121 应收票据 | 收 |
+| B07 | 票据退回/追索 | 1122 应收账款 | 1121 应收票据 | 转 |
+| B08 | 坏账核销 | 1231 坏账准备 | 1121 应收票据 | 转 |
 
 #### 应付票据模块 (6套)
 
-<tr><td>编号</td><td>场景</td><td>借方</td><td>贷方</td><td>凭证字</td></tr>
-
-<tr><td>PA01</td><td>应付票据开立</td><td>2202 应付账款</td><td>2201 应付票据</td><td>转</td></tr>
-<tr><td>PA03</td><td>到期付款</td><td>2201 应付票据</td><td>1002 银行存款</td><td>付</td></tr>
-<tr><td>PA04</td><td>票据展期</td><td>2201 应付票据-旧</td><td>2201 应付票据-新</td><td>转</td></tr>
-<tr><td>PA05</td><td>背书收票抵付</td><td>2202 应付账款</td><td>1121 应收票据</td><td>转</td></tr>
-<tr><td>PA06</td><td>票据退回</td><td>2201 应付票据</td><td>2202 应付账款</td><td>转</td></tr>
-<tr><td>PA07</td><td>银承保证金利息</td><td>6603 财务费用</td><td>1002 银行存款/2241</td><td>付</td></tr>
+| 编号 | 场景 | 借方 | 贷方 | 凭证字 |
+|:---:|:---|:---|:---|:---:|
+| PA01 | 应付票据开立 | 2202 应付账款 | 2201 应付票据 | 转 |
+| PA03 | 到期付款 | 2201 应付票据 | 1002 银行存款 | 付 |
+| PA04 | 票据展期 | 2201 应付票据-旧 | 2201 应付票据-新 | 转 |
+| PA05 | 背书收票抵付 | 2202 应付账款 | 1121 应收票据 | 转 |
+| PA06 | 票据退回 | 2201 应付票据 | 2202 应付账款 | 转 |
+| PA07 | 银承保证金利息 | 6603 财务费用 | 1002 银行存款/2241 | 付 |
 
 #### 总账内部 (3套)
 
-<tr><td>编号</td><td>场景</td><td>借方</td><td>贷方</td><td>凭证字</td></tr>
-
-<tr><td>GL01</td><td>损益结转-收入</td><td>6001~6301 各收入科目</td><td>4103 本年利润</td><td>转</td></tr>
-<tr><td>GL02</td><td>损益结转-费用</td><td>4103 本年利润</td><td>6401~6603 各费用科目</td><td>转</td></tr>
-<tr><td>GL03</td><td>年末利润结转</td><td>4103 本年利润</td><td>4104 利润分配-未分配利润</td><td>转</td></tr>
+| 编号 | 场景 | 借方 | 贷方 | 凭证字 |
+|:---:|:---|:---|:---|:---:|
+| GL01 | 损益结转-收入 | 6001~6301 各收入科目 | 4103 本年利润 | 转 |
+| GL02 | 损益结转-费用 | 4103 本年利润 | 6401~6603 各费用科目 | 转 |
+| GL03 | 年末利润结转 | 4103 本年利润 | 4104 利润分配-未分配利润 | 转 |
 
 <h3>4.4 模板引擎规则</h3>
 
-<code></code>`python
+</code>`<code class="inline-code">python
 class VoucherTemplateEngine:
     """凭证模板引擎"""
     
@@ -700,7 +820,7 @@ class VoucherTemplateEngine:
         # 加载模板 → 填充变量 → 借贷校验 → 返回凭证对象
         # ... (详细实现见规格文档)
         pass
-<code></code>`
+</code>`<code class="inline-code">
 
 ---
 
@@ -708,7 +828,7 @@ class VoucherTemplateEngine:
 
 <h3>5.1 科目管理</h3>
 
-<code></code>`
+</code>`<code class="inline-code">
 POST   /api/v1/gl/accounts                    # 新增科目
 GET    /api/v1/gl/accounts                    # 查询科目树(支持flat/tree两种模式)
 GET    /api/v1/gl/accounts/{id}               # 查询科目详情
@@ -716,11 +836,11 @@ PUT    /api/v1/gl/accounts/{id}               # 编辑科目
 POST   /api/v1/gl/accounts/{id}/toggle        # 启用/停用科目
 POST   /api/v1/gl/accounts/init-balance       # 录入期初余额
 GET    /api/v1/gl/accounts/validate           # 校验科目体系完整性
-<code></code>`
+</code>`<code class="inline-code">
 
 <h3>5.2 凭证管理</h3>
 
-<code></code>`
+</code>`<code class="inline-code">
 POST   /api/v1/gl/vouchers                     # 创建凭证(手工)
 POST   /api/v1/gl/vouchers/auto-generate       # 自动生成凭证(上游触发)
 GET    /api/v1/gl/vouchers                     # 凭证列表(分页+多维筛选)
@@ -733,36 +853,36 @@ POST   /api/v1/gl/vouchers/{id}/reject         # 审核驳回
 POST   /api/v1/gl/vouchers/{id}/un-approve     # 反审核(仅未过账)
 POST   /api/v1/gl/vouchers/{id}/post           # 过账
 POST   /api/v1/gl/vouchers/{id}/reverse        # 创建冲销凭证
-<code></code>`
+</code>`<code class="inline-code">
 
 <h3>5.3 查询与报表</h3>
 
-<code></code>`
+</code>`<code class="inline-code">
 GET    /api/v1/gl/reports/trial-balance        # 试算平衡表
 GET    /api/v1/gl/reports/account-balance      # 科目余额表
 GET    /api/v1/gl/reports/general-ledger        # 总账/明细账
 GET    /api/v1/gl/reports/journal              # 日记账
 GET    /api/v1/gl/reports/aux-balance          # 辅助核算余额表
 GET    /api/v1/gl/reports/aux-detail           # 辅助核算明细账
-<code></code>`
+</code>`<code class="inline-code">
 
 <h3>5.4 期末处理</h3>
 
-<code></code>`
+</code>`<code class="inline-code">
 GET    /api/v1/gl/periods                       # 会计期间列表
 GET    /api/v1/gl/periods/current              # 当前期间
 POST   /api/v1/gl/periods/open                  # 开账(新期间)
 POST   /api/v1/gl/periods/{id}/close            # 结账
 POST   /api/v1/gl/periods/{id}/unclose          # 反结账
 POST   /api/v1/gl/periods/profit-transfer       # 损益结转
-<code></code>`
+</code>`<code class="inline-code">
 
 <h3>5.5 核心API定义</h3>
 
 #### POST /api/v1/gl/vouchers/auto-generate（上游模块自动生成凭证）
 
 <strong>请求体：</strong>
-<code></code>`json
+</code>`<code class="inline-code">json
 {
   "source_module": "CRM",
   "event_type": "RECEIPT.NORMAL",
@@ -779,10 +899,10 @@ POST   /api/v1/gl/periods/profit-transfer       # 损益结转
     "summary_prefix": "收XX科技有限公司货款"
   }
 }
-<code></code>`
+</code>`<code class="inline-code">
 
 <strong>响应体：</strong>
-<code></code>`json
+</code>`<code class="inline-code">json
 {
   "code": 0,
   "data": {
@@ -816,33 +936,33 @@ POST   /api/v1/gl/periods/profit-transfer       # 损益结转
     ]
   }
 }
-<code></code>`
+</code>`<code class="inline-code">
 
 ---
 
 <h2>6. 与其他模块的集成</h2>
 
-<tr><td>集成方向</td><td>对接模块</td><td>集成内容</td><td>方式</td></tr>
-
-<tr><td><strong>上游-收款</strong></td><td>实收收款(CRM)</td><td>收款审核通过 → 自动生成凭证</td><td>调用 auto-generate API</td></tr>
-<tr><td><strong>上游-付款</strong></td><td>实付付款(PM)</td><td>付款完成 → 自动生成凭证</td><td>调用 auto-generate API</td></tr>
-<tr><td><strong>上游-应收票据</strong></td><td>票据往来(BM)</td><td>票据处置审批通过 → 自动生成凭证</td><td>调用 auto-generate API</td></tr>
-<tr><td><strong>上游-应付票据</strong></td><td>应付票据(PBM)</td><td>票据处置审批通过 → 自动生成凭证</td><td>调用 auto-generate API</td></tr>
-<tr><td><strong>上游-发票</strong></td><td>发票查验(IV)</td><td>查验通过 → 触发应收/应付入账</td><td>事件通知</td></tr>
-<tr><td><strong>下游</strong></td><td>财务报表</td><td>科目余额 → 资产负债表/利润表</td><td>查询余额表</td></tr>
-<tr><td><strong>下游</strong></td><td>现金管理</td><td>银行日记账 → 银行对账</td><td>查询日记账</td></tr>
-<tr><td><strong>下游</strong></td><td>预算管理</td><td>实际发生额 → 预算对比</td><td>查询辅助核算余额</td></tr>
+| 集成方向 | 对接模块 | 集成内容 | 方式 |
+|:---|:---|:---|:---|
+| <strong>上游-收款</strong> | 实收收款(CRM) | 收款审核通过 → 自动生成凭证 | 调用 auto-generate API |
+| <strong>上游-付款</strong> | 实付付款(PM) | 付款完成 → 自动生成凭证 | 调用 auto-generate API |
+| <strong>上游-应收票据</strong> | 票据往来(BM) | 票据处置审批通过 → 自动生成凭证 | 调用 auto-generate API |
+| <strong>上游-应付票据</strong> | 应付票据(PBM) | 票据处置审批通过 → 自动生成凭证 | 调用 auto-generate API |
+| <strong>上游-发票</strong> | 发票查验(IV) | 查验通过 → 触发应收/应付入账 | 事件通知 |
+| <strong>下游</strong> | 财务报表 | 科目余额 → 资产负债表/利润表 | 查询余额表 |
+| <strong>下游</strong> | 现金管理 | 银行日记账 → 银行对账 | 查询日记账 |
+| <strong>下游</strong> | 预算管理 | 实际发生额 → 预算对比 | 查询辅助核算余额 |
 
 <h3>6.1 上游模块集成字段映射</h3>
 
-各模块已有 <code>voucher_id</code> 字段用于关联凭证：
+各模块已有 </code>voucher_id<code class="inline-code"> 字段用于关联凭证：
 
-<tr><td>上游表</td><td>关联字段</td><td>说明</td></tr>
-
-<tr><td><code>receipt</code></td><td><code>voucher_id</code> → <code>gl_voucher.id</code></td><td>收款单关联凭证</td></tr>
-<tr><td><code>payment_order</code></td><td><code>voucher_id</code> → <code>gl_voucher.id</code></td><td>付款单关联凭证</td></tr>
-<tr><td><code>bill_transaction</code></td><td><code>voucher_id</code> → <code>gl_voucher.id</code></td><td>票据流水关联凭证</td></tr>
-<tr><td><code>payable_bill_settlement</code></td><td><code>voucher_id</code> → <code>gl_voucher.id</code></td><td>应付票据结算关联凭证</td></tr>
+| 上游表 | 关联字段 | 说明 |
+|:---|:---|:---|
+| </code>receipt<code class="inline-code"> | </code>voucher_id<code class="inline-code"> → </code>gl_voucher.id<code class="inline-code"> | 收款单关联凭证 |
+| </code>payment_order<code class="inline-code"> | </code>voucher_id<code class="inline-code"> → </code>gl_voucher.id<code class="inline-code"> | 付款单关联凭证 |
+| </code>bill_transaction<code class="inline-code"> | </code>voucher_id<code class="inline-code"> → </code>gl_voucher.id<code class="inline-code"> | 票据流水关联凭证 |
+| </code>payable_bill_settlement<code class="inline-code"> | </code>voucher_id<code class="inline-code"> → </code>gl_voucher.id<code class="inline-code"> | 应付票据结算关联凭证 |
 
 ---
 
@@ -850,56 +970,56 @@ POST   /api/v1/gl/periods/profit-transfer       # 损益结转
 
 <h3>7.1 操作权限矩阵</h3>
 
-<tr><td>操作</td><td>财务会计</td><td>财务主管</td><td>财务总监</td><td>出纳</td><td>系统管理员</td></tr>
-
-<tr><td>创建凭证(手工)</td><td>✅</td><td>✅</td><td>✅</td><td>❌</td><td>✅</td></tr>
-<tr><td>编辑/删除草稿</td><td>✅</td><td>✅</td><td>✅</td><td>❌</td><td>✅</td></tr>
-<tr><td>审核凭证</td><td>❌</td><td>✅</td><td>✅</td><td>❌</td><td>❌</td></tr>
-<tr><td>反审核</td><td>❌</td><td>✅</td><td>✅</td><td>❌</td><td>❌</td></tr>
-<tr><td>过账</td><td>❌</td><td>✅</td><td>✅</td><td>❌</td><td>❌</td></tr>
-<tr><td>红字冲销</td><td>❌</td><td>✅</td><td>✅</td><td>❌</td><td>❌</td></tr>
-<tr><td>科目管理</td><td>❌</td><td>✅</td><td>✅</td><td>❌</td><td>✅</td></tr>
-<tr><td>期初余额录入</td><td>❌</td><td>✅</td><td>✅</td><td>❌</td><td>✅</td></tr>
-<tr><td>月末结账</td><td>❌</td><td>✅</td><td>✅</td><td>❌</td><td>❌</td></tr>
-<tr><td>反结账(本月)</td><td>❌</td><td>❌</td><td>✅</td><td>❌</td><td>❌</td></tr>
-<tr><td>反结账(跨月)</td><td>❌</td><td>❌</td><td>✅+审批</td><td>❌</td><td>❌</td></tr>
-<tr><td>查看凭证</td><td>✅</td><td>✅</td><td>✅</td><td>仅银行科目</td><td>✅</td></tr>
-<tr><td>查看余额表</td><td>✅</td><td>✅</td><td>✅</td><td>仅银行科目</td><td>✅</td></tr>
+| 操作 | 财务会计 | 财务主管 | 财务总监 | 出纳 | 系统管理员 |
+|:---|:---:|:---:|:---:|:---:|:---:|
+| 创建凭证(手工) | ✅ | ✅ | ✅ | ❌ | ✅ |
+| 编辑/删除草稿 | ✅ | ✅ | ✅ | ❌ | ✅ |
+| 审核凭证 | ❌ | ✅ | ✅ | ❌ | ❌ |
+| 反审核 | ❌ | ✅ | ✅ | ❌ | ❌ |
+| 过账 | ❌ | ✅ | ✅ | ❌ | ❌ |
+| 红字冲销 | ❌ | ✅ | ✅ | ❌ | ❌ |
+| 科目管理 | ❌ | ✅ | ✅ | ❌ | ✅ |
+| 期初余额录入 | ❌ | ✅ | ✅ | ❌ | ✅ |
+| 月末结账 | ❌ | ✅ | ✅ | ❌ | ❌ |
+| 反结账(本月) | ❌ | ❌ | ✅ | ❌ | ❌ |
+| 反结账(跨月) | ❌ | ❌ | ✅+审批 | ❌ | ❌ |
+| 查看凭证 | ✅ | ✅ | ✅ | 仅银行科目 | ✅ |
+| 查看余额表 | ✅ | ✅ | ✅ | 仅银行科目 | ✅ |
 
 <h3>7.2 业务规则控制</h3>
 
-<tr><td>规则</td><td>说明</td></tr>
-
-<tr><td><strong>制审分离</strong></td><td>制单人 ≠ 审核人，系统强制校验</td></tr>
-<tr><td><strong>借贷平衡</strong></td><td>过账前强制校验 ∑借方 = ∑贷方 (允许±0.01)</td></tr>
-<tr><td><strong>期间控制</strong></td><td>已结账期间不可新增/修改/过账凭证</td></tr>
-<tr><td><strong>科目状态</strong></td><td>停用科目不可录入凭证分录</td></tr>
-<tr><td><strong>辅助核算</strong></td><td>配置了辅助核算的科目，凭证分录必须填写辅助核算</td></tr>
-<tr><td><strong>冲销控制</strong></td><td>冲销凭证金额不超过原凭证，跨月冲销需总监审批</td></tr>
-<tr><td><strong>删除控制</strong></td><td>仅草稿态可删除，已审核/过账不可删除</td></tr>
-<tr><td><strong>凭证编号</strong></td><td>自动生成，不可修改，不可重复</td></tr>
+| 规则 | 说明 |
+|:---|:---|
+| <strong>制审分离</strong> | 制单人 ≠ 审核人，系统强制校验 |
+| <strong>借贷平衡</strong> | 过账前强制校验 ∑借方 = ∑贷方 (允许±0.01) |
+| <strong>期间控制</strong> | 已结账期间不可新增/修改/过账凭证 |
+| <strong>科目状态</strong> | 停用科目不可录入凭证分录 |
+| <strong>辅助核算</strong> | 配置了辅助核算的科目，凭证分录必须填写辅助核算 |
+| <strong>冲销控制</strong> | 冲销凭证金额不超过原凭证，跨月冲销需总监审批 |
+| <strong>删除控制</strong> | 仅草稿态可删除，已审核/过账不可删除 |
+| <strong>凭证编号</strong> | 自动生成，不可修改，不可重复 |
 
 ---
 
 <h2>8. 测试用例</h2>
 
-<tr><td>#</td><td>场景</td><td>输入</td><td>预期结果</td><td>优先级</td></tr>
-
-<tr><td>T01</td><td>手工创建凭证</td><td>借:银行存款5万 贷:应收5万</td><td>借贷平衡，凭证号自动生成，状态=草稿</td><td>P0</td></tr>
-<tr><td>T02</td><td>凭证审核</td><td>制单≠审核人审核通过</td><td>状态=已审核，不可编辑</td><td>P0</td></tr>
-<tr><td>T03</td><td>凭证过账</td><td>已审核凭证执行过账</td><td>状态=已记账，科目余额表更新</td><td>P0</td></tr>
-<tr><td>T04</td><td>过账后不可修改</td><td>尝试编辑已记账凭证</td><td>系统拦截"已记账凭证不可修改"</td><td>P0</td></tr>
-<tr><td>T05</td><td>自动生成凭证</td><td>收款单审核通过触发</td><td>自动创建S01凭证，关联voucher_id</td><td>P0</td></tr>
-<tr><td>T06</td><td>借贷不平拦截</td><td>借5万贷4万</td><td>系统拦截"借贷不平衡"</td><td>P0</td></tr>
-<tr><td>T07</td><td>红字冲销</td><td>对已记账凭证创建冲销</td><td>生成负数凭证，原凭证关联冲销ID</td><td>P0</td></tr>
-<tr><td>T08</td><td>制审同人拦截</td><td>制单人审核自己创建的凭证</td><td>系统拦截"制单人不可审核自己的凭证"</td><td>P0</td></tr>
-<tr><td>T09</td><td>科目停用拦截</td><td>停用有余额的科目</td><td>系统拦截"科目有余额不可停用"</td><td>P0</td></tr>
-<tr><td>T10</td><td>辅助核算必填</td><td>应收账款科目不填客户</td><td>系统拦截"该科目需要辅助核算-客户"</td><td>P0</td></tr>
-<tr><td>T11</td><td>期间结账</td><td>所有凭证已过账 → 结账</td><td>期间状态=已结账，不可再录入凭证</td><td>P0</td></tr>
-<tr><td>T12</td><td>反结账</td><td>已结账期间执行反结账</td><td>期间重新开放，状态=已开账</td><td>P1</td></tr>
-<tr><td>T13</td><td>损益结转</td><td>月末执行损益结转</td><td>自动生成GL01/GL02凭证</td><td>P1</td></tr>
-<tr><td>T14</td><td>期初余额校验</td><td>首次启用录入期初</td><td>资产=负债+所有者权益 验证通过</td><td>P0</td></tr>
-<tr><td>T15</td><td>科目余额查询</td><td>查询1002科目2026-04余额</td><td>返回期初/本期发生/期末</td><td>P0</td></tr>
+| # | 场景 | 输入 | 预期结果 | 优先级 |
+|:--:|:---|:---|:---|:---:|
+| T01 | 手工创建凭证 | 借:银行存款5万 贷:应收5万 | 借贷平衡，凭证号自动生成，状态=草稿 | P0 |
+| T02 | 凭证审核 | 制单≠审核人审核通过 | 状态=已审核，不可编辑 | P0 |
+| T03 | 凭证过账 | 已审核凭证执行过账 | 状态=已记账，科目余额表更新 | P0 |
+| T04 | 过账后不可修改 | 尝试编辑已记账凭证 | 系统拦截"已记账凭证不可修改" | P0 |
+| T05 | 自动生成凭证 | 收款单审核通过触发 | 自动创建S01凭证，关联voucher_id | P0 |
+| T06 | 借贷不平拦截 | 借5万贷4万 | 系统拦截"借贷不平衡" | P0 |
+| T07 | 红字冲销 | 对已记账凭证创建冲销 | 生成负数凭证，原凭证关联冲销ID | P0 |
+| T08 | 制审同人拦截 | 制单人审核自己创建的凭证 | 系统拦截"制单人不可审核自己的凭证" | P0 |
+| T09 | 科目停用拦截 | 停用有余额的科目 | 系统拦截"科目有余额不可停用" | P0 |
+| T10 | 辅助核算必填 | 应收账款科目不填客户 | 系统拦截"该科目需要辅助核算-客户" | P0 |
+| T11 | 期间结账 | 所有凭证已过账 → 结账 | 期间状态=已结账，不可再录入凭证 | P0 |
+| T12 | 反结账 | 已结账期间执行反结账 | 期间重新开放，状态=已开账 | P1 |
+| T13 | 损益结转 | 月末执行损益结转 | 自动生成GL01/GL02凭证 | P1 |
+| T14 | 期初余额校验 | 首次启用录入期初 | 资产=负债+所有者权益 验证通过 | P0 |
+| T15 | 科目余额查询 | 查询1002科目2026-04余额 | 返回期初/本期发生/期末 | P0 |
 
 ---
 
@@ -907,7 +1027,7 @@ POST   /api/v1/gl/periods/profit-transfer       # 损益结转
 
 <h3>9.1 MVP阶段（约20天）</h3>
 
-<code></code>`
+</code>`<code class="inline-code">
 ┌─────────────────────────────────────────────────────────────┐
 │                   总账凭证引擎 MVP 路线图                     │
 ├──────────┬────────────────────────────┬──────────┬──────────┤
@@ -945,34 +1065,34 @@ POST   /api/v1/gl/periods/profit-transfer       # 损益结转
 ├──────────┼────────────────────────────┼──────────┼──────────┤
 │          │ <strong>合计</strong>                   │ <strong>~20天</strong>│          │
 └──────────┴────────────────────────────┴──────────┴──────────┘
-<code></code>`
+</code>`<code class="inline-code">
 
 <h3>9.2 P2阶段（后续迭代）</h3>
 
-<tr><td>阶段</td><td>内容</td><td>预计工期</td></tr>
-
-<tr><td>G8 多币种</td><td>外币凭证、汇率管理、汇兑损益</td><td>3天</td></tr>
-<tr><td>G9 数量核算</td><td>存货科目数量金额式明细账</td><td>2天</td></tr>
-<tr><td>G10 预算集成</td><td>预算控制、预算执行分析</td><td>3天</td></tr>
-<tr><td>G11 报表增强</td><td>多栏式明细账、自定义报表</td><td>3天</td></tr>
-<tr><td>G12 银行对账</td><td>银行日记账自动对账</td><td>3天</td></tr>
+| 阶段 | 内容 | 预计工期 |
+|:---|:---|:---:|
+| G8 多币种 | 外币凭证、汇率管理、汇兑损益 | 3天 |
+| G9 数量核算 | 存货科目数量金额式明细账 | 2天 |
+| G10 预算集成 | 预算控制、预算执行分析 | 3天 |
+| G11 报表增强 | 多栏式明细账、自定义报表 | 3天 |
+| G12 银行对账 | 银行日记账自动对账 | 3天 |
 
 ---
 
 <h2>附录A: 金蝶云星空功能对照</h2>
 
-<tr><td>本模块功能</td><td>金蝶对应位置</td><td>差距说明</td></tr>
-
-<tr><td>科目管理</td><td>总账→基础设置→科目</td><td>金蝶科目级次更多(5级)，我们4级MVP够用</td></tr>
-<tr><td>手工凭证</td><td>总账→凭证管理→凭证录入</td><td>功能基本对标</td></tr>
-<tr><td>自动凭证</td><td>总账→智能会计平台</td><td>金蝶AI识别更强，我们规则模板化</td></tr>
-<tr><td>凭证审核</td><td>总账→凭证管理→凭证审核</td><td>功能对标</td></tr>
-<tr><td>辅助核算</td><td>总账→基础设置→辅助核算</td><td>金蝶支持更多维度(10+)，我们MVP 5个</td></tr>
-<tr><td>科目余额表</td><td>总账→报表→科目余额表</td><td>功能对标</td></tr>
-<tr><td>期末结账</td><td>总账→期末处理→结账</td><td>金蝶结账检查更细，我们逐步完善</td></tr>
-<tr><td>损益结转</td><td>总账→期末处理→损益结转</td><td>功能对标</td></tr>
-<tr><td>多栏账</td><td>总账→报表→多栏式明细账</td><td>P2阶段</td></tr>
-<tr><td>预算控制</td><td>预算管理模块</td><td>P2阶段</td></tr></table>
+| 本模块功能 | 金蝶对应位置 | 差距说明 |
+|:---|:---|:---|
+| 科目管理 | 总账→基础设置→科目 | 金蝶科目级次更多(5级)，我们4级MVP够用 |
+| 手工凭证 | 总账→凭证管理→凭证录入 | 功能基本对标 |
+| 自动凭证 | 总账→智能会计平台 | 金蝶AI识别更强，我们规则模板化 |
+| 凭证审核 | 总账→凭证管理→凭证审核 | 功能对标 |
+| 辅助核算 | 总账→基础设置→辅助核算 | 金蝶支持更多维度(10+)，我们MVP 5个 |
+| 科目余额表 | 总账→报表→科目余额表 | 功能对标 |
+| 期末结账 | 总账→期末处理→结账 | 金蝶结账检查更细，我们逐步完善 |
+| 损益结转 | 总账→期末处理→损益结转 | 功能对标 |
+| 多栏账 | 总账→报表→多栏式明细账 | P2阶段 |
+| 预算控制 | 预算管理模块 | P2阶段 |
 
 ---
 
@@ -980,7 +1100,7 @@ POST   /api/v1/gl/periods/profit-transfer       # 损益结转
 
 > 以下为MVP阶段预置的一级科目，基于《企业会计准则》简化版。
 
-<code></code>`sql
+</code>`<code class="inline-code">sql
 -- 资产类
 INSERT INTO gl_account (account_code, account_name, level_no, is_leaf, account_type, balance_dir) VALUES
 ('1001', '库存现金', 1, 1, 1, 1),
@@ -1038,13 +1158,13 @@ INSERT INTO gl_account (account_code, account_name, level_no, is_leaf, account_t
 ('6603', '财务费用', 1, 0, 5, 1),
 ('6711', '营业外支出', 1, 1, 5, 1),
 ('6801', '所得税费用', 1, 1, 5, 1);
-<code></code>`
+</code>`<code class="inline-code">
 
 ---
 
 <h2>附录C: 凭证摘要自动生成规则</h2>
 
-<code></code>`python
+</code>`<code class="inline-code">python
 def generate_summary(source_module: str, event_type: str, 
                      context: dict) -> str:
     """自动生成凭证摘要"""
@@ -1067,16 +1187,15 @@ def generate_summary(source_module: str, event_type: str,
     }
     
     template = templates.get(f"{source_module}.{event_type}", "")
-    return template.format(<em></em>context)
-<code></code>`
+    return template.format(**context)
+</code>``
 
 ---
 
 > <strong>文档维护</strong>: 财务追踪器 · Dev_Dept 团队  
 > <strong>最后更新</strong>: 2026-04-15  
 > <strong>下一步</strong>: 实现科目管理 + 凭证CRUD + 过账引擎核心
-
-  </div>
-</div>
+</p>
+    </div>
 </body>
 </html>
