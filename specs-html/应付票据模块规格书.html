@@ -1,0 +1,970 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>应付票据模块规格书</title>
+<style>
+:root {
+  --bg: #f8fafc;
+  --card: #ffffff;
+  --primary: #6366f1;
+  --text: #1e293b;
+  --text-dim: #64748b;
+  --border: #e2e8f0;
+  --code-bg: #1e293b;
+  --code-text: #e2e8f0;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.7;
+  padding: 2rem;
+}
+.container {
+  max-width: 1000px;
+  margin: 0 auto;
+  background: var(--card);
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  padding: 3rem;
+}
+.header {
+  border-bottom: 2px solid var(--primary);
+  padding-bottom: 1.5rem;
+  margin-bottom: 2rem;
+}
+.header h1 {
+  font-size: 1.75rem;
+  color: var(--primary);
+  margin-bottom: 0.5rem;
+}
+.header .meta {
+  color: var(--text-dim);
+  font-size: 0.875rem;
+}
+.content h1 { font-size: 1.5rem; margin: 2rem 0 1rem; color: var(--primary); }
+.content h2 { font-size: 1.25rem; margin: 1.5rem 0 0.75rem; color: var(--text); border-bottom: 1px solid var(--border); padding-bottom: 0.5rem; }
+.content h3 { font-size: 1.1rem; margin: 1.25rem 0 0.5rem; color: var(--text); }
+.content p { margin: 0.75rem 0; }
+.content ul, .content ol { margin: 0.75rem 0; padding-left: 1.5rem; }
+.content li { margin: 0.375rem 0; }
+.content table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1rem 0;
+  font-size: 0.9rem;
+}
+.content td, .content th {
+  border: 1px solid var(--border);
+  padding: 0.625rem 0.75rem;
+  text-align: left;
+}
+.content th {
+  background: #f1f5f9;
+  font-weight: 600;
+}
+.content pre {
+  background: var(--code-bg);
+  color: var(--code-text);
+  padding: 1rem;
+  border-radius: 8px;
+  overflow-x: auto;
+  margin: 1rem 0;
+  font-size: 0.85rem;
+}
+.content code {
+  background: #f1f5f9;
+  padding: 0.125rem 0.375rem;
+  border-radius: 4px;
+  font-size: 0.875rem;
+}
+.content pre code {
+  background: transparent;
+  padding: 0;
+}
+.back-link {
+  display: inline-block;
+  margin-bottom: 1.5rem;
+  color: var(--primary);
+  text-decoration: none;
+  font-size: 0.875rem;
+}
+.back-link:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+<div class="container">
+  <a href="../index.html" class="back-link">← 返回目录</a>
+  <div class="header">
+    <h1>应付票据模块规格书</h1>
+    <div class="meta">Dev_Dept · ERP财务管理系统</div>
+  </div>
+  <div class="content">
+    <h1>应付票据往来模块 — 补充需求规格书</h1>
+
+> <strong>版本</strong>: v1.0 <table><tr><td><strong>日期</strong>: 2026-04-15</td></tr> <strong>优先级</strong>: P2（票据管理）  
+> <strong>对标系统</strong>: 金蝶云星空 · 应付票据管理  
+> <strong>所属流程</strong>: 采购入库 → 应付确认 → <strong>应付票据</strong> → 总账凭证  
+> <strong>定位</strong>: 本文档为 <code>票据往来模块规格书.md</code> 的<strong>补充规格</strong>，覆盖应付端票据管理
+
+---
+
+<h2>目录</h2>
+
+1. [模块概述](#1-模块概述)
+2. [功能全景图](#2-功能全景图)
+3. [数据模型补充](#3-数据模型补充)
+4. [业务规则定义](#4-业务规则定义)
+5. [凭证模板矩阵](#5-凭证模板矩阵)
+6. [内部API设计](#6-内部api设计)
+7. [备付金管理机制](#7-备付金管理机制)
+8. [安全与风控](#8-安全与风控)
+9. [测试用例](#9-测试用例)
+10. [实施路线图](#10-实施路线图)
+
+---
+
+<h2>1. 模块概述</h2>
+
+<h3>1.1 业务定位</h3>
+
+应付票据模块是ERP财务管理中<strong>采购端票据支付</strong>的核心枢纽，负责管理我方开出的商业汇票从开立、交付、持有、到期兑付的全生命周期。
+
+<code></code>`
+┌──────────────────────────────────────────────────────────┐
+│                  应付票据模块架构定位                       │
+├──────────────────────────────────────────────────────────┤
+│                                                          │
+│  上游: 采购入库/应付确认 ───→ 开出票据 ───→ 应付票据模块   │
+│                                       │                 │
+│                            ┌──────────┼──────────┐       │
+│                            ↓          ↓          ↓       │
+│                         到期兑付    票据展期    票据退回   │
+│                            │          │          │       │
+│  下游:                     ↓          ↓          ↓       │
+│  ┌──────────────┐  ┌──────────┐  ┌──────────┐          │
+│  │ 银企直连     │  │ 应付票据  │  │ 应付账款  │          │
+│  │ (资金划出)   │  │ (新票据)  │  │ (恢复)   │          │
+│  └──────────────┘  └──────────┘  └──────────┘          │
+│                                                          │
+│  特殊场景:                                               │
+│  ┌──────────────────────────────────────────┐            │
+│  │ 供应商背书转让票据给我方（收票抵付）      │            │
+│  │ → 应收票据入池 + 应付账款核销            │            │
+│  └──────────────────────────────────────────┘            │
+└──────────────────────────────────────────────────────────┘
+<code></code>`
+
+<h3>1.2 核心目标</h3>
+
+<tr><td>#</td><td>目标</td><td>衡量指标</td></tr>
+
+<tr><td>1</td><td>应付票据全生命周期可视</td><td>100%开出票据实时可查</td></tr>
+<tr><td>2</td><td>到期零违约</td><td>票据到期前资金到位，违约率=0</td></tr>
+<tr><td>3</td><td>票据成本可控</td><td>银承保证金+利息支出透明可算</td></tr>
+<tr><td>4</td><td>自动生成凭证</td><td>6种场景自动匹配凭证模板</td></tr>
+<tr><td>5</td><td>备付金精准规划</td><td>提前30天预测到期资金需求</td></tr>
+
+<h3>1.3 对标金蝶云星空差距分析</h3>
+
+<tr><td>功能点</td><td>金蝶云星空</td><td>当前差距</td><td>应对策略</td></tr>
+
+<tr><td>应付票据开立</td><td>✅ 支持银承/商承/电子票</td><td>🔴 完全缺失</td><td>MVP: 手工开立 + 关联应付</td></tr>
+<tr><td>到期自动付款</td><td>✅ 银企对接自动扣款</td><td>🔴 完全缺失</td><td>MVP: 预警+手工确认+银企指令</td></tr>
+<tr><td>票据展期</td><td>✅ 新旧票据替换+差额处理</td><td>🔴 完全缺失</td><td>MVP: 基础展期替换</td></tr>
+<tr><td>背书收票抵付</td><td>✅ 收票+核销一体化</td><td>🔴 完全缺失</td><td>MVP: 收票登记+应付核销</td></tr>
+<tr><td>保证金管理</td><td>✅ 按银行/票据管理保证金</td><td>🔴 完全缺失</td><td>P2: 保证金台账</td></tr>
+<tr><td>备付金预测</td><td>✅ 滚动预测未来资金需求</td><td>🔴 完全缺失</td><td>P2: 30天滚动预测</td></tr>
+<tr><td>ECDS电子票据签发</td><td>✅ 对接票交所</td><td>🟠 不支持</td><td>P3: ECDS对接</td></tr>
+<tr><td>票据池统一管理</td><td>✅ 应收+应付票据池</td><td>🟠 不支持</td><td>P3: 统一视图</td></tr>
+
+<h3>1.4 与应收票据模块的关系</h3>
+
+<code></code>`
+                    票据往来模块
+┌─────────────────────────────────────────────┐
+│                                             │
+│  ┌──────────────────┐  ┌──────────────────┐ │
+│  │  应收票据（已有）  │  │ 应付票据（补充） │ │
+│  │  bill_note       │  │ payable_bill    │ │
+│  │                  │  │                  │ │
+│  │  我方=收款人      │  │  我方=付款人     │ │
+│  │  科目=1121       │  │  科目=2201       │ │
+│  │  资产类           │  │  负债类          │ │
+│  │                  │  │                  │ │
+│  │  操作:            │  │  操作:            │ │
+│  │  ·收取登记        │  │  ·票据开立        │ │
+│  │  ·背书转出 →  ──→ │←──  ·背书收票       │ │
+│  │  ·贴现            │  │  ·到期付款        │ │
+│  │  ·到期托收        │  │  ·票据展期        │ │
+│  │  ·退回追索        │  │  ·票据退回        │ │
+│  └──────────────────┘  └──────────────────┘ │
+│           ↑                     ↑            │
+│           └──── 共享预警/台账 ────┘           │
+└─────────────────────────────────────────────┘
+<code></code>`
+
+---
+
+<h2>2. 功能全景图</h2>
+
+<h3>2.1 功能域划分</h3>
+
+<code></code>`
+应付票据模块
+├── PF1 应付票据开立管理
+│   ├── PF1.1 票据开立申请（选应付+填票据信息）
+│   ├── PF1.2 票据类型选择（银承/商承）
+│   ├── PF1.3 开票金额校验（≤应付余额）
+│   ├── PF1.4 票据编号自动生成（PBILL+年月+序号）
+│   ├── PF1.5 关联付款单/应付明细
+│   └── PF1.6 开票审批流程
+│
+├── PF2 票据交付管理
+│   ├── PF2.1 纸质票交付（出纳→供应商，签收回执）
+│   ├── PF2.2 电子票签发（ECDS系统推送）
+│   └── PF2.3 交付状态跟踪
+│
+├── PF3 到期付款管理
+│   ├── PF3.1 到期前资金检查
+│   ├── PF3.2 银承自动扣款确认
+│   ├── PF3.3 商承手工付款
+│   ├── PF3.4 付款指令生成（银企直连）
+│   └── PF3.5 付款回单归档
+│
+├── PF4 票据展期管理
+│   ├── PF4.1 展期申请（供应商协商）
+│   ├── PF4.2 新旧票据替换
+│   ├── PF4.3 差额处理（如有息差）
+│   └── PF4.4 展期审批
+│
+├── PF5 背书收票抵付
+│   ├── PF5.1 接收供应商背书票据
+│   ├── PF5.2 票据验证（票面+背书连续性）
+│   ├── PF5.3 承兑人信用评估
+│   ├── PF5.4 抵付金额确认
+│   ├── PF5.5 应付核销处理
+│   └── PF5.6 收票入应收台账
+│
+└── PF6 应付票据台账与报表
+    ├── PF6.1 应付票据台账列表
+    ├── PF6.2 供应商维度汇总
+    ├── PF6.3 到期分布统计
+    ├── PF6.4 备付金需求预测
+    └── PF6.5 票据成本分析（保证金+利息）
+<code></code>`
+
+<h3>2.2 功能清单（按优先级）</h3>
+
+<tr><td>编号</td><td>功能</td><td>优先级</td><td>说明</td></tr>
+
+<tr><td>PF1.1</td><td>票据开立申请</td><td><strong>P1-A</strong></td><td>核心基础功能</td></tr>
+<tr><td>PF1.2</td><td>票据类型选择</td><td><strong>P1-A</strong></td><td>银承/商承二选一</td></tr>
+<tr><td>PF1.3</td><td>开票金额校验</td><td><strong>P1-A</strong></td><td>防止超开</td></tr>
+<tr><td>PF1.4</td><td>票据编号生成</td><td><strong>P1-A</strong></td><td>PBILL+年月+序号</td></tr>
+<tr><td>PF1.5</td><td>关联应付明细</td><td><strong>P1-A</strong></td><td>打通应付台账</td></tr>
+<tr><td>PF1.6</td><td>开票审批</td><td>P1-B</td><td>金额阈值判断</td></tr>
+<tr><td>PF2.1</td><td>纸质票交付</td><td>P1-B</td><td>签收回执</td></tr>
+<tr><td>PF2.2</td><td>电子票签发</td><td>P2</td><td>ECDS对接</td></tr>
+<tr><td>PF3.1</td><td>到期资金检查</td><td><strong>P1-A</strong></td><td>防违约</td></tr>
+<tr><td>PF3.3</td><td>商承手工付款</td><td><strong>P1-A</strong></td><td>核心操作</td></tr>
+<tr><td>PF3.4</td><td>银企付款指令</td><td>P1-B</td><td>自动化</td></tr>
+<tr><td>PF3.5</td><td>回单归档</td><td>P1-B</td><td>合规留痕</td></tr>
+<tr><td>PF4.1</td><td>展期申请</td><td>P2</td><td>非高频</td></tr>
+<tr><td>PF4.2</td><td>新旧票据替换</td><td>P2</td><td>含差额处理</td></tr>
+<tr><td>PF5.1</td><td>接收背书票据</td><td><strong>P1-A</strong></td><td>高频场景</td></tr>
+<tr><td>PF5.2</td><td>票据验证</td><td><strong>P1-A</strong></td><td>防风险</td></tr>
+<tr><td>PF5.3</td><td>信用评估</td><td>P1-B</td><td>商承必做</td></tr>
+<tr><td>PF5.4</td><td>抵付确认+核销</td><td><strong>P1-A</strong></td><td>业务闭环</td></tr>
+<tr><td>PF6.1</td><td>应付票据台账</td><td><strong>P1-A</strong></td><td>基础管理</td></tr>
+<tr><td>PF6.3</td><td>到期分布统计</td><td>P2</td><td>管理视图</td></tr>
+<tr><td>PF6.4</td><td>备付金预测</td><td>P2</td><td>资金规划</td></tr>
+
+---
+
+<h2>3. 数据模型补充</h2>
+
+<h3>3.1 核心表: <code>payable_bill</code>（应付票据主表）</h3>
+
+<code></code>`sql
+CREATE TABLE payable_bill (
+    id              BIGINT PRIMARY KEY AUTO_INCREMENT,
+    bill_no         VARCHAR(20)  NOT NULL UNIQUE COMMENT '应付票据编号 PBILL+年月+4位序号',
+    
+    -- 票面基本信息
+    bill_type       TINYINT      NOT NULL COMMENT '票据类型: 1=银行承兑汇票 2=商业承兑汇票',
+    bill_number     VARCHAR(30)  NOT NULL COMMENT '票据号码',
+    draft_date      DATE         NOT NULL COMMENT '出票日期（开票日期）',
+    due_date        DATE         NOT NULL COMMENT '到期日期',
+    face_amount     DECIMAL(18,2) NOT NULL COMMENT '票面金额',
+    
+    -- 票据当事人
+    drawer          VARCHAR(100) NOT NULL COMMENT '出票人名称（我方企业）',
+    drawer_tax_no   VARCHAR(20)  DEFAULT NULL COMMENT '出票人税号（我方税号）',
+    payee           VARCHAR(100) NOT NULL COMMENT '收款人名称（供应商）',
+    payee_id        BIGINT       DEFAULT NULL COMMENT '收款人供应商ID',
+    payee_bank      VARCHAR(100) DEFAULT NULL COMMENT '收款人开户行',
+    payee_acct      VARCHAR(30)  DEFAULT NULL COMMENT '收款人账号',
+    acceptor        VARCHAR(100) NOT NULL COMMENT '承兑人名称（银承=银行/商承=我方）',
+    acceptor_type   TINYINT      NOT NULL COMMENT '承兑人类型: 1=银行 2=企业（我方）',
+    
+    -- 关联信息
+    payment_id      BIGINT       DEFAULT NULL COMMENT '关联付款单ID',
+    ap_detail_id    BIGINT       DEFAULT NULL COMMENT '关联应付明细ID',
+    ap_amount       DECIMAL(18,2) NOT NULL COMMENT '抵付应付金额（≤face_amount）',
+    
+    -- 银承专用
+    margin_ratio    DECIMAL(5,2) DEFAULT NULL COMMENT '保证金比例(%)（银承专用）',
+    margin_amount   DECIMAL(18,2) DEFAULT NULL COMMENT '保证金金额（银承专用）',
+    margin_account  VARCHAR(30)  DEFAULT NULL COMMENT '保证金账户（银承专用）',
+    
+    -- 状态管理
+    status          TINYINT      NOT NULL DEFAULT 1 COMMENT '状态: 1=草稿 2=审批中 3=待交付 4=持有中 5=已兑付 6=已展期 7=已退回 8=已作废',
+    
+    -- 实物/电子
+    is_electronic   TINYINT      NOT NULL DEFAULT 0 COMMENT '是否电子票据: 0=纸质 1=电子',
+    delivery_date   DATE         DEFAULT NULL COMMENT '票据交付日期',
+    delivery_confirm TINYINT    NOT NULL DEFAULT 0 COMMENT '交付确认: 0=未交付 1=已交付',
+    
+    remark          TEXT         DEFAULT NULL COMMENT '备注',
+    
+    -- 系统字段
+    org_id          BIGINT       NOT NULL COMMENT '组织ID',
+    created_by      VARCHAR(20)  NOT NULL COMMENT '创建人',
+    created_at      DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_by      VARCHAR(20)  DEFAULT NULL,
+    updated_at      DATETIME     DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+    is_deleted      TINYINT      NOT NULL DEFAULT 0,
+    
+    INDEX idx_status (status),
+    INDEX idx_due_date (due_date),
+    INDEX idx_payee (payee_id),
+    INDEX idx_payment (payment_id),
+    INDEX idx_bill_number (bill_number)
+) COMMENT '应付票据主表';
+<code></code>`
+
+<h3>3.2 辅助表: <code>payable_bill_settlement</code>（应付票据结算/处置记录表）</h3>
+
+<code></code>`sql
+CREATE TABLE payable_bill_settlement (
+    id              BIGINT PRIMARY KEY AUTO_INCREMENT,
+    bill_id         BIGINT       NOT NULL COMMENT '应付票据ID',
+    bill_no         VARCHAR(20)  NOT NULL COMMENT '应付票据编号',
+    
+    -- 结算信息
+    settle_type     TINYINT      NOT NULL COMMENT '结算类型: 1=到期付款 2=票据展期 3=票据退回 4=背书收票抵付',
+    settle_date     DATE         NOT NULL COMMENT '结算日期',
+    settle_amount   DECIMAL(18,2) NOT NULL COMMENT '结算金额',
+    
+    -- 到期付款专用
+    pay_bank_account VARCHAR(30) DEFAULT NULL COMMENT '付款银行账户',
+    pay_voucher_no  VARCHAR(30)  DEFAULT NULL COMMENT '银行付款凭证号',
+    
+    -- 展期专用
+    new_bill_id     BIGINT       DEFAULT NULL COMMENT '新票据ID（展期时）',
+    new_bill_no     VARCHAR(20)  DEFAULT NULL COMMENT '新票据编号',
+    interest_diff   DECIMAL(18,2) DEFAULT NULL COMMENT '展期利息差额',
+    
+    -- 审批信息
+    approval_status TINYINT      NOT NULL DEFAULT 0 COMMENT '审批状态: 0=无需审批 1=待审批 2=已审批 3=已驳回',
+    approver        VARCHAR(20)  DEFAULT NULL COMMENT '审批人',
+    approved_at     DATETIME     DEFAULT NULL COMMENT '审批时间',
+    
+    voucher_id      BIGINT       DEFAULT NULL COMMENT '生成的凭证ID',
+    remark          TEXT         DEFAULT NULL COMMENT '备注',
+    created_by      VARCHAR(20)  NOT NULL,
+    created_at      DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    
+    INDEX idx_bill_id (bill_id),
+    INDEX idx_bill_no (bill_no),
+    INDEX idx_settle_type (settle_type),
+    INDEX idx_settle_date (settle_date),
+    FOREIGN KEY (bill_id) REFERENCES payable_bill(id)
+) COMMENT '应付票据结算记录表';
+<code></code>`
+
+<h3>3.3 应收票据表扩展字段</h3>
+
+在已有的 <code>bill_note</code> 表中增加应付票据收票的关联：
+
+<code></code>`sql
+-- 应付票据收票抵付场景：应收票据入池时关联应付核销
+ALTER TABLE bill_note ADD COLUMN payee_ap_detail_id BIGINT DEFAULT NULL 
+    COMMENT '背书收票抵付的应付明细ID（应付端使用）';
+ALTER TABLE bill_note ADD COLUMN payee_ap_amount DECIMAL(18,2) DEFAULT NULL 
+    COMMENT '背书收票抵付金额（应付端使用）';
+<code></code>`
+
+<h3>3.4 预警配置扩展</h3>
+
+复用 <code>bill_alert_config</code> 表，增加应付票据预警配置：
+
+<code></code>`sql
+-- 应付票据预警配置（复用现有表结构，通过类型区分）
+INSERT INTO bill_alert_config (org_id, alert_level, alert_days, notify_channel, notify_roles) VALUES
+(1, 1, 30, 'site', 'cashier,treasury'),
+(1, 2, 15, 'site,email', 'cashier,treasury,finance_supervisor'),
+(1, 3, 7, 'site,email,sms', 'cashier,treasury,finance_supervisor'),
+(1, 4, 3, 'site,email,sms,phone', 'cashier,treasury,finance_supervisor,dept_head');
+<code></code>`
+
+---
+
+<h2>4. 业务规则定义</h2>
+
+<h3>4.1 票据编号规则</h3>
+
+<code></code>`
+格式: PBILL + YYYYMM + 4位序号
+示例: PBILL2026040001
+
+规则:
+<li>按月归零重新计数</li>
+<li>同一组织内唯一</li>
+<li>一旦生成不可修改</li>
+<li>作废票据编号保留（不重用）</li>
+<li>与应收票据编号(BILL)区分，便于识别</li>
+<code></code>`
+
+<h3>4.2 应付票据状态枚举与状态机</h3>
+
+<code></code>`python
+class PayableBillStatus(Enum):
+    DRAFT = 1          # 草稿
+    APPROVING = 2      # 审批中
+    PENDING_DELIVERY = 3  # 待��付（审批通过，等待交付给供应商）
+    HOLDING = 4        # 持有中（已交付，等待到期）
+    SETTLED = 5        # 已兑付（到期已付款）
+    EXTENDED = 6       # 已展期（新票据已开立）
+    RETURNED = 7       # 已退回（供应商退回票据）
+    CANCELLED = 8      # 已作废
+
+<h1>状态转换规则</h1>
+PAYABLE_STATUS_TRANSITIONS = {
+    PayableBillStatus.DRAFT: [PayableBillStatus.APPROVING, PayableBillStatus.CANCELLED],
+    PayableBillStatus.APPROVING: [PayableBillStatus.DRAFT, 
+                                   PayableBillStatus.PENDING_DELIVERY, PayableBillStatus.CANCELLED],
+    PayableBillStatus.PENDING_DELIVERY: [PayableBillStatus.HOLDING, PayableBillStatus.RETURNED],
+    PayableBillStatus.HOLDING: [PayableBillStatus.SETTLED, PayableBillStatus.EXTENDED, 
+                                 PayableBillStatus.RETURNED],
+    # 终态不可再转换
+    PayableBillStatus.SETTLED: [],
+    PayableBillStatus.EXTENDED: [],
+    PayableBillStatus.RETURNED: [],
+    PayableBillStatus.CANCELLED: [],
+}
+<code></code>`
+
+<h3>4.3 开票金额校验规则</h3>
+
+<code></code>`python
+def validate_payable_bill(bill: dict) -> list[str]:
+    """应付票据开立校验"""
+    errors = []
+    
+    # 必填字段
+    required = ['bill_type', 'draft_date', 'due_date', 'face_amount', 
+                'payee', 'payee_id', 'acceptor']
+    for field in required:
+        if not bill.get(field):
+            errors.append(f"缺少必填字段: {field}")
+    
+    # 业务规则
+    if bill.get('face_amount', 0) <= 0:
+        errors.append("票面金额必须大于0")
+    
+    if bill.get('ap_amount', 0) > bill.get('face_amount', 0):
+        errors.append("抵付金额不能超过票面金额")
+    
+    if bill.get('due_date') and bill.get('draft_date'):
+        if bill['due_date'] <= bill['draft_date']:
+            errors.append("到期日期必须晚于出票日期")
+        days = (bill['due_date'] - bill['draft_date']).days
+        if days > 365:
+            errors.append("票据期限不得超过一年")
+    
+    # 银承必须填写保证金信息
+    if bill.get('bill_type') == 1:
+        if not bill.get('margin_ratio'):
+            errors.append("银行承兑汇票必须填写保证金比例")
+    
+    # 商承限制（信用评估）
+    if bill.get('bill_type') == 2:
+        if not has_credit_check(bill['drawer_tax_no']):
+            errors.append("商业承兑汇票需要通过企业信用评估")
+    
+    return errors
+<code></code>`
+
+<h3>4.4 审批金额阈值</h3>
+
+<code></code>`python
+def get_approval_chain(amount: float) -> list[str]:
+    """根据票据金额返回审批链"""
+    if amount < 100000:        # < 10万
+        return ['cashier', 'finance_supervisor']
+    elif amount < 500000:      # 10-50万
+        return ['cashier', 'finance_supervisor', 'finance_manager']
+    else:                      # ≥ 50万
+        return ['cashier', 'finance_supervisor', 'finance_manager', 'general_manager']
+<code></code>`
+
+<h3>4.5 背书收票验证规则</h3>
+
+<code></code>`python
+def validate_received_bill_for_payment(bill: dict, ap_detail: dict) -> list[str]:
+    """背书收票抵付验证"""
+    errors = []
+    
+    # 票面金额校验
+    if bill['face_amount'] > ap_detail['remaining_amount']:
+        errors.append(f"票据金额({bill['face_amount']})超过应付余额({ap_detail['remaining_amount']})")
+    
+    # 到期日合理性
+    days_to_due = (bill['due_date'] - date.today()).days
+    if days_to_due < 7:
+        errors.append(f"票据距到期仅{days_to_due}天，时间过短不建议接受")
+    if days_to_due < 0:
+        errors.append("票据已过期，不能接受")
+    
+    # 商业承兑汇票信用检查
+    if bill['bill_type'] == 2:
+        credit_rating = get_credit_rating(bill['acceptor_tax_no'])
+        if credit_rating and credit_rating < 'B':
+            errors.append(f"承兑人信用评级{credit_rating}过低，建议拒绝或要求补担保")
+    
+    # 背书连续性
+    if bill.get('is_paper', False):
+        if not check_endorsement_chain(bill):
+            errors.append("背书链不连续，请核实")
+    
+    return errors
+<code></code>`
+
+---
+
+<h2>5. 凭证模板矩阵</h2>
+
+<h3>5.1 六种标准凭证模板</h3>
+
+<tr><td>编号</td><td>场景</td><td>借方</td><td>贷方</td><td>凭证字</td><td>触发时机</td></tr>
+
+<tr><td><strong>PA01</strong></td><td>应付票据开立</td><td>应付账款-XX供应商（抵付金额）</td><td>应付票据-银承/商承（票面金额）</td><td>转</td><td>审批通过+交付确认</td></tr>
+<tr><td><strong>PA03</strong></td><td>到期付款</td><td>应付票据-XX票据（票面金额）</td><td>银行存款-XX账户（付款金额）</td><td>付</td><td>付款指令执行成功</td></tr>
+<tr><td><strong>PA04</strong></td><td>票据展期</td><td>应付票据-旧票据（原票面金额）</td><td>应付票据-新票据（新票面金额）</td><td>转</td><td>展期审批通过</td></tr>
+<tr><td><strong>PA05</strong></td><td>背书收票抵付</td><td>应付账款-XX供应商（核销金额）</td><td>应收票据-XX票据（票面金额）</td><td>转</td><td>收票验证通过+审批通过</td></tr>
+<tr><td><strong>PA06</strong></td><td>票据退回</td><td>应付票据-XX票据（票面金额）</td><td>应付账款-XX供应商（恢复金额）</td><td>转</td><td>退回确认</td></tr>
+<tr><td><strong>PA07</strong></td><td>银承保证金利息</td><td>财务费用-保证金利息（利息金额）</td><td>银行存款/应付利息</td><td>付</td><td>保证金利息结算日</td></tr>
+
+<h3>5.2 凭证模板JSON定义</h3>
+
+<code></code>`json
+{
+  "PA01": {
+    "name": "应付票据开立",
+    "voucher_word": "转",
+    "entries": [
+      {"direction": "DEBIT", "account": "2202", "sub_account": "动态-供应商名称", "amount_source": "ap_amount"},
+      {"direction": "CREDIT", "account": "2201", "sub_account": "银行承兑汇票/商业承兑汇票", "amount_source": "face_amount"}
+    ],
+    "note": "若ap_amount < face_amount，差额部分贷记应付票据-票据溢价或借记应付票据-票据折价"
+  },
+  "PA03": {
+    "name": "应付票据到期付款",
+    "voucher_word": "付",
+    "entries": [
+      {"direction": "DEBIT", "account": "2201", "sub_account": "对应票据子目", "amount_source": "face_amount"},
+      {"direction": "CREDIT", "account": "1002", "sub_account": "付款银行账户", "amount_source": "face_amount"}
+    ]
+  },
+  "PA05": {
+    "name": "背书收票抵付",
+    "voucher_word": "转",
+    "entries": [
+      {"direction": "DEBIT", "account": "2202", "sub_account": "动态-供应商名称", "amount_source": "ap_amount"},
+      {"direction": "CREDIT", "account": "1121", "sub_account": "动态-票据子目", "amount_source": "face_amount"}
+    ],
+    "note": "同时触发应收票据入池操作，生成应收端收票凭证"
+  }
+}
+<code></code>`
+
+<h3>5.3 与应收票据凭证对照</h3>
+
+<tr><td>应收端（已有）</td><td>对应应付端（补充）</td><td>关系说明</td></tr>
+
+<tr><td>B01 票据收取（借应收票据/贷应收账款）</td><td>PA01 票据开立（借应付账款/贷应付票据）</td><td><strong>镜像操作</strong></td></tr>
+<tr><td>B02 票据背书（借应付账款/贷应收票据）</td><td>PA05 背书收票（借应付账款/贷应收票据）</td><td><strong>互为对手方</strong></td></tr>
+<tr><td>B06 到期兑付（借银行存款/贷应收票据）</td><td>PA03 到期付款（借应付票据/贷银行存款）</td><td><strong>镜像操作</strong></td></tr>
+<tr><td>B07 票据退回（借应收账款/贷应收票据）</td><td>PA06 票据退回（借应付票据/贷应付账款）</td><td><strong>镜像操作</strong></td></tr>
+
+---
+
+<h2>6. 内部API设计</h2>
+
+<h3>6.1 应付票据开立</h3>
+
+<code></code>`
+POST /api/v1/payable-bills
+<code></code>`
+
+<strong>请求体:</strong>
+<code></code>`json
+{
+  "bill_type": 1,
+  "bill_number": "GA0203010001256789",
+  "draft_date": "2026-04-15",
+  "due_date": "2026-10-15",
+  "face_amount": 300000.00,
+  "drawer": "我方公司名称",
+  "drawer_tax_no": "91320100MA1XXXXX",
+  "payee": "YY供应商有限公司",
+  "payee_id": 20001,
+  "payee_bank": "中国建设银行XX支行",
+  "payee_acct": "32001234567890",
+  "acceptor": "中国工商银行南京分行",
+  "acceptor_type": 1,
+  "payment_id": 50001,
+  "ap_detail_id": 30010,
+  "ap_amount": 300000.00,
+  "margin_ratio": 30.00,
+  "margin_amount": 90000.00,
+  "is_electronic": 0,
+  "remark": "支付3月采购货款"
+}
+<code></code>`
+
+<strong>响应:</strong>
+<code></code>`json
+{
+  "code": 0,
+  "message": "应付票据开立成功，待审批",
+  "data": {
+    "bill_id": 40001,
+    "bill_no": "PBILL2026040001",
+    "status": 2,
+    "approval_chain": ["cashier", "finance_supervisor"]
+  }
+}
+<code></code>`
+
+<h3>6.2 应付票据到期付款</h3>
+
+<code></code>`
+POST /api/v1/payable-bills/{bill_id}/settle
+<code></code>`
+
+<strong>请求体:</strong>
+<code></code>`json
+{
+  "settle_type": 1,
+  "settle_date": "2026-10-15",
+  "settle_amount": 300000.00,
+  "pay_bank_account": "4301011234567890",
+  "remark": "到期自动付款"
+}
+<code></code>`
+
+<h3>6.3 背书收票抵付</h3>
+
+<code></code>`
+POST /api/v1/payable-bills/receive-endorse
+<code></code>`
+
+<strong>请求体:</strong>
+<code></code>`json
+{
+  "bill_no": "BILL2026040005",
+  "received_bill_info": {
+    "bill_type": 1,
+    "bill_number": "GA0203010001256880",
+    "face_amount": 500000.00,
+    "drawer": "ZZ贸易有限公司",
+    "acceptor": "中国银行上海分行",
+    "due_date": "2026-09-20"
+  },
+  "ap_detail_id": 30010,
+  "ap_amount": 500000.00,
+  "endorse_verify": {
+    "is_continuous": true,
+    "acceptor_credit_rating": "AA",
+    "days_to_due": 158
+  },
+  "remark": "供应商背书票据抵付货款"
+}
+<code></code>`
+
+<h3>6.4 票据展期</h3>
+
+<code></code>`
+POST /api/v1/payable-bills/{bill_id}/extend
+<code></code>`
+
+<strong>请求体:</strong>
+<code></code>`json
+{
+  "new_due_date": "2027-01-15",
+  "extend_reason": "双方协商展期3个月",
+  "interest_diff": 0.00,
+  "remark": "与YY供应商协商展期"
+}
+<code></code>`
+
+<h3>6.5 应付票据台账查询</h3>
+
+<code></code>`
+GET /api/v1/payable-bills?status=holding&page=1&size=20&sort=due_date&order=asc
+<code></code>`
+
+<h3>6.6 备付金需求查询</h3>
+
+<code></code>`
+GET /api/v1/payable-bills/reserve-forecast?days=30
+<code></code>`
+
+<strong>响应:</strong>
+<code></code>`json
+{
+  "code": 0,
+  "data": {
+    "period": "2026-04-15 ~ 2026-05-15",
+    "total_due_amount": 1250000.00,
+    "bills": [
+      {
+        "bill_no": "PBILL2026040001",
+        "face_amount": 300000.00,
+        "due_date": "2026-04-20",
+        "days_remaining": 5,
+        "payee": "YY供应商有限公司",
+        "bill_type": "银行承兑汇票",
+        "status": "持有中"
+      }
+    ],
+    "weekly_breakdown": [
+      {"week": "4/15-4/21", "amount": 300000.00, "count": 1},
+      {"week": "4/22-4/28", "amount": 200000.00, "count": 1},
+      {"week": "4/29-5/5", "amount": 750000.00, "count": 2}
+    ]
+  }
+}
+<code></code>`
+
+---
+
+<h2>7. 备付金管理机制</h2>
+
+<h3>7.1 备付金预测规则</h3>
+
+<code></code>`python
+def calculate_reserve_forecast(days: int = 30) -> dict:
+    """
+    计算未来N天的应付票据备付金需求
+    """
+    today = date.today()
+    end_date = today + timedelta(days=days)
+    
+    # 查询持有中的应付票据
+    bills = PayableBill.query.filter(
+        PayableBill.status == PayableBillStatus.HOLDING,
+        PayableBill.due_date.between(today, end_date),
+        PayableBill.is_deleted == 0
+    ).order_by(PayableBill.due_date).all()
+    
+    # 银承 vs 商承分类
+    bank_acceptance = [b for b in bills if b.bill_type == 1]
+    commercial_acceptance = [b for b in bills if b.bill_type == 2]
+    
+    return {
+        'total': sum(b.face_amount for b in bills),
+        'bank_acceptance_total': sum(b.face_amount for b in bank_acceptance),
+        'commercial_acceptance_total': sum(b.face_amount for b in commercial_acceptance),
+        'bills': bills,
+        'margin_already_deposited': sum(b.margin_amount for b in bank_acceptance),
+        'actual_cash_needed': sum(b.face_amount for b in commercial_acceptance) + 
+            sum(b.face_amount - b.margin_amount for b in bank_acceptance)
+    }
+<code></code>`
+
+<h3>7.2 备付金预警</h3>
+
+<tr><td>级别</td><td>条件</td><td>措施</td></tr>
+
+<tr><td>🟢 正常</td><td>可用资金 ≥ 应付票据到期总额</td><td>无需额外操作</td></tr>
+<tr><td>🟡 关注</td><td>可用资金 ≥ 总额的80%</td><td>通知资金岗关注</td></tr>
+<tr><td>🟠 警告</td><td>可用资金 ≥ 总额的50%</td><td>启动头寸调拨流程</td></tr>
+<tr><td>🔴 紧急</td><td>可用资金 < 总额的50%</td><td>紧急资金调度+管理层预警</td></tr>
+
+<h3>7.3 银承保证金管理</h3>
+
+<code></code>`python
+class MarginRule:
+    """银行承兑汇票保证金规则"""
+    
+    # 保证金比例参考（具体以银行协议为准）
+    MARGIN_RATIOS = {
+        'AAA': 0,        # AAA级企业免保证金
+        'AA': 10,        # AA级10%
+        'A': 30,         # A级30%
+        'BBB': 50,       # BBB级50%
+        'BB_below': 100  # BB及以下全额保证金
+    }
+    
+    @staticmethod
+    def calculate_margin(face_amount: float, credit_rating: str) -> dict:
+        ratio = MarginRule.MARGIN_RATIOS.get(credit_rating, 100)
+        margin = round(face_amount * ratio / 100, 2)
+        return {
+            'face_amount': face_amount,
+            'credit_rating': credit_rating,
+            'margin_ratio': ratio,
+            'margin_amount': margin,
+            'free_amount': face_amount - margin
+        }
+<code></code>`
+
+---
+
+<h2>8. 安全与风控</h2>
+
+<h3>8.1 应付票据风险控制</h3>
+
+<tr><td>风控点</td><td>规则</td></tr>
+
+<tr><td>开票总额控制</td><td>单一供应商应付票据总额不超过应付余额的80%</td></tr>
+<tr><td>商承信用要求</td><td>开出商业承兑汇票前必须通过企业信用评估</td></tr>
+<tr><td>大额审批</td><td>票面金额≥50万需总经理审批</td></tr>
+<tr><td>到期违约预警</td><td>距到期3天资金未到位，升级为紧急事件</td></tr>
+<tr><td>展期限制</td><td>同一票据最多展期2次，总期限不超过12个月</td></tr>
+<tr><td>退回监控</td><td>月度退回率超过10%触发内部审查</td></tr>
+
+<h3>8.2 操作权限</h3>
+
+<tr><td>操作</td><td>角色</td><td>说明</td></tr>
+
+<tr><td>票据开立申请</td><td>出纳/财务</td><td>基础权限</td></tr>
+<tr><td>开票审批</td><td>财务主管/财务总监/总经理</td><td>按金额阈值</td></tr>
+<tr><td>纸质票交付</td><td>出纳</td><td>实物交接</td></tr>
+<tr><td>到期付款确认</td><td>出纳（执行）+ 财务主管（确认）</td><td>双人控制</td></tr>
+<tr><td>票据展期</td><td>财务主管（申请）+ 财务总监（审批）</td><td>影响付款节奏</td></tr>
+<tr><td>背书收票验证</td><td>出纳（接收）+ 财务主管（审批）</td><td>防止假票/瑕疵票</td></tr>
+<tr><td>台账查询</td><td>出纳/财务/主管</td><td>按角色过滤</td></tr>
+<tr><td>备付金预测</td><td>资金岗/财务主管</td><td>资金规划</td></tr>
+
+<h3>8.3 银企对接安全</h3>
+
+<tr><td>措施</td><td>说明</td></tr>
+
+<tr><td>付款指令校验</td><td>付款金额+收款方+票据号三重核对</td></tr>
+<tr><td>U盾双签</td><td>大额付款（≥10万）需U盾双签</td></tr>
+<tr><td>指令追踪</td><td>每笔银企指令全链路可查</td></tr>
+<tr><td>异常拦截</td><td>超时/失败指令自动冻结，人工处理</td></tr>
+
+---
+
+<h2>9. 测试用例</h2>
+
+<h3>9.1 核心测试场景</h3>
+
+<tr><td>#</td><td>场景</td><td>前置条件</td><td>操作</td><td>预期结果</td></tr>
+
+<tr><td>PT01</td><td>正常开立银承汇票</td><td>应付明细存在</td><td>选应付 → 填票据信息 → 提交审批 → 审批通过 → 交付确认</td><td>状态=持有中，生成凭证PA01</td></tr>
+<tr><td>PT02</td><td>开票金额超限</td><td>应付余额10万</td><td>尝试开15万票据</td><td>拒绝并提示"超出应付余额"</td></tr>
+<tr><td>PT03</td><td>到期自动付款（银承）</td><td>银承持有中到期</td><td>系统触发预警 → 确认资金 → 银行自动扣款</td><td>状态=已兑付，生成凭证PA03</td></tr>
+<tr><td>PT04</td><td>到期手工付款（商承）</td><td>商承持有中到期</td><td>预警 → 出纳确认 → 发起银企付款 → 银行回单</td><td>状态=已兑付，生成凭证PA03</td></tr>
+<tr><td>PT05</td><td>资金不足到期</td><td>账户余额不足</td><td>到期预警触发 → 发现资金缺口</td><td>触发紧急预警，提示头寸调拨</td></tr>
+<tr><td>PT06</td><td>票据展期</td><td>持有中票据</td><td>协商展期 → 申请 → 审批 → 新旧替换</td><td>旧票据状态=已展期，新票据=持有中，生成PA04</td></tr>
+<tr><td>PT07</td><td>背书收票抵付</td><td>供应商背书票据</td><td>接收 → 验证 → 信用评估 → 审批 → 核销</td><td>应付核销，应收票据入池，生成PA05</td></tr>
+<tr><td>PT08</td><td>收票验证失败</td><td>票据有瑕疵</td><td>验证发现背书链断裂</td><td>拒绝接受，通知供应商</td></tr>
+<tr><td>PT09</td><td>票据退回</td><td>持有中票据</td><td>供应商退回 → 确认 → 更新状态</td><td>状态=已退回，恢复应付账款，生成PA06</td></tr>
+<tr><td>PT10</td><td>备付金预测</td><td>多张票据到期</td><td>查询30天备付金需求</td><td>返回分周汇总+总额+银承/商承分类</td></tr>
+<tr><td>PT11</td><td>保证金利息</td><td>银承持有中</td><td>保证金利息结算日</td><td>生成凭证PA07</td></tr>
+<tr><td>PT12</td><td>状态机校验</td><td>已兑付票据</td><td>尝试展期操作</td><td>拒绝操作，提示"票据已兑付"</td></tr>
+
+---
+
+<h2>10. 实施路线图</h2>
+
+<h3>10.1 MVP阶段（约8个工作日）</h3>
+
+<code></code>`
+Phase PP1-A: 基础框架 (2天)
+├── Day 1: 数据库建表（payable_bill + payable_bill_settlement）
+│   └── 交付: DDL + 索引 + bill_note扩展字段
+├── Day 2: 应付票据开立API + 编号生成 + 校验规则
+│   └── 交付: POST /api/v1/payable-bills + 编号生成器
+
+Phase PP1-B: 核心流转 (4天)
+├── Day 3-4: 到期付款流程（预警+付款确认+银企指令+凭证PA03）
+├── Day 5: 背书收票抵付（接收+验证+核销+凭证PA05）
+├── Day 6: 票据展期+退回处理（凭证PA04/PA06）
+│   └── 交付: 3种核心处置的完整API
+
+Phase PP1-C: 台账+预警 (2天)
+├── Day 7: 应付票据台账 + 到期预警 + 备付金预测
+├── Day 8: 集成测试 + 与应收票据模块联动测试
+│   └── 交付: 台账视图 + 预警系统 + 测试报告
+<code></code>`
+
+<h3>10.2 增强阶段（约5个工作日）</h3>
+
+<code></code>`
+Phase PP2-A: 高级功能 (3天)
+├── 保证金管理（台账+利息结算+凭证PA07）
+├── 电子票签发对接（ECDS预留接口）
+├── 银企直连付款指令自动化
+│   └── 交付: 保证金管理 + ECDS预留 + 银企自动化
+
+Phase PP2-B: 统计分析 (2天)
+├── 供应商维度应付票据汇总
+├── 票据成本分析（保证金占用+利息支出）
+├── 应收+应付统一票据池视图
+│   └── 交付: 3个统计视图
+<code></code>`
+
+---
+
+<h2>附录</h2>
+
+<h3>A. 应付票据编号规则</h3>
+
+<tr><td>项目</td><td>应收票据</td><td>应付票据</td></tr>
+
+<tr><td>前缀</td><td><code>BILL</code></td><td><code>PBILL</code></td></tr>
+<tr><td>格式</td><td>BILL+YYYYMM+序号</td><td>PBILL+YYYYMM+序号</td></tr>
+<tr><td>示例</td><td>BILL2026040001</td><td>PBILL2026040001</td></tr>
+<tr><td>区分目的</td><td>便于快速识别票据方向</td><td>一目了然我方是持票人还是付款人</td></tr>
+
+<h3>B. 与实付付款模块的关联</h3>
+
+<code></code>`
+实付付款模块                      应付票据模块
+┌───────────────┐              ┌───────────────┐
+│ 付款单        │──付款方式──→│ 票据开立       │
+│ payment      │   =票据     │ payable_bill  │
+│               │              │               │
+│ 付款方式枚举:  │              │ 票据类型枚举:   │
+│ - 银行转账    │              │ 1=银行承兑汇票  │
+│ - 现金        │              │ 2=商业承兑汇票  │
+│ - 承兑汇票 ←──│──────────────│               │
+└───────────────┘              └───────────────┘
+<code></code>`
+
+<h3>C. 数据表对照</h3>
+
+<tr><td>业务概念</td><td>应收票据表</td><td>应付票据表</td></tr>
+
+<tr><td>主表</td><td><code>bill_note</code></td><td><code>payable_bill</code></td></tr>
+<tr><td>流水表</td><td><code>bill_transaction</code></td><td><code>payable_bill_settlement</code></td></tr>
+<tr><td>编号前缀</td><td>BILL</td><td>PBILL</td></tr>
+<tr><td>会计科目</td><td>1121 应收票据</td><td>2201 应付票据</td></tr>
+<tr><td>当事人</td><td>drawer=客户, payee=我方</td><td>drawer=我方, payee=供应商</td></tr>
+<tr><td>关联单据</td><td>receipt_id (收款单)</td><td>payment_id (付款单)</td></tr></table>
+
+  </div>
+</div>
+</body>
+</html>
