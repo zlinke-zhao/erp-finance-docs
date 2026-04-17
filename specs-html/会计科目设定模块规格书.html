@@ -4,405 +4,263 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>会计科目设定模块规格书</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
-            line-height: 1.8;
-            color: #333;
-            background: #f5f7fa;
-            padding: 20px;
+            font-family: 'Noto Sans SC', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            line-height: 1.9;
+            color: #2d3748;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8ec 100%);
+            min-height: 100vh;
+            padding: 30px 20px;
         }
         .container {
-            max-width: 1200px;
+            max-width: 1100px;
             margin: 0 auto;
             background: #fff;
-            border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
         }
         .doc-header {
-            text-align: center;
-            padding-bottom: 30px;
-            border-bottom: 2px solid #e8ecf1;
-            margin-bottom: 30px;
-        }
-        .doc-header h1 {
-            font-size: 32px;
-            color: #1a1a2e;
-            margin-bottom: 15px;
-        }
-        .doc-meta {
-            display: flex;
-            justify-content: center;
-            gap: 30px;
-            flex-wrap: wrap;
-        }
-        .meta-item {
-            background: #f0f4f8;
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 14px;
-            color: #5a6c7d;
-        }
-        h2 {
-            font-size: 24px;
-            color: #1a1a2e;
-            margin: 30px 0 15px;
-            padding-bottom: 10px;
-            border-bottom: 3px solid #3498db;
-        }
-        h3 {
-            font-size: 18px;
-            color: #2c3e50;
-            margin: 25px 0 12px;
-        }
-        p {
-            margin-bottom: 15px;
-            text-align: justify;
-        }
-        
-        /* 代码块样式 */
-        .code-block {
-            margin: 20px 0;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-        .code-header {
-            background: #2d3748;
-            color: #fff;
-            padding: 8px 16px;
-            font-size: 12px;
-            font-weight: 600;
-            text-transform: uppercase;
-        }
-        .code-block pre {
-            background: #1a202c;
-            color: #e2e8f0;
-            padding: 20px;
-            overflow-x: auto;
-            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
-            font-size: 13px;
-            line-height: 1.6;
-        }
-        .code-block code {
-            font-family: inherit;
-        }
-        .inline-code {
-            background: #f0f4f8;
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-family: 'Consolas', 'Monaco', monospace;
-            font-size: 0.9em;
-            color: #e53e3e;
-        }
-        
-        /* 表格样式 */
-        .data-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 20px 0;
-            font-size: 14px;
-        }
-        .data-table th {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: #fff;
-            padding: 14px;
-            text-align: left;
-            font-weight: 600;
+            padding: 40px;
+            text-align: center;
         }
-        .data-table td {
-            padding: 12px 14px;
-            border-bottom: 1px solid #e8ecf1;
-        }
-        .data-table tr:hover {
-            background: #f8fafc;
-        }
-        
-        /* 列表样式 */
-        ul {
-            margin: 15px 0;
-            padding-left: 25px;
-        }
-        li {
-            margin-bottom: 8px;
-        }
-        
-        /* 架构图/流程图容器 */
-        .diagram-container {
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
-            border-radius: 8px;
-            padding: 20px;
-            margin: 20px 0;
-            overflow-x: auto;
-        }
-        .diagram-container pre {
-            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
-            font-size: 12px;
-            line-height: 1.4;
-            color: #2d3748;
-        }
-        
-        /* 接口卡片 */
-        .api-card {
-            background: #f8fafc;
-            border-left: 4px solid #3498db;
-            padding: 20px;
-            margin: 15px 0;
-            border-radius: 0 8px 8px 0;
-        }
-        .api-method {
-            display: inline-block;
-            padding: 4px 10px;
-            border-radius: 4px;
-            font-size: 12px;
-            font-weight: 600;
-            margin-right: 10px;
-        }
-        .api-method.get { background: #48bb78; color: #fff; }
-        .api-method.post { background: #4299e1; color: #fff; }
-        .api-method.put { background: #ed8936; color: #fff; }
-        .api-method.delete { background: #f56565; color: #fff; }
-        .api-path {
-            font-family: 'Consolas', monospace;
-            font-size: 14px;
-            color: #2d3748;
-        }
-        .api-section {
-            margin-top: 15px;
-        }
-        .api-section-title {
-            font-weight: 600;
-            color: #4a5568;
-            margin-bottom: 8px;
-            font-size: 13px;
-            text-transform: uppercase;
-        }
-        
-        /* 警告框 */
-        .alert {
-            padding: 16px 20px;
-            border-radius: 8px;
-            margin: 20px 0;
-        }
-        .alert-info {
-            background: #ebf8ff;
-            border-left: 4px solid #4299e1;
-        }
-        .alert-warning {
-            background: #fffaf0;
-            border-left: 4px solid #ed8936;
-        }
-        .alert-success {
-            background: #f0fff4;
-            border-left: 4px solid #48bb78;
-        }
-        
-        /* 状态标签 */
-        .status-badge {
-            display: inline-block;
-            padding: 4px 10px;
-            border-radius: 12px;
-            font-size: 12px;
-            font-weight: 500;
-        }
-        .status-done { background: #c6f6d5; color: #22543d; }
-        .status-pending { background: #feebc8; color: #744210; }
-        .status-deprecated { background: #fed7d7; color: #742a2a; }
+        .doc-header h1 { font-size: 28px; font-weight: 600; margin-bottom: 15px; }
+        .doc-meta { display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; }
+        .meta-item { background: rgba(255,255,255,0.2); padding: 6px 14px; border-radius: 20px; font-size: 13px; }
+        .content { padding: 40px; }
+        h2 { font-size: 22px; color: #1a202c; margin: 35px 0 18px; padding-bottom: 10px; border-bottom: 3px solid #667eea; }
+        h3 { font-size: 18px; color: #2d3748; margin: 28px 0 14px; }
+        h4 { font-size: 16px; color: #4a5568; margin: 20px 0 10px; }
+        p { margin-bottom: 12px; }
+        .md-table { width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 14px; border-radius: 8px; overflow: hidden; border: 1px solid #e2e8f0; }
+        .md-table th { background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%); color: #fff; padding: 14px 16px; text-align: left; font-weight: 600; }
+        .md-table td { padding: 12px 16px; border-bottom: 1px solid #f1f5f9; }
+        .md-table tr:hover td { background: #f8fafc; }
+        .md-table tr:last-child td { border-bottom: none; }
+        .inline-code { background: #f1f5f9; color: #e53e3e; padding: 2px 7px; border-radius: 4px; font-family: 'JetBrains Mono', monospace; font-size: 0.88em; }
+        .code-block { margin: 22px 0; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        .code-header { background: #1e293b; color: #94a3b8; padding: 8px 16px; font-size: 11px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; font-family: 'JetBrains Mono', monospace; }
+        .sql-block .code-header { background: #065f46; }
+        .code-block pre { background: #0f172a; color: #e2e8f0; padding: 20px; overflow-x: auto; font-family: 'JetBrains Mono', monospace; font-size: 13px; line-height: 1.65; }
+        .code-block code { font-family: inherit; }
+        .gherkin-block { margin: 22px 0; border-radius: 10px; overflow: hidden; background: #fefce8; border: 1px solid #fbbf24; }
+        .gherkin-header { background: #f59e0b; color: #fff; padding: 8px 16px; font-size: 12px; font-weight: 600; }
+        .gherkin-content { padding: 18px; font-family: 'JetBrains Mono', monospace; font-size: 13px; line-height: 1.7; color: #78350f; white-space: pre-wrap; }
+        .csv-block { margin: 22px 0; border-radius: 10px; overflow: hidden; background: #f0fdf4; border: 1px solid #86efac; }
+        .csv-header { background: #22c55e; color: #fff; padding: 8px 16px; font-size: 12px; font-weight: 600; }
+        .csv-content { padding: 18px; font-family: 'JetBrains Mono', monospace; font-size: 13px; line-height: 1.6; color: #166534; overflow-x: auto; }
+        .ascii-diagram { margin: 22px 0; border-radius: 10px; overflow: hidden; background: #f8fafc; border: 1px solid #cbd5e1; }
+        .ascii-header { background: #475569; color: #fff; padding: 8px 16px; font-size: 12px; font-weight: 600; }
+        .ascii-content { padding: 20px; font-family: 'JetBrains Mono', 'Consolas', monospace; font-size: 13px; line-height: 1.45; color: #1e293b; white-space: pre; overflow-x: auto; }
+        .md-quote { margin: 18px 0; padding: 16px 20px; background: #eff6ff; border-left: 4px solid #3b82f6; border-radius: 0 8px 8px 0; color: #1e40af; }
+        ul { margin: 12px 0; padding-left: 28px; }
+        li { margin-bottom: 8px; }
+        .back-link { display: inline-block; margin: 20px 40px; padding: 10px 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #fff; text-decoration: none; border-radius: 8px; font-weight: 500; }
+        @media (max-width: 768px) { .content { padding: 20px; } .doc-header { padding: 25px; } .doc-header h1 { font-size: 22px; } }
     </style>
 </head>
 <body>
+    <a href="https://zlinke-zhao.github.io/erp-finance-docs/" class="back-link">← 返回入口</a>
     <div class="container">
         <div class="doc-header">
             <h1>会计科目设定模块规格书</h1>
             <div class="doc-meta">
-                <span class="meta-item">📅 版本: V1.0</span>
-                <span class="meta-item">👥 产品团队</span>
+                <span class="meta-item">📅 V1.0</span>
+                <span class="meta-item">👥 Dev_Dept</span>
                 <span class="meta-item">📋 需求规格说明书</span>
             </div>
         </div>
-        <h1>会计科目设定模块需求分析文档</h1>
+        <div class="content"><h1>会计科目设定模块需求分析文档</h1>
 
-<strong>文档版本：</strong> V1.0  
-<strong>编制日期：</strong> 2026-04-08  
-<strong>编制团队：</strong> Dev_Dept  
-<strong>参考系统：</strong> 金蝶云星空（Kingdee Cloud COS）  
-<strong>适用架构：</strong> C/S 架构 + MS SQL Server  
+<p><strong>文档版本：</strong> V1.0  </p>
+<p><strong>编制日期：</strong> 2026-04-08  </p>
+<p><strong>编制团队：</strong> Dev_Dept  </p>
+<p><strong>参考系统：</strong> 金蝶云星空（Kingdee Cloud COS）  </p>
+<p><strong>适用架构：</strong> C/S 架构 + MS SQL Server  </p>
 
----
+<li>--</li>
 
-<h2>一、模块定位与业务背景</h2>
+<h2>一、模块定位与业务背景</h2>
 
-<h3>1.1 模块地位</h3>
+<h3>1.1 模块地位</h3>
 
-会计科目是财务管理系统的基础数据源，所有财务业务（凭证、账簿、报表、应收应付、固定资产、成本核算、预算管理）均依赖科目体系。一旦科目结构确定，后续模块的账务处理逻辑将被锚定。因此，会计科目设定是整个财务管理系统<strong>第一个需要完整规划的核心模块</strong>。
+<p>会计科目是财务管理系统的基础数据源，所有财务业务（凭证、账簿、报表、应收应付、固定资产、成本核算、预算管理）均依赖科目体系。一旦科目结构确定，后续模块的账务处理逻辑将被锚定。因此，会计科目设定是整个财务管理系统<strong>第一个需要完整规划的核心模块</strong>。</p>
 
-> 本模块对应金蝶云星空 → <strong>基础资料 → 会计科目</strong>，支持多账套、多币别、数量核算、辅助核算等完整特性。
+<blockquote class="md-quote">本模块对应金蝶云星空 → **基础资料 → 会计科目**，支持多账套、多币别、数量核算、辅助核算等完整特性。</blockquote>
 
-<h3>1.2 当前差距分析</h3>
+<h3>1.2 当前差距分析</h3>
 
-基于 ERP 功能菜单（877 条）梳理结果，现有财务相关功能约 90 条，<strong>会计科目模块严重缺失</strong>，主要表现：
+<p>基于 ERP 功能菜单（877 条）梳理结果，现有财务相关功能约 90 条，<strong>会计科目模块严重缺失</strong>，主要表现：</p>
 
-| 缺失项 | 现状 | 影响 |
-|---|---|---|
-| 会计科目体系 | ❌ 无科目定义功能 | 无法进行标准账务处理 |
-| 科目级次/维度管理 | ❌ 无 | 无法支持多维度辅助核算 |
-| 科目余额初始化 | ❌ 无 | 无法启用账务系统 |
-| 科目受控字段 | ❌ 无 | 各模块字段标准不统一 |
-| 多账套科��管理 | ❌ 仅 1 个"公司帐套" | 无法支撑多组织财务集中 |
+<table class="md-table"><thead><tr><th>缺失项</th><th>现状</th><th>影响</th></tr></thead><tbody><tr><td>会计科目体系</td><td>❌ 无科目定义功能</td><td>无法进行标准账务处理</td></tr><tr><td>科目级次/维度管理</td><td>❌ 无</td><td>无法支持多维度辅助核算</td></tr><tr><td>科目余额初始化</td><td>❌ 无</td><td>无法启用账务系统</td></tr><tr><td>科目受控字段</td><td>❌ 无</td><td>各模块字段标准不统一</td></tr><tr><td>多账套科��管理</td><td>❌ 仅 1 个"公司帐套"</td><td>无法支撑多组织财务集中</td></tr></tbody></table>
 
----
+<li>--</li>
 
-<h2>二、功能范围与边界</h2>
+<h2>二、功能范围与边界</h2>
 
-<h3>2.1 核心功能范围（Must Have）</h3>
+<h3>2.1 核心功能范围（Must Have）</h3>
 
-| 功能域 | 功能点 | 说明 |
-|---|---|---|
-| <strong>科目体系管理</strong> | 新增/编辑/删除/复制科目 | 支持多级科目（1-10 级） |
-| | 科目编码规则配置 | 4-2-2-2-2 等自由定义 |
-| | 科目类型定义 | 资产/负债/权益/成本/损益/表外 |
-| | 余额方向设置 | 借/贷 |
-| | 现金/银行/数量科目标记 | 影响现金流量表和成本核算 |
-| <strong>辅助核算维度</strong> | 部门/人员/供应商/客户/项目/物料/自定义维度 | 支持多辅助核算并行 |
-| | 核算维度层级管理 | 如部门树形结构 |
-| <strong>账套级科目分配</strong> | 科目与账套关联 | 同一科目在不同账套可有不同控制策略 |
-| | 科目受控模块设置 | 科目在哪些模块可用 |
-| <strong>启用控制</strong> | 科目启用/禁用 | 禁用后不可新增凭证 |
-| | 已使用科目锁定 | 有发生额的科目禁止删除 |
-| <strong>余额初始化</strong> | 科目期初余额录入 | 支持多期间、多币别、数量 |
-| | 试算平衡校验 | 借方合计=贷方合计 |
+<table class="md-table"><thead><tr><th>功能域</th><th>功能点</th><th>说明</th></tr></thead><tbody><tr><td><strong>科目体系管理</strong></td><td>新增/编辑/删除/复制科目</td><td>支持多级科目（1-10 级）</td></tr><tr><td>科目编码规则配置</td><td>4-2-2-2-2 等自由定义</td></tr><tr><td>科目类型定义</td><td>资产/负债/权益/成本/损益/表外</td></tr><tr><td>余额方向设置</td><td>借/贷</td></tr><tr><td>现金/银行/数量科目标记</td><td>影响现金流量表和成本核算</td></tr><tr><td><strong>辅助核算维度</strong></td><td>部门/人员/供应商/客户/项目/物料/自定义维度</td><td>支持多辅助核算并行</td></tr><tr><td>核算维度层级管理</td><td>如部门树形结构</td></tr><tr><td><strong>账套级科目分配</strong></td><td>科目与账套关联</td><td>同一科目在不同账套可有不同控制策略</td></tr><tr><td>科目受控模块设置</td><td>科目在哪些模块可用</td></tr><tr><td><strong>启用控制</strong></td><td>科目启用/禁用</td><td>禁用后不可新增凭证</td></tr><tr><td>已使用科目锁定</td><td>有发生额的科目禁止删除</td></tr><tr><td><strong>余额初始化</strong></td><td>科目期初余额录入</td><td>支持多期间、多币别、数量</td></tr><tr><td>试算平衡校验</td><td>借方合计=贷方合计</td></tr></tbody></table>
 
-<h3>2.2 扩展功能范围（Should Have）</h3>
+<h3>2.2 扩展功能范围（Should Have）</h3>
 
-| 功能点 | 说明 |
-|---|---|
-| 科目受控字段 | 统一管理字段长度/必填/默认值 |
-| 科目模板导入/导出 | Excel 模板批量新增 |
-| 历史科目版本管理 | 科目变更留痕 |
-| 科目体系复制 | 以现有账套科目为模板新建账套 |
-| 多语言科目名称 | 支持中英文双语 |
+<table class="md-table"><thead><tr><th>功能点</th><th>说明</th></tr></thead><tbody><tr><td>科目受控字段</td><td>统一管理字段长度/必填/默认值</td></tr><tr><td>科目模板导入/导出</td><td>Excel 模板批量新增</td></tr><tr><td>历史科目版本管理</td><td>科目变更留痕</td></tr><tr><td>科目体系复制</td><td>以现有账套科目为模板新建账套</td></tr><tr><td>多语言科目名称</td><td>支持中英文双语</td></tr></tbody></table>
 
-<h3>2.3 非功能范围（Won't Have）</h3><ul><li><strong>跨年结账/反结账</strong>：属于总账凭证管理模块</li></ul><ul><li><strong>凭证自动生成规则</strong>：属于凭证生成模块</li></ul><ul><li><strong>报表取数公式</strong>：属于财务报表模块</li></ul><ul><li><strong>与税务系统对接的科目映射</strong>：属于发票管理模块</li></ul>
+<h3>2.3 非功能范围（Won't Have）</h3>
 
----
+<li>**跨年结账/反结账**：属于总账凭证管理模块</li>
+<li>**凭证自动生成规则**：属于凭证生成模块</li>
+<li>**报表取数公式**：属于财务报表模块</li>
+<li>**与税务系统对接的科目映射**：属于发票管理模块</li>
 
-<h2>三、用户故事（User Stories）</h2>
+<li>--</li>
 
-<h3>3.1 基础科目管理</h3>
+<h2>三、用户故事（User Stories）</h2>
 
-``<code class="inline-code">
-【故事 1】作为财务管理员，我需要新增末级科目，以便完成科目体系的搭建。<ul><li>给定：我已登录系统并进入"会计科目设定"界面</li></ul><ul><li>当：我点击"新增科目"，填写编码"1002"、名称"银行存款"，选择余额方向为"借"、科目类型为"资产"</li></ul><ul><li>则：系统保存科目，并在科目树中显示，刷新后可见</li></ul>
+<h3>3.1 基础科目管理</h3>
 
-【故事 2】作为财务管理员，我需要在科目下新增下级科目，以便细化核算颗粒度。<ul><li>给定：科目"1002 银行存款"已存在</li></ul><ul><li>当：我新增下级科目"100201 中国银行"</li></ul><ul><li>则：原科目"1002"自动变为非末级（父级），不能再作为凭证借贷方使用</li></ul>
+<div class="code-block">
+  <div class="code-header">CODE</div>
+  <pre class="language-"><code>【故事 1】作为财务管理员，我需要新增末级科目，以便完成科目体系的搭建。
+  - 给定：我已登录系统并进入"会计科目设定"界面
+  - 当：我点击"新增科目"，填写编码"1002"、名称"银行存款"，选择余额方向为"借"、科目类型为"资产"
+  - 则：系统保存科目，并在科目树中显示，刷新后可见
 
-【故事 3】作为财务管理员，我需要复制科目，以便快速批量创建相似科目。<ul><li>给定：科目"6602 销售费用"及其辅助核算设置已配置完毕</li></ul><ul><li>当：我选中该科目，点击"复制"，修改编码为"6603"、名称为"管理费用"</li></ul><ul><li>则：新建科目继承原科目的余额方向、辅助核算等属性，仅编码和名称不同</li></ul>
+【故事 2】作为财务管理员，我需要在科目下新增下级科目，以便细化核算颗粒度。
+  - 给定：科目"1002 银行存款"已存在
+  - 当：我新增下级科目"100201 中国银行"
+  - 则：原科目"1002"自动变为非末级（父级），不能再作为凭证借贷方使用
 
-【故事 4】作为财务管理员，我需要禁用已停用的科目，以便在界面上隐藏不再使用的科目。<ul><li>给定：科目"100199 其他货币资金"无任何发生额和余额</li></ul><ul><li>当：我将该科目状态改为"禁用"</li></ul><ul><li>则：该科目不再出现在凭证录入的科目选择列表中，但数据库记录保留</li></ul>
+【故事 3】作为财务管理员，我需要复制科目，以便快速批量创建相似科目。
+  - 给定：科目"6602 销售费用"及其辅助核算设置已配置完毕
+  - 当：我选中该科目，点击"复制"，修改编码为"6603"、名称为"管理费用"
+  - 则：新建科目继承原科目的余额方向、辅助核算等属性，仅编码和名称不同
 
-【故事 5】作为系统管理员，我需要删除错误录入的科目，以便修正初始化失误。<ul><li>给定：某科目从未被任何单据/凭证引用</li></ul><ul><li>当：我选中该科目并点击"删除"</li></ul><ul><li>则：系统弹出确认框，提示"确定删除？"，确认后删除并刷新列表</li></ul>
+【故事 4】作为财务管理员，我需要禁用已停用的科目，以便在界面上隐藏不再使用的科目。
+  - 给定：科目"100199 其他货币资金"无任何发生额和余额
+  - 当：我将该科目状态改为"禁用"
+  - 则：该科目不再出现在凭证录入的科目选择列表中，但数据库记录保留
 
-【故事 6】作为系统管理员，我需要防止删除已被使用的科目，以避免账务数据孤岛。<ul><li>给定：科目"1001 库存现金"已被某张凭证引用</li></ul><ul><li>当：我尝试删除该科目</li></ul><ul><li>则：系统拦截并提示"该科目已被使用，无法删除"</li></ul>
-</code>`<code class="inline-code">
+【故事 5】作为系统管理员，我需要删除错误录入的科目，以便修正初始化失误。
+  - 给定：某科目从未被任何单据/凭证引用
+  - 当：我选中该科目并点击"删除"
+  - 则：系统弹出确认框，提示"确定删除？"，确认后删除并刷新列表
 
-<h3>3.2 辅助核算维度管理</h3>
+【故事 6】作为系统管理员，我需要防止删除已被使用的科目，以避免账务数据孤岛。
+  - 给定：科目"1001 库存现金"已被某张凭证引用
+  - 当：我尝试删除该科目
+  - 则：系统拦截并提示"该科目已被使用，无法删除"</code></pre>
+</div>
 
-</code>`<code class="inline-code">
-【故事 7】作为财务管理员，我需要为科目绑定"部门"辅助核算，以便按部门归集���用。<ul><li>给定：科目"6602 销售费用"未设置辅助核算</li></ul><ul><li>当：我勾选"部门"辅助核算并选择"多选"</li></ul><ul><li>则：该科目在凭证录入时必须选择具体部门，系统按部门维度归集账簿</li></ul>
+<h3>3.2 辅助核算维度管理</h3>
 
-【故事 8】作为财务管理员，我需要为科目绑定"项目"辅助核算，以便按项目单独核算成本。<ul><li>给定：科目"5001 项目成本"未设置辅助核算</li></ul><ul><li>当：我勾选"项目"辅助核算</li></ul><ul><li>则：该科目在凭证录入时必须选择具体项目，可按项目出具辅助账簿</li></ul>
+<div class="code-block">
+  <div class="code-header">CODE</div>
+  <pre class="language-"><code>【故事 7】作为财务管理员，我需要为科目绑定"部门"辅助核算，以便按部门归集���用。
+  - 给定：科目"6602 销售费用"未设置辅助核算
+  - 当：我勾选"部门"辅助核算并选择"多选"
+  - 则：该科目在凭证录入时必须选择具体部门，系统按部门维度归集账簿
 
-【故事 9】作为财务管理员，我需要科目同时支持多个辅助核算维度，以便满足复杂业务场景。<ul><li>给定：科目"660201 差旅费"需要同时按部门和项目核算</li></ul><ul><li>当：我勾选"部门"和"项目"两个辅助核算维度</li></ul><ul><li>则：该科目在凭证录入时需同时选择部门和项目，系统支持双向交叉账簿</li></ul>
-</code>`<code class="inline-code">
+【故事 8】作为财务管理员，我需要为科目绑定"项目"辅助核算，以便按项目单独核算成本。
+  - 给定：科目"5001 项目成本"未设置辅助核算
+  - 当：我勾选"项目"辅助核算
+  - 则：该科目在凭证录入时必须选择具体项目，可按项目出具辅助账簿
 
-<h3>3.3 账套与科目分配</h3>
+【故事 9】作为财务管理员，我需要科目同时支持多个辅助核算维度，以便满足复杂业务场景。
+  - 给定：科目"660201 差旅费"需要同时按部门和项目核算
+  - 当：我勾选"部门"和"项目"两个辅助核算维度
+  - 则：该科目在凭证录入时需同时选择部门和项目，系统支持双向交叉账簿</code></pre>
+</div>
 
-</code>`<code class="inline-code">
-【故事 10】作为财务管理员，我需要将科目分配到特定账套，以便实现多账套独立核算。<ul><li>给定：系统中有"法人账套A"和"法人账套B"两个账套</li></ul><ul><li>当：我将科目"1002 银行存款"分配给"账套A"</li></ul><ul><li>则：该科目仅在账套A的凭证录入中可见，账套B不受影响</li></ul>
+<h3>3.3 账套与科目分配</h3>
 
-【故事 11】作为财务管理员，我需要设置科目在哪些模块受控，以便统一字段标准。<ul><li>给定：科目"1122 应收账款"需要在应收模块和总账模块受控</li></ul><ul><li>当：我勾选"应收模块"和"总账模块"</li></ul><ul><li>则：该科目的字段长度、必填等规则在两个模块保持一致</li></ul>
+<div class="code-block">
+  <div class="code-header">CODE</div>
+  <pre class="language-"><code>【故事 10】作为财务管理员，我需要将科目分配到特定账套，以便实现多账套独立核算。
+  - 给定：系统中有"法人账套A"和"法人账套B"两个账套
+  - 当：我将科目"1002 银行存款"分配给"账套A"
+  - 则：该科目仅在账套A的凭证录入中可见，账套B不受影响
 
-【故事 12】作为系统管理员，我需要复制整个账套的科目体系到新账套，以便快速启用新组织。<ul><li>给定：账套A有完整的科目体系（100+科目）</li></ul><ul><li>当：我使用"以账套A为模板新建账套B"</li></ul><ul><li>则：账套B自动复制账套A的所有科目及其属性，管理员仅需少量调整</li></ul>
-</code>`<code class="inline-code">
+【故事 11】作为财务管理员，我需要设置科目在哪些模块受控，以便统一字段标准。
+  - 给定：科目"1122 应收账款"需要在应收模块和总账模块受控
+  - 当：我勾选"应收模块"和"总账模块"
+  - 则：该科目的字段长度、必填等规则在两个模块保持一致
 
-<h3>3.4 余额初始化</h3>
+【故事 12】作为系统管理员，我需要复制整个账套的科目体系到新账套，以便快速启用新组织。
+  - 给定：账套A有完整的科目体系（100+科目）
+  - 当：我使用"以账套A为模板新建账套B"
+  - 则：账套B自动复制账套A的所有科目及其属性，管理员仅需少量调整</code></pre>
+</div>
 
-</code>`<code class="inline-code">
-【故事 13】作为财务主管，我需要在系统启用前录入科目期初余额，以便财务数据衔接。<ul><li>给定：系统处于初始化期间，尚未开账</li></ul><ul><li>当：我录入"1001 库存现金"的期初余额为借方 50,000 元</li></ul><ul><li>则：系统保存期初余额，在试算平衡表中显示</li></ul>
+<h3>3.4 余额初始化</h3>
 
-【故事 14】作为财务主管，我需要系统自动校验试算平衡，以便确保初始化数据正确。<ul><li>给定：我已录入所有科目的期初余额</li></ul><ul><li>当：我点击"试算平衡检查"</li></ul><ul><li>则：系统计算所有资产类科目余额合计与所有负债+权益类科目余额合计</li></ul><ul><li>若相等：提示"试算平衡，可以通过"</li></ul><ul><li>若不相等：提示差异金额，列出疑似错误科目</li></ul>
+<div class="code-block">
+  <div class="code-header">CODE</div>
+  <pre class="language-"><code>【故事 13】作为财务主管，我需要在系统启用前录入科目期初余额，以便财务数据衔接。
+  - 给定：系统处于初始化期间，尚未开账
+  - 当：我录入"1001 库存现金"的期初余额为借方 50,000 元
+  - 则：系统保存期初余额，在试算平衡表中显示
 
-【故事 15】作为财务主管，我需要录入多币别的期初余额，以便支持外币核算。<ul><li>给定：科目"1002 银行存款"已勾选"外币核算"</li></ul><ul><li>当：我录入期初余额为本位币 100,000、美元 13,800（汇率 7.25）</li></ul><ul><li>则：系统同时保存本位币余额和外币余额，汇率和币种一并记录</li></ul>
-</code>`<code class="inline-code">
+【故事 14】作为财务主管，我需要系统自动校验试算平衡，以便确保初始化数据正确。
+  - 给定：我已录入所有科目的期初余额
+  - 当：我点击"试算平衡检查"
+  - 则：系统计算所有资产类科目余额合计与所有负债+权益类科目余额合计
+        - 若相等：提示"试算平衡，可以通过"
+        - 若不相等：提示差异金额，列出疑似错误科目
 
----
+【故事 15】作为财务主管，我需要录入多币别的期初余额，以便支持外币核算。
+  - 给定：科目"1002 银行存款"已勾选"外币核算"
+  - 当：我录入期初余额为本位币 100,000、美元 13,800（汇率 7.25）
+  - 则：系统同时保存本位币余额和外币余额，汇率和币种一并记录</code></pre>
+</div>
 
-<h2>四、详细功能规格</h2>
+<li>--</li>
 
-<h3>4.1 科目体系结构</h3>
+<h2>四、详细功能规格</h2>
 
-#### 4.1.1 科目编码规则<ul><li><strong>编码格式</strong>：支持自由定义段数（1-5段）和每段长度（1-10位）</li></ul><ul><li><strong>推荐格式</strong>：</code>4-2-2-2-2<code class="inline-code">（共12位，5级）</li></ul><ul><li>示例：</code>1001<code class="inline-code"> → </code>1001.01<code class="inline-code"> → </code>1001.01.01<code class="inline-code"> → </code>1001.01.01.01<code class="inline-code"></li></ul><ul><li><strong>编码约束</strong>：</li></ul><ul><li>同一级次下编码必须唯一</li></ul><ul><li>编码必须连续（不允许跳跃，如先录1001再录1003跳号）</li></ul><ul><li>下级科目编码必须以上级为前缀</li></ul>
+<h3>4.1 科目体系结构</h3>
 
-#### 4.1.2 科目属性字段
+<h4>4.1.1 科目编码规则</h4>
 
-| 字段名 | 字段类型 | 必填 | 说明 | 示例 |
-|---|---|---|---|---|
-| 科目ID | GUID | 是 | 主键 | </code>A1B2C3D4-E5F6-...<code class="inline-code"> |
-| 科目编码 | VARCHAR(30) | 是 | 唯一索引 | </code>1002.01.01<code class="inline-code"> |
-| 科目名称 | NVARCHAR(100) | 是 | 显示名称 | </code>中国银行深圳支行<code class="inline-code"> |
-| 英文名称 | NVARCHAR(100) | 否 | 国际化用 | </code>Bank of China SZ Branch<code class="inline-code"> |
-| 科目类型 | ENUM | 是 | 6种之一 | 资产/负债/权益/成本/损益/表外 |
-| 余额方向 | ENUM | 是 | 借/贷 | 借 |
-| 末级标志 | BIT | 是 | 自动计算 | 1=末级，0=父级 |
-| 数量核算 | BIT | 否 | 是否启用数量辅助 | 0/1 |
-| 外币核算 | BIT | 否 | 是否启用外币核算 | 0/1 |
-| 现金科目 | BIT | 否 | 影响现金流量表 | 0/1 |
-| 银行科目 | BIT | 否 | 影响银行日记账 | 0/1 |
-| 默认税率 | DECIMAL(5,2) | 否 | 增值税默认税率 | 13% |
-| 受控模块 | VARCHAR(200) | 否 | 模块代码逗号分隔 | </code>AR,AP,GL<code class="inline-code"> |
-| 启用状态 | BIT | 是 | 是否启用 | 1/0 |
-| 排序号 | INT | 是 | 同级排序 | 1 |
-| 账套ID | GUID | 是 | 所属账套 | 引用 BD_AccountBook |
-| 创建时间 | DATETIME | 是 | 自动 | </code>2026-04-08 12:00:00<code class="inline-code"> |
-| 创建人 | VARCHAR(50) | 是 | 自动 | </code>admin<code class="inline-code"> |
-| 修改时间 | DATETIME | 否 | 自动 | </code>2026-04-08 12:00:00<code class="inline-code"> |
-| 修改人 | VARCHAR(50) | 否 | 自动 | </code>admin<code class="inline-code"> |
+<li>**编码格式**：支持自由定义段数（1-5段）和每段长度（1-10位）</li>
+<li>**推荐格式**：`4-2-2-2-2`（共12位，5级）</li>
+<li>  - 示例：`1001` → `1001.01` → `1001.01.01` → `1001.01.01.01`</li>
+<li>**编码约束**：</li>
+<li>  - 同一级次下编码必须唯一</li>
+<li>  - 编码必须连续（不允许跳跃，如先录1001再录1003跳号）</li>
+<li>  - 下级科目编码必须以上级为前缀</li>
 
-#### 4.1.3 科目类型业务规则
+<h4>4.1.2 科目属性字段</h4>
 
-| 类型 | 余额方向 | 典型科目 | 辅助核算建议 |
-|---|---|---|---|
-| 资产 | 借 | 库存现金、银行存款、应收账款 | 部门+供应商+项目 |
-| 负债 | 贷 | 应付账款、短期借款、应付票据 | 供应商+项目 |
-| 权益 | 贷 | 实收资本、资本公积、未分配利润 | 部门 |
-| 成本 | 借/贷 | 生产成本、制造费用 | 部门+项目+物料 |
-| 损益 | 借/贷 | 主营业务收入、管理费用 | 部门+项目 |
-| 表外 | 借/贷 | 代管商品、受托加工物资 | 自定义 |
+<table class="md-table"><thead><tr><th>字段名</th><th>字段类型</th><th>必填</th><th>说明</th><th>示例</th></tr></thead><tbody><tr><td>科目ID</td><td>GUID</td><td>是</td><td>主键</td><td><code class="inline-code">A1B2C3D4-E5F6-...</code></td></tr><tr><td>科目编码</td><td>VARCHAR(30)</td><td>是</td><td>唯一索引</td><td><code class="inline-code">1002.01.01</code></td></tr><tr><td>科目名称</td><td>NVARCHAR(100)</td><td>是</td><td>显示名称</td><td><code class="inline-code">中国银行深圳支行</code></td></tr><tr><td>英文名称</td><td>NVARCHAR(100)</td><td>否</td><td>国际化用</td><td><code class="inline-code">Bank of China SZ Branch</code></td></tr><tr><td>科目类型</td><td>ENUM</td><td>是</td><td>6种之一</td><td>资产/负债/权益/成本/损益/表外</td></tr><tr><td>余额方向</td><td>ENUM</td><td>是</td><td>借/贷</td><td>借</td></tr><tr><td>末级标志</td><td>BIT</td><td>是</td><td>自动计算</td><td>1=末级，0=父级</td></tr><tr><td>数量核算</td><td>BIT</td><td>否</td><td>是否启用数量辅助</td><td>0/1</td></tr><tr><td>外币核算</td><td>BIT</td><td>否</td><td>是否启用外币核算</td><td>0/1</td></tr><tr><td>现金科目</td><td>BIT</td><td>否</td><td>影响现金流量表</td><td>0/1</td></tr><tr><td>银行科目</td><td>BIT</td><td>否</td><td>影响银行日记账</td><td>0/1</td></tr><tr><td>默认税率</td><td>DECIMAL(5,2)</td><td>否</td><td>增值税默认税率</td><td>13%</td></tr><tr><td>受控模块</td><td>VARCHAR(200)</td><td>否</td><td>模块代码逗号分隔</td><td><code class="inline-code">AR,AP,GL</code></td></tr><tr><td>启用状态</td><td>BIT</td><td>是</td><td>是否启用</td><td>1/0</td></tr><tr><td>排序号</td><td>INT</td><td>是</td><td>同级排序</td><td>1</td></tr><tr><td>账套ID</td><td>GUID</td><td>是</td><td>所属账套</td><td>引用 BD_AccountBook</td></tr><tr><td>创建时间</td><td>DATETIME</td><td>是</td><td>自动</td><td><code class="inline-code">2026-04-08 12:00:00</code></td></tr><tr><td>创建人</td><td>VARCHAR(50)</td><td>是</td><td>自动</td><td><code class="inline-code">admin</code></td></tr><tr><td>修改时间</td><td>DATETIME</td><td>否</td><td>自动</td><td><code class="inline-code">2026-04-08 12:00:00</code></td></tr><tr><td>修改人</td><td>VARCHAR(50)</td><td>否</td><td>自动</td><td><code class="inline-code">admin</code></td></tr></tbody></table>
 
-<h3>4.2 辅助核算维度</h3>
+<h4>4.1.3 科目类型业务规则</h4>
 
-#### 4.2.1 内置维度
+<table class="md-table"><thead><tr><th>类型</th><th>余额方向</th><th>典型科目</th><th>辅助核算建议</th></tr></thead><tbody><tr><td>资产</td><td>借</td><td>库存现金、银行存款、应收账款</td><td>部门+供应商+项目</td></tr><tr><td>负债</td><td>贷</td><td>应付账款、短期借款、应付票据</td><td>供应商+项目</td></tr><tr><td>权益</td><td>贷</td><td>实收资本、资本公积、未分配利润</td><td>部门</td></tr><tr><td>成本</td><td>借/贷</td><td>生产成本、制造费用</td><td>部门+项目+物料</td></tr><tr><td>损益</td><td>借/贷</td><td>主营业务收入、管理费用</td><td>部门+项目</td></tr><tr><td>表外</td><td>借/贷</td><td>代管商品、受托加工物资</td><td>自定义</td></tr></tbody></table>
 
-| 维度代码 | 维度名称 | 是否树形 | 说明 |
-|---|---|---|---|
-| DEPT | 部门 | 是 | 引用组织架构模块 |
-| PERSON | 人员 | 是 | 引用人员档案 |
-| SUPPLIER | 供应商 | 否 | 引用供应商档案 |
-| CUSTOMER | 客户 | 否 | 引用客户档案 |
-| PROJECT | 项目 | 是 | 引用项目档案 |
-| MATERIAL | 物料 | 否 | 引用物料档案 |
-| BANK | 银行账户 | 否 | 引用银行账户档案 |
-| COSTITEM | 费用项目 | 否 | 自定义费用项 |
-| SELFDEF01~10 | 自定义维度1~10 | 可配置 | 支持用户自定义 |
+<h3>4.2 辅助核算维度</h3>
 
-#### 4.2.2 辅助核算设置<ul><li><strong>多选模式</strong>：每个科目同一维度可选"单选"或"多选"</li></ul><ul><li><strong>必填控制</strong>：科目在该维度可设为"必填"或"选填"</li></ul><ul><li><strong>组合控制</strong>：同一科目可绑定多个维度，维度间为"AND"关系</li></ul><ul><li><strong>维度层级</strong>：如"部门"支持到最末级部门为止</li></ul>
+<h4>4.2.1 内置维度</h4>
 
-<h3>4.3 数据库表结构设计（MS SQL Server）</h3>
+<table class="md-table"><thead><tr><th>维度代码</th><th>维度名称</th><th>是否树形</th><th>说明</th></tr></thead><tbody><tr><td>DEPT</td><td>部门</td><td>是</td><td>引用组织架构模块</td></tr><tr><td>PERSON</td><td>人员</td><td>是</td><td>引用人员档案</td></tr><tr><td>SUPPLIER</td><td>供应商</td><td>否</td><td>引用供应商档案</td></tr><tr><td>CUSTOMER</td><td>客户</td><td>否</td><td>引用客户档案</td></tr><tr><td>PROJECT</td><td>项目</td><td>是</td><td>引用项目档案</td></tr><tr><td>MATERIAL</td><td>物料</td><td>否</td><td>引用物料档案</td></tr><tr><td>BANK</td><td>银行账户</td><td>否</td><td>引用银行账户档案</td></tr><tr><td>COSTITEM</td><td>费用项目</td><td>否</td><td>自定义费用项</td></tr><tr><td>SELFDEF01~10</td><td>自定义维度1~10</td><td>可配置</td><td>支持用户自定义</td></tr></tbody></table>
 
-</code>`<code class="inline-code">sql
--- =============================================
+<h4>4.2.2 辅助核算设置</h4>
+
+<li>**多选模式**：每个科目同一维度可选"单选"或"多选"</li>
+<li>**必填控制**：科目在该维度可设为"必填"或"选填"</li>
+<li>**组合控制**：同一科目可绑定多个维度，维度间为"AND"关系</li>
+<li>**维度层级**：如"部门"支持到最末级部门为止</li>
+
+<h3>4.3 数据库表结构设计（MS SQL Server）</h3>
+
+<div class="code-block sql-block">
+  <div class="code-header">SQL</div>
+  <pre class="language-sql"><code>-- =============================================
 -- 账套主表（已存在，需新增字段）
 -- =============================================
 CREATE TABLE dbo.BD_AccountBook (
@@ -549,51 +407,30 @@ CREATE TABLE dbo.FA_SubjectChangeLog (
     AfterValue       NVARCHAR(MAX) NULL,
     ChangeDate       DATETIME DEFAULT GETDATE(),
     ChangedBy        NVARCHAR(50)
-);
-</code>`<code class="inline-code">
+);</code></pre>
+</div>
 
-<h3>4.4 服务端 API 设计（RESTful）</h3>
+<h3>4.4 服务端 API 设计（RESTful）</h3>
 
-#### 4.4.1 科目管理 API
+<h4>4.4.1 科目管理 API</h4>
 
-| 方法 | 路径 | 说明 |
-|---|---|---|
-| </code>GET<code class="inline-code"> | </code>/api/v1/account-books/{bookId}/subjects<code class="inline-code"> | 分页查询科目列表（支持树形/列表切换） |
-| </code>GET<code class="inline-code"> | </code>/api/v1/account-books/{bookId}/subjects/tree<code class="inline-code"> | 获取科目树（完整层级结构） |
-| </code>GET<code class="inline-code"> | </code>/api/v1/account-books/{bookId}/subjects/{id}<code class="inline-code"> | 获取单个科目详情（含辅助核算） |
-| </code>POST<code class="inline-code"> | </code>/api/v1/account-books/{bookId}/subjects<code class="inline-code"> | 新增科目 |
-| </code>PUT<code class="inline-code"> | </code>/api/v1/account-books/{bookId}/subjects/{id}<code class="inline-code"> | 修改科目 |
-| </code>DELETE<code class="inline-code"> | </code>/api/v1/account-books/{bookId}/subjects/{id}<code class="inline-code"> | 删除科目 |
-| </code>POST<code class="inline-code"> | </code>/api/v1/account-books/{bookId}/subjects/{id}/copy<code class="inline-code"> | 复制科目 |
-| </code>POST<code class="inline-code"> | </code>/api/v1/account-books/{bookId}/subjects/{id}/enable<code class="inline-code"> | 启用科目 |
-| </code>POST<code class="inline-code"> | </code>/api/v1/account-books/{bookId}/subjects/{id}/disable<code class="inline-code"> | 禁用科目 |
-| </code>POST<code class="inline-code"> | </code>/api/v1/account-books/{bookId}/subjects/batch-import<code class="inline-code"> | 批量导入（Excel） |
-| </code>GET<code class="inline-code"> | </code>/api/v1/account-books/{bookId}/subjects/export<code class="inline-code"> | 导出 Excel |
+<table class="md-table"><thead><tr><th>方法</th><th>路径</th><th>说明</th></tr></thead><tbody><tr><td><code class="inline-code">GET</code></td><td><code class="inline-code">/api/v1/account-books/{bookId}/subjects</code></td><td>分页查询科目列表（支持树形/列表切换）</td></tr><tr><td><code class="inline-code">GET</code></td><td><code class="inline-code">/api/v1/account-books/{bookId}/subjects/tree</code></td><td>获取科目树（完整层级结构）</td></tr><tr><td><code class="inline-code">GET</code></td><td><code class="inline-code">/api/v1/account-books/{bookId}/subjects/{id}</code></td><td>获取单个科目详情（含辅助核算）</td></tr><tr><td><code class="inline-code">POST</code></td><td><code class="inline-code">/api/v1/account-books/{bookId}/subjects</code></td><td>新增科目</td></tr><tr><td><code class="inline-code">PUT</code></td><td><code class="inline-code">/api/v1/account-books/{bookId}/subjects/{id}</code></td><td>修改科目</td></tr><tr><td><code class="inline-code">DELETE</code></td><td><code class="inline-code">/api/v1/account-books/{bookId}/subjects/{id}</code></td><td>删除科目</td></tr><tr><td><code class="inline-code">POST</code></td><td><code class="inline-code">/api/v1/account-books/{bookId}/subjects/{id}/copy</code></td><td>复制科目</td></tr><tr><td><code class="inline-code">POST</code></td><td><code class="inline-code">/api/v1/account-books/{bookId}/subjects/{id}/enable</code></td><td>启用科目</td></tr><tr><td><code class="inline-code">POST</code></td><td><code class="inline-code">/api/v1/account-books/{bookId}/subjects/{id}/disable</code></td><td>禁用科目</td></tr><tr><td><code class="inline-code">POST</code></td><td><code class="inline-code">/api/v1/account-books/{bookId}/subjects/batch-import</code></td><td>批量导入（Excel）</td></tr><tr><td><code class="inline-code">GET</code></td><td><code class="inline-code">/api/v1/account-books/{bookId}/subjects/export</code></td><td>导出 Excel</td></tr></tbody></table>
 
-#### 4.4.2 辅助核算 API
+<h4>4.4.2 辅助核算 API</h4>
 
-| 方法 | 路径 | 说明 |
-|---|---|---|
-| </code>GET<code class="inline-code"> | </code>/api/v1/aux-dimensions<code class="inline-code"> | 查询所有辅助核算维度定义 |
-| </code>GET<code class="inline-code"> | </code>/api/v1/subjects/{subjectId}/aux-dimensions<code class="inline-code"> | 获取科目绑定的辅助核算维度 |
-| </code>POST<code class="inline-code"> | </code>/api/v1/subjects/{subjectId}/aux-dimensions<code class="inline-code"> | 绑定辅助核算维度 |
-| </code>DELETE<code class="inline-code"> | </code>/api/v1/subjects/{subjectId}/aux-dimensions/{dimCode}<code class="inline-code"> | 解除辅助核算绑定 |
+<table class="md-table"><thead><tr><th>方法</th><th>路径</th><th>说明</th></tr></thead><tbody><tr><td><code class="inline-code">GET</code></td><td><code class="inline-code">/api/v1/aux-dimensions</code></td><td>查询所有辅助核算维度定义</td></tr><tr><td><code class="inline-code">GET</code></td><td><code class="inline-code">/api/v1/subjects/{subjectId}/aux-dimensions</code></td><td>获取科目绑定的辅助核算维度</td></tr><tr><td><code class="inline-code">POST</code></td><td><code class="inline-code">/api/v1/subjects/{subjectId}/aux-dimensions</code></td><td>绑定辅助核算维度</td></tr><tr><td><code class="inline-code">DELETE</code></td><td><code class="inline-code">/api/v1/subjects/{subjectId}/aux-dimensions/{dimCode}</code></td><td>解除辅助核算绑定</td></tr></tbody></table>
 
-#### 4.4.3 期初余额 API
+<h4>4.4.3 期初余额 API</h4>
 
-| 方法 | 路径 | 说明 |
-|---|---|---|
-| </code>GET<code class="inline-code"> | </code>/api/v1/account-books/{bookId}/init-balances<code class="inline-code"> | 获取期初余额列表 |
-| </code>POST<code class="inline-code"> | </code>/api/v1/account-books/{bookId}/init-balances<code class="inline-code"> | 批量保存期初余额 |
-| </code>POST<code class="inline-code"> | </code>/api/v1/account-books/{bookId}/init-balances/trial-balance<code class="inline-code"> | 试算平衡校验 |
-| </code>POST<code class="inline-code"> | </code>/api/v1/account-books/{bookId}/init-balances/lock<code class="inline-code"> | 锁定期初余额（开账） |
+<table class="md-table"><thead><tr><th>方法</th><th>路径</th><th>说明</th></tr></thead><tbody><tr><td><code class="inline-code">GET</code></td><td><code class="inline-code">/api/v1/account-books/{bookId}/init-balances</code></td><td>获取期初余额列表</td></tr><tr><td><code class="inline-code">POST</code></td><td><code class="inline-code">/api/v1/account-books/{bookId}/init-balances</code></td><td>批量保存期初余额</td></tr><tr><td><code class="inline-code">POST</code></td><td><code class="inline-code">/api/v1/account-books/{bookId}/init-balances/trial-balance</code></td><td>试算平衡校验</td></tr><tr><td><code class="inline-code">POST</code></td><td><code class="inline-code">/api/v1/account-books/{bookId}/init-balances/lock</code></td><td>锁定期初余额（开账）</td></tr></tbody></table>
 
-<h3>4.5 客户端交互设计要点（C/S）</h3>
+<h3>4.5 客户端交互设计要点（C/S）</h3>
 
-#### 4.5.1 科目列表界面
+<h4>4.5.1 科目列表界面</h4>
 
-</code>`<code class="inline-code">
-┌──��───────────────────────────────────────────────────────────────────┐
+<div class="code-block">
+  <div class="code-header">CODE</div>
+  <pre class="language-"><code>┌──��───────────────────────────────────────────────────────────────────┐
 │ 会计科目设定                                    [账套: 法人账套A ▼] │
 ├──────────────────────────────────────────────────────────────────────┤
 │ [新增] [复制] [删除] [导入] [导出] [试算平衡]          🔍 搜索...    │
@@ -612,13 +449,14 @@ CREATE TABLE dbo.FA_SubjectChangeLog (
 │   6602      销售费用              损益        借    部门+项目        │
 ├──────────────────────────────────────────────────────────────────────┤
 │  共 56 条  |  第 1/3 页  |  ◀  ▶                                   │
-└──────────────────────────────────────────────────────────────────────┘
-</code>`<code class="inline-code">
+└──────────────────────────────────────────────────────────────────────┘</code></pre>
+</div>
 
-#### 4.5.2 科目编辑界面（弹窗）
+<h4>4.5.2 科目编辑界面（弹窗）</h4>
 
-</code>`<code class="inline-code">
-┌──────────────────────────────────────────────────────────���──┐
+<div class="code-block">
+  <div class="code-header">CODE</div>
+  <pre class="language-"><code>┌──────────────────────────────────────────────────────────���──┐
 │  编辑科目                                            [×]   │
 ├─────────────────────────────────────────────────────────────┤
 │  上级科目：1002 银行存款                              [▼]  │
@@ -644,133 +482,70 @@ CREATE TABLE dbo.FA_SubjectChangeLog (
 │  排序号：[10]                                              │
 ├─────────────────────────────────────────────────────────────┤
 │                              [取消]  [保存]  [保存并新增]   │
-└─────────────────────────────────────────────────────────────┘
-</code>`<code class="inline-code">
+└─────────────────────────────────────────────────────────────┘</code></pre>
+</div>
 
----
+<li>--</li>
 
-<h2>五、与金蝶云星空的兼容性设计</h2>
+<h2>五、与金蝶云星空的兼容性设计</h2>
 
-<h3>5.1 功能对照表</h3>
+<h3>5.1 功能对照表</h3>
 
-| 功能项 | 金蝶云星空 | 本系统 | 兼容性等级 |
-|---|---|---|---|
-| 科目新增/编辑 | ✅ | ✅ | 完全兼容 |
-| 多级科目（10级） | ✅ | ✅ | 完全兼容 |
-| 科目编码规则自定义 | ✅ | ✅ | 完全兼容 |
-| 辅助核算维度（部门/供应商/客户/项目/物料） | ✅ | ✅ | 完全兼容 |
-| 自定义辅助核算维度 | ✅ | ✅ | 完全兼容 |
-| 外币核算 | ✅ | ✅ | 完全兼容 |
-| 数量核算 | ✅ | ✅ | 完全兼容 |
-| 现金/银行科目标记 | ✅ | ✅ | 完全兼容 |
-| 多账套科目管理 | ✅ | ✅ | 完全兼容 |
-| 科目模板导入/导出 | ✅ | ✅ | 完全兼容 |
-| 科目受控字段 | ✅ | ✅ | 完全兼容 |
-| 期初余额录入 | ✅ | ✅ | 完全兼容 |
-| 试算平衡校验 | ✅ | ✅ | 完全兼容 |
-| 科目使用状态控制 | ✅ | ✅ | 完全兼容 |
+<table class="md-table"><thead><tr><th>功能项</th><th>金蝶云星空</th><th>本系统</th><th>兼容性等级</th></tr></thead><tbody><tr><td>科目新增/编辑</td><td>✅</td><td>✅</td><td>完全兼容</td></tr><tr><td>多级科目（10级）</td><td>✅</td><td>✅</td><td>完全兼容</td></tr><tr><td>科目编码规则自定义</td><td>✅</td><td>✅</td><td>完全兼容</td></tr><tr><td>辅助核算维度（部门/供应商/客户/项目/物料）</td><td>✅</td><td>✅</td><td>完全兼容</td></tr><tr><td>自定义辅助核算维度</td><td>✅</td><td>✅</td><td>完全兼容</td></tr><tr><td>外币核算</td><td>✅</td><td>✅</td><td>完全兼容</td></tr><tr><td>数量核算</td><td>✅</td><td>✅</td><td>完全兼容</td></tr><tr><td>现金/银行科目标记</td><td>✅</td><td>✅</td><td>完全兼容</td></tr><tr><td>多账套科目管理</td><td>✅</td><td>✅</td><td>完全兼容</td></tr><tr><td>科目模板导入/导出</td><td>✅</td><td>✅</td><td>完全兼容</td></tr><tr><td>科目受控字段</td><td>✅</td><td>✅</td><td>完全兼容</td></tr><tr><td>期初余额录入</td><td>✅</td><td>✅</td><td>完全兼容</td></tr><tr><td>试算平衡校验</td><td>✅</td><td>✅</td><td>完全兼容</td></tr><tr><td>科目使用状态控制</td><td>✅</td><td>✅</td><td>完全兼容</td></tr></tbody></table>
 
-<h3>5.2 数据迁移接口</h3>
+<h3>5.2 数据迁移接口</h3>
 
-支持从金蝶云星空导出科目数据（Excel），通过标准模板导入到本系统：
+<p>支持从金蝶云星空导出科目数据（Excel），通过标准模板导入到本系统：</p>
 
-</code>`<code class="inline-code">csv
-科目编码,科目名称,科目类型,余额方向,上级科目编码,数量核算,外币核算,辅助核算1,辅助核算2,...
+<div class="csv-block">
+  <div class="csv-header">CSV 数据</div>
+  <pre class="csv-content">科目编码,科目名称,科目类型,余额方向,上级科目编码,数量核算,外币核算,辅助核算1,辅助核算2,...
 1001,库存现金,资产,借,,否,否,DEPT,PROJECT
-1002,银行存款,资产,借,,否,是,DEPT,BANKACCOUNT
-</code>`<code class="inline-code">
+1002,银行存款,资产,借,,否,是,DEPT,BANKACCOUNT</pre>
+</div>
 
----
+<li>--</li>
 
-<h2>六、数据字典与枚举</h2>
+<h2>六、数据字典与枚举</h2>
 
-<h3>6.1 科目类型枚举</h3>
+<h3>6.1 科目类型枚举</h3>
 
-| 编码 | 中文名 | 英文名 | 默认余额���向 |
-|---|---|---|---|
-| </code>Asset<code class="inline-code"> | 资产 | Asset | 借 |
-| </code>Liability<code class="inline-code"> | 负债 | Liability | 贷 |
-| </code>Equity<code class="inline-code"> | 权益 | Equity | 贷 |
-| </code>Cost<code class="inline-code"> | 成本 | Cost | 借 |
-| </code>ProfitLoss<code class="inline-code"> | 损益 | ProfitLoss | 借/贷 |
-| </code>OffBalance<code class="inline-code"> | 表外 | Off Balance | 借/贷 |
+<table class="md-table"><thead><tr><th>编码</th><th>中文名</th><th>英文名</th><th>默认余额���向</th></tr></thead><tbody><tr><td><code class="inline-code">Asset</code></td><td>资产</td><td>Asset</td><td>借</td></tr><tr><td><code class="inline-code">Liability</code></td><td>负债</td><td>Liability</td><td>贷</td></tr><tr><td><code class="inline-code">Equity</code></td><td>权益</td><td>Equity</td><td>贷</td></tr><tr><td><code class="inline-code">Cost</code></td><td>成本</td><td>Cost</td><td>借</td></tr><tr><td><code class="inline-code">ProfitLoss</code></td><td>损益</td><td>ProfitLoss</td><td>借/贷</td></tr><tr><td><code class="inline-code">OffBalance</code></td><td>表外</td><td>Off Balance</td><td>借/贷</td></tr></tbody></table>
 
-<h3>6.2 辅助核算维度枚举</h3>
+<h3>6.2 辅助核算维度枚举</h3>
 
-| 编码 | 中文名 | 是否树形 | 内置 |
-|---|---|---|---|
-| </code>DEPT<code class="inline-code"> | 部门 | 是 | 是 |
-| </code>PERSON<code class="inline-code"> | 人员 | 是 | 是 |
-| </code>SUPPLIER<code class="inline-code"> | 供应商 | 否 | 是 |
-| </code>CUSTOMER<code class="inline-code"> | 客户 | 否 | 是 |
-| </code>PROJECT<code class="inline-code"> | 项目 | 是 | 是 |
-| </code>MATERIAL<code class="inline-code"> | 物料 | 否 | 是 |
-| </code>BANKACCOUNT<code class="inline-code"> | 银行账户 | 否 | 是 |
-| </code>COSTITEM<code class="inline-code"> | 费用项目 | 否 | 是 |
-| </code>SELFDEF01~10` | 自定义维度1~10 | 可配置 | 否 |
+<table class="md-table"><thead><tr><th>编码</th><th>中文名</th><th>是否树形</th><th>内置</th></tr></thead><tbody><tr><td><code class="inline-code">DEPT</code></td><td>部门</td><td>是</td><td>是</td></tr><tr><td><code class="inline-code">PERSON</code></td><td>人员</td><td>是</td><td>是</td></tr><tr><td><code class="inline-code">SUPPLIER</code></td><td>供应商</td><td>否</td><td>是</td></tr><tr><td><code class="inline-code">CUSTOMER</code></td><td>客户</td><td>否</td><td>是</td></tr><tr><td><code class="inline-code">PROJECT</code></td><td>项目</td><td>是</td><td>是</td></tr><tr><td><code class="inline-code">MATERIAL</code></td><td>物料</td><td>否</td><td>是</td></tr><tr><td><code class="inline-code">BANKACCOUNT</code></td><td>银行账户</td><td>否</td><td>是</td></tr><tr><td><code class="inline-code">COSTITEM</code></td><td>费用项目</td><td>否</td><td>是</td></tr><tr><td><code class="inline-code">SELFDEF01~10</code></td><td>自定义维度1~10</td><td>可配置</td><td>否</td></tr></tbody></table>
 
----
+<li>--</li>
 
-<h2>七、性能与安全要求</h2>
+<h2>七、性能与安全要求</h2>
 
-| 指标 | 要求 |
-|---|---|
-| 科目列表加载（1000条以内） | < 500ms |
-| 单科目保存响应时间 | < 200ms |
-| 批量导入100条科目 | < 5s |
-| 支持单账套最大科目数 | 10,000+ |
-| 辅助核算维度最大绑定数 | 10个/科目 |
-| 权限控制 | 按账套隔离，管理员/财务角色分级 |
-| 操作日志 | 全量记录，增删改均写入 FA_SubjectChangeLog |
-| 数据校验 | 科目编码唯一性、上下级关系、余额方向一致性 |
+<table class="md-table"><thead><tr><th>指标</th><th>要求</th></tr></thead><tbody><tr><td>科目列表加载（1000条以内）</td><td>< 500ms</td></tr><tr><td>单科目保存响应时间</td><td>< 200ms</td></tr><tr><td>批量导入100条科目</td><td>< 5s</td></tr><tr><td>支持单账套最大科目数</td><td>10,000+</td></tr><tr><td>辅助核算维度最大绑定数</td><td>10个/科目</td></tr><tr><td>权限控制</td><td>按账套隔离，管理员/财务角色分级</td></tr><tr><td>操作日志</td><td>全量记录，增删改均写入 FA_SubjectChangeLog</td></tr><tr><td>数据校验</td><td>科目编码唯一性、上下级关系、余额方向一致性</td></tr></tbody></table>
 
----
+<li>--</li>
 
-<h2>八、上线依赖与风险</h2>
+<h2>八、上线依赖与风险</h2>
 
-| 依赖项 | 前置模块 | 责任方 | 优先�� |
-|---|---|---|---|
-| 账套管理 | BD_AccountBook 表 | 后端 | P0 |
-| 会计期间管理 | BD_AccountPeriod 表 | 后端 | P0 |
-| 组织架构（部门） | BD_Department 表 | 后端 | P1 |
-| 币别汇率管理 | BD_Currency 表 | 后端 | P1 |
-| 用户权限体系 | 系统权限模块 | 后端 | P0 |
+<table class="md-table"><thead><tr><th>依赖项</th><th>前置模块</th><th>责任方</th><th>优先��</th></tr></thead><tbody><tr><td>账套管理</td><td>BD_AccountBook 表</td><td>后端</td><td>P0</td></tr><tr><td>会计期间管理</td><td>BD_AccountPeriod 表</td><td>后端</td><td>P0</td></tr><tr><td>组织架构（部门）</td><td>BD_Department 表</td><td>后端</td><td>P1</td></tr><tr><td>币别汇率管理</td><td>BD_Currency 表</td><td>后端</td><td>P1</td></tr><tr><td>用户权限体系</td><td>系统权限模块</td><td>后端</td><td>P0</td></tr></tbody></table>
 
-| 风险项 | 影响 | 缓解措施 |
-|---|---|---|
-| 科目体系一旦启用后修改成本高 | 影响所有财务模块 | 上线前组织财务主管评审，制定标准化科目模板 |
-| 科目编码规则变更 | 需重新编码 | 在设计阶段确定规则，设计文档评审签字确认 |
-| 与现有 ERP 模块的数据对接 | 现有业务单据可能引用科目 | 制定过渡期方案：先并行，待新科目确认后批量迁移 |
+<table class="md-table"><thead><tr><th>风险项</th><th>影响</th><th>缓解措施</th></tr></thead><tbody><tr><td>科目体系一旦启用后修改成本高</td><td>影响所有财务模块</td><td>上线前组织财务主管评审，制定标准化科目模板</td></tr><tr><td>科目编码规则变更</td><td>需重新编码</td><td>在设计阶段确定规则，设计文档评审签字确认</td></tr><tr><td>与现有 ERP 模块的数据对接</td><td>现有业务单据可能引用科目</td><td>制定过渡期方案：先并行，待新科目确认后批量迁移</td></tr></tbody></table>
 
----
+<li>--</li>
 
-<h2>九、里程碑与排期建议</h2>
+<h2>九、里程碑与排期建议</h2>
 
-| 阶段 | 功能 | 工期建议 | 交付物 |
-|---|---|---|---|
-| <strong>Phase 1</strong> | 科目 CRUD + 科目树 + 科目类型 + 余额方向 | 3 周 | 可用版本 |
-| <strong>Phase 2</strong> | 辅助核算维度绑定 + 受控字段配置 | 2 周 | 可用版本 |
-| <strong>Phase 3</strong> | 期初余额录入 + 试算平衡 + 批量导入/导出 | 2 周 | 可用版本 |
-| <strong>Phase 4</strong> | 科目模板管理 + 历史版本 + 审计日志 | 1 周 | 完整版本 |
-| <strong>合计</strong> | | <strong>8 周（约2个月）</strong> | |
+<table class="md-table"><thead><tr><th>阶段</th><th>功能</th><th>工期建议</th><th>交付物</th></tr></thead><tbody><tr><td><strong>Phase 1</strong></td><td>科目 CRUD + 科目树 + 科目类型 + 余额方向</td><td>3 周</td><td>可用版本</td></tr><tr><td><strong>Phase 2</strong></td><td>辅助核算维度绑定 + 受控字段配置</td><td>2 周</td><td>可用版本</td></tr><tr><td><strong>Phase 3</strong></td><td>期初余额录入 + 试算平衡 + 批量导入/导出</td><td>2 周</td><td>可用版本</td></tr><tr><td><strong>Phase 4</strong></td><td>科目模板管理 + 历史版本 + 审计日志</td><td>1 周</td><td>完整版本</td></tr><tr><td><strong>合计</strong></td><td><strong>8 周（约2个月）</strong></td></tr></tbody></table>
 
----
+<li>--</li>
 
-<h2>十、验收标准</h2>
+<h2>十、验收标准</h2>
 
-| 验收条件 | 测试方法 |
-|---|---|
-| 财务管理员可在 5 分钟内完成新增一级科目（含辅助核算） | 操作计时 |
-| 100 条科目导入 < 3 分钟完成 | 性能测试 |
-| 试算平衡校验能正确识别不平衡场景 | 异常测试 |
-| 有发生额的科目无法被删除 | 边界测试 |
-| 不同账套的科目互不影响 | 隔离测试 |
-| 批量导入 Excel 格式错误有明确提示 | 异常测试 |
+<table class="md-table"><thead><tr><th>验收条件</th><th>测试方法</th></tr></thead><tbody><tr><td>财务管理员可在 5 分钟内完成新增一级科目（含辅助核算）</td><td>操作计时</td></tr><tr><td>100 条科目导入 < 3 分钟完成</td><td>性能测试</td></tr><tr><td>试算平衡校验能正确识别不平衡场景</td><td>异常测试</td></tr><tr><td>有发生额的科目无法被删除</td><td>边界测试</td></tr><tr><td>不同账套的科目互不影响</td><td>隔离测试</td></tr><tr><td>批量导入 Excel 格式错误有明确提示</td><td>异常测试</td></tr></tbody></table>
 
----
+<li>--</li>
 
-*文档结束*
-</p>
+<p>*文档结束*</p>
+</div>
     </div>
 </body>
 </html>
