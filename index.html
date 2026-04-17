@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ERP财务管理系统 - 流程图与规格书</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            color: #333;
+            padding: 40px 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+        .header h1 {
+            color: #fff;
+            font-size: 2.5em;
+            margin-bottom: 15px;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+        .header p {
+            color: #a0aec0;
+            font-size: 1.1em;
+        }
+        .badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            margin-top: 15px;
+        }
+        .section {
+            background: #fff;
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+        .section-title {
+            font-size: 1.5em;
+            color: #2d3748;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .section-flowcharts .section-title { border-color: #e53e3e; }
+        .section-prototypes .section-title { border-color: #38a169; }
+        .section-specs .section-title { border-color: #3182ce; }
+        .section-icon { font-size: 1.2em; }
+        .file-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+        .file-card {
+            background: #f7fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 20px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+        .file-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        }
+        .section-flowcharts .file-card:hover { border-color: #e53e3e; background: #fff5f5; }
+        .section-prototypes .file-card:hover { border-color: #38a169; background: #f0fff4; }
+        .section-specs .file-card:hover { border-color: #3182ce; background: #ebf8ff; }
+        .file-card h3 {
+            font-size: 1.1em;
+            color: #2d3748;
+            margin-bottom: 10px;
+        }
+        .file-card p {
+            font-size: 0.9em;
+            color: #718096;
+        }
+        .file-tag {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-size: 0.8em;
+            margin-top: 12px;
+        }
+        .section-flowcharts .file-tag { background: #fed7d7; color: #c53030; }
+        .section-prototypes .file-tag { background: #c6f6d5; color: #276749; }
+        .section-specs .file-tag { background: #bee3f8; color: #2b6cb0; }
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            color: #a0aec0;
+            font-size: 0.9em;
+        }
+        .footer a {
+            color: #667eea;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📊 ERP财务管理系统</h1>
+            <p>流程图 · UI原型 · 规格说明书</p>
+            <span class="badge">共 19 个文件</span>
+        </div>
+
+        <!-- 流程图 -->
+        <div class="section section-flowcharts">
+            <h2 class="section-title">
+                <span class="section-icon">🔄</span>
+                业务流程图 (7个)
+            </h2>
+            <div class="file-grid">
+                <a class="file-card" href="flowcharts/财务总流程图.html" target="_blank">
+                    <h3>📋 财务总流程图</h3>
+                    <p>整体业务流程架构图</p>
+                    <span class="file-tag">HTML</span>
+                </a>
+                <a class="file-card" href="flowcharts/海外发票管理流程图.html" target="_blank">
+                    <h3>🌏 海外发票管理流程图</h3>
+                    <p>海外发票全流程管理</p>
+                    <span class="file-tag">HTML</span>
+                </a>
+                <a class="file-card" href="flowcharts/实付付款详细流程图.html" target="_blank">
+                    <h3>💰 实付付款详细流程图</h3>
+                    <p>付款申请到完成全流程</p>
+                    <span class="file-tag">HTML</span>
+                </a>
+                <a class="file-card" href="flowcharts/实收收款详细流程图.html" target="_blank">
+                    <h3>📥 实收收款详细流程图</h3>
+                    <p>收款认领到核销全流程</p>
+                    <span class="file-tag">HTML</span>
+                </a>
+                <a class="file-card" href="flowcharts/应付票据详细流程图.html" target="_blank">
+                    <h3>📄 应付票据详细流程图</h3>
+                    <p>应付票据全生命周期</p>
+                    <span class="file-tag">HTML</span>
+                </a>
+                <a class="file-card" href="flowcharts/应收票据详细流程图.html" target="_blank">
+                    <h3>📨 应收票据详细流程图</h3>
+                    <p>应收票据全生命周期</p>
+                    <span class="file-tag">HTML</span>
+                </a>
+                <a class="file-card" href="flowcharts/总账凭证引擎流程图.html" target="_blank">
+                    <h3>🧮 总账凭证引擎流程图</h3>
+                    <p>凭证自动生成与管理</p>
+                    <span class="file-tag">HTML</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- UI原型 -->
+        <div class="section section-prototypes">
+            <h2 class="section-title">
+                <span class="section-icon">🎨</span>
+                UI原型设计 (3个)
+            </h2>
+            <div class="file-grid">
+                <a class="file-card" href="prototypes/票据管理UI原型.html" target="_blank">
+                    <h3>🎯 票据管理UI原型</h3>
+                    <p>票据管理界面原型设计</p>
+                    <span class="file-tag">HTML</span>
+                </a>
+                <a class="file-card" href="prototypes/实付付款UI原型.html" target="_blank">
+                    <h3>💸 实付付款UI原型</h3>
+                    <p>付款管理界面原型设计</p>
+                    <span class="file-tag">HTML</span>
+                </a>
+                <a class="file-card" href="prototypes/实收收款UI原型.html" target="_blank">
+                    <h3>💵 实收收款UI原型</h3>
+                    <p>收款管理界面原型设计</p>
+                    <span class="file-tag">HTML</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- 规格说明书 -->
+        <div class="section section-specs">
+            <h2 class="section-title">
+                <span class="section-icon">📚</span>
+                规格说明书 (8个)
+            </h2>
+            <div class="file-grid">
+                <a class="file-card" href="specs/发票查验模块规格书.md" target="_blank">
+                    <h3>🔍 发票查验模块规格书</h3>
+                    <p>功能需求、接口设计、验收标准</p>
+                    <span class="file-tag">Markdown</span>
+                </a>
+                <a class="file-card" href="specs/海外发票管理规格书.md" target="_blank">
+                    <h3>🌐 海外发票管理规格书</h3>
+                    <p>跨境发票分层架构设计</p>
+                    <span class="file-tag">Markdown</span>
+                </a>
+                <a class="file-card" href="specs/会计科目设定模块规格书.md" target="_blank">
+                    <h3>📊 会计科目设定模块规格书</h3>
+                    <p>科目体系与维度配置</p>
+                    <span class="file-tag">Markdown</span>
+                </a>
+                <a class="file-card" href="specs/票据往来模块规格书.md" target="_blank">
+                    <h3>🔄 票据往来模块规格书</h3>
+                    <p>票据背书、贴现、转让管理</p>
+                    <span class="file-tag">Markdown</span>
+                </a>
+                <a class="file-card" href="specs/实付付款模块规格书.md" target="_blank">
+                    <h3>💰 实付付款模块规格书</h3>
+                    <p>付款申请、审批、付款执行</p>
+                    <span class="file-tag">Markdown</span>
+                </a>
+                <a class="file-card" href="specs/实收收款模块规格书.md" target="_blank">
+                    <h3>💵 实收收款模块规格书</h3>
+                    <p>收款认领、匹配、核销</p>
+                    <span class="file-tag">Markdown</span>
+                </a>
+                <a class="file-card" href="specs/应付票据模块规格书.md" target="_blank">
+                    <h3>📝 应付票据模块规格书</h3>
+                    <p>应付票据签发、承兑、到期</p>
+                    <span class="file-tag">Markdown</span>
+                </a>
+                <a class="file-card" href="specs/总账凭证引擎规格书.md" target="_blank">
+                    <h3>🧮 总账凭证引擎规格书</h3>
+                    <p>凭证模板、自动记账规则</p>
+                    <span class="file-tag">Markdown</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>📦 仓库地址：<a href="https://github.com/zlinke-zhao/erp-finance-docs" target="_blank">zlinke-zhao/erp-finance-docs</a></p>
+            <p style="margin-top:10px;">🚀 由 GitHub Pages 托管 · 点击即可在线预览</p>
+        </div>
+    </div>
+</body>
+</html>
