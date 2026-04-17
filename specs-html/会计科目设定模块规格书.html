@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>会计科目设定模块规格书</title>
+<style>
+:root {
+  --bg: #f8fafc;
+  --card: #ffffff;
+  --primary: #6366f1;
+  --text: #1e293b;
+  --text-dim: #64748b;
+  --border: #e2e8f0;
+  --code-bg: #1e293b;
+  --code-text: #e2e8f0;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.7;
+  padding: 2rem;
+}
+.container {
+  max-width: 1000px;
+  margin: 0 auto;
+  background: var(--card);
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  padding: 3rem;
+}
+.header {
+  border-bottom: 2px solid var(--primary);
+  padding-bottom: 1.5rem;
+  margin-bottom: 2rem;
+}
+.header h1 {
+  font-size: 1.75rem;
+  color: var(--primary);
+  margin-bottom: 0.5rem;
+}
+.header .meta {
+  color: var(--text-dim);
+  font-size: 0.875rem;
+}
+.content h1 { font-size: 1.5rem; margin: 2rem 0 1rem; color: var(--primary); }
+.content h2 { font-size: 1.25rem; margin: 1.5rem 0 0.75rem; color: var(--text); border-bottom: 1px solid var(--border); padding-bottom: 0.5rem; }
+.content h3 { font-size: 1.1rem; margin: 1.25rem 0 0.5rem; color: var(--text); }
+.content p { margin: 0.75rem 0; }
+.content ul, .content ol { margin: 0.75rem 0; padding-left: 1.5rem; }
+.content li { margin: 0.375rem 0; }
+.content table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1rem 0;
+  font-size: 0.9rem;
+}
+.content td, .content th {
+  border: 1px solid var(--border);
+  padding: 0.625rem 0.75rem;
+  text-align: left;
+}
+.content th {
+  background: #f1f5f9;
+  font-weight: 600;
+}
+.content pre {
+  background: var(--code-bg);
+  color: var(--code-text);
+  padding: 1rem;
+  border-radius: 8px;
+  overflow-x: auto;
+  margin: 1rem 0;
+  font-size: 0.85rem;
+}
+.content code {
+  background: #f1f5f9;
+  padding: 0.125rem 0.375rem;
+  border-radius: 4px;
+  font-size: 0.875rem;
+}
+.content pre code {
+  background: transparent;
+  padding: 0;
+}
+.back-link {
+  display: inline-block;
+  margin-bottom: 1.5rem;
+  color: var(--primary);
+  text-decoration: none;
+  font-size: 0.875rem;
+}
+.back-link:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+<div class="container">
+  <a href="../index.html" class="back-link">← 返回目录</a>
+  <div class="header">
+    <h1>会计科目设定模块规格书</h1>
+    <div class="meta">Dev_Dept · ERP财务管理系统</div>
+  </div>
+  <div class="content">
+    <h1>会计科目设定模块需求分析文档</h1>
+
+<strong>文档版本：</strong> V1.0  
+<strong>编制日期：</strong> 2026-04-08  
+<strong>编制团队：</strong> Dev_Dept  
+<strong>参考系统：</strong> 金蝶云星空（Kingdee Cloud COS）  
+<strong>适用架构：</strong> C/S 架构 + MS SQL Server  
+
+---
+
+<h2>一、模块定位与业务背景</h2>
+
+<h3>1.1 模块地位</h3>
+
+会计科目是财务管理系统的基础数据源，所有财务业务（凭证、账簿、报表、应收应付、固定资产、成本核算、预算管理）均依赖科目体系。一旦科目结构确定，后续模块的账务处理逻辑将被锚定。因此，会计科目设定是整个财务管理系统<strong>第一个需要完整规划的核心模块</strong>。
+
+> 本模块对应金蝶云星空 → <strong>基础资料 → 会计科目</strong>，支持多账套、多币别、数量核算、辅助核算等完整特性。
+
+<h3>1.2 当前差距分析</h3>
+
+基于 ERP 功能菜单（877 条）梳理结果，现有财务相关功能约 90 条，<strong>会计科目模块严重缺失</strong>，主要表现：
+
+<table><tr><td>缺失项</td><td>现状</td><td>影响</td></tr>
+
+<tr><td>会计科目体系</td><td>❌ 无科目定义功能</td><td>无法进行标准账务处理</td></tr>
+<tr><td>科目级次/维度管理</td><td>❌ 无</td><td>无法支持多维度辅助核算</td></tr>
+<tr><td>科目余额初始化</td><td>❌ 无</td><td>无法启用账务系统</td></tr>
+<tr><td>科目受控字段</td><td>❌ 无</td><td>各模块字段标准不统一</td></tr>
+<tr><td>多账套科��管理</td><td>❌ 仅 1 个"公司帐套"</td><td>无法支撑多组织财务集中</td></tr>
+
+---
+
+<h2>二、功能范围与边界</h2>
+
+<h3>2.1 核心功能范围（Must Have）</h3>
+
+<tr><td>功能域</td><td>功能点</td><td>说明</td></tr>
+
+<tr><td><strong>科目体系管理</strong></td><td>新增/编辑/删除/复制科目</td><td>支持多级科目（1-10 级）</td></tr>
+<tr><td>科目编码规则配置</td><td>4-2-2-2-2 等自由定义</td></tr>
+<tr><td>科目类型定义</td><td>资产/负债/权益/成本/损益/表外</td></tr>
+<tr><td>余额方向设置</td><td>借/贷</td></tr>
+<tr><td>现金/银行/数量科目标记</td><td>影响现金流量表和成本核算</td></tr>
+<tr><td><strong>辅助核算维度</strong></td><td>部门/人员/供应商/客户/项目/物料/自定义维度</td><td>支持多辅助核算并行</td></tr>
+<tr><td>核算维度层级管理</td><td>如部门树形结构</td></tr>
+<tr><td><strong>账套级科目分配</strong></td><td>科目与账套关联</td><td>同一科目在不同账套可有不同控制策略</td></tr>
+<tr><td>科目受控模块设置</td><td>科目在哪些模块可用</td></tr>
+<tr><td><strong>启用控制</strong></td><td>科目启用/禁用</td><td>禁用后不可新增凭证</td></tr>
+<tr><td>已使用科目锁定</td><td>有发生额的科目禁止删除</td></tr>
+<tr><td><strong>余额初始化</strong></td><td>科目期初余额录入</td><td>支持多期间、多币别、数量</td></tr>
+<tr><td>试算平衡校验</td><td>借方合计=贷方合计</td></tr>
+
+<h3>2.2 扩展功能范围（Should Have）</h3>
+
+<tr><td>功能点</td><td>说明</td></tr>
+
+<tr><td>科目受控字段</td><td>统一管理字段长度/必填/默认值</td></tr>
+<tr><td>科目模板导入/导出</td><td>Excel 模板批量新增</td></tr>
+<tr><td>历史科目版本管理</td><td>科目变更留痕</td></tr>
+<tr><td>科目体系复制</td><td>以现有账套科目为模板新建账套</td></tr>
+<tr><td>多语言科目名称</td><td>支持中英文双语</td></tr>
+
+<h3>2.3 非功能范围（Won't Have）</h3>
+
+<li><strong>跨年结账/反结账</strong>：属于总账凭证管理模块</li>
+<li><strong>凭证自动生成规则</strong>：属于凭证生成模块</li>
+<li><strong>报表取数公式</strong>：属于财务报表模块</li>
+<li><strong>与税务系统对接的科目映射</strong>：属于发票管理模块</li>
+
+---
+
+<h2>三、用户故事（User Stories）</h2>
+
+<h3>3.1 基础科目管理</h3>
+
+<code></code>`
+【故事 1】作为财务管理员，我需要新增末级科目，以便完成科目体系的搭建。
+  - 给定：我已登录系统并进入"会计科目设定"界面
+  - 当：我点击"新增科目"，填写编码"1002"、名称"银行存款"，选择余额方向为"借"、科目类型为"资产"
+  - 则：系统保存科目，并在科目树中显示，刷新后可见
+
+【故事 2】作为财务管理员，我需要在科目下新增下级科目，以便细化核算颗粒度。
+  - 给定：科目"1002 银行存款"已存在
+  - 当：我新增下级科目"100201 中国银行"
+  - 则：原科目"1002"自动变为非末级（父级），不能再作为凭证借贷方使用
+
+【故事 3】作为财务管理员，我需要复制科目，以便快速批量创建相似科目。
+  - 给定：科目"6602 销售费用"及其辅助核算设置已配置完毕
+  - 当：我选中该科目，点击"复制"，修改编码为"6603"、名称为"管理费用"
+  - 则：新建科目继承原科目的余额方向、辅助核算等属性，仅编码和名称不同
+
+【故事 4】作为财务管理员，我需要禁用已停用的科目，以便在界面上隐藏不再使用的科目。
+  - 给定：科目"100199 其他货币资金"无任何发生额和余额
+  - 当：我将该科目状态改为"禁用"
+  - 则：该科目不再出现在凭证录入的科目选择列表中，但数据库记录保留
+
+【故事 5】作为系统管理员，我需要删除错误录入的科目，以便修正初始化失误。
+  - 给定：某科目从未被任何单据/凭证引用
+  - 当：我选中该科目并点击"删除"
+  - 则：系统弹出确认框，提示"确定删除？"，确认后删除并刷新列表
+
+【故事 6】作为系统管理员，我需要防止删除已被使用的科目，以避免账务数据孤岛。
+  - 给定：科目"1001 库存现金"已被某张凭证引用
+  - 当：我尝试删除该科目
+  - 则：系统拦截并提示"该科目已被使用，无法删除"
+<code></code>`
+
+<h3>3.2 辅助核算维度管理</h3>
+
+<code></code>`
+【故事 7】作为财务管理员，我需要为科目绑定"部门"辅助核算，以便按部门归集���用。
+  - 给定：科目"6602 销售费用"未设置辅助核算
+  - 当：我勾选"部门"辅助核算并选择"多选"
+  - 则：该科目在凭证录入时必须选择具体部门，系统按部门维度归集账簿
+
+【故事 8】作为财务管理员，我需要为科目绑定"项目"辅助核算，以便按项目单独核算成本。
+  - 给定：科目"5001 项目成本"未设置辅助核算
+  - 当：我勾选"项目"辅助核算
+  - 则：该科目在凭证录入时必须选择具体项目，可按项目出具辅助账簿
+
+【故事 9】作为财务管理员，我需要科目同时支持多个辅助核算维度，以便满足复杂业务场景。
+  - 给定：科目"660201 差旅费"需要同时按部门和项目核算
+  - 当：我勾选"部门"和"项目"两个辅助核算维度
+  - 则：该科目在凭证录入时需同时选择部门和项目，系统支持双向交叉账簿
+<code></code>`
+
+<h3>3.3 账套与科目分配</h3>
+
+<code></code>`
+【故事 10】作为财务管理员，我需要将科目分配到特定账套，以便实现多账套独立核算。
+  - 给定：系统中有"法人账套A"和"法人账套B"两个账套
+  - 当：我将科目"1002 银行存款"分配给"账套A"
+  - 则：该科目仅在账套A的凭证录入中可见，账套B不受影响
+
+【故事 11】作为财务管理员，我需要设置科目在哪些模块受控，以便统一字段标准。
+  - 给定：科目"1122 应收账款"需要在应收模块和总账模块受控
+  - 当：我勾选"应收模块"和"总账模块"
+  - 则：该科目的字段长度、必填等规则在两个模块保持一致
+
+【故事 12】作为系统管理员，我需要复制整个账套的科目体系到新账套，以便快速启用新组织。
+  - 给定：账套A有完整的科目体系（100+科目）
+  - 当：我使用"以账套A为模板新建账套B"
+  - 则：账套B自动复制账套A的所有科目及其属性，管理员仅需少量调整
+<code></code>`
+
+<h3>3.4 余额初始化</h3>
+
+<code></code>`
+【故事 13】作为财务主管，我需要在系统启用前录入科目期初余额，以便财务数据衔接。
+  - 给定：系统处于初始化期间，尚未开账
+  - 当：我录入"1001 库存现金"的期初余额为借方 50,000 元
+  - 则：系统保存期初余额，在试算平衡表中显示
+
+【故事 14】作为财务主管，我需要系统自动校验试算平衡，以便确保初始化数据正确。
+  - 给定：我已录入所有科目的期初余额
+  - 当：我点击"试算平衡检查"
+  - 则：系统计算所有资产类科目余额合计与所有负债+权益类科目余额合计
+        - 若相等：提示"试算平衡，可以通过"
+        - 若不相等：提示差异金额，列出疑似错误科目
+
+【故事 15】作为财务主管，我需要录入多币别的期初余额，以便支持外币核算。
+  - 给定：科目"1002 银行存款"已勾选"外币核算"
+  - 当：我录入期初余额为本位币 100,000、美元 13,800（汇率 7.25）
+  - 则：系统同时保存本位币余额和外币余额，汇率和币种一并记录
+<code></code>`
+
+---
+
+<h2>四、详细功能规格</h2>
+
+<h3>4.1 科目体系结构</h3>
+
+#### 4.1.1 科目编码规则
+
+<li><strong>编码格式</strong>：支持自由定义段数（1-5段）和每段长度（1-10位）</li>
+<li><strong>推荐格式</strong>：<code>4-2-2-2-2</code>（共12位，5级）</li>
+  - 示例：<code>1001</code> → <code>1001.01</code> → <code>1001.01.01</code> → <code>1001.01.01.01</code>
+<li><strong>编码约束</strong>：</li>
+  - 同一级次下编码必须唯一
+  - 编码必须连续（不允许跳跃，如先录1001再录1003跳号）
+  - 下级科目编码必须以上级为前缀
+
+#### 4.1.2 科目属性字段
+
+<tr><td>字段名</td><td>字段类型</td><td>必填</td><td>说明</td><td>示例</td></tr>
+
+<tr><td>科目ID</td><td>GUID</td><td>是</td><td>主键</td><td><code>A1B2C3D4-E5F6-...</code></td></tr>
+<tr><td>科目编码</td><td>VARCHAR(30)</td><td>是</td><td>唯一索引</td><td><code>1002.01.01</code></td></tr>
+<tr><td>科目名称</td><td>NVARCHAR(100)</td><td>是</td><td>显示名称</td><td><code>中国银行深圳支行</code></td></tr>
+<tr><td>英文名称</td><td>NVARCHAR(100)</td><td>否</td><td>国际化用</td><td><code>Bank of China SZ Branch</code></td></tr>
+<tr><td>科目类型</td><td>ENUM</td><td>是</td><td>6种之一</td><td>资产/负债/权益/成本/损益/表外</td></tr>
+<tr><td>余额方向</td><td>ENUM</td><td>是</td><td>借/贷</td><td>借</td></tr>
+<tr><td>末级标志</td><td>BIT</td><td>是</td><td>自动计算</td><td>1=末级，0=父级</td></tr>
+<tr><td>数量核算</td><td>BIT</td><td>否</td><td>是否启用数量辅助</td><td>0/1</td></tr>
+<tr><td>外币核算</td><td>BIT</td><td>否</td><td>是否启用外币核算</td><td>0/1</td></tr>
+<tr><td>现金科目</td><td>BIT</td><td>否</td><td>影响现金流量表</td><td>0/1</td></tr>
+<tr><td>银行科目</td><td>BIT</td><td>否</td><td>影响银行日记账</td><td>0/1</td></tr>
+<tr><td>默认税率</td><td>DECIMAL(5,2)</td><td>否</td><td>增值税默认税率</td><td>13%</td></tr>
+<tr><td>受控模块</td><td>VARCHAR(200)</td><td>否</td><td>模块代码逗号分隔</td><td><code>AR,AP,GL</code></td></tr>
+<tr><td>启用状态</td><td>BIT</td><td>是</td><td>是否启用</td><td>1/0</td></tr>
+<tr><td>排序号</td><td>INT</td><td>是</td><td>同级排序</td><td>1</td></tr>
+<tr><td>账套ID</td><td>GUID</td><td>是</td><td>所属账套</td><td>引用 BD_AccountBook</td></tr>
+<tr><td>创建时间</td><td>DATETIME</td><td>是</td><td>自动</td><td><code>2026-04-08 12:00:00</code></td></tr>
+<tr><td>创建人</td><td>VARCHAR(50)</td><td>是</td><td>自动</td><td><code>admin</code></td></tr>
+<tr><td>修改时间</td><td>DATETIME</td><td>否</td><td>自动</td><td><code>2026-04-08 12:00:00</code></td></tr>
+<tr><td>修改人</td><td>VARCHAR(50)</td><td>否</td><td>自动</td><td><code>admin</code></td></tr>
+
+#### 4.1.3 科目类型业务规则
+
+<tr><td>类型</td><td>余额方向</td><td>典型科目</td><td>辅助核算建议</td></tr>
+
+<tr><td>资产</td><td>借</td><td>库存现金、银行存款、应收账款</td><td>部门+供应商+项目</td></tr>
+<tr><td>负债</td><td>贷</td><td>应付账款、短期借款、应付票据</td><td>供应商+项目</td></tr>
+<tr><td>权益</td><td>贷</td><td>实收资本、资本公积、未分配利润</td><td>部门</td></tr>
+<tr><td>成本</td><td>借/贷</td><td>生产成本、制造费用</td><td>部门+项目+物料</td></tr>
+<tr><td>损益</td><td>借/贷</td><td>主营业务收入、管理费用</td><td>部门+项目</td></tr>
+<tr><td>表外</td><td>借/贷</td><td>代管商品、受托加工物资</td><td>自定义</td></tr>
+
+<h3>4.2 辅助核算维度</h3>
+
+#### 4.2.1 内置维度
+
+<tr><td>维度代码</td><td>维度名称</td><td>是否树形</td><td>说明</td></tr>
+
+<tr><td>DEPT</td><td>部门</td><td>是</td><td>引用组织架构模块</td></tr>
+<tr><td>PERSON</td><td>人员</td><td>是</td><td>引用人员档案</td></tr>
+<tr><td>SUPPLIER</td><td>供应商</td><td>否</td><td>引用供应商档案</td></tr>
+<tr><td>CUSTOMER</td><td>客户</td><td>否</td><td>引用客户档案</td></tr>
+<tr><td>PROJECT</td><td>项目</td><td>是</td><td>引用项目档案</td></tr>
+<tr><td>MATERIAL</td><td>物料</td><td>否</td><td>引用物料档案</td></tr>
+<tr><td>BANK</td><td>银行账户</td><td>否</td><td>引用银行账户档案</td></tr>
+<tr><td>COSTITEM</td><td>费用项目</td><td>否</td><td>自定义费用项</td></tr>
+<tr><td>SELFDEF01~10</td><td>自定义维度1~10</td><td>可配置</td><td>支持用户自定义</td></tr>
+
+#### 4.2.2 辅助核算设置
+
+<li><strong>多选模式</strong>：每个科目同一维度可选"单选"或"多选"</li>
+<li><strong>必填控制</strong>：科目在该维度可设为"必填"或"选填"</li>
+<li><strong>组合控制</strong>：同一科目可绑定多个维度，维度间为"AND"关系</li>
+<li><strong>维度层级</strong>：如"部门"支持到最末级部门为止</li>
+
+<h3>4.3 数据库表结构设计（MS SQL Server）</h3>
+
+<code></code>`sql
+-- =============================================
+-- 账套主表（已存在，需新增字段）
+-- =============================================
+CREATE TABLE dbo.BD_AccountBook (
+    AccountBookID    UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
+    BookCode         NVARCHAR(30) NOT NULL UNIQUE,
+    BookName         NVARCHAR(100) NOT NULL,
+    CurrencyCode     NVARCHAR(10) DEFAULT N'RMB',    -- 本位币
+    AccPeriodType    NVARCHAR(20) DEFAULT N'自然月', -- 会计期间类型
+    IsActive         BIT DEFAULT 1,
+    CreatedDate      DATETIME DEFAULT GETDATE(),
+    CreatedBy        NVARCHAR(50),
+    ModifiedDate     DATETIME,
+    ModifiedBy       NVARCHAR(50)
+);
+
+-- =============================================
+-- 科目表
+-- =============================================
+CREATE TABLE dbo.FA_AccountSubject (
+    SubjectID        UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
+    AccountBookID    UNIQUEIDENTIFIER NOT NULL,      -- FK → BD_AccountBook
+    ParentID         UNIQUEIDENTIFIER NULL,          -- FK → FA_AccountSubject (自引用)
+    SubjectCode      NVARCHAR(30) NOT NULL,
+    SubjectName      NVARCHAR(100) NOT NULL,
+    EnglishName      NVARCHAR(100) NULL,
+    SubjectType      NVARCHAR(20) NOT NULL,          -- Enum: Asset/Liability/Equity/Cost/ProfitLoss/OffBalance
+    BalanceDirection NVARCHAR(4) NOT NULL,           -- 借/贷
+    IsLeaf           BIT DEFAULT 1,                  -- 末级标志（0=父级，1=末级）
+    LevelNo          INT DEFAULT 1,                  -- 科目级次（1-10）
+    IsQuantityEnabled    BIT DEFAULT 0,             -- 数量核算
+    IsForeignCurrencyEnabled BIT DEFAULT 0,        -- 外币核算
+    IsCashAccount    BIT DEFAULT 0,                  -- 现金科目
+    IsBankAccount    BIT DEFAULT 0,                  -- 银行科目
+    DefaultTaxRate   DECIMAL(5,2) NULL,             -- 默认税率
+    ControlledModules NVARCHAR(200) NULL,            -- 受控模块，逗号分隔
+    IsEnabled        BIT DEFAULT 1,                  -- 启用状态
+    SortOrder        INT DEFAULT 0,                  -- 同级排序
+    CreatedDate      DATETIME DEFAULT GETDATE(),
+    CreatedBy        NVARCHAR(50),
+    ModifiedDate     DATETIME,
+    ModifiedBy       NVARCHAR(50),
+    -- 约束
+    CONSTRAINT CK_SubjectType CHECK (SubjectType IN (N'Asset',N'Liability',N'Equity',N'Cost',N'ProfitLoss',N'OffBalance')),
+    CONSTRAINT CK_BalanceDir CHECK (BalanceDirection IN (N'借',N'贷')),
+    CONSTRAINT CK_LevelNo CHECK (LevelNo BETWEEN 1 AND 10),
+    -- 唯一索引：同一账套下编码唯一
+    CONSTRAINT UX_SubjectCode_PerBook UNIQUE (AccountBookID, SubjectCode),
+    CONSTRAINT FK_Subject_AccountBook FOREIGN KEY (AccountBookID) REFERENCES dbo.BD_AccountBook(AccountBookID),
+    CONSTRAINT FK_Subject_Parent FOREIGN KEY (ParentID) REFERENCES dbo.FA_AccountSubject(SubjectID)
+);
+
+CREATE INDEX IX_Subject_ParentID ON dbo.FA_AccountSubject(ParentID);
+CREATE INDEX IX_Subject_Code ON dbo.FA_AccountSubject(AccountBookID, SubjectCode);
+
+-- =============================================
+-- 科目辅助核算关联表（一对多，科目可绑定多个维度）
+-- =============================================
+CREATE TABLE dbo.FA_SubjectAuxDimension (
+    RelationID       UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
+    SubjectID        UNIQUEIDENTIFIER NOT NULL,      -- FK → FA_AccountSubject
+    DimensionCode    NVARCHAR(30) NOT NULL,          -- 维度代码，如 DEPT/PERSON/SUPPLIER/CUSTOMER/PROJECT/MATERIAL/SELFDEF01...
+    IsMultiSelect    BIT DEFAULT 0,                  -- 多选：0=单选，1=多选
+    IsRequired       BIT DEFAULT 0,                  -- 必填：0=选填，1=必填
+    SortOrder        INT DEFAULT 0,
+    CreatedDate      DATETIME DEFAULT GETDATE(),
+    CONSTRAINT FK_AuxDim_Subject FOREIGN KEY (SubjectID) REFERENCES dbo.FA_AccountSubject(SubjectID) ON DELETE CASCADE
+);
+
+CREATE INDEX IX_AuxDim_Subject ON dbo.FA_SubjectAuxDimension(SubjectID);
+
+-- =============================================
+-- 辅助核算维度档案表（可扩展）
+-- =============================================
+CREATE TABLE dbo.FA_AuxDimensionDefine (
+    DimensionID      UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
+    DimensionCode    NVARCHAR(30) NOT NULL UNIQUE,
+    DimensionName    NVARCHAR(100) NOT NULL,
+    IsTreeStructure  BIT DEFAULT 0,
+    IsSystemBuiltIn  BIT DEFAULT 0,                 -- 1=系统内置，0=用户自定义
+    RefTableName     NVARCHAR(100) NULL,             -- 引用表名（如 BD_Department）
+    IsActive         BIT DEFAULT 1,
+    CreatedDate      DATETIME DEFAULT GETDATE()
+);
+
+-- 预置内置维度
+INSERT INTO dbo.FA_AuxDimensionDefine (DimensionCode, DimensionName, IsTreeStructure, IsSystemBuiltIn) VALUES
+(N'DEPT', N'部门', 1, 1),
+(N'PERSON', N'人员', 1, 1),
+(N'SUPPLIER', N'供应商', 0, 1),
+(N'CUSTOMER', N'客户', 0, 1),
+(N'PROJECT', N'项目', 1, 1),
+(N'MATERIAL', N'物料', 0, 1),
+(N'BANKACCOUNT', N'银行账户', 0, 1),
+(N'COSTITEM', N'费用项目', 0, 1);
+
+-- =============================================
+-- 科目期初余额表
+-- =============================================
+CREATE TABLE dbo.FA_SubjectInitBalance (
+    BalanceID        UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
+    SubjectID        UNIQUEIDENTIFIER NOT NULL,      -- FK → FA_AccountSubject
+    AccountPeriodID  UNIQUEIDENTIFIER NOT NULL,      -- FK → BD_AccountPeriod
+    DebitAmount      DECIMAL(18,4) DEFAULT 0,       -- 本位币借方
+    CreditAmount     DECIMAL(18,4) DEFAULT 0,        -- 本位币贷方
+    Quantity         DECIMAL(18,4) NULL,            -- 数量
+    CurrencyCode     NVARCHAR(10) DEFAULT N'RMB',
+    ExchangeRate     DECIMAL(18,6) DEFAULT 1.000000,
+    FCYDebitAmount   DECIMAL(18,4) DEFAULT 0,       -- 外币借方
+    FCYCreditAmount  DECIMAL(18,4) DEFAULT 0,       -- 外币贷方
+    CreatedDate      DATETIME DEFAULT GETDATE(),
+    CreatedBy        NVARCHAR(50),
+    ModifiedDate     DATETIME,
+    ModifiedBy       NVARCHAR(50),
+    CONSTRAINT FK_InitBal_Subject FOREIGN KEY (SubjectID) REFERENCES dbo.FA_AccountSubject(SubjectID),
+    CONSTRAINT FK_InitBal_Period FOREIGN KEY (AccountPeriodID) REFERENCES dbo.BD_AccountPeriod(AccountPeriodID)
+);
+
+CREATE INDEX IX_InitBal_Subject ON dbo.FA_SubjectInitBalance(SubjectID);
+CREATE INDEX IX_InitBal_Period ON dbo.FA_SubjectInitBalance(AccountPeriodID);
+
+-- =============================================
+-- 科目受控字段配置表
+-- =============================================
+CREATE TABLE dbo.FA_SubjectFieldControl (
+    ControlID        UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
+    SubjectID        UNIQUEIDENTIFIER NOT NULL,      -- FK → FA_AccountSubject
+    ModuleCode       NVARCHAR(30) NOT NULL,          -- 模块代码 GL/AR/AP/FA
+    FieldName        NVARCHAR(50) NOT NULL,
+    IsRequired       BIT DEFAULT 0,
+    MaxLength        INT DEFAULT 200,
+    DefaultValue     NVARCHAR(200) NULL,
+    CreatedDate      DATETIME DEFAULT GETDATE(),
+    CONSTRAINT FK_FieldCtrl_Subject FOREIGN KEY (SubjectID) REFERENCES dbo.FA_AccountSubject(SubjectID) ON DELETE CASCADE
+);
+
+-- =============================================
+-- 科目变更历史表（审计用）
+-- =============================================
+CREATE TABLE dbo.FA_SubjectChangeLog (
+    LogID            UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
+    SubjectID        UNIQUEIDENTIFIER NOT NULL,
+    ChangeType       NVARCHAR(20) NOT NULL,          -- 新增/修改/删除/禁用
+    BeforeValue      NVARCHAR(MAX) NULL,
+    AfterValue       NVARCHAR(MAX) NULL,
+    ChangeDate       DATETIME DEFAULT GETDATE(),
+    ChangedBy        NVARCHAR(50)
+);
+<code></code>`
+
+<h3>4.4 服务端 API 设计（RESTful）</h3>
+
+#### 4.4.1 科目管理 API
+
+<tr><td>方法</td><td>路径</td><td>说明</td></tr>
+
+<tr><td><code>GET</code></td><td><code>/api/v1/account-books/{bookId}/subjects</code></td><td>分页查询科目列表（支持树形/列表切换）</td></tr>
+<tr><td><code>GET</code></td><td><code>/api/v1/account-books/{bookId}/subjects/tree</code></td><td>获取科目树（完整层级结构）</td></tr>
+<tr><td><code>GET</code></td><td><code>/api/v1/account-books/{bookId}/subjects/{id}</code></td><td>获取单个科目详情（含辅助核算）</td></tr>
+<tr><td><code>POST</code></td><td><code>/api/v1/account-books/{bookId}/subjects</code></td><td>新增科目</td></tr>
+<tr><td><code>PUT</code></td><td><code>/api/v1/account-books/{bookId}/subjects/{id}</code></td><td>修改科目</td></tr>
+<tr><td><code>DELETE</code></td><td><code>/api/v1/account-books/{bookId}/subjects/{id}</code></td><td>删除科目</td></tr>
+<tr><td><code>POST</code></td><td><code>/api/v1/account-books/{bookId}/subjects/{id}/copy</code></td><td>复制科目</td></tr>
+<tr><td><code>POST</code></td><td><code>/api/v1/account-books/{bookId}/subjects/{id}/enable</code></td><td>启用科目</td></tr>
+<tr><td><code>POST</code></td><td><code>/api/v1/account-books/{bookId}/subjects/{id}/disable</code></td><td>禁用科目</td></tr>
+<tr><td><code>POST</code></td><td><code>/api/v1/account-books/{bookId}/subjects/batch-import</code></td><td>批量导入（Excel）</td></tr>
+<tr><td><code>GET</code></td><td><code>/api/v1/account-books/{bookId}/subjects/export</code></td><td>导出 Excel</td></tr>
+
+#### 4.4.2 辅助核算 API
+
+<tr><td>方法</td><td>路径</td><td>说明</td></tr>
+
+<tr><td><code>GET</code></td><td><code>/api/v1/aux-dimensions</code></td><td>查询所有辅助核算维度定义</td></tr>
+<tr><td><code>GET</code></td><td><code>/api/v1/subjects/{subjectId}/aux-dimensions</code></td><td>获取科目绑定的辅助核算维度</td></tr>
+<tr><td><code>POST</code></td><td><code>/api/v1/subjects/{subjectId}/aux-dimensions</code></td><td>绑定辅助核算维度</td></tr>
+<tr><td><code>DELETE</code></td><td><code>/api/v1/subjects/{subjectId}/aux-dimensions/{dimCode}</code></td><td>解除辅助核算绑定</td></tr>
+
+#### 4.4.3 期初余额 API
+
+<tr><td>方法</td><td>路径</td><td>说明</td></tr>
+
+<tr><td><code>GET</code></td><td><code>/api/v1/account-books/{bookId}/init-balances</code></td><td>获取期初余额列表</td></tr>
+<tr><td><code>POST</code></td><td><code>/api/v1/account-books/{bookId}/init-balances</code></td><td>批量保存期初余额</td></tr>
+<tr><td><code>POST</code></td><td><code>/api/v1/account-books/{bookId}/init-balances/trial-balance</code></td><td>试算平衡校验</td></tr>
+<tr><td><code>POST</code></td><td><code>/api/v1/account-books/{bookId}/init-balances/lock</code></td><td>锁定期初余额（开账）</td></tr>
+
+<h3>4.5 客户端交互设计要点（C/S）</h3>
+
+#### 4.5.1 科目列表界面
+
+<code></code>`
+┌──��───────────────────────────────────────────────────────────────────┐
+│ 会计科目设定                                    [账套: 法人账套A ▼] │
+├──────────────────────────────────────────────────────────────────────┤
+│ [新增] [复制] [删除] [导入] [导出] [试算平衡]          🔍 搜索...    │
+├──────────────────────────────────────────────────────────────────────┤
+│ 编码         名称                  类型      余额方向  辅助核算    │
+├──────────────────────────────────────────────────────────────────────┤
+│ ▶ 1        资产类                                                     │
+│   1001      库存现金              资产        借    部门+项目        │
+│   1002      银行存款              资产        借    部���+银行账户    │
+│   1002.01   中国银行                        借                      │
+│   1002.02   招商银行                        借                      │
+│ ▶ 2        负债类                                                     │
+│   2001      短期借款               负债        贷                     │
+│ ▶ 6        损益类                                                     │
+│   6001      主营业务收入           损益        贷    部门+客户        │
+│   6602      销售费用              损益        借    部门+项目        │
+├──────────────────────────────────────────────────────────────────────┤
+│  共 56 条  <tr><td>第 1/3 页</td></tr>  ◀  ▶                                   │
+└──────────────────────────────────────────────────────────────────────┘
+<code></code>`
+
+#### 4.5.2 科目编辑界面（弹窗）
+
+<code></code>`
+┌──────────────────────────────────────────────────────────���──┐
+│  编辑科目                                            [×]   │
+├─────────────────────────────────────────────────────────────┤
+│  上级科目：1002 银行存款                              [▼]  │
+│  科目编码：1002.01 *                                     │
+│  科目名称：中国银行深圳支行 *                             │
+│  英文名称：BOC Shenzhen Branch                            │
+│  科目类型：资产类                                    [▼]  │
+│  余额方向：借                                        [▼]  │
+│  ───────────────────────────────────────────────────────  │
+│  ☑ 数量核算    计量单位：[人民币元 ▼]                     │
+│  ☑ 外币核算    默认币别：[美元 USD ▼]                     │
+│  ☑ 现金科目                                                │
+│  ☑ 银行科目                                                │
+│  默认税率：[13% ▼]                                        │
+│  ─────────────────────────��─────────────────────────────  │
+│  辅助核算维度：                                            │
+│    ☑ 部门     [多选☑] [必填☑]                              │
+│    ☑ 银行账户 [多选☐] [必填☑]                              │
+│    ☑ 项目     [多选☑] [必填☐]                              │
+│  ───────────────────────────────────────────────────────  │
+│  受控模块： ☑应收 ☑应付 ☑总账 ☑固定资产                    │
+│  启用状态： ☑启用                                          │
+│  排序号：[10]                                              │
+├─────────────────────────────────────────────────────────────┤
+│                              [取消]  [保存]  [保存并新增]   │
+└─────────────────────────────────────────────────────────────┘
+<code></code>`
+
+---
+
+<h2>五、与金蝶云星空的兼容性设计</h2>
+
+<h3>5.1 功能对照表</h3>
+
+<tr><td>功能项</td><td>金蝶云星空</td><td>本系统</td><td>兼容性等级</td></tr>
+
+<tr><td>科目新增/编辑</td><td>✅</td><td>✅</td><td>完全兼容</td></tr>
+<tr><td>多级科目（10级）</td><td>✅</td><td>✅</td><td>完全兼容</td></tr>
+<tr><td>科目编码规则自定义</td><td>✅</td><td>✅</td><td>完全兼容</td></tr>
+<tr><td>辅助核算维度（部门/供应商/客户/项目/物料）</td><td>✅</td><td>✅</td><td>完全兼容</td></tr>
+<tr><td>自定义辅助核算维度</td><td>✅</td><td>✅</td><td>完全兼容</td></tr>
+<tr><td>外币核算</td><td>✅</td><td>✅</td><td>完全兼容</td></tr>
+<tr><td>数量核算</td><td>✅</td><td>✅</td><td>完全兼容</td></tr>
+<tr><td>现金/银行科目标记</td><td>✅</td><td>✅</td><td>完全兼容</td></tr>
+<tr><td>多账套科目管理</td><td>✅</td><td>✅</td><td>完全兼容</td></tr>
+<tr><td>科目模板导入/导出</td><td>✅</td><td>✅</td><td>完全兼容</td></tr>
+<tr><td>科目受控字段</td><td>✅</td><td>✅</td><td>完全兼容</td></tr>
+<tr><td>期初余额录入</td><td>✅</td><td>✅</td><td>完全兼容</td></tr>
+<tr><td>试算平衡校验</td><td>✅</td><td>✅</td><td>完全兼容</td></tr>
+<tr><td>科目使用状态控制</td><td>✅</td><td>✅</td><td>完全兼容</td></tr>
+
+<h3>5.2 数据迁移接口</h3>
+
+支持从金蝶云星空导出科目数据（Excel），通过标准模板导入到本系统：
+
+<code></code>`csv
+科目编码,科目名称,科目类型,余额方向,上级科目编码,数量核算,外币核算,辅助核算1,辅助核算2,...
+1001,库存现金,资产,借,,否,否,DEPT,PROJECT
+1002,银行存款,资产,借,,否,是,DEPT,BANKACCOUNT
+<code></code>`
+
+---
+
+<h2>六、数据字典与枚举</h2>
+
+<h3>6.1 科目类型枚举</h3>
+
+<tr><td>编码</td><td>中文名</td><td>英文名</td><td>默认余额���向</td></tr>
+
+<tr><td><code>Asset</code></td><td>资产</td><td>Asset</td><td>借</td></tr>
+<tr><td><code>Liability</code></td><td>负债</td><td>Liability</td><td>贷</td></tr>
+<tr><td><code>Equity</code></td><td>权益</td><td>Equity</td><td>贷</td></tr>
+<tr><td><code>Cost</code></td><td>成本</td><td>Cost</td><td>借</td></tr>
+<tr><td><code>ProfitLoss</code></td><td>损益</td><td>ProfitLoss</td><td>借/贷</td></tr>
+<tr><td><code>OffBalance</code></td><td>表外</td><td>Off Balance</td><td>借/贷</td></tr>
+
+<h3>6.2 辅助核算维度枚举</h3>
+
+<tr><td>编码</td><td>中文名</td><td>是否树形</td><td>内置</td></tr>
+
+<tr><td><code>DEPT</code></td><td>部门</td><td>是</td><td>是</td></tr>
+<tr><td><code>PERSON</code></td><td>人员</td><td>是</td><td>是</td></tr>
+<tr><td><code>SUPPLIER</code></td><td>供应商</td><td>否</td><td>是</td></tr>
+<tr><td><code>CUSTOMER</code></td><td>客户</td><td>否</td><td>是</td></tr>
+<tr><td><code>PROJECT</code></td><td>项目</td><td>是</td><td>是</td></tr>
+<tr><td><code>MATERIAL</code></td><td>物料</td><td>否</td><td>是</td></tr>
+<tr><td><code>BANKACCOUNT</code></td><td>银行账户</td><td>否</td><td>是</td></tr>
+<tr><td><code>COSTITEM</code></td><td>费用项目</td><td>否</td><td>是</td></tr>
+<tr><td><code>SELFDEF01~10</code></td><td>自定义维度1~10</td><td>可配置</td><td>否</td></tr>
+
+---
+
+<h2>七、性能与安全要求</h2>
+
+<tr><td>指标</td><td>要求</td></tr>
+
+<tr><td>科目列表加载（1000条以内）</td><td>< 500ms</td></tr>
+<tr><td>单科目保存响应时间</td><td>< 200ms</td></tr>
+<tr><td>批量导入100条科目</td><td>< 5s</td></tr>
+<tr><td>支持单账套最大科目数</td><td>10,000+</td></tr>
+<tr><td>辅助核算维度最大绑定数</td><td>10个/科目</td></tr>
+<tr><td>权限控制</td><td>按账套隔离，管理员/财务角色分级</td></tr>
+<tr><td>操作日志</td><td>全量记录，增删改均写入 FA_SubjectChangeLog</td></tr>
+<tr><td>数据校验</td><td>科目编码唯一性、上下级关系、余额方向一致性</td></tr>
+
+---
+
+<h2>八、上线依赖与风险</h2>
+
+<tr><td>依赖项</td><td>前置模块</td><td>责任方</td><td>优先��</td></tr>
+
+<tr><td>账套管理</td><td>BD_AccountBook 表</td><td>后端</td><td>P0</td></tr>
+<tr><td>会计期间管理</td><td>BD_AccountPeriod 表</td><td>后端</td><td>P0</td></tr>
+<tr><td>组织架构（部门）</td><td>BD_Department 表</td><td>后端</td><td>P1</td></tr>
+<tr><td>币别汇率管理</td><td>BD_Currency 表</td><td>后端</td><td>P1</td></tr>
+<tr><td>用户权限体系</td><td>系统权限模块</td><td>后端</td><td>P0</td></tr>
+
+<tr><td>风险项</td><td>影响</td><td>缓解措施</td></tr>
+
+<tr><td>科目体系一旦启用后修改成本高</td><td>影响所有财务模块</td><td>上线前组织财务主管评审，制定标准化科目模板</td></tr>
+<tr><td>科目编码规则变更</td><td>需重新编码</td><td>在设计阶段确定规则，设计文档评审签字确认</td></tr>
+<tr><td>与现有 ERP 模块的数据对接</td><td>现有业务单据可能引用科目</td><td>制定过渡期方案：先并行，待新科目确认后批量迁移</td></tr>
+
+---
+
+<h2>九、里程碑与排期建议</h2>
+
+<tr><td>阶段</td><td>功能</td><td>工期建议</td><td>交付物</td></tr>
+
+<tr><td><strong>Phase 1</strong></td><td>科目 CRUD + 科目树 + 科目类型 + 余额方向</td><td>3 周</td><td>可用版本</td></tr>
+<tr><td><strong>Phase 2</strong></td><td>辅助核算维度绑定 + 受控字段配置</td><td>2 周</td><td>可用版本</td></tr>
+<tr><td><strong>Phase 3</strong></td><td>期初余额录入 + 试算平衡 + 批量导入/导出</td><td>2 周</td><td>可用版本</td></tr>
+<tr><td><strong>Phase 4</strong></td><td>科目模板管理 + 历史版本 + 审计日志</td><td>1 周</td><td>完整版本</td></tr>
+<tr><td><strong>合计</strong></td><td><strong>8 周（约2个月）</strong></td></tr>
+
+---
+
+<h2>十、验收标准</h2>
+
+<tr><td>验收条件</td><td>测试方法</td></tr>
+
+<tr><td>财务管理员可在 5 分钟内完成新增一级科目（含辅助核算）</td><td>操作计时</td></tr>
+<tr><td>100 条科目导入 < 3 分钟完成</td><td>性能测试</td></tr>
+<tr><td>试算平衡校验能正确识别不平衡场景</td><td>异常测试</td></tr>
+<tr><td>有发生额的科目无法被删除</td><td>边界测试</td></tr>
+<tr><td>不同账套的科目互不影响</td><td>隔离测试</td></tr>
+<tr><td>批量导入 Excel 格式错误有明确提示</td><td>异常测试</td></tr></table>
+
+---
+
+<em>文档结束</em>
+
+  </div>
+</div>
+</body>
+</html>
