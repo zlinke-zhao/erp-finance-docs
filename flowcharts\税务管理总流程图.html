@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>税务管理模块 - 总流程图</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+        .container { max-width: 1400px; margin: 0 auto; }
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .header h1 {
+            color: #fff;
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+        .header p { color: #a0aec0; font-size: 1.1em; }
+        .flowchart {
+            background: #fff;
+            border-radius: 16px;
+            padding: 40px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+        .module {
+            background: #f8fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+        .module-title {
+            font-size: 1.3em;
+            font-weight: bold;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .module-1 { border-color: #e53e3e; }
+        .module-1 .module-title { color: #e53e3e; border-color: #e53e3e; }
+        .module-2 { border-color: #38a169; }
+        .module-2 .module-title { color: #38a169; border-color: #38a169; }
+        .module-3 { border-color: #3182ce; }
+        .module-3 .module-title { color: #3182ce; border-color: #3182ce; }
+        .module-4 { border-color: #805ad5; }
+        .module-4 .module-title { color: #805ad5; border-color: #805ad5; }
+        .flow-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .node {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 0.95em;
+            text-align: center;
+            min-width: 140px;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+        .node-process { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
+        .node-decision { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); transform: rotate(0); }
+        .node-end { background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); }
+        .arrow {
+            color: #a0aec0;
+            font-size: 1.5em;
+            font-weight: bold;
+        }
+        .formula {
+            background: #2d3748;
+            color: #68d391;
+            padding: 15px 20px;
+            border-radius: 8px;
+            font-family: "Consolas", monospace;
+            font-size: 0.9em;
+            margin: 15px 0;
+        }
+        .integration {
+            background: #fff5f5;
+            border: 2px dashed #e53e3e;
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+            text-align: center;
+        }
+        .integration-title {
+            color: #e53e3e;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+        .integration-items {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        .integration-item {
+            background: #fed7d7;
+            color: #c53030;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-size: 0.9em;
+        }
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #4a5568;
+            font-size: 0.9em;
+        }
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏛️ 税务管理模块 - 总流程图</h1>
+            <p>对标金蝶云星空税务管理模块 · 业财税一体化</p>
+        </div>
+
+        <div class="flowchart">
+            <!-- 模块1: 税务基础设置 -->
+            <div class="module module-1">
+                <div class="module-title">
+                    <span>🔧</span> 模块一：税务基础设置
+                </div>
+                <div class="flow-row">
+                    <div class="node">税务组织管理</div>
+                    <span class="arrow">→</span>
+                    <div class="node">税种税率配置</div>
+                    <span class="arrow">→</span>
+                    <div class="node">申报周期设置</div>
+                    <span class="arrow">→</span>
+                    <div class="node">优惠政策维护</div>
+                </div>
+                <div style="margin-top: 15px; color: #718096; font-size: 0.9em;">
+                    <strong>配置内容：</strong>纳税人类型、税率标准、申报日历、计提规则
+                </div>
+            </div>
+
+            <!-- 模块2: 业务数据归集 -->
+            <div class="module module-2">
+                <div class="module-title">
+                    <span>📥</span> 模块二：业务数据归集
+                </div>
+                <div class="flow-row">
+                    <div class="node node-process">销售开票数据</div>
+                    <span class="arrow">→</span>
+                    <div class="node node-process">销项税额汇总</div>
+                </div>
+                <div class="flow-row">
+                    <div class="node node-process">采购收票数据</div>
+                    <span class="arrow">→</span>
+                    <div class="node node-process">进项税额汇总</div>
+                    <span class="arrow">→</span>
+                    <div class="node node-process">可抵扣判断</div>
+                </div>
+                <div class="flow-row">
+                    <div class="node node-process">海关缴款书</div>
+                    <span class="arrow">→</span>
+                    <div class="node node-process">进口税额归集</div>
+                </div>
+            </div>
+
+            <!-- 模块3: 税金计算与计提 -->
+            <div class="module module-3">
+                <div class="module-title">
+                    <span>💰</span> 模块三：税金计算与计提
+                </div>
+                
+                <!-- 增值税计算 -->
+                <div style="background: #ebf8ff; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+                    <strong style="color: #2b6cb0;">📊 增值税计算</strong>
+                    <div class="formula">
+应纳税额 = 销项税额 - 进项税额 + 进项转出 - 加计抵减<br>
+留抵税额 = 进项税额 - 销项税额（结转下期继续抵扣）
+                    </div>
+                </div>
+
+                <!-- 附加税计算 -->
+                <div style="background: #f0fff4; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+                    <strong style="color: #276749;">📊 附加税计算</strong>
+                    <div class="formula">
+附加税基数 = 增值税应纳税额<br>
+城建税 = 基数 × 7%(或5%/1%)<br>
+教育费附加 = 基数 × 3%<br>
+地方教育附加 = 基数 × 2%
+                    </div>
+                </div>
+
+                <!-- 所得税计算 -->
+                <div style="background: #faf5ff; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+                    <strong style="color: #6b46c1;">📊 所得税计算</strong>
+                    <div class="formula">
+应税所得额 = 收入总额 - 不征税收入 - 免税收入 - 扣除项目 ± 纳税调整<br>
+季度预缴 = 应税所得额 × 25% ÷ 4<br>
+年度汇算 = 年度应纳所得税 - 已预缴总额
+                    </div>
+                </div>
+
+                <div class="flow-row">
+                    <div class="node">税金计算</div>
+                    <span class="arrow">→</span>
+                    <div class="node node-decision">主管审核</div>
+                    <span class="arrow">→</span>
+                    <div class="node">生成计提凭证</div>
+                    <span class="arrow">→</span>
+                    <div class="node node-end">凭证记账</div>
+                </div>
+            </div>
+
+            <!-- 模块4: 税务申报管理 -->
+            <div class="module module-4">
+                <div class="module-title">
+                    <span>📋</span> 模块四：税务申报管理
+                </div>
+                <div class="flow-row">
+                    <div class="node">申报日历提醒</div>
+                    <span class="arrow">→</span>
+                    <div class="node node-process">生成申报数据</div>
+                    <span class="arrow">→</span>
+                    <div class="node">核对申报表</div>
+                    <span class="arrow">→</span>
+                    <div class="node node-decision">确认申报</div>
+                </div>
+                <div class="flow-row" style="margin-top: 20px;">
+                    <div style="flex-basis: 100%; text-align: center; color: #718096;">
+                        申报状态流转
+                    </div>
+                </div>
+                <div class="flow-row">
+                    <div class="node" style="background: #e2e8f0; color: #4a5568;">待申报</div>
+                    <span class="arrow">→</span>
+                    <div class="node" style="background: #fbd38d; color: #744210;">申报中</div>
+                    <span class="arrow">→</span>
+                    <div class="node node-end">已申报</div>
+                    <span class="arrow">→</span>
+                    <div class="node node-end">已缴款</div>
+                    <span class="arrow">→</span>
+                    <div class="node" style="background: #38a169;">完税凭证归档</div>
+                </div>
+            </div>
+
+            <!-- 模块集成 -->
+            <div class="integration">
+                <div class="integration-title">🔗 业财税一体化集成</div>
+                <div class="integration-items">
+                    <span class="integration-item">📤 发票管理（销项/进项）</span>
+                    <span class="integration-item">📥 应收应付（挂账/核销）</span>
+                    <span class="integration-item">🧮 总账凭证（自动记账）</span>
+                    <span class="integration-item">📊 财务报表（税报输出）</span>
+                </div>
+            </div>
+
+            <!-- 图例 -->
+            <div class="legend">
+                <div class="legend-item">
+                    <div class="legend-color" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);"></div>
+                    <span>基础节点</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);"></div>
+                    <span>处理节点</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);"></div>
+                    <span>判断节点</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);"></div>
+                    <span>完成节点</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
