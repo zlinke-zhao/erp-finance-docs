@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>成本核算模块 — UI设计原型</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, "Microsoft YaHei", "Segoe UI", sans-serif; background: #f0f2f5; color: #333; font-size: 14px; line-height: 1.5; }
+        .container { max-width: 1400px; margin: 0 auto; padding: 16px; }
+        .page-header { background: linear-gradient(135deg, #4a148c 0%, #6a1b9a 50%, #7b1fa2 100%); color: white; padding: 24px 28px; border-radius: 12px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; }
+        .page-header h1 { font-size: 1.6em; }
+        .page-header .badge { background: rgba(255,255,255,0.2); padding: 4px 14px; border-radius: 20px; font-size: 0.85em; }
+        .screen { background: white; border-radius: 12px; margin-bottom: 24px; overflow: hidden; box-shadow: 0 2px 12px rgba(0,0,0,0.08); }
+        .screen-title { background: #f8f9fa; padding: 12px 20px; border-bottom: 1px solid #e9ecef; font-weight: 600; color: #495057; font-size: 1em; display: flex; align-items: center; gap: 8px; }
+        .screen-title .tag { background: #f3e5f5; color: #6a1b9a; padding: 2px 10px; border-radius: 10px; font-size: 0.8em; font-weight: normal; }
+        .toolbar { padding: 14px 20px; border-bottom: 1px solid #eee; display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+        .btn { padding: 7px 16px; border-radius: 6px; border: 1px solid #d0d0d0; background: white; cursor: pointer; font-size: 0.88em; transition: all 0.2s; display: inline-flex; align-items: center; gap: 4px; }
+        .btn:hover { background: #f5f5f5; border-color: #bbb; }
+        .btn-primary { background: #6a1b9a; color: white; border-color: #6a1b9a; }
+        .btn-primary:hover { background: #7b1fa2; }
+        .btn-success { background: #27ae60; color: white; border-color: #27ae60; }
+        .btn-warning { background: #f39c12; color: white; border-color: #f39c12; }
+        .btn-danger { background: #c62828; color: white; border-color: #c62828; }
+        .btn-info { background: #1565c0; color: white; border-color: #1565c0; }
+        .btn-sm { padding: 4px 10px; font-size: 0.82em; }
+        .search-input { padding: 6px 12px; border: 1px solid #ddd; border-radius: 6px; width: 180px; font-size: 0.88em; }
+        table { width: 100%; border-collapse: collapse; font-size: 0.88em; }
+        thead th { background: #f8f9fa; padding: 10px 12px; text-align: left; font-weight: 600; color: #555; border-bottom: 2px solid #dee2e6; white-space: nowrap; }
+        tbody td { padding: 10px 12px; border-bottom: 1px solid #f0f0f0; vertical-align: middle; }
+        tbody tr:hover { background: #f8f0ff; }
+        .tag-status { display: inline-block; padding: 3px 10px; border-radius: 10px; font-size: 0.82em; font-weight: 500; }
+        .tag-draft { background: #f0f0f0; color: #666; }
+        .tag-collecting { background: #fff3cd; color: #856404; }
+        .tag-allocated { background: #e1bee7; color: #6a1b9a; }
+        .tag-transferred { background: #d4edda; color: #155724; }
+        .tag-closed { background: #cce5ff; color: #004085; }
+        .tag-warn { background: #fff3cd; color: #856404; }
+        .tag-over { background: #ffebee; color: #c62828; }
+        .tag-ok { background: #e8f5e9; color: #2e7d32; }
+        .amount { font-weight: 600; color: #c62828; }
+        .amount-purple { font-weight: 600; color: #6a1b9a; }
+        .amount-green { font-weight: 600; color: #2e7d32; }
+
+        .tab-bar { display: flex; border-bottom: 2px solid #e9ecef; background: #f8f9fa; padding: 0 20px; }
+        .tab { padding: 10px 20px; cursor: pointer; font-size: 0.9em; color: #666; border-bottom: 2px solid transparent; margin-bottom: -2px; transition: all 0.2s; }
+        .tab:hover { color: #6a1b9a; }
+        .tab.active { color: #6a1b9a; border-bottom-color: #6a1b9a; font-weight: 600; }
+        .tab-panel { display: none; }
+        .tab-panel.active { display: block; }
+
+        .card-row { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px; padding: 20px; }
+        .stat-card { background: #f8f9fa; border-radius: 10px; padding: 16px 20px; border-left: 4px solid #6a1b9a; }
+        .stat-card .label { font-size: 0.82em; color: #888; }
+        .stat-card .value { font-size: 1.4em; font-weight: 700; color: #6a1b9a; margin-top: 4px; }
+        .stat-card .sub { font-size: 0.78em; color: #aaa; margin-top: 2px; }
+        .stat-card.orange { border-left-color: #e65100; }
+        .stat-card.orange .value { color: #e65100; }
+        .stat-card.red { border-left-color: #c62828; }
+        .stat-card.red .value { color: #c62828; }
+        .stat-card.blue { border-left-color: #1565c0; }
+        .stat-card.blue .value { color: #1565c0; }
+        .stat-card.green { border-left-color: #2e7d32; }
+        .stat-card.green .value { color: #2e7d32; }
+
+        .step-bar { display: flex; gap: 0; padding: 16px 20px; overflow-x: auto; }
+        .step { display: flex; align-items: center; gap: 0; white-space: nowrap; }
+        .step-circle { width: 28px; height: 28px; border-radius: 50%; background: #e0e0e0; color: #999; display: flex; align-items: center; justify-content: center; font-size: 0.82em; font-weight: 600; }
+        .step-circle.done { background: #6a1b9a; color: white; }
+        .step-circle.current { background: #ab47bc; color: white; }
+        .step-label { font-size: 0.82em; color: #888; margin-left: 6px; }
+        .step-label.done { color: #6a1b9a; font-weight: 600; }
+        .step-label.current { color: #ab47bc; font-weight: 600; }
+        .step-arrow { margin: 0 8px; color: #ccc; font-size: 0.9em; }
+
+        .section-note { padding: 12px 20px; background: #f3e5f5; font-size: 0.85em; color: #6a1b9a; border-bottom: 1px solid #e1bee7; }
+        .budget-bar { height: 8px; background: #e9ecef; border-radius: 4px; margin-top: 6px; }
+        .budget-bar-fill { height: 100%; border-radius: 4px; background: #6a1b9a; }
+        .budget-bar-fill.warn { background: #f39c12; }
+        .budget-bar-fill.over { background: #c62828; }
+
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.4); z-index: 1000; justify-content: center; align-items: center; }
+        .modal-overlay.show { display: flex; }
+        .modal { background: white; border-radius: 12px; width: 700px; max-height: 85vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
+        .modal-header { padding: 18px 24px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
+        .modal-header h3 { font-size: 1.1em; color: #6a1b9a; }
+        .modal-close { background: none; border: none; font-size: 1.5em; cursor: pointer; color: #999; }
+        .modal-body { padding: 20px 24px; }
+        .form-group { margin-bottom: 16px; }
+        .form-group label { display: block; font-size: 0.88em; font-weight: 600; color: #555; margin-bottom: 6px; }
+        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 0.9em; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="page-header">
+        <div>
+            <h1>🏭 成本核算管理</h1>
+            <p style="opacity:0.8;font-size:0.9em;">归集-分摊-核算-结转 全流程闭环</p>
+        </div>
+        <span class="badge">WinForm桌面端风格</span>
+    </div>
+
+    <div class="screen">
+        <div class="tab-bar">
+            <div class="tab active" data-tab="pool">📊 成本池</div>
+            <div class="tab" data-tab="collect">📥 成本归集</div>
+            <div class="tab" data-tab="allocate">🔀 制费分摊</div>
+            <div class="tab" data-tab="wip">⚙️ 在制品核算</div>
+            <div class="tab" data-tab="completion">✅ 完工结转</div>
+            <div class="tab" data-tab="variance">📉 差异分析</div>
+            <div class="tab" data-tab="period">🗓️ 月末结账</div>
+        </div>
+
+        <!-- Tab 1: 成本池 -->
+        <div class="tab-panel active" id="panel-pool">
+            <div class="step-bar">
+                <div class="step"><span class="step-circle done">1</span><span class="step-label done">材料归集</span></div><span class="step-arrow">→</span>
+                <div class="step"><span class="step-circle done">2</span><span class="step-label done">人工归集</span></div><span class="step-arrow">→</span>
+                <div class="step"><span class="step-circle done">3</span><span class="step-label done">制费归集</span></div><span class="step-arrow">→</span>
+                <div class="step"><span class="step-circle done">4</span><span class="step-label done">辅助分配</span></div><span class="step-arrow">→</span>
+                <div class="step"><span class="step-circle done">5</span><span class="step-label done">制费分摊</span></div><span class="step-arrow">→</span>
+                <div class="step"><span class="step-circle current">6</span><span class="step-label current">在制品核算</span></div><span class="step-arrow">→</span>
+                <div class="step"><span class="step-circle">7</span><span class="step-label">完工结转</span></div><span class="step-arrow">→</span>
+                <div class="step"><span class="step-circle">8</span><span class="step-label">差异处理</span></div><span class="step-arrow">→</span>
+                <div class="step"><span class="step-circle">9</span><span class="step-label">月末结账</span></div>
+            </div>
+            <div class="card-row">
+                <div class="stat-card"><div class="label">直接材料</div><div class="value">¥2,458,000</div><div class="sub">本月归集</div></div>
+                <div class="stat-card blue"><div class="label">直接人工</div><div class="value">¥680,000</div><div class="sub">本月归集</div></div>
+                <div class="stat-card orange"><div class="label">制造费用</div><div class="value">¥520,000</div><div class="sub">分摊前</div></div>
+                <div class="stat-card green"><div class="label">辅助生产</div><div class="value">¥145,000</div><div class="sub">待分配</div></div>
+                <div class="stat-card red"><div class="label">成本差异</div><div class="value">-2.3%</div><div class="sub">实际vs标准</div></div>
+            </div>
+            <table>
+                <thead><tr><th>成本池编码</th><th>名称</th><th>类型</th><th>期间</th><th>归集金额</th><th>已分摊</th><th>状态</th><th>操作</th></tr></thead>
+                <tbody>
+                    <tr><td>CP-DM-202604</td><td>直接材料成本池</td><td><span class="tag-status tag-ok">直接材料</span></td><td>2026-04</td><td class="amount-purple">¥2,458,000</td><td>—</td><td><span class="tag-status tag-allocated">已审核</span></td><td><button class="btn btn-sm btn-info">明细</button></td></tr>
+                    <tr><td>CP-DL-202604</td><td>直接人工成本池</td><td><span class="tag-status tag-ok">直接人工</span></td><td>2026-04</td><td class="amount-purple">¥680,000</td><td>—</td><td><span class="tag-status tag-allocated">已审核</span></td><td><button class="btn btn-sm btn-info">明细</button></td></tr>
+                    <tr><td>CP-OH-202604</td><td>制造费用成本池</td><td><span class="tag-status tag-warn">制造费用</span></td><td>2026-04</td><td class="amount-purple">¥520,000</td><td class="amount-green">¥520,000</td><td><span class="tag-status tag-allocated">已分摊</span></td><td><button class="btn btn-sm btn-info">明细</button></td></tr>
+                    <tr><td>CP-AP-202604</td><td>辅助生产成本池</td><td><span class="tag-status tag-warn">辅助生产</span></td><td>2026-04</td><td class="amount-purple">¥145,000</td><td class="amount-green">¥145,000</td><td><span class="tag-status tag-transferred">已分配</span></td><td><button class="btn btn-sm btn-info">明细</button></td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Tab 2: 成本归集 -->
+        <div class="tab-panel" id="panel-collect">
+            <div class="toolbar">
+                <button class="btn btn-primary">📥 材料归集</button>
+                <button class="btn btn-primary">👷 人工归集</button>
+                <button class="btn btn-primary">🔧 制费归集</button>
+                <button class="btn">🔄 刷新归集</button>
+                <span style="flex:1"></span>
+                <select style="padding:6px 10px;border:1px solid #ddd;border-radius:6px;font-size:0.88em;">
+                    <option>全部要素</option><option>直接材料</option><option>直接人工</option><option>制造费用</option>
+                </select>
+                <select style="padding:6px 10px;border:1px solid #ddd;border-radius:6px;font-size:0.88em;">
+                    <option>全部状态</option><option>归集中</option><option>已审核</option><option>已撤销</option>
+                </select>
+            </div>
+            <table>
+                <thead><tr><th>归集ID</th><th>来源类型</th><th>来源单号</th><th>成本要素</th><th>生产订单</th><th>产品</th><th>金额</th><th>数量</th><th>状态</th></tr></thead>
+                <tbody>
+                    <tr><td>CL2026040001</td><td>领料单</td><td>ML20260415001</td><td><span class="tag-status tag-ok">直接材料</span></td><td>PO2026040101</td><td>A产品</td><td class="amount-purple">¥125,600</td><td>500kg</td><td><span class="tag-status tag-allocated">已审核</span></td></tr>
+                    <tr><td>CL2026040002</td><td>工时单</td><td>TT20260415001</td><td><span class="tag-status tag-ok">直接人工</span></td><td>PO2026040101</td><td>A产品</td><td class="amount-purple">¥18,000</td><td>300h</td><td><span class="tag-status tag-allocated">已审核</span></td></tr>
+                    <tr><td>CL2026040003</td><td>费用报销</td><td>EX20260418005</td><td><span class="tag-status tag-warn">制造费用</span></td><td>—</td><td>—</td><td class="amount-purple">¥3,200</td><td>—</td><td><span class="tag-status tag-allocated">已审核</span></td></tr>
+                    <tr><td>CL2026040004</td><td>折旧计提</td><td>DP2026040001</td><td><span class="tag-status tag-warn">制造费用</span></td><td>—</td><td>—</td><td class="amount-purple">¥86,000</td><td>—</td><td><span class="tag-status tag-allocated">已审核</span></td></tr>
+                    <tr><td>CL2026040005</td><td>委外加工</td><td>OS20260412001</td><td><span class="tag-status tag-warn">委外加工</span></td><td>PO2026040103</td><td>C产品</td><td class="amount-purple">¥45,000</td><td>200件</td><td><span class="tag-status tag-collecting">归集中</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Tab 3: 制费分摊 -->
+        <div class="tab-panel" id="panel-allocate">
+            <div class="section-note">💡 当前期间制造费用已全部分摊完成，以下为分摊结果</div>
+            <div class="toolbar">
+                <button class="btn btn-primary">🔧 配置分摊规则</button>
+                <button class="btn btn-warning">📐 分摊试算</button>
+                <button class="btn btn-success">✅ 执行分摊</button>
+                <button class="btn">📤 导出分摊明细</button>
+            </div>
+            <table>
+                <thead><tr><th>分摊规则</th><th>分摊基准</th><th>源成本池</th><th>目标产品</th><th>基准值</th><th>分摊比例</th><th>分摊金额</th><th>凭证</th></tr></thead>
+                <tbody>
+                    <tr><td>按工时分摊</td><td>生产工时</td><td>制费-车间一</td><td>A产品</td><td>1,200h</td><td>40%</td><td class="amount-purple">¥208,000</td><td>CT04-001</td></tr>
+                    <tr><td>按工时分摊</td><td>生产工时</td><td>制费-车间一</td><td>B产品</td><td>900h</td><td>30%</td><td class="amount-purple">¥156,000</td><td>CT04-001</td></tr>
+                    <tr><td>按工时分摊</td><td>生产工时</td><td>制费-车间一</td><td>C产品</td><td>600h</td><td>20%</td><td class="amount-purple">¥104,000</td><td>CT04-001</td></tr>
+                    <tr><td>按工时分摊</td><td>生产工时</td><td>制费-车间一</td><td>D产品</td><td>300h</td><td>10%</td><td class="amount-purple">¥52,000</td><td>CT04-001</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Tab 4: 在制品核算 -->
+        <div class="tab-panel" id="panel-wip">
+            <div class="section-note">💡 约当产量法：期末在制品数量 × 完工程度 = 约当产量</div>
+            <div class="toolbar">
+                <button class="btn btn-primary">📝 录入在制品盘点</button>
+                <button class="btn btn-warning">⚙️ 维护完工程度</button>
+                <button class="btn btn-success">📐 计算约当产量</button>
+            </div>
+            <table>
+                <thead><tr><th>产品</th><th>生产订单</th><th>期初在制</th><th>本期投入</th><th>完工程度</th><th>约当产量</th><th>本期完工</th><th>期末在制</th><th>在制成本</th><th>方法</th></tr></thead>
+                <tbody>
+                    <tr><td>A产品</td><td>PO2026040101</td><td>100</td><td>1,000</td><td>60%</td><td>660</td><td>800</td><td>300</td><td class="amount-purple">¥186,000</td><td>约当产量法</td></tr>
+                    <tr><td>B产品</td><td>PO2026040102</td><td>50</td><td>600</td><td>40%</td><td>290</td><td>450</td><td>200</td><td class="amount-purple">¥98,400</td><td>约当产量法</td></tr>
+                    <tr><td>C产品</td><td>PO2026040103</td><td>0</td><td>300</td><td>80%</td><td>240</td><td>250</td><td>50</td><td class="amount-purple">¥32,500</td><td>约当产量法</td></tr>
+                    <tr><td>D产品</td><td>PO2026040104</td><td>20</td><td>200</td><td>—</td><td>—</td><td>220</td><td>0</td><td>¥0</td><td>不计算在制</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Tab 5: 完工结转 -->
+        <div class="tab-panel" id="panel-completion">
+            <div class="toolbar">
+                <button class="btn btn-primary">📐 计算产品成本</button>
+                <button class="btn btn-success">📦 完工入库结转</button>
+                <button class="btn btn-info">💰 销售成本结转</button>
+                <button class="btn">📤 导出</button>
+            </div>
+            <table>
+                <thead><tr><th>产品</th><th>完工数量</th><th>直接材料</th><th>直接人工</th><th>制造费用</th><th>总成本</th><th>单位成本</th><th>标准成本</th><th>差异率</th><th>凭证</th><th>操作</th></tr></thead>
+                <tbody>
+                    <tr><td>A产品</td><td>800件</td><td class="amount">¥1,200,000</td><td class="amount">¥288,000</td><td class="amount">¥208,000</td><td class="amount-purple">¥1,696,000</td><td>¥2,120</td><td>¥2,080</td><td><span class="tag-status tag-warn">+1.9%</span></td><td>CT06-001</td><td><button class="btn btn-sm btn-info">明细</button></td></tr>
+                    <tr><td>B产品</td><td>450件</td><td class="amount">¥540,000</td><td class="amount">¥162,000</td><td class="amount">¥156,000</td><td class="amount-purple">¥858,000</td><td>¥1,907</td><td>¥1,950</td><td><span class="tag-status tag-ok">-2.2%</span></td><td>CT06-002</td><td><button class="btn btn-sm btn-info">明细</button></td></tr>
+                    <tr><td>C产品</td><td>250件</td><td class="amount">¥450,000</td><td class="amount">¥108,000</td><td class="amount">¥104,000</td><td class="amount-purple">¥662,000</td><td>¥2,648</td><td>¥2,600</td><td><span class="tag-status tag-warn">+1.8%</span></td><td>CT06-003</td><td><button class="btn btn-sm btn-info">明细</button></td></tr>
+                    <tr><td>D产品</td><td>220件</td><td class="amount">¥268,000</td><td class="amount">¥122,000</td><td class="amount">¥52,000</td><td class="amount-purple">¥442,000</td><td>¥2,009</td><td>¥2,000</td><td><span class="tag-status tag-ok">+0.5%</span></td><td>CT06-004</td><td><button class="btn btn-sm btn-info">明细</button></td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Tab 6: 差异分析 -->
+        <div class="tab-panel" id="panel-variance">
+            <div class="card-row">
+                <div class="stat-card"><div class="label">材料量差</div><div class="value" style="color:#c62828;">+¥35,200</div><div class="sub">实际用量超标准</div></div>
+                <div class="stat-card orange"><div class="label">材料价差</div><div class="value" style="color:#2e7d32;">-¥12,800</div><div class="sub">采购单价低于标准</div></div>
+                <div class="stat-card blue"><div class="label">人工效率差异</div><div class="value" style="color:#c62828;">+¥18,000</div><div class="sub">实际工时超标准</div></div>
+                <div class="stat-card green"><div class="label">工资率差异</div><div class="value" style="color:#2e7d32;">-¥5,000</div><div class="sub">实际工资率低于标准</div></div>
+                <div class="stat-card red"><div class="label">综合差异率</div><div class="value" style="color:#c62828;">+2.3%</div><div class="sub">超过5%将预警</div></div>
+            </div>
+            <table>
+                <thead><tr><th>产品</th><th>材料量差</th><th>材料价差</th><th>人工效率差异</th><th>工资率差异</th><th>制费差异</th><th>合计差异</th><th>差异率</th><th>状态</th></tr></thead>
+                <tbody>
+                    <tr><td>A产品</td><td class="amount">+¥15,000</td><td class="amount-green">-¥5,200</td><td class="amount">+¥8,000</td><td class="amount-green">-¥2,000</td><td class="amount">+¥6,200</td><td class="amount">+¥22,000</td><td><span class="tag-status tag-warn">+1.9%</span></td><td><span class="tag-status tag-ok">正常</span></td></tr>
+                    <tr><td>B产品</td><td class="amount">+¥12,000</td><td class="amount-green">-¥4,800</td><td class="amount">+¥6,000</td><td class="amount-green">-¥1,500</td><td class="amount-green">-¥8,700</td><td class="amount-green">+¥3,000</td><td><span class="tag-status tag-ok">-2.2%</span></td><td><span class="tag-status tag-ok">正常</span></td></tr>
+                    <tr><td>C产品</td><td class="amount">+¥8,200</td><td class="amount-green">-¥2,800</td><td class="amount">+¥4,000</td><td class="amount-green">-¥1,500</td><td class="amount">+¥3,100</td><td class="amount">+¥11,000</td><td><span class="tag-status tag-warn">+1.8%</span></td><td><span class="tag-status tag-ok">正常</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Tab 7: 月末结账 -->
+        <div class="tab-panel" id="panel-period">
+            <div class="section-note">💡 结转顺序必须严格执行：材料→人工→制费→辅助→分摊→在制品→完工→销售→差异→结账</div>
+            <table>
+                <thead><tr><th>步骤</th><th>凭证</th><th>内容</th><th>金额</th><th>状态</th><th>操作</th></tr></thead>
+                <tbody>
+                    <tr><td>Step 1</td><td>CT01</td><td>材料费用归集</td><td class="amount-purple">¥2,458,000</td><td><span class="tag-status tag-transferred">已完成</span></td><td>—</td></tr>
+                    <tr><td>Step 2</td><td>CT02</td><td>人工费用归集</td><td class="amount-purple">¥680,000</td><td><span class="tag-status tag-transferred">已完成</span></td><td>—</td></tr>
+                    <tr><td>Step 3</td><td>CT03</td><td>制造费用归集</td><td class="amount-purple">¥520,000</td><td><span class="tag-status tag-transferred">已完成</span></td><td>—</td></tr>
+                    <tr><td>Step 4</td><td>CT05</td><td>辅助生产分配</td><td class="amount-purple">¥145,000</td><td><span class="tag-status tag-transferred">已完成</span></td><td>—</td></tr>
+                    <tr><td>Step 5</td><td>CT04</td><td>制造费用分摊</td><td class="amount-purple">¥520,000</td><td><span class="tag-status tag-transferred">已完成</span></td><td>—</td></tr>
+                    <tr><td>Step 6</td><td>—</td><td>在制品核算</td><td class="amount-purple">¥316,900</td><td><span class="tag-status tag-collecting">进行中</span></td><td><button class="btn btn-sm btn-primary">执行</button></td></tr>
+                    <tr><td>Step 7</td><td>CT06</td><td>完工产品入库</td><td class="amount">待计算</td><td><span class="tag-status tag-draft">待执行</span></td><td>—</td></tr>
+                    <tr><td>Step 8</td><td>CT07</td><td>销售成本结转</td><td class="amount">待计算</td><td><span class="tag-status tag-draft">待执行</span></td><td>—</td></tr>
+                    <tr><td>Step 9</td><td>CT08</td><td>成本差异处理</td><td class="amount">待计算</td><td><span class="tag-status tag-draft">待执行</span></td><td>—</td></tr>
+                    <tr><td>Step 10</td><td>—</td><td>月末结账</td><td>—</td><td><span class="tag-status tag-draft">待执行</span></td><td>—</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+document.querySelectorAll('.tab').forEach(tab => {
+    tab.addEventListener('click', function() {
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+        this.classList.add('active');
+        document.getElementById('panel-' + this.dataset.tab).classList.add('active');
+    });
+});
+</script>
+</body>
+</html>
