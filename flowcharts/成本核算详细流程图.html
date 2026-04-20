@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>成本核算模块 - 详细流程图 | ERP财务管理</title>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Microsoft YaHei', 'PingFang SC', sans-serif; background: #f0f2f5; color: #333; }
+.header { background: linear-gradient(135deg, #4a148c 0%, #6a1b9a 50%, #7b1fa2 100%); color: white; padding: 30px 40px; box-shadow: 0 2px 10px rgba(0,0,0,0.2); }
+.header h1 { font-size: 28px; margin-bottom: 8px; }
+.header p { font-size: 14px; opacity: 0.85; }
+.header .meta { margin-top: 10px; font-size: 12px; opacity: 0.7; }
+.container { max-width: 1400px; margin: 0 auto; padding: 30px 40px; }
+.toc { background: white; border-radius: 12px; padding: 24px 32px; margin-bottom: 30px; box-shadow: 0 1px 6px rgba(0,0,0,0.08); }
+.toc h2 { font-size: 20px; color: #6a1b9a; margin-bottom: 16px; border-bottom: 2px solid #e1bee7; padding-bottom: 10px; }
+.toc-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(380px, 1fr)); gap: 10px; }
+.toc-item { display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-radius: 8px; background: #f5f5f5; cursor: pointer; transition: all 0.2s; }
+.toc-item:hover { background: #f3e5f5; transform: translateX(4px); }
+.toc-item .num { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 50%; background: #6a1b9a; color: white; font-size: 13px; font-weight: bold; flex-shrink: 0; }
+.toc-item .label { font-size: 14px; color: #333; }
+.section { background: white; border-radius: 12px; padding: 28px 32px; margin-bottom: 24px; box-shadow: 0 1px 6px rgba(0,0,0,0.08); }
+.section h2 { font-size: 20px; color: #6a1b9a; margin-bottom: 6px; display: flex; align-items: center; gap: 10px; }
+.section h2 .icon { font-size: 24px; }
+.section .desc { font-size: 13px; color: #888; margin-bottom: 20px; }
+.mermaid { display: flex; justify-content: center; padding: 10px 0; }
+.mermaid svg { max-width: 100%; }
+.summary-box { background: linear-gradient(135deg, #f3e5f5, #e1bee7); border-radius: 12px; padding: 24px 32px; margin-top: 30px; }
+.summary-box h2 { color: #6a1b9a; font-size: 18px; margin-bottom: 16px; }
+.summary-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
+.summary-card { background: white; border-radius: 8px; padding: 16px; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
+.summary-card .title { font-size: 13px; color: #666; margin-bottom: 6px; }
+.summary-card .value { font-size: 16px; font-weight: bold; color: #6a1b9a; }
+.compare-box { background: white; border-radius: 12px; padding: 24px 32px; margin-top: 24px; box-shadow: 0 1px 6px rgba(0,0,0,0.08); }
+.compare-box h2 { font-size: 18px; color: #333; margin-bottom: 16px; }
+.compare-box table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.compare-box th { background: #f5f5f5; padding: 10px 12px; text-align: left; border: 1px solid #e0e0e0; font-weight: bold; }
+.compare-box td { padding: 10px 12px; border: 1px solid #e0e0e0; }
+.footer { text-align: center; padding: 20px; color: #999; font-size: 12px; }
+</style>
+</head>
+<body>
+<div class="header">
+  <h1>成本核算模块 - 详细流程图</h1>
+  <p>ERP财务管理 - 归集-分摊-核算-结转闭环 - 对标金蝶云星空成本管理</p>
+  <div class="meta">Dev_Dept 自研ERP - 版本 1.0 - 2026-04-20</div>
+</div>
+
+<div class="container">
+<!-- 目录 -->
+<div class="toc">
+  <h2>流程图目录</h2>
+  <div class="toc-grid">
+    <div class="toc-item" onclick="document.getElementById('s1').scrollIntoView({behavior:'smooth'})"><span class="num">1</span><span class="label">成本核算全流程架构总览</span></div>
+    <div class="toc-item" onclick="document.getElementById('s2').scrollIntoView({behavior:'smooth'})"><span class="num">2</span><span class="label">成本三要素归集流程</span></div>
+    <div class="toc-item" onclick="document.getElementById('s3').scrollIntoView({behavior:'smooth'})"><span class="num">3</span><span class="label">制造费用分摊流程</span></div>
+    <div class="toc-item" onclick="document.getElementById('s4').scrollIntoView({behavior:'smooth'})"><span class="num">4</span><span class="label">在制品核算流程</span></div>
+    <div class="toc-item" onclick="document.getElementById('s5').scrollIntoView({behavior:'smooth'})"><span class="num">5</span><span class="label">完工产品结转流程</span></div>
+    <div class="toc-item" onclick="document.getElementById('s6').scrollIntoView({behavior:'smooth'})"><span class="num">6</span><span class="label">凭证模板与结转顺序</span></div>
+    <div class="toc-item" onclick="document.getElementById('s7').scrollIntoView({behavior:'smooth'})"><span class="num">7</span><span class="label">差异分析与预警</span></div>
+  </div>
+</div>
+
+<!-- S1 架构总览 -->
+<div class="section" id="s1">
+  <h2><span class="icon">🏗️</span> 1. 成本核算全流程架构总览</h2>
+  <p class="desc">从成本归集到月末结账的完整闭环</p>
+  <div class="mermaid">
+flowchart TD
+    A["采购入库"] --> B["生产领料"]
+    B --> C["直接材料归集"]
+    D["工时采集"] --> E["直接人工归集"]
+    F["费用报销"] --> G["制造费用归集"]
+    H["固定资产折旧"] --> G
+    I["辅助生产归集"] --> J["辅助生产分配"]
+
+    C --> K["成本池归集确认"]
+    E --> K
+    G --> K
+    J --> K
+
+    K --> L["制造费用分摊"]
+    L --> M["分摊到各产品工单"]
+
+    M --> N["在制品核算"]
+    N --> O{"在制品核算方法"}
+    O -->|约当产量法| P["计算约当产量"]
+    O -->|定额成本法| Q["按定额计算"]
+
+    P --> R["完工产品成本计算"]
+    Q --> R
+
+    R --> S["完工入库结转"]
+    S --> T["销售成本结转"]
+    T --> U["成本差异处理"]
+    U --> V["月末结账"]
+
+    V --> W["凭证写入总账"]
+
+    style K fill:#f3e5f5,stroke:#6a1b9a
+    style R fill:#e1bee7,stroke:#6a1b9a
+    style V fill:#ce93d8,stroke:#4a148c
+    style W fill:#ab47bc,stroke:#4a148c,color:#fff
+  </div>
+</div>
+
+<!-- S2 成本三要素归集 -->
+<div class="section" id="s2">
+  <h2><span class="icon">📦</span> 2. 成本三要素归集流程</h2>
+  <p class="desc">直接材料+直接人工+制造费用三要素归集</p>
+  <div class="mermaid">
+flowchart TD
+    subgraph S1["直接材料归集"]
+        A1["生产领料单"] --> A2["匹配物料单价"]
+        A2 --> A3["计算领料金额"]
+        A3 --> A4["归集到生产订单"]
+    end
+
+    subgraph S2["直接人工归集"]
+        B1["工时记录采集"] --> B2["匹配人工费率"]
+        B2 --> B3["计算人工费用"]
+        B3 --> B4["归集到生产订单"]
+    end
+
+    subgraph S3["制造费用归集"]
+        C1["费用报销单"] --> C4["制造费用归集"]
+        C2["折旧计提"] --> C4
+        C3["辅助生产转入"] --> C4
+        C4 --> C5["按车间归集"]
+    end
+
+    A4 --> D["成本池汇总"]
+    B4 --> D
+    C5 --> D
+
+    D --> E{"归集审核"}
+    E -->|通过| F["归集确认锁定"]
+    E -->|不通过| G["修正后重新归集"]
+
+    F --> H["进入分摊环节"]
+
+    style A4 fill:#e3f2fd,stroke:#1565c0
+    style B4 fill:#e8f5e9,stroke:#2e7d32
+    style C5 fill:#fff3e0,stroke:#e65100
+    style F fill:#e1bee7,stroke:#6a1b9a
+  </div>
+</div>
+
+<!-- S3 制造费用分摊 -->
+<div class="section" id="s3">
+  <h2><span class="icon">🔀</span> 3. 制造费用分摊流程</h2>
+  <p class="desc">多动因分摊+试算+正式执行</p>
+  <div class="mermaid">
+flowchart TD
+    A["制造费用归集完成"] --> B["选择分摊基准"]
+    B --> C{"分摊基准类型"}
+    C -->|工时| D["按生产工时比例"]
+    C -->|机时| E["按机器工时比例"]
+    C -->|产量| F["按产品产量比例"]
+    C -->|材料| G["按直接材料比例"]
+    C -->|固定| H["按预设固定比例"]
+
+    D --> I["计算各产品分摊比例"]
+    E --> I
+    F --> I
+    G --> I
+    H --> I
+
+    I --> J["分摊试算"]
+    J --> K{"试算结果审查"}
+    K -->|不满意| L["调整分摊基准"]
+    L --> B
+    K -->|满意| M["正式执行分摊"]
+
+    M --> N["生成分摊结果"]
+    N --> O["更新各产品制造费用"]
+    O --> P["生成分摊凭证 CT04"]
+
+    style J fill:#fff3e0,stroke:#e65100
+    style M fill:#e1bee7,stroke:#6a1b9a
+    style P fill:#ce93d8,stroke:#4a148c
+  </div>
+</div>
+
+<!-- S4 在制品核算 -->
+<div class="section" id="s4">
+  <h2><span class="icon">⚙️</span> 4. 在制品核算流程</h2>
+  <p class="desc">约当产量法+定额成本法双模式</p>
+  <div class="mermaid">
+flowchart TD
+    A["在制品核算启动"] --> B{"选择核算方法"}
+    B -->|约当产量法| C["录入期末在制品数量"]
+    B -->|定额成本法| D["维护定额成本"]
+    B -->|不计算在制品| E["全部成本归完工"]
+
+    C --> F["维护各工序完工程度"]
+    F --> G["计算约当产量"]
+    G --> H["约当产量等于期末数量乘以完工程度"]
+
+    H --> I["成本分配计算"]
+    I --> J["单位成本等于总成本除以约当总产量"]
+    J --> K["完工成本等于完工数量乘以单位成本"]
+    K --> L["在制品成本等于期末约当产量乘以单位成本"]
+
+    D --> M["在制品按定额计价"]
+    M --> N["差异全部由完工产品承担"]
+
+    L --> O["确认核算结果"]
+    N --> O
+    E --> O
+
+    O --> P["进入完工结转环节"]
+
+    style G fill:#e8f5e9,stroke:#2e7d32
+    style K fill:#e1bee7,stroke:#6a1b9a
+    style L fill:#f3e5f5,stroke:#6a1b9a
+  </div>
+</div>
+
+<!-- S5 完工产品结转 -->
+<div class="section" id="s5">
+  <h2><span class="icon">✅</span> 5. 完工产品结转流程</h2>
+  <p class="desc">完工入库+销售成本结转</p>
+  <div class="mermaid">
+flowchart TD
+    A["在制品核算完成"] --> B["计算完工产品总成本"]
+    B --> C["直接材料加直接人工加制造费用"]
+
+    C --> D["计算产品单位成本"]
+    D --> E["单位成本等于总成本除以完工数量"]
+
+    E --> F["生成完工入库凭证 CT06"]
+    F --> G["借 库存商品 贷 生产成本"]
+
+    G --> H["产品入库完成"]
+    H --> I["等待销售出库"]
+
+    I --> J["销售出库确认"]
+    J --> K["匹配产品单位成本"]
+    K --> L["计算销售成本"]
+    L --> M["生成销售成本凭证 CT07"]
+
+    M --> N["借 主营业务成本 贷 库存商品"]
+
+    N --> O{"月末是否有成本差异"}
+    O -->|有差异| P["差异分摊处理 CT08"]
+    O -->|无差异| Q["进入月末结账"]
+    P --> Q
+
+    style E fill:#e1bee7,stroke:#6a1b9a
+    style F fill:#ce93d8,stroke:#4a148c
+    style M fill:#ce93d8,stroke:#4a148c
+    style Q fill:#ab47bc,stroke:#4a148c,color:#fff
+  </div>
+</div>
+
+<!-- S6 凭证模板与结转顺序 -->
+<div class="section" id="s6">
+  <h2><span class="icon">🧮</span> 6. 凭证模板与结转顺序</h2>
+  <p class="desc">8套凭证模板+严格结转顺序控制</p>
+  <div class="mermaid">
+flowchart TD
+    A["Step1 材料费用归集"] --> B["CT01 借 生产成本 贷 原材料"]
+    B --> C["Step2 人工费用归集"]
+    C --> D["CT02 借 生产成本 贷 应付职工薪酬"]
+    D --> E["Step3 制造费用归集"]
+    E --> F["CT03 借 制造费用 贷 银行存款等"]
+    F --> G["Step4 辅助生产分配"]
+    G --> H["CT05 借 制造费用 贷 辅助生产成本"]
+    H --> I["Step5 制造费用分摊"]
+    I --> J["CT04 借 生产成本 贷 制造费用"]
+    J --> K["Step6 完工产品入库"]
+    K --> L["CT06 借 库存商品 贷 生产成本"]
+    L --> M["Step7 销售成本结转"]
+    M --> N["CT07 借 主营业务成本 贷 库存商品"]
+    N --> O["Step8 成本差异处理"]
+    O --> P["CT08 借 主营业务成本 贷 成本差异"]
+
+    P --> Q["全部凭证写入总账"]
+
+    style A fill:#e3f2fd,stroke:#1565c0
+    style C fill:#e3f2fd,stroke:#1565c0
+    style E fill:#e3f2fd,stroke:#1565c0
+    style G fill:#fff3e0,stroke:#e65100
+    style I fill:#fff3e0,stroke:#e65100
+    style K fill:#e1bee7,stroke:#6a1b9a
+    style M fill:#e1bee7,stroke:#6a1b9a
+    style O fill:#fce4ec,stroke:#c62828
+    style Q fill:#ab47bc,stroke:#4a148c,color:#fff
+  </div>
+</div>
+
+<!-- S7 差异分析 -->
+<div class="section" id="s7">
+  <h2><span class="icon">📉</span> 7. 差异分析与预警</h2>
+  <p class="desc">量差+价差拆分+超阈值预警</p>
+  <div class="mermaid">
+flowchart TD
+    A["标准成本 vs 实际成本"] --> B{"差异类型"}
+    B -->|材料差异| C["材料量差加材料价差"]
+    B -->|人工差异| D["效率差异加工资率差异"]
+    B -->|制费差异| E["耗费差异加效率差异"]
+
+    C --> F["量差等于实际用量减标准用量乘标准单价"]
+    C --> G["价差等于实际单价减标准单价乘实际用量"]
+
+    D --> H["效率差异等于实际工时减标准工时乘标准工资率"]
+    D --> I["工资率差异等于实际工资率减标准工资率乘实际工时"]
+
+    E --> J["耗费差异等于实际制费减预算制费"]
+    E --> K["效率差异等于实际工时减标准工时乘标准分摊率"]
+
+    F --> L{"差异率是否超5%"}
+    G --> L
+    H --> L
+    I --> L
+    J --> L
+    K --> L
+
+    L -->|是| M["触发差异预警"]
+    L -->|否| N["正常记录"]
+
+    M --> O["通知成本管理员"]
+    O --> P["分析差异原因"]
+    P --> Q["制定改善措施"]
+
+    N --> R["月末差异分摊"]
+    R --> S["按比例分摊到存货和销售成本"]
+
+    style M fill:#ffebee,stroke:#c62828
+    style Q fill:#e8f5e9,stroke:#2e7d32
+    style S fill:#e1bee7,stroke:#6a1b9a
+  </div>
+</div>
+
+<!-- 汇总 -->
+<div class="summary-box">
+  <h2>📋 凭证模板汇总</h2>
+  <div class="summary-grid">
+    <div class="summary-card">
+      <div class="title">CT01 材料费用归集</div>
+      <div class="value">借 生产成本-直接材料 → 贷 原材料</div>
+    </div>
+    <div class="summary-card">
+      <div class="title">CT02 人工费用归集</div>
+      <div class="value">借 生产成本-直接人工 → 贷 应付职工薪酬</div>
+    </div>
+    <div class="summary-card">
+      <div class="title">CT03 制造费用归集</div>
+      <div class="value">借 制造费用 → 贷 银行存款/折旧等</div>
+    </div>
+    <div class="summary-card">
+      <div class="title">CT04 制造费用分摊</div>
+      <div class="value">借 生产成本-制造费用 → 贷 制造费用</div>
+    </div>
+    <div class="summary-card">
+      <div class="title">CT05 辅助生产分配</div>
+      <div class="value">借 制造费用/生产成本 → 贷 辅助生产</div>
+    </div>
+    <div class="summary-card">
+      <div class="title">CT06 完工产品入库</div>
+      <div class="value">借 库存商品 → 贷 生产成本</div>
+    </div>
+    <div class="summary-card">
+      <div class="title">CT07 销售成本结转</div>
+      <div class="value">借 主营业务成本 → 贷 库存商品</div>
+    </div>
+    <div class="summary-card">
+      <div class="title">CT08 成本差异处理</div>
+      <div class="value">借 主营业务成本/库存商品 → 贷 成本差异</div>
+    </div>
+  </div>
+</div>
+
+<div class="compare-box">
+  <h2>📊 成本核算方法对照表</h2>
+  <table>
+    <thead>
+      <tr><th>方法</th><th>适用场景</th><th>归集对象</th><th>特点</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>品种法</td><td>大量单步骤生产</td><td>按产品品种</td><td>简单直接，成本计算期固定</td></tr>
+      <tr><td>分批法</td><td>单件小批生产</td><td>按生产订单/批号</td><td>成本随订单归集，不分配在制品</td></tr>
+      <tr><td>分步法</td><td>大量多步骤生产</td><td>按生产步骤</td><td>逐步结转，需计算在制品</td></tr>
+      <tr><td>作业成本法</td><td>间接费用占比高</td><td>按作业活动</td><td>分摊更精确，实施复杂</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="footer">
+  ERP财务管理系统 · 成本核算模块流程图 · Dev_Dept 自研 · 2026-04-20
+</div>
+</div>
+
+<script>
+mermaid.initialize({
+  startOnLoad: true,
+  theme: 'base',
+  themeVariables: {
+    fontSize: '14px'
+  },
+  flowchart: {
+    htmlLabels: true,
+    curve: 'basis',
+    useMaxWidth: true
+  }
+});
+</script>
+</body>
+</html>
