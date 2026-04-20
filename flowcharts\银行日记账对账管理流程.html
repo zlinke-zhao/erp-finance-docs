@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>银行日记账与对账管理 - 流程图</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+            background: linear-gradient(135deg, #1a365d 0%, #2c5282 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+        .container { max-width: 1400px; margin: 0 auto; }
+        h1 {
+            color: #fff;
+            text-align: center;
+            font-size: 2em;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+        .subtitle {
+            color: #a0c4e8;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+        .module-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 40px;
+        }
+        .module-tag {
+            background: rgba(255,255,255,0.15);
+            color: #fff;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        .section {
+            background: #fff;
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+        .section-title {
+            font-size: 1.3em;
+            color: #2d3748;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #4299e1;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .flow-container { overflow-x: auto; }
+        .flow {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 10px;
+            background: #f7fafc;
+            border: 2px solid #e2e8f0;
+            min-width: max-content;
+        }
+        .flow-step {
+            background: #4299e1;
+            color: #fff;
+            padding: 12px 18px;
+            border-radius: 8px;
+            font-weight: 600;
+            white-space: nowrap;
+            min-width: 120px;
+            text-align: center;
+        }
+        .flow-arrow {
+            color: #4299e1;
+            font-size: 1.5em;
+            flex-shrink: 0;
+        }
+        .flow-branch {
+            background: linear-gradient(135deg, #ed8936 0%, #dd6b20 100%);
+        }
+        .flow-auto {
+            background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+        }
+        .flow-manual {
+            background: linear-gradient(135deg, #ed64a6 0%, #d53f8c 100%);
+        }
+        .flow-result {
+            background: linear-gradient(135deg, #667eea 0%, #5a67d8 100%);
+        }
+        .flow-detail {
+            font-size: 0.85em;
+            color: #718096;
+            margin-top: 5px;
+        }
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        .card {
+            background: #f7fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 20px;
+        }
+        .card-title {
+            font-size: 1.1em;
+            color: #2d3748;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .card-title .icon { font-size: 1.3em; }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9em;
+        }
+        th, td {
+            border: 1px solid #e2e8f0;
+            padding: 10px 12px;
+            text-align: left;
+        }
+        th {
+            background: #edf2f7;
+            font-weight: 600;
+            color: #4a5568;
+        }
+        .badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            font-weight: 600;
+        }
+        .badge-success { background: #c6f6d5; color: #276749; }
+        .badge-warning { background: #fefcbf; color: #975a16; }
+        .badge-info { background: #bee3f8; color: #2b6cb0; }
+        .formula {
+            background: #1a202c;
+            color: #68d391;
+            padding: 15px 20px;
+            border-radius: 8px;
+            font-family: "Consolas", monospace;
+            margin: 15px 0;
+            font-size: 1em;
+        }
+        .legend {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #f7fafc;
+            border-radius: 8px;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9em;
+        }
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+        }
+        .workflow-step {
+            background: #fff;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .workflow-title {
+            font-size: 1.1em;
+            color: #2d3748;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .step-number {
+            background: #4299e1;
+            color: #fff;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+        }
+        .step-content {
+            padding-left: 40px;
+        }
+        .step-list {
+            list-style: none;
+            padding: 0;
+        }
+        .step-list li {
+            padding: 8px 0;
+            padding-left: 20px;
+            position: relative;
+            color: #4a5568;
+        }
+        .step-list li::before {
+            content: "▸";
+            position: absolute;
+            left: 0;
+            color: #4299e1;
+        }
+        .highlight-box {
+            background: linear-gradient(135deg, #ebf8ff 0%, #e6fffa 100%);
+            border: 2px solid #81e6d9;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .highlight-box h4 {
+            color: #2c7a7b;
+            margin-bottom: 10px;
+        }
+        .source-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 15px;
+            margin: 15px 0;
+        }
+        .source-card {
+            background: #f7fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+        }
+        .source-card .icon { font-size: 2em; margin-bottom: 10px; }
+        .source-card h4 { color: #2d3748; margin-bottom: 5px; }
+        .source-card p { font-size: 0.85em; color: #718096; }
+        .matching-rules {
+            background: #fffbf0;
+            border: 2px solid #f6e05e;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+        .rule-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 0;
+            border-bottom: 1px dashed #f6e05e;
+        }
+        .rule-item:last-child { border-bottom: none; }
+        .rule-priority {
+            background: #ed8936;
+            color: #fff;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏦 银行日记账与对账管理</h1>
+        <p class="subtitle">Bank Diary & Reconciliation Management</p>
+
+        <div class="module-tags">
+            <span class="module-tag">💳 银行账户管理</span>
+            <span class="module-tag">📝 银行日记账</span>
+            <span class="module-tag">📥 对账单导入</span>
+            <span class="module-tag">🔗 自动勾对</span>
+            <span class="module-tag">📊 余额调节表</span>
+            <span class="module-tag">⚠️ 未达账预警</span>
+        </div>
+
+        <!-- 一、整体架构 -->
+        <div class="section">
+            <h2 class="section-title">📐 一、系统架构</h2>
+            <div class="legend">
+                <div class="legend-item">
+                    <div class="legend-color" style="background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);"></div>
+                    <span>企业日记账（收款/付款单生成）</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: linear-gradient(135deg, #4299e1 0%, #3182ce 100%);"></div>
+                    <span>银行流水（各渠道采集）</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: linear-gradient(135deg, #667eea 0%, #5a67d8 100%);"></div>
+                    <span>对账引擎（核心处理）</span>
+                </div>
+            </div>
+
+            <div class="flow-container">
+                <div class="flow" style="background: linear-gradient(135deg, #f0fff4 0%, #c6f6d5 100%);">
+                    <div class="flow-step flow-auto">
+                        💰 收款单/付款单
+                        <div class="flow-detail">审核通过后自动登记日记账</div>
+                    </div>
+                    <div class="flow-arrow">→</div>
+                    <div class="flow-step flow-auto">
+                        📖 企业银行日记账
+                        <div class="flow-detail">收支金额、对手信息、凭证关联</div>
+                    </div>
+                    <div class="flow-arrow">↕</div>
+                    <div class="flow-step" style="background: linear-gradient(135deg, #667eea 0%, #5a67d8 100%);">
+                        ⚙️ 对账引擎
+                        <div class="flow-detail">自动勾对 + 余额调节</div>
+                    </div>
+                    <div class="flow-arrow">↕</div>
+                    <div class="flow-step flow-auto">
+                        📄 银行流水
+                        <div class="flow-detail">来源：手工/Excel/银企直连</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 二、银行流水采集 -->
+        <div class="section">
+            <h2 class="section-title">📥 二、银行流水采集（多渠道兼容）</h2>
+
+            <div class="source-cards">
+                <div class="source-card">
+                    <div class="icon">✏️</div>
+                    <h4>手工录入</h4>
+                    <p>适用于小额零星交易、急事急办场景</p>
+                </div>
+                <div class="source-card">
+                    <div class="icon">📊</div>
+                    <h4>Excel/CSV导入</h4>
+                    <p>网银导出标准格式批量导入</p>
+                </div>
+                <div class="source-card">
+                    <div class="icon">🔌</div>
+                    <h4>银企直连（预留）</h4>
+                    <p>API插件化设计，未来可扩展工行/农行/招行等</p>
+                </div>
+            </div>
+
+            <div class="workflow-step">
+                <div class="workflow-title">
+                    <span class="step-number">1</span>
+                    Excel导入流程
+                </div>
+                <div class="step-content">
+                    <div class="flow-container">
+                        <div class="flow">
+                            <div class="flow-step">📤 网银导出</div>
+                            <div class="flow-arrow">→</div>
+                            <div class="flow-step">📋 模板下载</div>
+                            <div class="flow-arrow">→</div>
+                            <div class="flow-step">📤 Excel上传</div>
+                            <div class="flow-arrow">→</div>
+                            <div class="flow-step flow-auto">🔍 自动解析</div>
+                            <div class="flow-arrow">→</div>
+                            <div class="flow-step">✅ 确认入库</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="highlight-box">
+                <h4>💡 扩展设计：银企直连插件接口</h4>
+                <pre style="background: #1a202c; color: #68d391; padding: 15px; border-radius: 8px; font-family: Consolas; overflow-x: auto;">
+interface BankSyncPlugin {
+    // 获取银行账户列表
+    listAccounts(): Promise<BankAccount[]>
+
+    // 拉取指定时间段的流水
+    fetchStatements(
+        accountNo: string,
+        startDate: string,
+        endDate: string
+    ): Promise<BankStatement[]>
+
+    // 银行流水标准格式（各银行适配器统一输出）
+    // amount, date, counterparty, remark, serialNo
+}</pre>
+            </div>
+        </div>
+
+        <!-- 三、自动勾对规则 -->
+        <div class="section">
+            <h2 class="section-title">🔗 三、自动勾对规则（优先级순）</h2>
+
+            <div class="matching-rules">
+                <div class="rule-item">
+                    <span class="rule-priority">P1</span>
+                    <strong>精准匹配</strong>：银行流水号 = 业务单据号（如付款单号） → 100%确认勾对
+                </div>
+                <div class="rule-item">
+                    <span class="rule-priority">P2</span>
+                    <strong>金额+日期匹配</strong>：金额完全相等 + 日期在±3天内 → 系统推荐，人工确认
+                </div>
+                <div class="rule-item">
+                    <span class="rule-priority">P3</span>
+                    <strong>对手+金额匹配</strong>：对手名称包含 + 金额相等 → 系统推荐，人工确认
+                </div>
+                <div class="rule-item">
+                    <span class="rule-priority">P4</span>
+                    <strong>模糊推荐</strong>：金额相近（误差&lt;1%）+ 同期交易 → 仅提示，不自动勾对
+                </div>
+            </div>
+
+            <div class="workflow-step">
+                <div class="workflow-title">
+                    <span class="step-number">2</span>
+                    勾对状态流转
+                </div>
+                <div class="step-content">
+                    <div class="flow-container">
+                        <div class="flow">
+                            <div class="flow-step flow-manual">🔴 未勾对</div>
+                            <div class="flow-arrow">→</div>
+                            <div class="flow-step flow-auto">🟡 待确认</div>
+                            <div class="flow-arrow">→</div>
+                            <div class="flow-step flow-auto">🟢 已勾对</div>
+                            <div class="flow-arrow">↩</div>
+                            <div class="flow-step" style="background: #718096;">⚪ 已冲销</div>
+                        </div>
+                    </div>
+                    <p style="margin-top: 15px; color: #718096; font-size: 0.9em;">
+                        * 已勾对的记录如需调整，可执行"取消勾对"操作，系统保留完整操作日志
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 四、余额调节表 -->
+        <div class="section">
+            <h2 class="section-title">📊 四、余额调节表生成</h2>
+
+            <div class="grid-2">
+                <div class="card">
+                    <div class="card-title"><span class="icon">📐</span> 调节公式</div>
+                    <div class="formula">
+银行日记账余额
++ 银行已收企业未收
+- 银行已付企业未付
+─────────────────────
+= 银行对账单余额
++ 企业已收银行未收
+- 企业已付银行未付
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-title"><span class="icon">📋</span> 调节表内容</div>
+                    <table>
+                        <tr><th>类型</th><th>笔数</th><th>金额</th></tr>
+                        <tr><td>银行已收企业未收</td><td>3</td><td>¥50,000.00</td></tr>
+                        <tr><td>银行已付企业未付</td><td>1</td><td>¥12,000.00</td></tr>
+                        <tr><td>企业已收银行未收</td><td>2</td><td>¥8,000.00</td></tr>
+                        <tr><td>企业已付银行未付</td><td>4</td><td>¥35,000.00</td></tr>
+                    </table>
+                </div>
+            </div>
+
+            <div class="highlight-box" style="margin-top: 20px;">
+                <h4>📅 月结流程</h4>
+                <p>每月末自动生成各账户余额调节表，支持打印存档。长期未达账项（超过30天）自动标红预警。</p>
+            </div>
+        </div>
+
+        <!-- 五、凭证关联 -->
+        <div class="section">
+            <h2 class="section-title">🧾 五、凭证关联机制</h2>
+
+            <div class="workflow-step">
+                <div class="workflow-title">
+                    <span class="step-number">3</span>
+                    三方关联关系
+                </div>
+                <div class="step-content">
+                    <div class="flow-container">
+                        <div class="flow">
+                            <div class="flow-step flow-auto">💰 收款/付款单</div>
+                            <div class="flow-arrow">⟷</div>
+                            <div class="flow-step" style="background: linear-gradient(135deg, #667eea 0%, #5a67d8 100%);">📖 企业日记账</div>
+                            <div class="flow-arrow">⟷</div>
+                            <div class="flow-step flow-auto">📄 银行流水</div>
+                            <div class="flow-arrow">⟷</div>
+                            <div class="flow-step flow-auto">🧾 总账凭证</div>
+                        </div>
+                    </div>
+                    <p style="margin-top: 15px; color: #4a5568;">
+                        对账勾对后，系统自动追溯关联原始收款/付款单，并更新凭证状态为"已银行核验"
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 六、数据模型 -->
+        <div class="section">
+            <h2 class="section-title">💾 六、核心数据表</h2>
+
+            <div class="grid-2">
+                <div class="card">
+                    <div class="card-title"><span class="icon">🏦</span> 银行账户表 bank_account</div>
+                    <table>
+                        <tr><th>字段</th><th>说明</th></tr>
+                        <tr><td>id</td><td>主键</td></tr>
+                        <tr><td>account_no</td><td>账号</td></tr>
+                        <tr><td>bank_name</td><td>开户行</td></tr>
+                        <tr><td>account_name</td><td>账户名</td></tr>
+                        <tr><td>currency</td><td>币种</td></tr>
+                        <tr><td>balance</td><td>当前余额</td></tr>
+                        <tr><td>status</td><td>启用/停用</td></tr>
+                    </table>
+                </div>
+                <div class="card">
+                    <div class="card-title"><span class="icon">📄</span> 银行流水表 bank_statement</div>
+                    <table>
+                        <tr><th>字段</th><th>说明</th></tr>
+                        <tr><td>id</td><td>主键</td></tr>
+                        <tr><td>account_id</td><td>账户ID</td></tr>
+                        <tr><td>source</td><td>来源(MANUAL/EXCEL/API_*)</td></tr>
+                        <tr><td>tx_date</td><td>交易日期</td></tr>
+                        <tr><td>amount</td><td>发生额(+收/-付)</td></tr>
+                        <tr><td>counterparty</td><td>对手信息</td></tr>
+                        <tr><td>remark</td><td>摘要</td></tr>
+                        <tr><td>serial_no</td><td>银行流水号</td></tr>
+                        <tr><td>match_status</td><td>勾对状态</td></tr>
+                    </table>
+                </div>
+            </div>
+
+            <div class="grid-2" style="margin-top: 20px;">
+                <div class="card">
+                    <div class="card-title"><span class="icon">📖</span> 企业日记账 bank_diary</div>
+                    <table>
+                        <tr><th>字段</th><th>说明</th></tr>
+                        <tr><td>id</td><td>主键</td></tr>
+                        <tr><td>account_id</td><td>账户ID</td></tr>
+                        <tr><td>source_doc_type</td><td>来源单据类型</td></tr>
+                        <tr><td>source_doc_id</td><td>来源单据ID</td></tr>
+                        <tr><td>amount</td><td>金额(+收/-付)</td></tr>
+                        <tr><td>business_date</td><td>业务日期</td></tr>
+                        <tr><td>voucher_id</td><td>凭证ID</td></tr>
+                        <tr><td>match_status</td><td>勾对状态</td></tr>
+                    </table>
+                </div>
+                <div class="card">
+                    <div class="card-title"><span class="icon">🔗</span> 勾对记录表 reconciliation</div>
+                    <table>
+                        <tr><th>字段</th><th>说明</th></tr>
+                        <tr><td>id</td><td>主键</td></tr>
+                        <tr><td>statement_id</td><td>银行流水ID</td></tr>
+                        <tr><td>diary_id</td><td>日记账ID</td></tr>
+                        <tr><td>match_type</td><td>匹配类型(P1~P4)</td></tr>
+                        <tr><td>match_status</td><td>状态(待确认/已确认)</td></tr>
+                        <tr><td>confirmed_by</td><td>确认人</td></tr>
+                        <tr><td>confirmed_at</td><td>确认时间</td></tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- 七、状态概览 -->
+        <div class="section">
+            <h2 class="section-title">📈 七、对账状态看板</h2>
+            <table>
+                <tr>
+                    <th>账户</th>
+                    <th>期初未达</th>
+                    <th>本期新增</th>
+                    <th>本期勾对</th>
+                    <th>期末未达</th>
+                    <th>健康度</th>
+                </tr>
+                <tr>
+                    <td>工商银行-基本户</td>
+                    <td>5笔 / ¥120,000</td>
+                    <td>28笔 / ¥580,000</td>
+                    <td>25笔 / ¥520,000</td>
+                    <td>8笔 / ¥180,000</td>
+                    <td><span class="badge badge-success">✓ 正常</span></td>
+                </tr>
+                <tr>
+                    <td>农业银行-一般户</td>
+                    <td>3笔 / ¥85,000</td>
+                    <td>15笔 / ¥320,000</td>
+                    <td>12笔 / ¥260,000</td>
+                    <td>6笔 / ¥145,000</td>
+                    <td><span class="badge badge-warning">⚠ 关注</span></td>
+                </tr>
+                <tr>
+                    <td>建设银行-美元户</td>
+                    <td>0笔 / $0</td>
+                    <td>8笔 / $45,000</td>
+                    <td>8笔 / $45,000</td>
+                    <td>0笔 / $0</td>
+                    <td><span class="badge badge-success">✓ 完成</span></td>
+                </tr>
+            </table>
+        </div>
+
+    </div>
+</body>
+</html>
