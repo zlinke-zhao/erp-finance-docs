@@ -582,7 +582,7 @@ flowchart TD
 <!-- 缩放控制按钮 -->
 <div class="zoom-controls">
   <button class="zoom-btn" onclick="zoomOut()" title="缩小">−</button>
-  <div class="zoom-label" id="zoomLevel">150%</div>
+  <div class="zoom-label" id="zoomLevel">100%</div>
   <button class="zoom-btn" onclick="zoomIn()" title="放大">+</button>
   <button class="zoom-btn" onclick="zoomReset()" title="重置">⟲</button>
 </div>
@@ -596,14 +596,14 @@ mermaid.initialize({
     primaryTextColor: '#1a1a2e', 
     primaryBorderColor: '#2e7d32',
     lineColor: '#666',
-    fontSize: '18px'
+    fontSize: '14px'
   },
-  flowchart: { htmlLabels: true, curve: 'basis', padding: 16, useMaxWidth: false }
+  flowchart: { htmlLabels: true, curve: 'basis', padding: 15, nodeSpacing: 50, rankSpacing: 60, useMaxWidth: true }
 });
 
 /* 流程图缩放控制 */
-let currentZoom = 1.5;
-const zoomStep = 0.25;
+let currentZoom = 1;
+const zoomStep = 0.2;
 function applyZoom() {
   document.querySelectorAll('.flow-container .mermaid').forEach(el => {
     el.style.transform = 'scale(' + currentZoom + ')';
@@ -614,7 +614,7 @@ function applyZoom() {
 }
 function zoomIn() { currentZoom = Math.min(3, currentZoom + zoomStep); applyZoom(); }
 function zoomOut() { currentZoom = Math.max(0.5, currentZoom - zoomStep); applyZoom(); }
-function zoomReset() { currentZoom = 1.5; applyZoom(); }
+function zoomReset() { currentZoom = 1; applyZoom(); }
 document.addEventListener('DOMContentLoaded', function() { applyZoom(); });
 
 function navTo(el) {
