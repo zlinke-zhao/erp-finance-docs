@@ -31,6 +31,8 @@
         .section-bank .section-title { border-color: #00838f; }
         .section-account .section-title { border-color: #6a1b9a; }
         .section-deduction .section-title { border-color: #bf360c; }
+        .section-expense .section-title { border-color: #2e7d32; }
+        .section-cost .section-title { border-color: #6a1b9a; }
         .section-icon { font-size: 1.2em; }
         .file-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
         .file-card { background: #f7fafc; border: 2px solid #e2e8f0; border-radius: 12px; padding: 20px; transition: all 0.3s ease; cursor: pointer; text-decoration: none; color: inherit; display: block; }
@@ -55,7 +57,7 @@
         <div class="header">
             <h1>ERP财务管理系统</h1>
             <p>流程图 · UI原型 · 规格说明书</p>
-            <span class="badge total-badge">共 54 个文件 · 14个模块 · 2026-04-20 更新</span>
+            <span class="badge total-badge">共 62 个文件 · 16个模块 · 2026-04-20 更新</span>
         </div>
 
         <!-- 总览 -->
@@ -398,6 +400,79 @@
                     <p>功能详述 · 数据库设计 · 验收标准</p>
                     <span class="file-tag tag-spechtml">HTML规格书</span>
                     <span class="file-tag tag-spec">MD</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- 费用报销 -->
+        <div class="section section-expense">
+            <h2 class="section-title">
+                <span class="section-icon">💰</span>
+                费用报销管理
+            </h2>
+            <div class="module-list">
+                <span class="module-tag" style="background:#2e7d32;">费用申请</span>
+                <span class="module-tag" style="background:#2e7d32;">审批流转</span>
+                <span class="module-tag" style="background:#2e7d32;">票据关联</span>
+                <span class="module-tag" style="background:#2e7d32;">预算控制</span>
+                <span class="module-tag" style="background:#2e7d32;">借款核销</span>
+                <span class="module-tag" style="background:#2e7d32;">报销支付</span>
+            </div>
+            <div class="file-grid" style="margin-top: 20px;">
+                <a class="file-card" href="flowcharts/费用报销详细流程图.html" target="_blank">
+                    <h3>💰 费用报销详细流程图</h3>
+                    <p>申请-审批-票据-预算-支付全流程</p>
+                    <span class="file-tag tag-flow">流程图</span>
+                    <span class="new-tag">NEW</span>
+                </a>
+                <a class="file-card" href="flowcharts/费用报销UI原型.html" target="_blank">
+                    <h3>📝 费用报销UI原型</h3>
+                    <p>费用申请·审批管理·票据关联·预算控制·报销支付</p>
+                    <span class="file-tag tag-ui">UI原型</span>
+                    <span class="new-tag">NEW</span>
+                </a>
+                <a class="file-card" href="specs-html/费用报销模块规格书.html" target="_blank">
+                    <h3>📚 费用报销模块规格书</h3>
+                    <p>7功能域·6张DDL表·7套凭证EX01~EX07</p>
+                    <span class="file-tag tag-spechtml">HTML规格书</span>
+                    <span class="file-tag tag-spec">MD</span>
+                    <span class="new-tag">NEW</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- 成本核算 -->
+        <div class="section section-cost">
+            <h2 class="section-title">
+                <span class="section-icon">🏭</span>
+                成本核算管理
+            </h2>
+            <div class="module-list">
+                <span class="module-tag" style="background:#6a1b9a;">成本归集</span>
+                <span class="module-tag" style="background:#6a1b9a;">制费分摊</span>
+                <span class="module-tag" style="background:#6a1b9a;">在制品核算</span>
+                <span class="module-tag" style="background:#6a1b9a;">完工结转</span>
+                <span class="module-tag" style="background:#6a1b9a;">差异分析</span>
+            </div>
+            <div class="file-grid" style="margin-top: 20px;">
+                <a class="file-card" href="flowcharts/成本核算详细流程图.html" target="_blank">
+                    <h3>🏭 成本核算详细流程图</h3>
+                    <p>归集-分摊-核算-结转全闭环</p>
+                    <span class="file-tag tag-flow">流程图</span>
+                    <span class="new-tag">NEW</span>
+                </a>
+                <a class="file-card" href="flowcharts/成本核算UI原型.html" target="_blank">
+                    <h3>📊 成本核算UI原型</h3>
+                    <p>成本池·归集·分摊·在制品·完工结转·差异分析</p>
+                    <span class="file-tag tag-ui">UI原型</span>
+                    <span class="new-tag">NEW</span>
+                </a>
+                <a class="file-card" href="specs-html/成本核算模块规格书.html" target="_blank">
+                    <h3>📚 成本核算模块规格书</h3>
+                    <p>7功能域·6张DDL表·8套凭证CT01~CT08</p>
+                    <span class="file-tag tag-spechtml">HTML规格书</span>
+                    <span class="file-tag tag-spec">MD</span>
+                    <span class="new-tag">NEW</span>
                 </a>
             </div>
         </div>
