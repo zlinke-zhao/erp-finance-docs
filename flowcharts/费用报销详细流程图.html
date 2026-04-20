@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>费用报销模块 - 详细流程图 | ERP财务管理</title>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Microsoft YaHei', 'PingFang SC', sans-serif; background: #f0f2f5; color: #333; }
+.header { background: linear-gradient(135deg, #2e7d32 0%, #388e3c 50%, #43a047 100%); color: white; padding: 30px 40px; box-shadow: 0 2px 10px rgba(0,0,0,0.2); }
+.header h1 { font-size: 28px; margin-bottom: 8px; }
+.header p { font-size: 14px; opacity: 0.85; }
+.header .meta { margin-top: 10px; font-size: 12px; opacity: 0.7; }
+.container { max-width: 1400px; margin: 0 auto; padding: 30px 40px; }
+.toc { background: white; border-radius: 12px; padding: 24px 32px; margin-bottom: 30px; box-shadow: 0 1px 6px rgba(0,0,0,0.08); }
+.toc h2 { font-size: 20px; color: #2e7d32; margin-bottom: 16px; border-bottom: 2px solid #c8e6c9; padding-bottom: 10px; }
+.toc-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(380px, 1fr)); gap: 10px; }
+.toc-item { display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-radius: 8px; background: #f5f5f5; cursor: pointer; transition: all 0.2s; }
+.toc-item:hover { background: #e8f5e9; transform: translateX(4px); }
+.toc-item .num { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 50%; background: #2e7d32; color: white; font-size: 13px; font-weight: bold; flex-shrink: 0; }
+.toc-item .label { font-size: 14px; color: #333; }
+.section { background: white; border-radius: 12px; padding: 28px 32px; margin-bottom: 24px; box-shadow: 0 1px 6px rgba(0,0,0,0.08); }
+.section h2 { font-size: 20px; color: #2e7d32; margin-bottom: 6px; display: flex; align-items: center; gap: 10px; }
+.section h2 .icon { font-size: 24px; }
+.section .desc { font-size: 13px; color: #888; margin-bottom: 20px; }
+.mermaid { display: flex; justify-content: center; padding: 10px 0; }
+.mermaid svg { max-width: 100%; }
+.summary-box { background: linear-gradient(135deg, #e8f5e9, #c8e6c9); border-radius: 12px; padding: 24px 32px; margin-top: 30px; }
+.summary-box h2 { color: #2e7d32; font-size: 18px; margin-bottom: 16px; }
+.summary-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
+.summary-card { background: white; border-radius: 8px; padding: 16px; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
+.summary-card .title { font-size: 13px; color: #666; margin-bottom: 6px; }
+.summary-card .value { font-size: 16px; font-weight: bold; color: #2e7d32; }
+.compare-box { background: white; border-radius: 12px; padding: 24px 32px; margin-top: 24px; box-shadow: 0 1px 6px rgba(0,0,0,0.08); }
+.compare-box h2 { font-size: 18px; color: #333; margin-bottom: 16px; }
+.compare-box table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.compare-box th { background: #f5f5f5; padding: 10px 12px; text-align: left; border: 1px solid #e0e0e0; font-weight: bold; }
+.compare-box td { padding: 10px 12px; border: 1px solid #e0e0e0; }
+.footer { text-align: center; padding: 20px; color: #999; font-size: 12px; }
+</style>
+</head>
+<body>
+<div class="header">
+  <h1>费用报销模块 - 详细流程图</h1>
+  <p>ERP财务管理 - 费用管控中枢 - 对标金蝶云星空费用管理</p>
+  <div class="meta">Dev_Dept 自研ERP - 版本 1.0 - 2026-04-20</div>
+</div>
+
+<div class="container">
+<!-- 目录 -->
+<div class="toc">
+  <h2>流程图目录</h2>
+  <div class="toc-grid">
+    <div class="toc-item" onclick="document.getElementById('s1').scrollIntoView({behavior:'smooth'})"><span class="num">1</span><span class="label">费用报销全流程架构总览</span></div>
+    <div class="toc-item" onclick="document.getElementById('s2').scrollIntoView({behavior:'smooth'})"><span class="num">2</span><span class="label">费用申请与审批流程</span></div>
+    <div class="toc-item" onclick="document.getElementById('s3').scrollIntoView({behavior:'smooth'})"><span class="num">3</span><span class="label">发票关联与查验流程</span></div>
+    <div class="toc-item" onclick="document.getElementById('s4').scrollIntoView({behavior:'smooth'})"><span class="num">4</span><span class="label">预算控制与扣减流程</span></div>
+    <div class="toc-item" onclick="document.getElementById('s5').scrollIntoView({behavior:'smooth'})"><span class="num">5</span><span class="label">借款与核销流程</span></div>
+    <div class="toc-item" onclick="document.getElementById('s6').scrollIntoView({behavior:'smooth'})"><span class="num">6</span><span class="label">凭证模板与费用分摊</span></div>
+    <div class="toc-item" onclick="document.getElementById('s7').scrollIntoView({behavior:'smooth'})"><span class="num">7</span><span class="label">异常场景与处理</span></div>
+  </div>
+</div>
+
+<!-- S1 架构总览 -->
+<div class="section" id="s1">
+  <h2><span class="icon">🏗️</span> 1. 费用报销全流程架构总览</h2>
+  <p class="desc">从费用申请到凭证入账的完整闭环</p>
+  <div class="mermaid">
+flowchart TD
+    A["员工发起费用申请"] --> B{"申请类型"}
+    B -->|日常费用| C["填写费用明细"]
+    B -->|差旅费用| D["填写行程+预估"]
+    B -->|项目费用| E["关联项目WBS"]
+    B -->|借款申请| F["填写借款信息"]
+    C --> G["关联发票/票据"]
+    D --> G
+    E --> G
+    F --> H["借款审批流"]
+    G --> I["预算余额校验"]
+    I -->|余额充足| J["提交审批"]
+    I -->|余额不足| K{"控制策略"}
+    K -->|禁止| L["拦截不可提交"]
+    K -->|警告| M["提示后可提交"]
+    K -->|特批| N["增加特批节点"]
+    J --> O["审批流转"]
+    M --> O
+    N --> O
+    O -->|全部通过| P["审批通过"]
+    O -->|驳回| Q["修改后重提"]
+    P --> R["预算占用冻结"]
+    R --> S["生成报销单"]
+    S --> T{"是否有借款"}
+    T -->|有借款| U["借款核销对冲"]
+    T -->|无借款| V["直接付款"]
+    U --> W["计算实付金额"]
+    V --> W
+    W --> X["提交付款申请"]
+    X --> Y["银行支付"]
+    Y --> Z["预算扣减确认"]
+    Z --> AA["自动生成凭证"]
+    AA --> AB["费用归集完成"]
+
+    style A fill:#e8f5e9,stroke:#2e7d32
+    style P fill:#c8e6c9,stroke:#2e7d32
+    style Z fill:#a5d6a7,stroke:#2e7d32
+    style AB fill:#66bb6a,stroke:#1b5e20,color:#fff
+  </div>
+</div>
+
+<!-- S2 费用申请与审批 -->
+<div class="section" id="s2">
+  <h2><span class="icon">📝</span> 2. 费用申请与审批流程</h2>
+  <p class="desc">多级审批按金额阈值自动路由</p>
+  <div class="mermaid">
+flowchart TD
+    A["填写费用申请单"] --> B["选择费用类型"]
+    B --> C["录入费用明细行"]
+    C --> D{"是否差旅"}
+    D -->|是| E["校验差旅标准"]
+    D -->|否| F["校验费用限额"]
+    E --> G{"是否超标"}
+    F --> G
+    G -->|超标| H["填写超标原因"]
+    G -->|标准内| I["关联发票"]
+    H --> I
+    I --> J["预算余额检查"]
+    J --> K["提交审批"]
+
+    K --> L{"金额阈值判断"}
+    L -->|2千以下| M["部门主管审批"]
+    L -->|2千到1万| N["部门主管→部门经理"]
+    L -->|1万以上| O["部门主管→部门经理→副总"]
+
+    M --> P{"审批结果"}
+    N --> P
+    O --> P
+
+    P -->|通过| Q["进入财务审核"]
+    P -->|驳回| R["修改后重新提交"]
+    P -->|转交| S["转交代理人审批"]
+
+    Q --> T{"财务审核"}
+    T -->|通过| U["审批完成"]
+    T -->|退回| V["退回申请人补充"]
+
+    style K fill:#fff3e0,stroke:#e65100
+    style U fill:#c8e6c9,stroke:#2e7d32
+    style R fill:#ffebee,stroke:#c62828
+  </div>
+</div>
+
+<!-- S3 发票关联与查验 -->
+<div class="section" id="s3">
+  <h2><span class="icon">🧾</span> 3. 发票关联与查验流程</h2>
+  <p class="desc">发票自动查验+重复报销拦截</p>
+  <div class="mermaid">
+flowchart TD
+    A["选择发票关联方式"] --> B{"关联方式"}
+    B -->|手工录入| C["输入发票代码+号码"]
+    B -->|OCR识别| D["拍照上传自动识别"]
+    B -->|查验模块导入| E["从已查验发票选取"]
+
+    C --> F["调用发票查验接口"]
+    D --> F
+    E --> G["查验状态校验"]
+
+    F --> H{"查验结果"}
+    H -->|验证通过| I["发票信息回填"]
+    H -->|查无此票| J["提示发票异常"]
+    H -->|作废或红冲| K["标记不可用"]
+
+    G --> L{"查验状态"}
+    L -->|已通过| I
+    L -->|未查验| F
+    L -->|查验失败| J
+
+    I --> M["重复报销检查"]
+    M --> N{"发票代码+号码"}
+    N -->|未使用| O["关联成功"]
+    N -->|已关联其他单| P["拦截重复报销"]
+    N -->|已入账| Q["提示已报销"]
+
+    O --> R["金额核对"]
+    R --> S{"发票金额 vs 报销金额"}
+    S -->|发票金额不超过报销| T["核对通过"]
+    S -->|发票金额超出| U["提示金额不匹配"]
+
+    style O fill:#c8e6c9,stroke:#2e7d32
+    style P fill:#ffebee,stroke:#c62828
+    style Q fill:#ffebee,stroke:#c62828
+  </div>
+</div>
+
+<!-- S4 预算控制 -->
+<div class="section" id="s4">
+  <h2><span class="icon">📊</span> 4. 预算控制与扣减流程</h2>
+  <p class="desc">预算占用冻结→报销扣减→驳回释放 全生命周期</p>
+  <div class="mermaid">
+flowchart TD
+    A["费用申请提交"] --> B["查询预算科目余额"]
+    B --> C{"余额是否充足"}
+    C -->|充足| D["标记预算校验通过"]
+    C -->|不足| E{"预算控制策略"}
+
+    E -->|禁止| F["直接拦截不可提交"]
+    E -->|警告| G["提示警告可继续"]
+    E -->|特批| H["增加特批审批节点"]
+    E -->|不控制| I["跳过预算校验"]
+
+    D --> J["提交进入审批"]
+    G --> J
+    H --> J
+    I --> J
+
+    J --> K{"审批结果"}
+    K -->|通过| L["预算占用冻结"]
+    K -->|驳回| M["不占预算直接结束"]
+
+    L --> N["更新预算余额"]
+    N --> O["预算占用金额记录"]
+
+    O --> P{"后续处理"}
+    P -->|报销确认| Q["预算实际扣减"]
+    P -->|单据撤销| R["预算占用释放"]
+    P -->|驳回修改| S["释放后重新校验"]
+
+    Q --> T["预算余额最终更新"]
+    R --> U["预算余额恢复"]
+    S --> B
+
+    style D fill:#c8e6c9,stroke:#2e7d32
+    style F fill:#ffebee,stroke:#c62828
+    style Q fill:#a5d6a7,stroke:#2e7d32
+    style U fill:#e3f2fd,stroke:#1565c0
+  </div>
+</div>
+
+<!-- S5 借款与核销 -->
+<div class="section" id="s5">
+  <h2><span class="icon">💳</span> 5. 借款与核销流程</h2>
+  <p class="desc">预借款→报销对冲核销→余额管理</p>
+  <div class="mermaid">
+flowchart TD
+    A["员工提交借款申请"] --> B["填写借款金额+用途"]
+    B --> C["审批流转"]
+    C -->|通过| D["生成借款凭证 EX04"]
+    D --> E["出纳确认放款"]
+    E --> F["记录借款余额"]
+
+    F --> G["员工出差归来"]
+    G --> H["提交差旅报销"]
+    H --> I["报销审批通过"]
+
+    I --> J{"是否有未还借款"}
+    J -->|有借款| K["自动匹配同人员借款"]
+    J -->|无借款| L["正常报销付款"]
+
+    K --> M{"报销金额 vs 借款余额"}
+    M -->|报销小于借款| N["部分核销借款"]
+    M -->|报销等于借款| O["全额核销借款"]
+    M -->|报销大于借款| P["核销借款+差额支付"]
+
+    N --> Q["更新借款余额"]
+    O --> R["借款余额清零"]
+    P --> S["借款清零+支付差额"]
+
+    Q --> T["生成核销凭证 EX05"]
+    R --> T
+    S --> T
+
+    style D fill:#fff3e0,stroke:#e65100
+    style T fill:#c8e6c9,stroke:#2e7d32
+    style R fill:#a5d6a7,stroke:#2e7d32
+  </div>
+</div>
+
+<!-- S6 凭证模板 -->
+<div class="section" id="s6">
+  <h2><span class="icon">🧮</span> 6. 凭证模板与费用分摊</h2>
+  <p class="desc">7套凭证模板自动生成 + 多维度费用分摊</p>
+  <div class="mermaid">
+flowchart TD
+    A["报销单确认支付"] --> B{"报销类型判断"}
+
+    B -->|日常费用| C["EX01 日常费用凭证"]
+    B -->|差旅费用| D["EX02 差旅费凭证"]
+    B -->|招待费用| E["EX03 招待费凭证"]
+    B -->|借款发放| F["EX04 借款凭证"]
+    B -->|借款核销| G["EX05 核销凭证"]
+    B -->|超标特批| H["EX06 超标凭证"]
+    B -->|费用分摊| I["EX07 分摊凭证"]
+
+    C --> J{"费用是否分摊"}
+    D --> J
+    E --> J
+    H --> J
+
+    J -->|单一成本中心| K["直接生成凭证"]
+    J -->|多成本中心分摊| L["按分摊规则拆分"]
+
+    L --> M["生成分摊明细行"]
+    M --> N["每行独立科目+成本中心"]
+    N --> O["汇总生成一张凭证"]
+
+    K --> P["凭证写入总账"]
+    O --> P
+
+    I --> Q["多行借方分摊"]
+    Q --> R["贷方合并为银行存款"]
+    R --> P
+
+    style C fill:#e3f2fd,stroke:#1565c0
+    style D fill:#e3f2fd,stroke:#1565c0
+    style E fill:#e3f2fd,stroke:#1565c0
+    style F fill:#fff3e0,stroke:#e65100
+    style G fill:#fff3e0,stroke:#e65100
+    style H fill:#fce4ec,stroke:#c62828
+    style I fill:#f3e5f5,stroke:#6a1b9a
+    style P fill:#c8e6c9,stroke:#2e7d32
+  </div>
+</div>
+
+<!-- S7 异常场景 -->
+<div class="section" id="s7">
+  <h2><span class="icon">⚠️</span> 7. 异常场景与处理</h2>
+  <p class="desc">重复报销/发票异常/超标/预算不足等异常处理</p>
+  <div class="mermaid">
+flowchart TD
+    A["异常检测触发"] --> B{"异常类型"}
+
+    B -->|重复发票| C["拦截提交"]
+    B -->|发票查验失败| D["标记异常"]
+    B -->|超标费用| E{"超标策略"}
+    B -->|预算不足| F{"预算策略"}
+    B -->|审批超时| G["超时处理"]
+    B -->|借款逾期未还| H["逾期提醒"]
+
+    C --> I["提示已关联报销单号"]
+    I --> J["更换发票或取消"]
+
+    D --> K["允许提交但标记待确认"]
+    K --> L["审批时人工核实"]
+
+    E -->|需说明| M["填写超标原因后提交"]
+    E -->|需特批| N["增加特批审批节点"]
+    E -->|禁止| O["不允许提交"]
+
+    F -->|禁止| P["直接拦截"]
+    F -->|警告| Q["提示后可继续"]
+    F -->|特批| R["追加特批审批"]
+
+    G --> S{"超时配置"}
+    S -->|催办| T["发送催办通知"]
+    S -->|自动转交| U["转交代理人"]
+    S -->|自动通过| V["超时自动通过"]
+
+    H --> W["发送还款提醒"]
+    W --> X{"是否超期30天"}
+    X -->|是| Y["冻结新借款申请"]
+    X -->|否| Z["继续提醒"]
+
+    style C fill:#ffebee,stroke:#c62828
+    style D fill:#fff3e0,stroke:#e65100
+    style O fill:#ffebee,stroke:#c62828
+    style P fill:#ffebee,stroke:#c62828
+    style Y fill:#ffebee,stroke:#c62828
+  </div>
+</div>
+
+<!-- 汇总 -->
+<div class="summary-box">
+  <h2>📋 凭证模板汇总</h2>
+  <div class="summary-grid">
+    <div class="summary-card">
+      <div class="title">EX01 日常费用报销</div>
+      <div class="value">借 管理费用 + 进项税 → 贷 银行存款</div>
+    </div>
+    <div class="summary-card">
+      <div class="title">EX02 差旅费报销</div>
+      <div class="value">借 销售/管理费用-差旅 + 进项税 → 贷 银行存款</div>
+    </div>
+    <div class="summary-card">
+      <div class="title">EX03 招待费报销</div>
+      <div class="value">借 管理费用-招待费 → 贷 银行存款</div>
+    </div>
+    <div class="summary-card">
+      <div class="title">EX04 借款发放</div>
+      <div class="value">借 其他应收款-员工借款 → 贷 银行存款</div>
+    </div>
+    <div class="summary-card">
+      <div class="title">EX05 借款核销</div>
+      <div class="value">借 管理费用 → 贷 其他应收款 + 银行存款</div>
+    </div>
+    <div class="summary-card">
+      <div class="title">EX06 超标特批</div>
+      <div class="value">借 管理费用-标准内 + 营业外支出-超标 → 贷 银行存款</div>
+    </div>
+    <div class="summary-card">
+      <div class="title">EX07 费用分摊</div>
+      <div class="value">借 多成本中心管理/销售费用 → 贷 银行存款</div>
+    </div>
+  </div>
+</div>
+
+<div class="compare-box">
+  <h2>📊 审批链路对照表</h2>
+  <table>
+    <thead>
+      <tr><th>费用类型</th><th>金额区间</th><th>审批链路</th><th>级数</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>日常费用</td><td>2千以下</td><td>部门主管 → 财务审核</td><td>2级</td></tr>
+      <tr><td>日常费用</td><td>2千~1万</td><td>部门主管 → 部门经理 → 财务审核</td><td>3级</td></tr>
+      <tr><td>日常费用</td><td>1万以上</td><td>部门主管 → 部门经理 → 分管副总 → 财务审核</td><td>4级</td></tr>
+      <tr><td>差旅费用</td><td>不限</td><td>部门主管 → 部门经理 → 财务审核</td><td>3级</td></tr>
+      <tr><td>招待费用</td><td>不限</td><td>部门主管 → 部门经理 → 分管副总 → 财务审核</td><td>4级</td></tr>
+      <tr><td>借款申请</td><td>不限</td><td>部门主管 → 财务审核 → 出纳确认</td><td>3级</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="footer">
+  ERP财务管理系统 · 费用报销模块流程图 · Dev_Dept 自研 · 2026-04-20
+</div>
+</div>
+
+<script>
+mermaid.initialize({
+  startOnLoad: true,
+  theme: 'base',
+  themeVariables: {
+    fontSize: '14px'
+  },
+  flowchart: {
+    htmlLabels: true,
+    curve: 'basis',
+    useMaxWidth: true
+  }
+});
+</script>
+</body>
+</html>
