@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>银行日记账与对账管理模块规格书</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: 'PingFang SC', 'Microsoft YaHei', -apple-system, sans-serif;
+  background: #f8fafc;
+  color: #334155;
+  line-height: 1.8;
+  font-size: 15px;
+}
+.container {
+  max-width: 960px;
+  margin: 0 auto;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+  padding: 3rem 3.5rem;
+}
+.back-link {
+  display: inline-block;
+  margin-bottom: 1.5rem;
+  color: #6366f1;
+  text-decoration: none;
+  font-size: 0.875rem;
+}
+.back-link:hover { text-decoration: underline; }
+.doc-header {
+  border-bottom: 3px solid #6366f1;
+  padding-bottom: 1.5rem;
+  margin-bottom: 2rem;
+}
+.doc-header h1 {
+  font-size: 1.75rem;
+  color: #1e293b;
+  margin-bottom: 0.75rem;
+}
+.doc-meta {
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  font-size: 0.85rem;
+  color: #64748b;
+}
+.doc-meta span { background: #f1f5f9; padding: 0.25rem 0.75rem; border-radius: 20px; }
+.content h1 { font-size: 1.4rem; margin: 2rem 0 1rem; color: #6366f1; border-bottom: 2px solid #e2e8f0; padding-bottom: 0.5rem; }
+.content h2 { font-size: 1.2rem; margin: 1.75rem 0 0.75rem; color: #1e293b; }
+.content h3 { font-size: 1.05rem; margin: 1.25rem 0 0.5rem; color: #475569; }
+.content h4 { font-size: 1rem; margin: 1rem 0 0.5rem; color: #64748b; }
+.content p { margin: 0.75rem 0; }
+.content ul, .content ol { margin: 0.75rem 0; padding-left: 1.75rem; }
+.content li { margin: 0.4rem 0; }
+.content table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.25rem 0;
+  font-size: 0.875rem;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid #e2e8f0;
+}
+.content th, .content td {
+  border: 1px solid #e2e8f0;
+  padding: 0.75rem 1rem;
+  text-align: left;
+}
+.content th { background: #f1f5f9; font-weight: 600; color: #1e293b; }
+.content tr:hover td { background: #fafbfc; }
+.content pre {
+  background: #1e293b;
+  color: #e2e8f0;
+  padding: 1.25rem;
+  border-radius: 8px;
+  overflow-x: auto;
+  margin: 1rem 0;
+  font-size: 0.8rem;
+  line-height: 1.6;
+}
+.content code {
+  background: #f1f5f9;
+  color: #6366f1;
+  padding: 0.15rem 0.4rem;
+  border-radius: 4px;
+  font-size: 0.85em;
+  font-family: 'Consolas', monospace;
+}
+.content pre code {
+  background: transparent;
+  color: inherit;
+  padding: 0;
+}
+.content blockquote {
+  border-left: 4px solid #6366f1;
+  margin: 1rem 0;
+  padding: 0.75rem 1.25rem;
+  background: #f8fafc;
+  color: #475569;
+}
+.content strong { color: #1e293b; }
+.content hr { border: none; border-top: 2px solid #e2e8f0; margin: 2rem 0; }
+</style>
+</head>
+<body>
+<div class="container">
+  <a href="../index.html" class="back-link">&larr; 返回目录</a>
+  <div class="doc-header">
+    <h1>银行日记账与对账管理模块规格书</h1>
+    <div class="doc-meta">
+      <span>📋 V1.0</span>
+      <span>📅 2026-04-20</span>
+      <span>🏢 Dev_Dept</span>
+    </div>
+  </div>
+  <div class="content">
+<h1>银行日记账与对账管理模块规格书</h1>
+<blockquote><p><strong>版本</strong>: v1.0</p></blockquote>
+<blockquote><p><strong>日期</strong>: 2026-04-17</p></blockquote>
+<blockquote><p><strong>作者</strong>: Dev_Dept ERP团队</p></blockquote>
+<hr>
+<h2>一、模块概述</h2>
+<h3>1.1 功能定位</h3>
+<p>银行日记账与对账管理是ERP财务系统的核心模块，负责：</p>
+<ul>
+<li>维护企业所有银行账户的日记账记录</li>
+<li>采集银行流水（手工/Excel/银企直连）</li>
+<li>自动勾对银行流水与企业日记账</li>
+<li>生成余额调节表，确保账账相符</li>
+</ul>
+<h3>1.2 设计原则</h3>
+<table><thead>
+<tr><th>原则</th><th>说明</th></tr>
+</thead><tbody>
+<tr><td><strong>渠道无关</strong></td><td>对账引擎不关心银行流水来源，统一数据模型</td></tr>
+<tr><td><strong>可扩展</strong></td><td>银企直连采用插件化设计，未来可扩展各银行API</td></tr>
+<tr><td><strong>可追溯</strong></td><td>银行流水 ↔ 企业日记账 ↔ 收款/付款单 ↔ 总账凭证 全链路关联</td></tr>
+</tbody>
+</table>
+<hr>
+<h2>二、功能清单</h2>
+<h3>2.1 功能列表</h3>
+<table><thead>
+<tr><th>编号</th><th>功能点</th><th>优先级</th><th>说明</th></tr>
+</thead><tbody>
+<tr><td>F01</td><td>银行账户管理</td><td>P0</td><td>账户档案、余额管理、多币种支持</td></tr>
+<tr><td>F02</td><td>银行日记账登记</td><td>P0</td><td>收款/付款单审核后自动登记</td></tr>
+<tr><td>F03</td><td>银行流水采集</td><td>P0</td><td>手工录入 + Excel导入</td></tr>
+<tr><td>F04</td><td>Excel模板管理</td><td>P1</td><td>下载导入模板、管理列映射</td></tr>
+<tr><td>F05</td><td>自动勾对</td><td>P0</td><td>按优先级规则自动匹配</td></tr>
+<tr><td>F06</td><td>人工确认/调整</td><td>P0</td><td>对自动推荐结果进行确认</td></tr>
+<tr><td>F07</td><td>取消勾对</td><td>P1</td><td>取消已确认的勾对记录</td></tr>
+<tr><td>F08</td><td>余额调节表</td><td>P0</td><td>自动生成、打印存档</td></tr>
+<tr><td>F09</td><td>未达账预警</td><td>P1</td><td>长期未达账项（>30天）标红预警</td></tr>
+<tr><td>F10</td><td>对账状态看板</td><td>P1</td><td>各账户对账进度一览</td></tr>
+<tr><td>F11</td><td>银企直连接口（预留）</td><td>P2</td><td>插件化接口设计</td></tr>
+</tbody>
+</table>
+<hr>
+<h2>三、业务流程</h2>
+<h3>3.1 整体流程</h3>
+<pre><code>
+┌─────────────────────────────────────────────────────────────────┐
+│                     银行日记账对账完整流程                        │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│  【日常业务触发】                                                │
+│  收款单审核 → 自动登记企业日记账                                 │
+│  付款单审核 → 自动登记企业日记账                                 │
+│                                                                 │
+│  【银行流水采集】                                                │
+│  手工录入 / Excel导入 / 银企直连(预留)                           │
+│        ↓                                                        │
+│  【对账处理】                                                   │
+│  自动勾对 → 人工确认 → 余额调节                                  │
+│        ↓                                                        │
+│  【月末结账】                                                   │
+│  余额调节表 → 存档 → 结账锁定                                   │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+</pre>
+<h3>3.2 银行流水采集流程</h3>
+<pre><code>
+1. 网银导出Excel/CSV
+       ↓
+2. 下载ERP标准模板（或使用银行专属模板）
+       ↓
+3. 上传文件 → 系统自动解析
+       ↓
+4. 预览解析结果 → 修正错误行
+       ↓
+5. 确认入库
+</pre>
+<h3>3.3 自动勾对流程</h3>
+<pre><code>
+┌─────────────────────────────────────────┐
+│           对账引擎                       │
+├─────────────────────────────────────────┤
+│                                         │
+│  P1: 精准匹配（流水号=单据号）            │
+│      → 直接勾对，无需确认                │
+│                                         │
+│  P2: 金额+日期匹配（±3天）               │
+│      → 系统推荐，待确认                  │
+│                                         │
+│  P3: 对手+金额匹配                       │
+│      → 系统推荐，待确认                  │
+│                                         │
+│  P4: 模糊推荐（金额误差&lt;1%）              │
+│      → 仅提示，不自动勾对                │
+│                                         │
+└─────────────────────────────────────────┘
+</pre>
+<hr>
+<h2>四、数据模型</h2>
+<h3>4.1 银行账户表 bank_account</h3>
+<pre><code>
+CREATE TABLE bank_account (
+    id                BIGINT PRIMARY KEY AUTO_INCREMENT COMMENT &#x27;主键ID&#x27;,
+
+    -- === 基本信息 ===
+    account_no        VARCHAR(32)  NOT NULL UNIQUE COMMENT &#x27;银行账号&#x27;,
+    bank_code         VARCHAR(12)  NOT NULL        COMMENT &#x27;银行代码(如ICBC/ABC)&#x27;,
+    bank_name         VARCHAR(100) NOT NULL        COMMENT &#x27;开户行全称&#x27;,
+    branch_name       VARCHAR(200) DEFAULT NULL     COMMENT &#x27;支行名称&#x27;,
+    account_name      VARCHAR(200) NOT NULL        COMMENT &#x27;账户名称(与印鉴一致)&#x27;,
+    account_type      VARCHAR(16)  NOT NULL        COMMENT &#x27;账户类型: BASIC(基本户)/GENERAL(一般户)/SPECIAL(专用)/TEMPORARY(临时)&#x27;,
+
+    -- === 财务信息 ===
+    currency          VARCHAR(6)   NOT NULL DEFAULT &#x27;CNY&#x27; COMMENT &#x27;币种&#x27;,
+    balance           DECIMAL(16,2) DEFAULT 0       COMMENT &#x27;当前余额&#x27;,
+    balance_date      DATE         DEFAULT NULL     COMMENT &#x27;余额截止日期&#x27;,
+
+    -- === 辅助信息 ===
+    opening_date      DATE         DEFAULT NULL     COMMENT &#x27;开户日期&#x27;,
+    remark            VARCHAR(500) DEFAULT NULL     COMMENT &#x27;备注&#x27;,
+
+    -- === 状态 ===
+    status            VARCHAR(16)  NOT NULL DEFAULT &#x27;ACTIVE&#x27;
+        COMMENT &#x27;ACTIVE(启用)/FROZEN(冻结)/CLOSED(已销户)&#x27;,
+
+    -- === 审计字段 ===
+    created_by        BIGINT       DEFAULT NULL     COMMENT &#x27;创建人ID&#x27;,
+    created_at        DATETIME     DEFAULT CURRENT_TIMESTAMP,
+    updated_by        BIGINT       DEFAULT NULL     COMMENT &#x27;更新人ID&#x27;,
+    updated_at        DATETIME     DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+
+    -- === 索引 ===
+    INDEX idx_account_no (account_no),
+    INDEX idx_bank_code (bank_code),
+    INDEX idx_status (status)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT=&#x27;银行账户表&#x27;;
+</pre>
+<h3>4.2 企业银行日记账 bank_diary</h3>
+<pre><code>
+CREATE TABLE bank_diary (
+    id                BIGINT PRIMARY KEY AUTO_INCREMENT COMMENT &#x27;主键ID&#x27;,
+
+    -- === 账户信息 ===
+    account_id        BIGINT       NOT NULL        COMMENT &#x27;银行账户ID&#x27;,
+
+    -- === 来源信息 ===
+    source_doc_type   VARCHAR(20)  NOT NULL        COMMENT &#x27;来源单据类型: RECEIPT(收款单)/PAYMENT(付款单)/MANUAL(手工)/TRANSFER(转账)&#x27;,
+    source_doc_id     BIGINT       DEFAULT NULL     COMMENT &#x27;来源单据ID&#x27;,
+    source_doc_no     VARCHAR(32)  DEFAULT NULL     COMMENT &#x27;来源单据编号&#x27;,
+
+    -- === 金额信息 ===
+    amount            DECIMAL(14,2) NOT NULL        COMMENT &#x27;金额(正数=收入/收款,负数=支出/付款)&#x27;,
+    currency          VARCHAR(6)   NOT NULL DEFAULT &#x27;CNY&#x27; COMMENT &#x27;币种&#x27;,
+    amount_cny        DECIMAL(14,2) NOT NULL        COMMENT &#x27;折合人民币金额&#x27;,
+
+    -- === 业务信息 ===
+    business_date     DATE         NOT NULL        COMMENT &#x27;业务日期&#x27;,
+    counterparty      VARCHAR(200) DEFAULT NULL     COMMENT &#x27;对手方名称&#x27;,
+    remark            VARCHAR(500) DEFAULT NULL     COMMENT &#x27;摘要/备注&#x27;,
+
+    -- === 凭证关联 ===
+    voucher_id        BIGINT       DEFAULT NULL     COMMENT &#x27;关联的记账凭证ID&#x27;,
+    voucher_no        VARCHAR(32)  DEFAULT NULL     COMMENT &#x27;凭证编号&#x27;,
+
+    -- === 勾对状态 ===
+    match_status      VARCHAR(16)  NOT NULL DEFAULT &#x27;UNMATCHED&#x27;
+        COMMENT &#x27;UNMATCHED(未勾对)/MATCHED(已勾对)/PENDING(待确认)&#x27;,
+
+    -- === 审计字段 ===
+    created_by        BIGINT       DEFAULT NULL     COMMENT &#x27;创建人ID&#x27;,
+    created_at        DATETIME     DEFAULT CURRENT_TIMESTAMP,
+
+    -- === 索引 ===
+    INDEX idx_account_date (account_id, business_date),
+    INDEX idx_source_doc (source_doc_type, source_doc_id),
+    INDEX idx_match_status (match_status),
+    INDEX idx_counterparty (counterparty)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT=&#x27;企业银行日记账&#x27;;
+</pre>
+<h3>4.3 银行流水表 bank_statement</h3>
+<pre><code>
+CREATE TABLE bank_statement (
+    id                BIGINT PRIMARY KEY AUTO_INCREMENT COMMENT &#x27;主键ID&#x27;,
+
+    -- === 账户信息 ===
+    account_id        BIGINT       NOT NULL        COMMENT &#x27;银行账户ID&#x27;,
+    source            VARCHAR(20)  NOT NULL        COMMENT &#x27;来源: MANUAL(手工)/EXCEL/API_ICBC/API_CCB/...&#x27;,
+
+    -- === 流水信息 ===
+    serial_no         VARCHAR(64)  DEFAULT NULL     COMMENT &#x27;银行流水号/交易流水号&#x27;,
+    tx_date           DATE         NOT NULL        COMMENT &#x27;交易日期&#x27;,
+    tx_time           TIME         DEFAULT NULL     COMMENT &#x27;交易时间&#x27;,
+
+    -- === 金额信息 ===
+    amount            DECIMAL(14,2) NOT NULL        COMMENT &#x27;发生额(正数=收入,负数=支出)&#x27;,
+    balance_after     DECIMAL(16,2) DEFAULT NULL     COMMENT &#x27;交易后余额&#x27;,
+
+    -- === 对方信息 ===
+    counterparty_name VARCHAR(200) DEFAULT NULL     COMMENT &#x27;对方户名&#x27;,
+    counterparty_account VARCHAR(32) DEFAULT NULL  COMMENT &#x27;对方账号&#x27;,
+
+    -- === 摘要信息 ===
+    summary           VARCHAR(500) DEFAULT NULL     COMMENT &#x27;交易摘要&#x27;,
+    remark            VARCHAR(500) DEFAULT NULL     COMMENT &#x27;备注&#x27;,
+
+    -- === 勾对状态 ===
+    match_status      VARCHAR(16)  NOT NULL DEFAULT &#x27;UNMATCHED&#x27;
+        COMMENT &#x27;UNMATCHED(未勾对)/MATCHED(已勾对)/PENDING(待确认)&#x27;,
+
+    -- === 原始数据 ===
+    raw_data          JSON         DEFAULT NULL     COMMENT &#x27;原始JSON(导入时保存)&#x27;,
+
+    -- === 审计字段 ===
+    created_by        BIGINT       DEFAULT NULL     COMMENT &#x27;创建人ID&#x27;,
+    created_at        DATETIME     DEFAULT CURRENT_TIMESTAMP,
+
+    -- === 索引 ===
+    INDEX idx_account_date (account_id, tx_date),
+    INDEX idx_serial_no (serial_no),
+    INDEX idx_match_status (match_status),
+    INDEX idx_counterparty (counterparty_name)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT=&#x27;银行流水表&#x27;;
+</pre>
+<h3>4.4 勾对记录表 reconciliation</h3>
+<pre><code>
+CREATE TABLE reconciliation (
+    id                BIGINT PRIMARY KEY AUTO_INCREMENT COMMENT &#x27;主键ID&#x27;,
+
+    -- === 勾对双方 ===
+    account_id        BIGINT       NOT NULL        COMMENT &#x27;银行账户ID&#x27;,
+    statement_id      BIGINT       NOT NULL        COMMENT &#x27;银行流水ID&#x27;,
+    diary_id          BIGINT       NOT NULL        COMMENT &#x27;企业日记账ID&#x27;,
+
+    -- === 勾对金额 ===
+    amount            DECIMAL(14,2) NOT NULL        COMMENT &#x27;勾对金额&#x27;,
+
+    -- === 勾对规则 ===
+    match_type        VARCHAR(16)  NOT NULL        COMMENT &#x27;匹配类型: P1_EXACT(精准)/P2_AMOUNT_DATE(金额日期)/P3_COUNTERPARTY(对手)/P4_FUZZY(模糊)&#x27;,
+    match_score       DECIMAL(5,2) DEFAULT 100     COMMENT &#x27;匹配得分(0-100)&#x27;,
+
+    -- === 确认状态 ===
+    confirm_status    VARCHAR(16)  NOT NULL DEFAULT &#x27;PENDING&#x27;
+        COMMENT &#x27;PENDING(待确认)/CONFIRMED(已确认)/CANCELLED(已取消)&#x27;,
+
+    -- === 确认信息 ===
+    confirmed_by      BIGINT       DEFAULT NULL     COMMENT &#x27;确认人ID&#x27;,
+    confirmed_at      DATETIME     DEFAULT NULL     COMMENT &#x27;确认时间&#x27;,
+    cancel_reason     VARCHAR(200) DEFAULT NULL     COMMENT &#x27;取消原因&#x27;,
+
+    -- === 审计字段 ===
+    created_at        DATETIME     DEFAULT CURRENT_TIMESTAMP,
+
+    -- === 索引 ===
+    UNIQUE INDEX uk_statement_diary (statement_id, diary_id),
+    INDEX idx_account_status (account_id, confirm_status)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT=&#x27;勾对记录表&#x27;;
+</pre>
+<h3>4.5 余额调节表 reconciliation_report</h3>
+<pre><code>
+CREATE TABLE reconciliation_report (
+    id                BIGINT PRIMARY KEY AUTO_INCREMENT COMMENT &#x27;主键ID&#x27;,
+
+    -- === 账户与期间 ===
+    account_id        BIGINT       NOT NULL        COMMENT &#x27;银行账户ID&#x27;,
+    period_year       SMALLINT     NOT NULL        COMMENT &#x27;年度&#x27;,
+    period_month      TINYINT      NOT NULL        COMMENT &#x27;月份&#x27;,
+    report_date       DATE         NOT NULL        COMMENT &#x27;报表日期&#x27;,
+
+    -- === 银行端余额 ===
+    bank_balance      DECIMAL(16,2) NOT NULL        COMMENT &#x27;银行对账单余额&#x27;,
+
+    -- === 企业端余额 ===
+    diary_balance     DECIMAL(16,2) NOT NULL        COMMENT &#x27;企业日记账余额&#x27;,
+
+    -- === 加减项 ===
+    bank_received     DECIMAL(14,2) DEFAULT 0       COMMENT &#x27;银行已收企业未收&#x27;,
+    bank_paid         DECIMAL(14,2) DEFAULT 0       COMMENT &#x27;银行已付企业未付&#x27;,
+    co_received       DECIMAL(14,2) DEFAULT 0       COMMENT &#x27;企业已收银行未收&#x27;,
+    co_paid           DECIMAL(14,2) DEFAULT 0       COMMENT &#x27;企业已付银行未付&#x27;,
+
+    -- === 调节后余额 ===
+    adjusted_bank     DECIMAL(16,2) NOT NULL        COMMENT &#x27;调节后银行余额&#x27;,
+    adjusted_co       DECIMAL(16,2) NOT NULL        COMMENT &#x27;调节后企业余额&#x27;,
+    diff              DECIMAL(14,2) DEFAULT 0       COMMENT &#x27;差额(应为0)&#x27;,
+
+    -- === 状态 ===
+    status            VARCHAR(16)  NOT NULL DEFAULT &#x27;DRAFT&#x27;
+        COMMENT &#x27;DRAFT(草稿)/CONFIRMED(已确认)/ARCHIVED(已存档)&#x27;,
+
+    -- === 审计字段 ===
+    created_by        BIGINT       DEFAULT NULL     COMMENT &#x27;制表人ID&#x27;,
+    created_at        DATETIME     DEFAULT CURRENT_TIMESTAMP,
+    confirmed_by      BIGINT       DEFAULT NULL     COMMENT &#x27;审核人ID&#x27;,
+    confirmed_at      DATETIME     DEFAULT NULL     COMMENT &#x27;审核时间&#x27;,
+
+    -- === 索引 ===
+    UNIQUE INDEX uk_account_period (account_id, period_year, period_month),
+    INDEX idx_status (status)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT=&#x27;余额调节表&#x27;;
+</pre>
+<hr>
+<h2>五、API接口</h2>
+<h3>5.1 银行账户管理</h3>
+<pre><code>
+GET    /api/v1/bank/accounts                    # 查询账户列表
+POST   /api/v1/bank/accounts                    # 新增账户
+GET    /api/v1/bank/accounts/{id}              # 查询账户详情
+PUT    /api/v1/bank/accounts/{id}              # 修改账户
+PUT    /api/v1/bank/accounts/{id}/status       # 启用/停用账户
+GET    /api/v1/bank/accounts/{id}/balance      # 查询账户余额
+</pre>
+<h3>5.2 企业日记账</h3>
+<pre><code>
+GET    /api/v1/bank/diary                      # 查询日记账列表
+GET    /api/v1/bank/diary/{id}                # 查询详情
+POST   /api/v1/bank/diary/manual               # 手工新增日记账
+PUT    /api/v1/bank/diary/{id}                # 修改（仅未勾对）
+DELETE /api/v1/bank/diary/{id}                # 删除（仅未勾对）
+GET    /api/v1/bank/diary/unmatched            # 查询未勾对记录
+</pre>
+<h3>5.3 银行流水</h3>
+<pre><code>
+GET    /api/v1/bank/statements                 # 查询流水列表
+POST   /api/v1/bank/statements                # 手工录入流水
+POST   /api/v1/bank/statements/import         # Excel导入
+GET    /api/v1/bank/statements/template       # 下载导入模板
+POST   /api/v1/bank/statements/parse          # 预览解析结果
+GET    /api/v1/bank/statements/unmatched      # 查询未勾对流水
+DELETE /api/v1/bank/statements/{id}          # 删除流水（仅未勾对）
+</pre>
+<h3>5.4 对账处理</h3>
+<pre><code>
+POST   /api/v1/bank/reconciliation/auto-match  # 执行自动勾对
+GET    /api/v1/bank/reconciliation/pending    # 查询待确认勾对
+POST   /api/v1/bank/reconciliation/confirm    # 确认勾对
+POST   /api/v1/bank/reconciliation/cancel     # 取消勾对
+GET    /api/v1/bank/reconciliation/unmatched  # 查询未达账项
+</pre>
+<h3>5.5 余额调节表</h3>
+<pre><code>
+GET    /api/v1/bank/reports/balance           # 查询余额调节表
+POST   /api/v1/bank/reports/generate          # 生成调节表
+PUT    /api/v1/bank/reports/{id}/confirm     # 确认调节表
+GET    /api/v1/bank/reports/{id}/export       # 导出调节表(PDF)
+GET    /api/v1/bank/reports/dashboard        # 对账状态看板
+</pre>
+<hr>
+<h2>六、自动勾对规则</h2>
+<h3>6.1 匹配规则详解</h3>
+<table><thead>
+<tr><th>优先级</th><th>规则名称</th><th>匹配条件</th><th>处理方式</th></tr>
+</thead><tbody>
+<tr><td>P1</td><td>精准匹配</td><td>银行流水号 = 业务单据号</td><td>自动勾对，无需确认</td></tr>
+<tr><td>P2</td><td>金额日期匹配</td><td>金额完全相等 + 日期在±3天内</td><td>系统推荐，待人工确认</td></tr>
+<tr><td>P3</td><td>对手金额匹配</td><td>对方名称包含关键词 + 金额相等</td><td>系统推荐，待人工确认</td></tr>
+<tr><td>P4</td><td>模糊推荐</td><td>金额误差<1% + 同期交易</td><td>仅提示，不自动勾对</td></tr>
+</tbody>
+</table>
+<h3>6.2 匹配算法伪代码</h3>
+<pre><code>
+def auto_match(statement, diaries):
+    &quot;&quot;&quot;
+    银行流水自动匹配算法
+    &quot;&quot;&quot;
+    # P1: 精准匹配
+    exact = find_by_serial_no(statement.serial_no)
+    if exact and exact.amount == statement.amount:
+        return MatchResult(P1, auto_confirm=True)
+
+    # P2: 金额+日期匹配
+    candidates = find_by_amount_and_date(
+        statement.amount,
+        statement.tx_date,
+        days_range=3
+    )
+    if len(candidates) == 1:
+        return MatchResult(P2, candidates[0], auto_confirm=False)
+    elif len(candidates) &gt; 1:
+        return MatchResult(P2, candidates, requires_manual=True)
+
+    # P3: 对手+金额匹配
+    candidates = find_by_counterparty_and_amount(
+        statement.counterparty_name,
+        statement.amount
+    )
+    if len(candidates) == 1:
+        return MatchResult(P3, candidates[0], auto_confirm=False)
+
+    # P4: 模糊推荐
+    candidates = find_fuzzy_matches(statement, diaries)
+    return MatchResult(P4, candidates, recommend_only=True)
+</pre>
+<hr>
+<h2>七、凭证生成规则</h2>
+<h3>7.1 日记账登记时自动生成凭证</h3>
+<p>当收款单/付款单审核通过时，系统自动生成日记账并关联凭证：</p>
+<table><thead>
+<tr><th>场景</th><th>借方</th><th>贷方</th><th>摘要</th></tr>
+</thead><tbody>
+<tr><td>收款核销</td><td>银行存款</td><td>应收账款</td><td>收XXX公司货款</td></tr>
+<tr><td>付款核销</td><td>应付账款</td><td>银行存款</td><td>付XXX公司货款</td></tr>
+<tr><td>预收款项</td><td>银行存款</td><td>预收账款</td><td>预收XXX公司款项</td></tr>
+</tbody>
+</table>
+<h3>7.2 对账确认后的额外校验</h3>
+<p>对账勾对完成后，系统更新凭证状态为"<strong>已银行核验</strong>"，用于：</p>
+<ul>
+<li>标记该笔业务已与银行流水核对无误</li>
+<li>作为内部审计的参考依据</li>
+</ul>
+<hr>
+<h2>八、界面原型要点</h2>
+<h3>8.1 银行账户列表</h3>
+<ul>
+<li>显示所有账户：账号、开户行、余额、状态</li>
+<li>支持按状态筛选：全部/启用/停用</li>
+<li>支持按银行筛选</li>
+<li>显示对账健康度指标（未达账占比）</li>
+</ul>
+<h3>8.2 对账操作界面</h3>
+<ul>
+<li>左表：银行流水（未勾对）</li>
+<li>右表：企业日记账（未勾对）</li>
+<li>中间：勾对关系线（可视化）</li>
+<li>支持批量选择后一键勾对</li>
+<li>支持手动创建勾对关系</li>
+</ul>
+<h3>8.3 余额调节表</h3>
+<ul>
+<li>标准格式：银行余额 + 加减项 = 调节后余额</li>
+<li>支持逐笔列明未达账项详情</li>
+<li>支持导出PDF存档</li>
+</ul>
+<hr>
+<h2>九、银企直连扩展设计</h2>
+<h3>9.1 插件接口</h3>
+<pre><code>
+interface BankSyncPlugin {
+    // 插件标识
+    code: string           // 如 &#x27;ICBC&#x27;, &#x27;ABC&#x27;
+    name: string           // 如 &#x27;工商银行&#x27;, &#x27;农业银行&#x27;
+
+    // 连接配置
+    config: ConnectionConfig
+
+    // 方法
+    testConnection(): Promise&lt;boolean&gt;
+    listAccounts(): Promise&lt;BankAccount[]&gt;
+    fetchStatements(
+        accountNo: string,
+        startDate: string,
+        endDate: string
+    ): Promise&lt;BankStatement[]&gt;
+}
+</pre>
+<h3>9.2 已规划支持的银行</h3>
+<table><thead>
+<tr><th>银行</th><th>代码</th><th>优先级</th><th>备注</th></tr>
+</thead><tbody>
+<tr><td>工商银行</td><td>ICBC</td><td>P2</td><td>已规划</td></tr>
+<tr><td>农业银行</td><td>ABC</td><td>P2</td><td>已规划</td></tr>
+<tr><td>建设银行</td><td>CCB</td><td>P2</td><td>已规划</td></tr>
+<tr><td>中国银行</td><td>BOC</td><td>P2</td><td>已规划</td></tr>
+<tr><td>招商银行</td><td>CMB</td><td>P1</td><td>已规划（接口规范）</td></tr>
+</tbody>
+</table>
+<hr>
+<h2>十、验收标准</h2>
+<h3>10.1 功能验收</h3>
+<table><thead>
+<tr><th>编号</th><th>验收项</th><th>通过标准</th></tr>
+</thead><tbody>
+<tr><td>V01</td><td>账户管理</td><td>可增删改查银行账户，余额自动更新</td></tr>
+<tr><td>V02</td><td>流水导入</td><td>Excel导入1000条记录<10秒，解析准确率>99%</td></tr>
+<tr><td>V03</td><td>自动勾对</td><td>P1规则自动勾对准确率100%</td></tr>
+<tr><td>V04</td><td>余额调节</td><td>调节后银行余额与企业余额相等（差异=0）</td></tr>
+<tr><td>V05</td><td>凭证关联</td><td>日记账100%关联对应凭证，可追溯查询</td></tr>
+<tr><td>V06</td><td>月结存档</td><td>月末可生成并导出标准格式调节表</td></tr>
+</tbody>
+</table>
+<h3>10.2 性能要求</h3>
+<table><thead>
+<tr><th>指标</th><th>要求</th></tr>
+</thead><tbody>
+<tr><td>单账户对账响应时间</td><td><3秒（1000条流水）</td></tr>
+<tr><td>Excel导入速度</td><td>≥100条/秒</td></tr>
+<tr><td>并发对账</td><td>支持10个账户同时对账</td></tr>
+</tbody>
+</table>
+<hr>
+<h2>十一、依赖关系</h2>
+<h3>11.1 前置模块</h3>
+<table><thead>
+<tr><th>模块</th><th>依赖内容</th></tr>
+</thead><tbody>
+<tr><td>收款单/付款单</td><td>日记账数据来源，需先完成</td></tr>
+<tr><td>会计科目设定</td><td>凭证模板引用科目</td></tr>
+<tr><td>总账凭证引擎</td><td>凭证生成能力</td></tr>
+</tbody>
+</table>
+<h3>11.2 被依赖模块</h3>
+<table><thead>
+<tr><th>模块</th><th>依赖内容</th></tr>
+</thead><tbody>
+<tr><td>财务报表</td><td>引用银行余额数据</td></tr>
+<tr><td>资金管理</td><td>引用银行账户余额</td></tr>
+</tbody>
+</table>
+<hr>
+<p>_文档结束_</p>
+  </div>
+</div>
+</body>
+</html>
