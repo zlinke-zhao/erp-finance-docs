@@ -60,6 +60,7 @@ body {
 .btn:hover { background: var(--hover); }
 .btn.primary { background: var(--primary); color: white; border-color: var(--primary); }
 .btn.primary:hover { background: #4f46e5; }
+.btn.danger { color: var(--danger); }
 .search-box {
   margin-left: auto;
   display: flex;
@@ -83,9 +84,13 @@ body {
   cursor: pointer;
   font-size: 0.875rem;
   color: var(--text-dim);
+  user-select: none;
 }
-.tab.active { color: var(--primary); border-color: var(--primary); }
+.tab:hover { color: var(--text); }
+.tab.active { color: var(--primary); border-color: var(--primary); font-weight: 500; }
 .content { flex: 1; padding: 1.5rem; }
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
 .card {
   background: var(--card);
   border-radius: 8px;
@@ -130,6 +135,154 @@ body {
 .type-profit { background: #f3e8ff; color: #7e22ce; }
 .tags { display: flex; gap: 0.25rem; flex-wrap: wrap; }
 .tag { background: #f1f5f9; padding: 0.125rem 0.5rem; border-radius: 4px; font-size: 0.7rem; }
+
+/* 科目树样式 */
+.tree-visual { padding: 1.5rem; }
+.tree-node { margin-left: 0; }
+.tree-node .node-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.875rem;
+}
+.tree-node .node-row:hover { background: var(--hover); }
+.tree-node .toggle {
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  color: var(--text-dim);
+  cursor: pointer;
+  user-select: none;
+}
+.tree-node .toggle.collapsed { transform: rotate(-90deg); }
+.tree-node .node-icon { font-size: 1rem; }
+.tree-node .node-code { font-family: monospace; font-weight: 500; min-width: 60px; }
+.tree-node .node-name { font-weight: 500; }
+.tree-node .node-type { font-size: 0.75rem; color: var(--text-dim); margin-left: auto; }
+.tree-children { margin-left: 1.5rem; border-left: 1px dashed var(--border); }
+.tree-children.hidden { display: none; }
+
+/* 辅助核算维度样式 */
+.dim-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1rem;
+  padding: 1rem;
+}
+.dim-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1rem 1.25rem;
+}
+.dim-card h3 { font-size: 0.95rem; margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem; }
+.dim-card .dim-info { font-size: 0.8rem; color: var(--text-dim); margin-bottom: 0.5rem; }
+.dim-card .dim-count { font-size: 0.8rem; color: var(--primary); font-weight: 500; }
+.dim-card .dim-tags { display: flex; flex-wrap: wrap; gap: 0.25rem; margin-top: 0.5rem; }
+.dim-card .dim-tag { background: #ede9fe; color: #6d28d9; padding: 0.125rem 0.5rem; border-radius: 4px; font-size: 0.7rem; }
+.dim-card .switch { 
+  float: right; 
+  width: 40px; height: 20px; 
+  background: #cbd5e1; border-radius: 10px; 
+  position: relative; cursor: pointer; 
+}
+.dim-card .switch.on { background: var(--success); }
+.dim-card .switch::after {
+  content: '';
+  position: absolute;
+  width: 16px; height: 16px;
+  background: white; border-radius: 50%;
+  top: 2px; left: 2px;
+  transition: 0.2s;
+}
+.dim-card .switch.on::after { left: 22px; }
+
+/* 受控模块样式 */
+.module-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1rem;
+  padding: 1rem;
+}
+.module-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1.25rem;
+}
+.module-card h3 { font-size: 0.95rem; margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem; }
+.module-card .module-desc { font-size: 0.8rem; color: var(--text-dim); margin-bottom: 1rem; }
+.module-card .module-status {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+.module-card .module-status.enabled { background: #dcfce7; color: #166534; }
+.module-card .module-status.disabled { background: #f1f5f9; color: #94a3b8; }
+.module-card .module-subjects { margin-top: 0.75rem; font-size: 0.8rem; color: var(--text-dim); }
+.module-card .subject-link { color: var(--primary); cursor: pointer; }
+.module-card .subject-link:hover { text-decoration: underline; }
+
+/* 模板管理样式 */
+.template-list { padding: 1rem; }
+.template-row {
+  display: grid;
+  grid-template-columns: 40px 1fr 120px 120px 100px 80px 100px;
+  gap: 1rem;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--border);
+  align-items: center;
+  font-size: 0.875rem;
+}
+.template-row:hover { background: var(--hover); }
+.template-row.header {
+  background: #f8fafc;
+  font-weight: 600;
+  font-size: 0.8rem;
+  color: var(--text-dim);
+  border-radius: 6px 6px 0 0;
+}
+.template-row .status-badge {
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+}
+.status-system { background: #dbeafe; color: #1d4ed8; }
+.status-custom { background: #dcfce7; color: #166534; }
+
+/* 操作日志样式 */
+.log-table { padding: 1rem; }
+.log-row {
+  display: grid;
+  grid-template-columns: 160px 80px 80px 1fr 100px 120px;
+  gap: 1rem;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--border);
+  align-items: center;
+  font-size: 0.875rem;
+}
+.log-row:hover { background: var(--hover); }
+.log-row.header {
+  background: #f8fafc;
+  font-weight: 600;
+  font-size: 0.8rem;
+  color: var(--text-dim);
+  border-radius: 6px 6px 0 0;
+}
+.log-action { padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.75rem; }
+.log-add { background: #dcfce7; color: #166534; }
+.log-edit { background: #dbeafe; color: #1d4ed8; }
+.log-delete { background: #fee2e2; color: #991b1b; }
+.log-import { background: #fef3c7; color: #92400e; }
+
 .modal {
   position: fixed;
   top: 0; left: 0; right: 0; bottom: 0;
@@ -203,6 +356,26 @@ body {
 }
 .balance-row { display: flex; justify-content: space-between; padding: 0.375rem 0; }
 .balance-row.total { font-weight: 600; border-top: 1px solid #fbbf24; margin-top: 0.5rem; padding-top: 0.5rem; }
+.filter-bar {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  background: white;
+  border-bottom: 1px solid var(--border);
+}
+.filter-bar select, .filter-bar input {
+  padding: 0.375rem 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-size: 0.8rem;
+}
+.empty-hint {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: var(--text-dim);
+  font-size: 0.9rem;
+}
 </style>
 </head>
 <body>
@@ -214,7 +387,7 @@ body {
 <div class="toolbar">
   <button class="btn primary" onclick="openModal('add')">➕ 新增科目</button>
   <button class="btn">📋 复制</button>
-  <button class="btn">🗑️ 删除</button>
+  <button class="btn danger">🗑️ 删除</button>
   <button class="btn">📥 导入</button>
   <button class="btn">📤 导出</button>
   <button class="btn" onclick="openModal('balance')">⚖️ 试算平衡</button>
@@ -226,147 +399,701 @@ body {
 </div>
 
 <div class="tabs">
-  <div class="tab active">📋 科目列表</div>
-  <div class="tab">🌳 科目树</div>
-  <div class="tab">📐 辅助核算维度</div>
-  <div class="tab">🔗 受控模块</div>
-  <div class="tab">📄 模板管理</div>
-  <div class="tab">📜 操作日志</div>
+  <div class="tab active" data-tab="list">📋 科目列表</div>
+  <div class="tab" data-tab="tree">🌳 科目树</div>
+  <div class="tab" data-tab="dimension">📐 辅助核算维度</div>
+  <div class="tab" data-tab="module">🔗 受控模块</div>
+  <div class="tab" data-tab="template">📄 模板管理</div>
+  <div class="tab" data-tab="log">📜 操作日志</div>
 </div>
 
 <div class="content">
-  <div class="card">
-    <div class="tree-view">
-      <div class="tree-header">
-        <span>编码</span>
-        <span>科目名称</span>
-        <span>类型</span>
-        <span>余额方向</span>
-        <span>辅助核算</span>
-        <span>状态</span>
-        <span>操作</span>
-      </div>
-      <div class="tree-row level-0">
-        <span class="code">1</span>
-        <span style="font-weight:600">资产类</span>
-        <span>-</span>
-        <span>借</span>
-        <span>-</span>
-        <span>-</span>
-        <span>-</span>
-      </div>
-      <div class="tree-row level-1">
-        <span class="code">1001</span>
-        <span>库存现金</span>
-        <span class="type-badge type-asset">资产</span>
-        <span>借</span>
-        <div class="tags"><span class="tag">部门</span><span class="tag">项目</span></div>
-        <span style="color:#22c55e">✓ 启用</span>
-        <span><a href="#" onclick="openModal('edit')" style="color:#6366f1">编辑</a></span>
-      </div>
-      <div class="tree-row level-2">
-        <span class="code">1002</span>
-        <span>银行存款</span>
-        <span class="type-badge type-asset">资产</span>
-        <span>借</span>
-        <div class="tags"><span class="tag">部门</span><span class="tag">银行账户</span></div>
-        <span style="color:#22c55e">✓ 启用</span>
-        <span><a href="#" onclick="openModal('edit')" style="color:#6366f1">编辑</a></span>
-      </div>
-      <div class="tree-row level-2">
-        <span class="code">1002.01</span>
-        <span>中国银行基本户</span>
-        <span class="type-badge type-asset">资产</span>
-        <span>借</span>
-        <div class="tags"><span class="tag">银行账户</span></div>
-        <span style="color:#22c55e">✓ 启用</span>
-        <span><a href="#" onclick="openModal('edit')" style="color:#6366f1">编辑</a></span>
-      </div>
-      <div class="tree-row level-2">
-        <span class="code">1002.02</span>
-        <span>招商银行一般户</span>
-        <span class="type-badge type-asset">资产</span>
-        <span>借</span>
-        <div class="tags"><span class="tag">银行账户</span></div>
-        <span style="color:#94a3b8">禁用</span>
-        <span><a href="#" onclick="openModal('edit')" style="color:#6366f1">编辑</a></span>
-      </div>
-      <div class="tree-row level-0">
-        <span class="code">2</span>
-        <span style="font-weight:600">负债类</span>
-        <span>-</span>
-        <span>贷</span>
-        <span>-</span>
-        <span>-</span>
-        <span>-</span>
-      </div>
-      <div class="tree-row level-1">
-        <span class="code">2001</span>
-        <span>短期借款</span>
-        <span class="type-badge type-liability">负债</span>
-        <span>贷</span>
-        <div class="tags"><span class="tag">供应商</span></div>
-        <span style="color:#22c55e">✓ 启用</span>
-        <span><a href="#" onclick="openModal('edit')" style="color:#6366f1">编辑</a></span>
-      </div>
-      <div class="tree-row level-1">
-        <span class="code">2002</span>
-        <span>应付账款</span>
-        <span class="type-badge type-liability">负债</span>
-        <span>贷</span>
-        <div class="tags"><span class="tag">供应商</span><span class="tag">客户</span></div>
-        <span style="color:#22c55e">✓ 启用</span>
-        <span><a href="#" onclick="openModal('edit')" style="color:#6366f1">编辑</a></span>
-      </div>
-      <div class="tree-row level-0">
-        <span class="code">4</span>
-        <span style="font-weight:600">成本类</span>
-        <span>-</span>
-        <span>借</span>
-        <span>-</span>
-        <span>-</span>
-        <span>-</span>
-      </div>
-      <div class="tree-row level-1">
-        <span class="code">5001</span>
-        <span>主营业务成本</span>
-        <span class="type-badge type-cost">成本</span>
-        <span>借</span>
-        <div class="tags"><span class="tag">物料</span><span class="tag">部门</span></div>
-        <span style="color:#22c55e">✓ 启用</span>
-        <span><a href="#" onclick="openModal('edit')" style="color:#6366f1">编辑</a></span>
-      </div>
-      <div class="tree-row level-0">
-        <span class="code">6</span>
-        <span style="font-weight:600">损益类</span>
-        <span>-</span>
-        <span>借/贷</span>
-        <span>-</span>
-        <span>-</span>
-        <span>-</span>
-      </div>
-      <div class="tree-row level-1">
-        <span class="code">6001</span>
-        <span>主营业务收入</span>
-        <span class="type-badge type-profit">损益</span>
-        <span>贷</span>
-        <div class="tags"><span class="tag">物料</span></div>
-        <span style="color:#22c55e">✓ 启用</span>
-        <span><a href="#" onclick="openModal('edit')" style="color:#6366f1">编辑</a></span>
-      </div>
-      <div class="tree-row level-1">
-        <span class="code">6602</span>
-        <span>管理费用</span>
-        <span class="type-badge type-profit">损益</span>
-        <span>借</span>
-        <div class="tags"><span class="tag">部门</span><span class="tag">费用项目</span></div>
-        <span style="color:#22c55e">✓ 启用</span>
-        <span><a href="#" onclick="openModal('edit')" style="color:#6366f1">编辑</a></span>
+
+  <!-- ===== Tab 1: 科目列表 ===== -->
+  <div class="tab-panel active" id="panel-list">
+    <div class="card">
+      <div class="tree-view">
+        <div class="tree-header">
+          <span>编码</span>
+          <span>科目名称</span>
+          <span>类型</span>
+          <span>余额方向</span>
+          <span>辅助核算</span>
+          <span>状态</span>
+          <span>操作</span>
+        </div>
+        <div class="tree-row level-0">
+          <span class="code">1</span>
+          <span style="font-weight:600">资产类</span>
+          <span>-</span>
+          <span>借</span>
+          <span>-</span>
+          <span>-</span>
+          <span>-</span>
+        </div>
+        <div class="tree-row level-1">
+          <span class="code">1001</span>
+          <span>库存现金</span>
+          <span class="type-badge type-asset">资产</span>
+          <span>借</span>
+          <div class="tags"><span class="tag">部门</span><span class="tag">项目</span></div>
+          <span style="color:#22c55e">✓ 启用</span>
+          <span><a href="#" onclick="openModal('edit');return false" style="color:#6366f1">编辑</a></span>
+        </div>
+        <div class="tree-row level-2">
+          <span class="code">1002</span>
+          <span>银行存款</span>
+          <span class="type-badge type-asset">资产</span>
+          <span>借</span>
+          <div class="tags"><span class="tag">部门</span><span class="tag">银行账户</span></div>
+          <span style="color:#22c55e">✓ 启用</span>
+          <span><a href="#" onclick="openModal('edit');return false" style="color:#6366f1">编辑</a></span>
+        </div>
+        <div class="tree-row level-2">
+          <span class="code">1002.01</span>
+          <span>中国银行基本户</span>
+          <span class="type-badge type-asset">资产</span>
+          <span>借</span>
+          <div class="tags"><span class="tag">银行账户</span></div>
+          <span style="color:#22c55e">✓ 启用</span>
+          <span><a href="#" onclick="openModal('edit');return false" style="color:#6366f1">编辑</a></span>
+        </div>
+        <div class="tree-row level-2">
+          <span class="code">1002.02</span>
+          <span>招商银行一般户</span>
+          <span class="type-badge type-asset">资产</span>
+          <span>借</span>
+          <div class="tags"><span class="tag">银行账户</span></div>
+          <span style="color:#94a3b8">禁用</span>
+          <span><a href="#" onclick="openModal('edit');return false" style="color:#6366f1">编辑</a></span>
+        </div>
+        <div class="tree-row level-0">
+          <span class="code">2</span>
+          <span style="font-weight:600">负债类</span>
+          <span>-</span>
+          <span>贷</span>
+          <span>-</span>
+          <span>-</span>
+          <span>-</span>
+        </div>
+        <div class="tree-row level-1">
+          <span class="code">2001</span>
+          <span>短期借款</span>
+          <span class="type-badge type-liability">负债</span>
+          <span>贷</span>
+          <div class="tags"><span class="tag">供应商</span></div>
+          <span style="color:#22c55e">✓ 启用</span>
+          <span><a href="#" onclick="openModal('edit');return false" style="color:#6366f1">编辑</a></span>
+        </div>
+        <div class="tree-row level-1">
+          <span class="code">2002</span>
+          <span>应付账款</span>
+          <span class="type-badge type-liability">负债</span>
+          <span>贷</span>
+          <div class="tags"><span class="tag">供应商</span><span class="tag">客户</span></div>
+          <span style="color:#22c55e">✓ 启用</span>
+          <span><a href="#" onclick="openModal('edit');return false" style="color:#6366f1">编辑</a></span>
+        </div>
+        <div class="tree-row level-0">
+          <span class="code">4</span>
+          <span style="font-weight:600">权益类</span>
+          <span>-</span>
+          <span>贷</span>
+          <span>-</span>
+          <span>-</span>
+          <span>-</span>
+        </div>
+        <div class="tree-row level-1">
+          <span class="code">4001</span>
+          <span>实收资本</span>
+          <span class="type-badge type-equity">权益</span>
+          <span>贷</span>
+          <div class="tags"><span class="tag">投资人</span></div>
+          <span style="color:#22c55e">✓ 启用</span>
+          <span><a href="#" onclick="openModal('edit');return false" style="color:#6366f1">编辑</a></span>
+        </div>
+        <div class="tree-row level-0">
+          <span class="code">5</span>
+          <span style="font-weight:600">成本类</span>
+          <span>-</span>
+          <span>借</span>
+          <span>-</span>
+          <span>-</span>
+          <span>-</span>
+        </div>
+        <div class="tree-row level-1">
+          <span class="code">5001</span>
+          <span>主营业务成本</span>
+          <span class="type-badge type-cost">成本</span>
+          <span>借</span>
+          <div class="tags"><span class="tag">物料</span><span class="tag">部门</span></div>
+          <span style="color:#22c55e">✓ 启用</span>
+          <span><a href="#" onclick="openModal('edit');return false" style="color:#6366f1">编辑</a></span>
+        </div>
+        <div class="tree-row level-0">
+          <span class="code">6</span>
+          <span style="font-weight:600">损益类</span>
+          <span>-</span>
+          <span>借或贷</span>
+          <span>-</span>
+          <span>-</span>
+          <span>-</span>
+        </div>
+        <div class="tree-row level-1">
+          <span class="code">6001</span>
+          <span>主营业务收入</span>
+          <span class="type-badge type-profit">损益</span>
+          <span>贷</span>
+          <div class="tags"><span class="tag">物料</span></div>
+          <span style="color:#22c55e">✓ 启用</span>
+          <span><a href="#" onclick="openModal('edit');return false" style="color:#6366f1">编辑</a></span>
+        </div>
+        <div class="tree-row level-1">
+          <span class="code">6602</span>
+          <span>管理费用</span>
+          <span class="type-badge type-profit">损益</span>
+          <span>借</span>
+          <div class="tags"><span class="tag">部门</span><span class="tag">费用项目</span></div>
+          <span style="color:#22c55e">✓ 启用</span>
+          <span><a href="#" onclick="openModal('edit');return false" style="color:#6366f1">编辑</a></span>
+        </div>
       </div>
     </div>
   </div>
+
+  <!-- ===== Tab 2: 科目树 ===== -->
+  <div class="tab-panel" id="panel-tree">
+    <div class="card">
+      <div class="tree-visual">
+        <div class="tree-node">
+          <div class="node-row" onclick="toggleNode(this)">
+            <span class="toggle">▼</span>
+            <span class="node-icon">📁</span>
+            <span class="node-code">1</span>
+            <span class="node-name">资产类</span>
+            <span class="node-type">借方</span>
+          </div>
+          <div class="tree-children">
+            <div class="tree-node">
+              <div class="node-row" onclick="toggleNode(this)">
+                <span class="toggle">▼</span>
+                <span class="node-icon">📂</span>
+                <span class="node-code">1001</span>
+                <span class="node-name">库存现金</span>
+                <span class="node-type">资产 · 借</span>
+              </div>
+              <div class="tree-children">
+                <div class="tree-node">
+                  <div class="node-row">
+                    <span class="toggle" style="visibility:hidden">▼</span>
+                    <span class="node-icon">📄</span>
+                    <span class="node-code"></span>
+                    <span class="node-name" style="color:var(--text-dim);font-size:0.8rem">部门、项目</span>
+                    <span class="node-type">辅助核算</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="tree-node">
+              <div class="node-row" onclick="toggleNode(this)">
+                <span class="toggle">▼</span>
+                <span class="node-icon">📂</span>
+                <span class="node-code">1002</span>
+                <span class="node-name">银行存款</span>
+                <span class="node-type">资产 · 借</span>
+              </div>
+              <div class="tree-children">
+                <div class="tree-node">
+                  <div class="node-row">
+                    <span class="toggle" style="visibility:hidden">▼</span>
+                    <span class="node-icon">📄</span>
+                    <span class="node-code">1002.01</span>
+                    <span class="node-name">中国银行基本户</span>
+                    <span class="node-type">银行账户</span>
+                  </div>
+                </div>
+                <div class="tree-node">
+                  <div class="node-row">
+                    <span class="toggle" style="visibility:hidden">▼</span>
+                    <span class="node-icon">📄</span>
+                    <span class="node-code">1002.02</span>
+                    <span class="node-name" style="color:#94a3b8">招商银行一般户 (禁用)</span>
+                    <span class="node-type">银行账户</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="tree-node">
+              <div class="node-row">
+                <span class="toggle" style="visibility:hidden">▼</span>
+                <span class="node-icon">📂</span>
+                <span class="node-code">1012</span>
+                <span class="node-name">其他货币资金</span>
+                <span class="node-type">资产 · 借</span>
+              </div>
+            </div>
+            <div class="tree-node">
+              <div class="node-row" onclick="toggleNode(this)">
+                <span class="toggle">▼</span>
+                <span class="node-icon">📂</span>
+                <span class="node-code">1122</span>
+                <span class="node-name">应收账款</span>
+                <span class="node-type">资产 · 借</span>
+              </div>
+              <div class="tree-children">
+                <div class="tree-node">
+                  <div class="node-row">
+                    <span class="toggle" style="visibility:hidden">▼</span>
+                    <span class="node-icon">📄</span>
+                    <span class="node-code"></span>
+                    <span class="node-name" style="color:var(--text-dim);font-size:0.8rem">客户、部门</span>
+                    <span class="node-type">辅助核算</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="tree-node" style="margin-top:0.5rem">
+          <div class="node-row" onclick="toggleNode(this)">
+            <span class="toggle">▼</span>
+            <span class="node-icon">📁</span>
+            <span class="node-code">2</span>
+            <span class="node-name">负债类</span>
+            <span class="node-type">贷方</span>
+          </div>
+          <div class="tree-children">
+            <div class="tree-node">
+              <div class="node-row">
+                <span class="toggle" style="visibility:hidden">▼</span>
+                <span class="node-icon">📂</span>
+                <span class="node-code">2001</span>
+                <span class="node-name">短期借款</span>
+                <span class="node-type">负债 · 贷</span>
+              </div>
+            </div>
+            <div class="tree-node">
+              <div class="node-row" onclick="toggleNode(this)">
+                <span class="toggle">▼</span>
+                <span class="node-icon">📂</span>
+                <span class="node-code">2002</span>
+                <span class="node-name">应付账款</span>
+                <span class="node-type">负债 · 贷</span>
+              </div>
+              <div class="tree-children">
+                <div class="tree-node">
+                  <div class="node-row">
+                    <span class="toggle" style="visibility:hidden">▼</span>
+                    <span class="node-icon">📄</span>
+                    <span class="node-code"></span>
+                    <span class="node-name" style="color:var(--text-dim);font-size:0.8rem">供应商、客户</span>
+                    <span class="node-type">辅助核算</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="tree-node">
+              <div class="node-row">
+                <span class="toggle" style="visibility:hidden">▼</span>
+                <span class="node-icon">📂</span>
+                <span class="node-code">2203</span>
+                <span class="node-name">预收账款</span>
+                <span class="node-type">负债 · 贷</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="tree-node" style="margin-top:0.5rem">
+          <div class="node-row" onclick="toggleNode(this)">
+            <span class="toggle">▼</span>
+            <span class="node-icon">📁</span>
+            <span class="node-code">4</span>
+            <span class="node-name">权益类</span>
+            <span class="node-type">贷方</span>
+          </div>
+          <div class="tree-children">
+            <div class="tree-node">
+              <div class="node-row">
+                <span class="toggle" style="visibility:hidden">▼</span>
+                <span class="node-icon">📂</span>
+                <span class="node-code">4001</span>
+                <span class="node-name">实收资本</span>
+                <span class="node-type">权益 · 贷</span>
+              </div>
+            </div>
+            <div class="tree-node">
+              <div class="node-row">
+                <span class="toggle" style="visibility:hidden">▼</span>
+                <span class="node-icon">📂</span>
+                <span class="node-code">4002</span>
+                <span class="node-name">资本公积</span>
+                <span class="node-type">权益 · 贷</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="tree-node" style="margin-top:0.5rem">
+          <div class="node-row" onclick="toggleNode(this)">
+            <span class="toggle">▼</span>
+            <span class="node-icon">📁</span>
+            <span class="node-code">5</span>
+            <span class="node-name">成本类</span>
+            <span class="node-type">借方</span>
+          </div>
+          <div class="tree-children">
+            <div class="tree-node">
+              <div class="node-row">
+                <span class="toggle" style="visibility:hidden">▼</span>
+                <span class="node-icon">📂</span>
+                <span class="node-code">5001</span>
+                <span class="node-name">主营业务成本</span>
+                <span class="node-type">成本 · 借</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="tree-node" style="margin-top:0.5rem">
+          <div class="node-row" onclick="toggleNode(this)">
+            <span class="toggle">▼</span>
+            <span class="node-icon">📁</span>
+            <span class="node-code">6</span>
+            <span class="node-name">损益类</span>
+            <span class="node-type">借或贷</span>
+          </div>
+          <div class="tree-children">
+            <div class="tree-node">
+              <div class="node-row">
+                <span class="toggle" style="visibility:hidden">▼</span>
+                <span class="node-icon">📂</span>
+                <span class="node-code">6001</span>
+                <span class="node-name">主营业务收入</span>
+                <span class="node-type">损益 · 贷</span>
+              </div>
+            </div>
+            <div class="tree-node">
+              <div class="node-row">
+                <span class="toggle" style="visibility:hidden">▼</span>
+                <span class="node-icon">📂</span>
+                <span class="node-code">6602</span>
+                <span class="node-name">管理费用</span>
+                <span class="node-type">损益 · 借</span>
+              </div>
+            </div>
+            <div class="tree-node">
+              <div class="node-row">
+                <span class="toggle" style="visibility:hidden">▼</span>
+                <span class="node-icon">📂</span>
+                <span class="node-code">6603</span>
+                <span class="node-name">销售费用</span>
+                <span class="node-type">损益 · 借</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== Tab 3: 辅助核算维度 ===== -->
+  <div class="tab-panel" id="panel-dimension">
+    <div class="dim-grid">
+      <div class="dim-card">
+        <div class="switch on" onclick="this.classList.toggle('on')"></div>
+        <h3>🏢 部门</h3>
+        <div class="dim-info">按部门归集费用和收入，支持多级部门结构</div>
+        <div class="dim-count">关联科目: 5个</div>
+        <div class="dim-tags">
+          <span class="dim-tag">1001 库存现金</span>
+          <span class="dim-tag">6602 管理费用</span>
+          <span class="dim-tag">5001 主营业务成本</span>
+          <span class="dim-tag">...</span>
+        </div>
+      </div>
+      <div class="dim-card">
+        <div class="switch on" onclick="this.classList.toggle('on')"></div>
+        <h3>👤 人员</h3>
+        <div class="dim-info">按员工归集差旅费、工资等个人相关费用</div>
+        <div class="dim-count">关联科目: 2个</div>
+        <div class="dim-tags">
+          <span class="dim-tag">6602 管理费用</span>
+          <span class="dim-tag">6603 销售费用</span>
+        </div>
+      </div>
+      <div class="dim-card">
+        <div class="switch on" onclick="this.classList.toggle('on')"></div>
+        <h3>🏭 供应商</h3>
+        <div class="dim-info">按供应商归集应付账款和采购成本</div>
+        <div class="dim-count">关联科目: 3个</div>
+        <div class="dim-tags">
+          <span class="dim-tag">2001 短期借款</span>
+          <span class="dim-tag">2002 应付账款</span>
+          <span class="dim-tag">2203 预收账款</span>
+        </div>
+      </div>
+      <div class="dim-card">
+        <div class="switch on" onclick="this.classList.toggle('on')"></div>
+        <h3>🛒 客户</h3>
+        <div class="dim-info">按客户归集应收账款和销售收入</div>
+        <div class="dim-count">关联科目: 3个</div>
+        <div class="dim-tags">
+          <span class="dim-tag">1122 应收账款</span>
+          <span class="dim-tag">2002 应付账款</span>
+          <span class="dim-tag">2203 预收账款</span>
+        </div>
+      </div>
+      <div class="dim-card">
+        <div class="switch on" onclick="this.classList.toggle('on')"></div>
+        <h3>📊 项目</h3>
+        <div class="dim-info">按项目归集收入和成本，支持项目盈亏分析</div>
+        <div class="dim-count">关联科目: 2个</div>
+        <div class="dim-tags">
+          <span class="dim-tag">1001 库存现金</span>
+          <span class="dim-tag">5001 主营业务成本</span>
+        </div>
+      </div>
+      <div class="dim-card">
+        <div class="switch on" onclick="this.classList.toggle('on')"></div>
+        <h3>📦 物料</h3>
+        <div class="dim-info">按物料归集采购成本和销售收入</div>
+        <div class="dim-count">关联科目: 3个</div>
+        <div class="dim-tags">
+          <span class="dim-tag">5001 主营业务成本</span>
+          <span class="dim-tag">6001 主营业务收入</span>
+        </div>
+      </div>
+      <div class="dim-card">
+        <div class="switch on" onclick="this.classList.toggle('on')"></div>
+        <h3>🏦 银行账户</h3>
+        <div class="dim-info">按银行账户归集资金流水，支持银企对账</div>
+        <div class="dim-count">关联科目: 2个</div>
+        <div class="dim-tags">
+          <span class="dim-tag">1002 银行存款</span>
+          <span class="dim-tag">1002.01 中行基本户</span>
+        </div>
+      </div>
+      <div class="dim-card">
+        <div class="switch on" onclick="this.classList.toggle('on')"></div>
+        <h3>💰 费用项目</h3>
+        <div class="dim-info">按费用类型归集，支持费用预算控制</div>
+        <div class="dim-count">关联科目: 2个</div>
+        <div class="dim-tags">
+          <span class="dim-tag">6602 管理费用</span>
+          <span class="dim-tag">6603 销售费用</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== Tab 4: 受控模块 ===== -->
+  <div class="tab-panel" id="panel-module">
+    <div class="module-grid">
+      <div class="module-card">
+        <h3>💰 应收管理</h3>
+        <div class="module-desc">控制应收账款、预收账款等科目的增删改，确保凭证由AR模块自动生成</div>
+        <span class="module-status enabled">✓ 已启用</span>
+        <div class="module-subjects">
+          受控科目: <span class="subject-link">1122 应收账款</span> · <span class="subject-link">1123 预付账款</span> · <span class="subject-link">2203 预收账款</span>
+        </div>
+      </div>
+      <div class="module-card">
+        <h3>💸 应付管理</h3>
+        <div class="module-desc">控制应付账款、预付账款等科目的增删改，确保凭证由AP模块自动生成</div>
+        <span class="module-status enabled">✓ 已启用</span>
+        <div class="module-subjects">
+          受控科目: <span class="subject-link">2002 应付账款</span> · <span class="subject-link">2202 应付票据</span>
+        </div>
+      </div>
+      <div class="module-card">
+        <h3>📒 总账</h3>
+        <div class="module-desc">总账凭证的默认来源模块，不受其他模块控制的科目由总账直接记账</div>
+        <span class="module-status enabled">✓ 已启用</span>
+        <div class="module-subjects">
+          受控科目: <span class="subject-link">1001 库存现金</span> · <span class="subject-link">1002 银行存款</span> · <span class="subject-link">6602 管理费用</span> · <span class="subject-link">...</span>
+        </div>
+      </div>
+      <div class="module-card">
+        <h3>🏦 固定资产</h3>
+        <div class="module-desc">控制固定资产、累计折旧等科目，确保折旧凭证由资产模块自动生成</div>
+        <span class="module-status disabled">未启用</span>
+        <div class="module-subjects">
+          受控科目: <span class="subject-link">1501 固定资产</span> · <span class="subject-link">1502 累计折旧</span>
+        </div>
+      </div>
+      <div class="module-card">
+        <h3>📈 成本管理</h3>
+        <div class="module-desc">控制生产成本、制造费用等科目，确保成本分配凭证由成本模块自动生成</div>
+        <span class="module-status disabled">未启用</span>
+        <div class="module-subjects">
+          受控科目: <span class="subject-link">5001 主营业务成本</span> · <span class="subject-link">5101 制造费用</span>
+        </div>
+      </div>
+      <div class="module-card">
+        <h3>📋 预算管理</h3>
+        <div class="module-desc">对科目设置预算控制规则，超预算时拦截或预警</div>
+        <span class="module-status disabled">未启用</span>
+        <div class="module-subjects">
+          预算控制科目: <span class="subject-link">6602 管理费用</span> · <span class="subject-link">6603 销售费用</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== Tab 5: 模板管理 ===== -->
+  <div class="tab-panel" id="panel-template">
+    <div class="card">
+      <div class="filter-bar">
+        <select><option>全部类型</option><option>行业模板</option><option>自定义模板</option></select>
+        <select><option>全部行业</option><option>制造业</option><option>商贸业</option><option>服务业</option></select>
+        <button class="btn primary" style="margin-left:auto">➕ 新建模板</button>
+        <button class="btn">📥 导入模板</button>
+      </div>
+      <div class="template-list">
+        <div class="template-row header">
+          <span>#</span>
+          <span>模板名称</span>
+          <span>行业</span>
+          <span>科目数量</span>
+          <span>类型</span>
+          <span>状态</span>
+          <span>操作</span>
+        </div>
+        <div class="template-row">
+          <span>1</span>
+          <span style="font-weight:500">企业会计准则(一般企业)</span>
+          <span>通用</span>
+          <span>86个科目</span>
+          <span><span class="status-badge status-system">系统</span></span>
+          <span style="color:var(--success)">✓</span>
+          <span><a href="#" style="color:#6366f1" onclick="return false">查看</a></span>
+        </div>
+        <div class="template-row">
+          <span>2</span>
+          <span style="font-weight:500">小企业会计准则</span>
+          <span>通用</span>
+          <span>62个科目</span>
+          <span><span class="status-badge status-system">系统</span></span>
+          <span style="color:var(--success)">✓</span>
+          <span><a href="#" style="color:#6366f1" onclick="return false">查看</a></span>
+        </div>
+        <div class="template-row">
+          <span>3</span>
+          <span style="font-weight:500">制造业标准科目表</span>
+          <span>制造业</span>
+          <span>128个科目</span>
+          <span><span class="status-badge status-system">系统</span></span>
+          <span style="color:var(--success)">✓</span>
+          <span><a href="#" style="color:#6366f1" onclick="return false">查看</a></span>
+        </div>
+        <div class="template-row">
+          <span>4</span>
+          <span style="font-weight:500">商贸业科目表</span>
+          <span>商贸业</span>
+          <span>94个科目</span>
+          <span><span class="status-badge status-system">系统</span></span>
+          <span style="color:var(--success)">✓</span>
+          <span><a href="#" style="color:#6366f1" onclick="return false">查看</a></span>
+        </div>
+        <div class="template-row">
+          <span>5</span>
+          <span style="font-weight:500">Dev_Dept自定义科目表</span>
+          <span>制造业</span>
+          <span>103个科目</span>
+          <span><span class="status-badge status-custom">自定义</span></span>
+          <span style="color:var(--success)">✓</span>
+          <span><a href="#" style="color:#6366f1" onclick="return false">编辑</a> · <a href="#" style="color:var(--danger)" onclick="return false">删除</a></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== Tab 6: 操作日志 ===== -->
+  <div class="tab-panel" id="panel-log">
+    <div class="card">
+      <div class="filter-bar">
+        <select><option>全部操作</option><option>新增</option><option>修改</option><option>删除</option><option>导入</option></select>
+        <input type="date" value="2026-04-17">
+        <span style="color:var(--text-dim);font-size:0.8rem">至</span>
+        <input type="date" value="2026-04-20">
+        <input type="text" placeholder="操作人..." style="width:120px">
+        <button class="btn">🔍 查询</button>
+        <button class="btn" style="margin-left:auto">📤 导出日志</button>
+      </div>
+      <div class="log-table">
+        <div class="log-row header">
+          <span>时间</span>
+          <span>操作人</span>
+          <span>操作类型</span>
+          <span>操作内容</span>
+          <span>科目编码</span>
+          <span>来源</span>
+        </div>
+        <div class="log-row">
+          <span style="font-size:0.8rem;color:var(--text-dim)">2026-04-20 14:32</span>
+          <span>张三</span>
+          <span><span class="log-action log-add">新增</span></span>
+          <span>新增科目 6603 销售费用</span>
+          <span class="code">6603</span>
+          <span style="font-size:0.8rem">Web</span>
+        </div>
+        <div class="log-row">
+          <span style="font-size:0.8rem;color:var(--text-dim)">2026-04-20 11:15</span>
+          <span>李四</span>
+          <span><span class="log-action log-edit">修改</span></span>
+          <span>修改科目 1002.02 状态: 启用 → 禁用</span>
+          <span class="code">1002.02</span>
+          <span style="font-size:0.8rem">Web</span>
+        </div>
+        <div class="log-row">
+          <span style="font-size:0.8rem;color:var(--text-dim)">2026-04-19 16:45</span>
+          <span>系统</span>
+          <span><span class="log-action log-import">导入</span></span>
+          <span>从模板导入企业会计准则科目表，共86个科目</span>
+          <span>-</span>
+          <span style="font-size:0.8rem">导入</span>
+        </div>
+        <div class="log-row">
+          <span style="font-size:0.8rem;color:var(--text-dim)">2026-04-19 16:44</span>
+          <span>系统</span>
+          <span><span class="log-action log-add">新增</span></span>
+          <span>初始化账套，创建默认科目体系</span>
+          <span>-</span>
+          <span style="font-size:0.8rem">系统</span>
+        </div>
+        <div class="log-row">
+          <span style="font-size:0.8rem;color:var(--text-dim)">2026-04-18 09:30</span>
+          <span>王五</span>
+          <span><span class="log-action log-edit">修改</span></span>
+          <span>修改科目 6602 辅助核算: 新增「费用项目」维度</span>
+          <span class="code">6602</span>
+          <span style="font-size:0.8rem">Web</span>
+        </div>
+        <div class="log-row">
+          <span style="font-size:0.8rem;color:var(--text-dim)">2026-04-17 15:20</span>
+          <span>张三</span>
+          <span><span class="log-action log-add">新增</span></span>
+          <span>新增科目 1002.01 中国银行基本户</span>
+          <span class="code">1002.01</span>
+          <span style="font-size:0.8rem">Web</span>
+        </div>
+        <div class="log-row">
+          <span style="font-size:0.8rem;color:var(--text-dim)">2026-04-17 15:18</span>
+          <span>张三</span>
+          <span><span class="log-action log-add">新增</span></span>
+          <span>新增科目 1002 银行存款</span>
+          <span class="code">1002</span>
+          <span style="font-size:0.8rem">Web</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
 </div>
 
+<!-- ===== 新增/编辑科目弹窗 ===== -->
 <div id="modal" class="modal" style="display:none">
   <div class="modal-content">
     <div class="modal-header">
@@ -394,7 +1121,7 @@ body {
         </div>
         <div class="form-group">
           <label>余额方向 *</label>
-          <select><option value="">请选择</option><option value="借">借</option><option value="贷">贷</option><option value="借/贷">借/贷</option></select>
+          <select><option value="">请选择</option><option value="借">借</option><option value="贷">贷</option><option value="借或贷">借或贷</option></select>
         </div>
         <div class="form-group">
           <label>排序号</label>
@@ -436,6 +1163,7 @@ body {
   </div>
 </div>
 
+<!-- ===== 试算平衡弹窗 ===== -->
 <div id="balance-modal" class="modal" style="display:none">
   <div class="modal-content">
     <div class="modal-header">
@@ -458,20 +1186,43 @@ body {
 </div>
 
 <script>
+// ===== 页签切换逻辑 =====
+document.querySelectorAll('.tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    // 切换tab高亮
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    // 切换内容面板
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    var targetId = 'panel-' + tab.getAttribute('data-tab');
+    var targetPanel = document.getElementById(targetId);
+    if (targetPanel) targetPanel.classList.add('active');
+  });
+});
+
+// ===== 科目树展开收起 =====
+function toggleNode(el) {
+  var children = el.parentElement.querySelector('.tree-children');
+  var toggle = el.querySelector('.toggle');
+  if (children) {
+    children.classList.toggle('hidden');
+    if (toggle) toggle.classList.toggle('collapsed');
+  }
+}
+
+// ===== 弹窗控制 =====
 function openModal(type) {
-  document.getElementById('modal').style.display = 'flex';
-  if (type === 'balance') document.getElementById('balance-modal').style.display = 'flex';
+  if (type === 'balance') {
+    document.getElementById('balance-modal').style.display = 'flex';
+  } else {
+    document.getElementById('modal').style.display = 'flex';
+    document.getElementById('modal-title').textContent = type === 'edit' ? '编辑科目' : '新增科目';
+  }
 }
 function closeModal() {
   document.getElementById('modal').style.display = 'none';
   document.getElementById('balance-modal').style.display = 'none';
 }
-document.querySelectorAll('.tab').forEach((tab, i) => {
-  tab.addEventListener('click', () => {
-    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-    tab.classList.add('active');
-  });
-});
 </script>
 </body>
 </html>
