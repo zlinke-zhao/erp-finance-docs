@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>预算编制 - UI原型 | ERP预算管理</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Microsoft YaHei', 'PingFang SC', sans-serif; background: #f0f2f5; color: #333; }
+.page-header { background: linear-gradient(135deg, #1565c0 0%, #1976d2 100%); color: white; padding: 20px 30px; }
+.page-header h1 { font-size: 22px; margin-bottom: 6px; }
+.page-header p { font-size: 13px; opacity: 0.8; }
+.container { max-width: 1200px; margin: 24px auto; padding: 0 24px; }
+.card { background: white; border-radius: 8px; padding: 24px; margin-bottom: 20px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+.card-title { font-size: 16px; font-weight: bold; color: #333; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid #f0f0f0; }
+.form-row { display: flex; gap: 16px; margin-bottom: 16px; flex-wrap: wrap; }
+.form-item { flex: 1; min-width: 200px; }
+.form-item label { display: block; margin-bottom: 6px; font-size: 13px; color: #333; }
+.form-item select, .form-item input { width: 100%; padding: 8px 12px; border-radius: 6px; border: 1px solid #d9d9d9; font-size: 13px; }
+.stat-row { display: flex; gap: 16px; margin-bottom: 20px; }
+.stat-card { flex: 1; background: #f8f9fa; border-radius: 8px; padding: 16px; text-align: center; }
+.stat-card .label { font-size: 12px; color: #666; margin-bottom: 4px; }
+.stat-card .value { font-size: 24px; font-weight: bold; }
+.stat-card .value.blue { color: #1565c0; }
+.stat-card .value.green { color: #52c41a; }
+.stat-card .value.orange { color: #fa8c16; }
+.table-title { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+.table-title span { font-size: 14px; font-weight: bold; }
+.action-bar { display: flex; gap: 8px; margin-bottom: 16px; }
+.btn { padding: 6px 16px; border-radius: 6px; cursor: pointer; font-size: 13px; border: none; }
+.btn-primary { background: #1565c0; color: white; }
+.btn-success { background: #52c41a; color: white; }
+.btn-default { background: #fff; color: #666; border: 1px solid #d9d9d9; }
+.info-box { background: #e6f7ff; border: 1px solid #91d5ff; border-radius: 6px; padding: 12px 16px; margin-bottom: 16px; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+th, td { padding: 10px 8px; border: 1px solid #f0f0f0; text-align: left; }
+th { background: #fafafa; font-weight: 500; }
+tfoot td { background: #e6f7ff; font-weight: bold; }
+.text-right { text-align: right; }
+.text-center { text-align: center; }
+.link { color: #1890ff; cursor: pointer; text-decoration: none; }
+.link:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+<div class="page-header">
+  <h1>预算编制</h1>
+  <p>ERP财务管理 - 预算管理 - 年度预算编制</p>
+</div>
+
+<div class="container">
+  <!-- 统计卡片 -->
+  <div class="card">
+    <div class="stat-row">
+      <div class="stat-card">
+        <div class="label">年度预算总额</div>
+        <div class="value blue">10,300,000</div>
+      </div>
+      <div class="stat-card">
+        <div class="label">累计执行</div>
+        <div class="value green">5,270,000</div>
+      </div>
+      <div class="stat-card">
+        <div class="label">整体执行率</div>
+        <div class="value orange">51.2%</div>
+      </div>
+      <div class="stat-card">
+        <div class="label">预算状态</div>
+        <div class="value green">审批中</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 筛选条件 -->
+  <div class="card">
+    <div class="card-title">筛选条件</div>
+    <div class="form-row">
+      <div class="form-item">
+        <label>预算年度</label>
+        <select id="selectYear">
+          <option value="2026">2026年</option>
+          <option value="2025">2025年</option>
+          <option value="2024">2024年</option>
+        </select>
+      </div>
+      <div class="form-item">
+        <label>编制部门</label>
+        <select id="selectDept">
+          <option value="all">全部部门</option>
+          <option value="sales">销售部</option>
+          <option value="purchase">采购部</option>
+          <option value="production">生产部</option>
+          <option value="admin">管理部</option>
+        </select>
+      </div>
+      <div class="form-item">
+        <label>预算周期</label>
+        <select id="selectPeriod">
+          <option value="year">年度预算</option>
+          <option value="quarter">季度预算</option>
+          <option value="month">月度预算</option>
+        </select>
+      </div>
+      <div class="form-item" style="display: flex; align-items: flex-end; gap: 8px;">
+        <button class="btn btn-primary" onclick="queryData()">查询</button>
+        <button class="btn btn-default" onclick="resetForm()">重置</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 预算数据表格 -->
+  <div class="card">
+    <div class="table-title">
+      <span>预算数据列表</span>
+      <div class="action-bar">
+        <button class="btn btn-success" onclick="showAddModal()">+ 新增预算</button>
+        <button class="btn btn-default">Excel导入</button>
+        <button class="btn btn-default">从历史复制</button>
+      </div>
+    </div>
+
+    <table id="budgetTable">
+      <thead>
+        <tr>
+          <th>科目编码</th>
+          <th>科目名称</th>
+          <th class="text-right">年度预算</th>
+          <th class="text-right">Q1</th>
+          <th class="text-right">Q2</th>
+          <th class="text-right">Q3</th>
+          <th class="text-right">Q4</th>
+          <th class="text-right">累计执行</th>
+          <th class="text-center">执行率</th>
+          <th class="text-center">操作</th>
+        </tr>
+      </thead>
+      <tbody id="budgetBody">
+        <!-- 数据由JS动态填充 -->
+      </tbody>
+      <tfoot id="budgetFoot">
+        <!-- 合计由JS动态填充 -->
+      </tfoot>
+    </table>
+  </div>
+
+  <!-- 操作按钮 -->
+  <div class="card" style="text-align: center;">
+    <button class="btn btn-primary" style="padding: 10px 40px; font-size: 14px; margin-right: 12px;" onclick="submitApproval()">提交审批</button>
+    <button class="btn btn-default" style="padding: 10px 40px; font-size: 14px; margin-right: 12px;" onclick="saveDraft()">保存草稿</button>
+    <button class="btn btn-default" style="padding: 10px 40px; font-size: 14px;">取消</button>
+  </div>
+</div>
+
+<!-- 新增预算弹窗 -->
+<div id="addModal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 1000;">
+  <div style="background: white; border-radius: 8px; width: 500px; margin: 100px auto; padding: 24px;">
+    <h3 style="margin-bottom: 20px; font-size: 16px;">新增预算</h3>
+    <div class="form-row" style="flex-direction: column;">
+      <div class="form-item">
+        <label>科目编码</label>
+        <input type="text" placeholder="请输入科目编码" style="width: 100%; padding: 8px 12px; border: 1px solid #d9d9d9; border-radius: 6px;">
+      </div>
+      <div class="form-item">
+        <label>科目名称</label>
+        <input type="text" placeholder="请输入科目名称" style="width: 100%; padding: 8px 12px; border: 1px solid #d9d9d9; border-radius: 6px;">
+      </div>
+      <div class="form-item">
+        <label>年度预算金额</label>
+        <input type="number" placeholder="请输入金额" style="width: 100%; padding: 8px 12px; border: 1px solid #d9d9d9; border-radius: 6px;">
+      </div>
+    </div>
+    <div style="text-align: right; margin-top: 20px;">
+      <button class="btn btn-default" style="margin-right: 8px;" onclick="closeModal()">取消</button>
+      <button class="btn btn-primary" onclick="saveBudget()">保存</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const budgetData = [
+  { code: 'A001', name: '销售收入', yearBudget: 5000000, q1: 1000000, q2: 1200000, q3: 1300000, q4: 1500000, ytd: 2300000, executeRate: 46 },
+  { code: 'A002', name: '其他收入', yearBudget: 200000, q1: 40000, q2: 50000, q3: 50000, q4: 60000, ytd: 90000, executeRate: 45 },
+  { code: 'B001', name: '直接成本', yearBudget: 3000000, q1: 600000, q2: 700000, q3: 800000, q4: 900000, ytd: 1500000, executeRate: 50 },
+  { code: 'B002', name: '制造费用', yearBudget: 500000, q1: 100000, q2: 120000, q3: 130000, q4: 150000, ytd: 280000, executeRate: 56 },
+  { code: 'C001', name: '管理费用', yearBudget: 800000, q1: 160000, q2: 180000, q3: 200000, q4: 260000, ytd: 420000, executeRate: 52 },
+  { code: 'C002', name: '销售费用', yearBudget: 600000, q1: 120000, q2: 140000, q3: 160000, q4: 180000, ytd: 360000, executeRate: 60 },
+];
+
+function formatNumber(num) {
+  return num.toLocaleString();
+}
+
+function renderTable() {
+  const tbody = document.getElementById('budgetBody');
+  const tfoot = document.getElementById('budgetFoot');
+  
+  let totalYear = 0, totalQ1 = 0, totalQ2 = 0, totalQ3 = 0, totalQ4 = 0, totalYtd = 0;
+  
+  tbody.innerHTML = budgetData.map((row, i) => {
+    totalYear += row.yearBudget;
+    totalQ1 += row.q1;
+    totalQ2 += row.q2;
+    totalQ3 += row.q3;
+    totalQ4 += row.q4;
+    totalYtd += row.ytd;
+    return `
+      <tr style="background: ${i % 2 === 0 ? '#fff' : '#fafafa'}">
+        <td>${row.code}</td>
+        <td>${row.name}</td>
+        <td class="text-right">${formatNumber(row.yearBudget)}</td>
+        <td class="text-right">${formatNumber(row.q1)}</td>
+        <td class="text-right">${formatNumber(row.q2)}</td>
+        <td class="text-right">${formatNumber(row.q3)}</td>
+        <td class="text-right">${formatNumber(row.q4)}</td>
+        <td class="text-right">${formatNumber(row.ytd)}</td>
+        <td class="text-center">${row.executeRate}%</td>
+        <td class="text-center"><span class="link" onclick="editRow('${row.code}')">编辑</span></td>
+      </tr>
+    `;
+  }).join('');
+  
+  const totalRate = Math.round(totalYtd / totalYear * 100);
+  tfoot.innerHTML = `
+    <tr>
+      <td colspan="2">合计</td>
+      <td class="text-right">${formatNumber(totalYear)}</td>
+      <td class="text-right">${formatNumber(totalQ1)}</td>
+      <td class="text-right">${formatNumber(totalQ2)}</td>
+      <td class="text-right">${formatNumber(totalQ3)}</td>
+      <td class="text-right">${formatNumber(totalQ4)}</td>
+      <td class="text-right">${formatNumber(totalYtd)}</td>
+      <td class="text-center">${totalRate}%</td>
+      <td>-</td>
+    </tr>
+  `;
+}
+
+function queryData() {
+  alert('查询数据: ' + document.getElementById('selectYear').value);
+}
+
+function resetForm() {
+  document.getElementById('selectYear').value = '2026';
+  document.getElementById('selectDept').value = 'all';
+  document.getElementById('selectPeriod').value = 'year';
+}
+
+function showAddModal() {
+  document.getElementById('addModal').style.display = 'block';
+}
+
+function closeModal() {
+  document.getElementById('addModal').style.display = 'none';
+}
+
+function saveBudget() {
+  alert('保存成功！');
+  closeModal();
+}
+
+function submitApproval() {
+  alert('提交审批成功！');
+}
+
+function saveDraft() {
+  alert('草稿保存成功！');
+}
+
+function editRow(code) {
+  alert('编辑: ' + code);
+}
+
+// 初始化渲染
+renderTable();
+</script>
+</body>
+</html>
