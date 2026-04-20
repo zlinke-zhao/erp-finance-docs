@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>预算管理模块规格书</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: 'PingFang SC', 'Microsoft YaHei', -apple-system, sans-serif;
+  background: #f8fafc;
+  color: #334155;
+  line-height: 1.8;
+  font-size: 15px;
+}
+.container {
+  max-width: 960px;
+  margin: 0 auto;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+  padding: 3rem 3.5rem;
+}
+.back-link {
+  display: inline-block;
+  margin-bottom: 1.5rem;
+  color: #6366f1;
+  text-decoration: none;
+  font-size: 0.875rem;
+}
+.back-link:hover { text-decoration: underline; }
+.doc-header {
+  border-bottom: 3px solid #6366f1;
+  padding-bottom: 1.5rem;
+  margin-bottom: 2rem;
+}
+.doc-header h1 {
+  font-size: 1.75rem;
+  color: #1e293b;
+  margin-bottom: 0.75rem;
+}
+.doc-meta {
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  font-size: 0.85rem;
+  color: #64748b;
+}
+.doc-meta span { background: #f1f5f9; padding: 0.25rem 0.75rem; border-radius: 20px; }
+.content h1 { font-size: 1.4rem; margin: 2rem 0 1rem; color: #6366f1; border-bottom: 2px solid #e2e8f0; padding-bottom: 0.5rem; }
+.content h2 { font-size: 1.2rem; margin: 1.75rem 0 0.75rem; color: #1e293b; }
+.content h3 { font-size: 1.05rem; margin: 1.25rem 0 0.5rem; color: #475569; }
+.content p { margin: 0.75rem 0; }
+.content ul, .content ol { margin: 0.75rem 0; padding-left: 1.75rem; }
+.content li { margin: 0.4rem 0; }
+.content table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.25rem 0;
+  font-size: 0.875rem;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid #e2e8f0;
+}
+.content th, .content td {
+  border: 1px solid #e2e8f0;
+  padding: 0.75rem 1rem;
+  text-align: left;
+}
+.content th { background: #f1f5f9; font-weight: 600; color: #1e293b; }
+.content tr:hover td { background: #fafbfc; }
+.content pre {
+  background: #1e293b;
+  color: #e2e8f0;
+  padding: 1.25rem;
+  border-radius: 8px;
+  overflow-x: auto;
+  margin: 1rem 0;
+  font-size: 0.8rem;
+  line-height: 1.6;
+}
+.content code {
+  background: #f1f5f9;
+  color: #6366f1;
+  padding: 0.15rem 0.4rem;
+  border-radius: 4px;
+  font-size: 0.85em;
+  font-family: 'Consolas', monospace;
+}
+.content pre code {
+  background: transparent;
+  color: inherit;
+  padding: 0;
+}
+.toc { background: #f8fafc; padding: 1.5rem; border-radius: 8px; margin: 1.5rem 0; }
+.toc h3 { margin-top: 0 !important; }
+.toc ul { margin: 0.5rem 0; }
+</style>
+</head>
+<body>
+<div class="container">
+  <a href="../index.html" class="back-link">← 返回目录</a>
+  <div class="doc-header">
+    <h1>预算管理模块规格书</h1>
+    <div class="doc-meta">
+      <span>📋 V1.0</span>
+      <span>📅 2026-04-08</span>
+      <span>🏢 Dev_Dept</span>
+    </div>
+  </div>
+  <div class="content">
+    <h1>预算管理模块规格书</h1>
+<p>> ERP财务管理模块 · 对标金蝶云星空标准功能 · Dev_Dept 自研ERP</p>
+<p><strong>版本</strong>: v1.0  </p>
+<p><strong>日期</strong>: 2026-04-17  </p>
+<p><strong>状态</strong>: 草稿</p>
+<p>---</p>
+<h2>一、模块概述</h2>
+<p>预算管理是企业财务管控的核心工具，通过"编-审-控-调-分析"闭环，实现资金的事前计划、事中控制、事后分析。</p>
+<h3>1.1 核心价值</h3>
+<table>
+<tr><th>价值点</th><th>说明</th></tr>
+<tr><th>资金可视化</th><th>事前规划资金使用，避免资金黑洞</th></tr>
+<tr><th>过程管控</th><th>事中控制预算执行，超限预警/阻断</th></tr>
+<tr><th>绩效考核</th><th>部门/项目维度预算执行率考核</th></tr>
+<tr><th>决策支撑</th><th>实时预算执行分析，支撑经营决策</th></tr>
+</table>
+<h3>1.2 对标金蝶云星空</h3>
+<p>金蝶云星空预算管理模块功能：</p>
+<ul><li><strong>预算编制</strong>：支持年度/季度/月度多周期预算编制</li><li><strong>预算审批</strong>：多级审批流程，支持预算冻结/解冻</li><li><strong>预算控制</strong>：严格控制/弹性控制/不控制三种模式</li><li><strong>预算调整</strong>：支持预算调整申请与审批</li><li><strong>预算分析</strong>：执行率分析、预算与实际对比、滚动预测</li><li><strong>预算考核</strong>：部门/项目维度预算执行率考核</li></ul>
+<p>---</p>
+<h2>二、功能架构</h2>
+<pre><code>预算管理模块
+├── 01 预算基础设置
+│   ├── 预算周期定义（年度/季度/月度）
+│   ├── 预算组织架构（部门/项目/成本中心）
+│   ├── 预算科目体系（费用类/收入类/资产类）
+│   └── 预算模板管理
+│
+├── 02 预算编制
+│   ├── 年度预算编制
+│   ├── 季度预算分解
+│   ├── 月度预算细化
+│   └── 预算数据导入（Excel）
+│
+├── 03 预算审批
+│   ├── 预算编制提交
+│   ├── 多级审批流程
+│   ├── 预算锁定/发布
+│   └── 审批历史追溯
+│
+├── 04 预算控制
+│   ├── 控制维度（部门/项目/费用项）
+│   ├── 控制方式（严格/弹性/不控制）
+│   ├── 超限预警规则
+│   └── 事前申请与事后报销联动
+│
+├── 05 预算调整
+│   ├── 预算调整申请
+│   ├── 调整原因记录
+│   ├── 调整审批流程
+│   └── 调整记录追溯
+│
+├── 06 预算分析
+│   ├── 执行进度分析
+│   ├── 预算与实际对比
+│   ├── 滚动预测
+│   └── 多维分析报表
+│
+└── 07 预算考核
+    ├── 部门预算考核
+    ├── 项目预算考核
+    ├── 考核指标定义
+    └── 考核结果导出</code></pre>
+<p>---</p>
+<h2>三、详细功能说明</h2>
+<h3>3.1 预算基础设置</h3>
+<p>#### 3.1.1 预算周期定义</p>
+<table>
+<tr><th>字段</th><th>说明</th><th>示例</th></tr>
+<tr><th>周期类型</th><th>年度/季度/月度</th><th>月度</th></tr>
+<tr><th>开始月份</th><th>预算周期起始月</th><th>1月</th></tr>
+<tr><th>结束月份</th><th>预算周期结束月</th><th>12月</th></tr>
+<tr><th>编制提前期</th><th>提前多少天开始编制</th><th>30天</th></tr>
+<tr><th>锁定规则</th><th>何时锁定不可修改</th><th>审批通过后</th></tr>
+</table>
+<p>#### 3.1.2 预算组织架构</p>
+<pre><code>组织层级：
+├── 公司级预算
+├── 事业部/部门级预算
+│   ├── 销售部
+│   ├── 采购部
+│   ├── 生产部
+│   └── 管理部门
+└── 项目级预算
+    ├── 项目A
+    └── 项目B</code></pre>
+<p>#### 3.1.3 预算科目体系</p>
+<table>
+<tr><th>科目类型</th><th>方向</th><th>说明</th></tr>
+<tr><th>收入类</th><th>预算增加</th><th>销售收入、其他收入</th></tr>
+<tr><th>成本类</th><th>预算减少</th><th>直接成本、制造费用</th></tr>
+<tr><th>费用类</th><th>预算减少</th><th>管理费用、销售费用</th></tr>
+<tr><th>资产类</th><th>预算变动</th><th>固定资产采购、在建工程</th></tr>
+</table>
+<h3>3.2 预算编制</h3>
+<p>#### 3.2.1 年度预算编制流程</p>
+<pre><code>开始 -> 选择预算年度 -> 选择编制部门 -> 选择预算模板
+  -> 按模板填报数据 -> 数据校验 -> 提交审批 -> 结束</code></pre>
+<p>#### 3.2.2 预算编制规则</p>
+<table>
+<tr><th>规则类型</th><th>说明</th><th>配置方式</th></tr>
+<tr><th>零基预算</th><th>从零开始编制</th><th>每年度重置</th></tr>
+<tr><th>增量预算</th><th>基于上年调整</th><th>增量比例配置</th></tr>
+<tr><th>弹性预算</th><th>基于业务量调整</th><th>公式定义</th></tr>
+</table>
+<p>#### 3.2.3 预算数据来源</p>
+<table>
+<tr><th>来源</th><th>说明</th></tr>
+<tr><th>手工录入</th><th>直接在系统填写</th></tr>
+<tr><th>Excel导入</th><th>模板下载-填写-导入</th></tr>
+<tr><th>历史数据</th><th>基于上年实际/预算复制</th></tr>
+<tr><th>业务计划</th><th>关联销售计划、生产计划</th></tr>
+</table>
+<h3>3.3 预算审批</h3>
+<p>#### 3.3.1 审批流程</p>
+<pre><code>编制人提交 -> 部门主管审批 -> 财务经理审批 -> 财务总监审批 -> 发布
+     ↓              ↓              ↓
+   驳回          驳回          驳回
+     ↓              ↓              ↓
+  返回编制      返回编制      返回编制</code></pre>
+<p>#### 3.3.2 审批权限矩阵</p>
+<table>
+<tr><th>预算金额</th><th>审批层级</th><th>审批人</th></tr>
+<tr><th>< 10万</th><th>1级</th><th>部门主管</th></tr>
+<tr><th>10-50万</th><th>2级</th><th>部门主管 + 财务经理</th></tr>
+<tr><th>50-100万</th><th>3级</th><th>部门主管 + 财务经理 + 财务总监</th></tr>
+<tr><th>>= 100万</th><th>4级</th><th>+ 总经理</th></tr>
+</table>
+<h3>3.4 预算控制</h3>
+<p>#### 3.4.1 控制模式</p>
+<table>
+<tr><th>控制模式</th><th>说明</th><th>触发动作</th></tr>
+<tr><th>严格控制</th><th>不得超预算</th><th>直接拒绝报销</th></tr>
+<tr><th>弹性控制</th><th>可超一定比例</th><th>预警 + 审批升级</th></tr>
+<tr><th>不控制</th><th>仅记录分析</th><th>仅记录，无拦截</th></tr>
+</table>
+<p>#### 3.4.2 控制维度</p>
+<pre><code>预算控制维度：
+├── 维度1：部门维度
+│   └── 各部门独立控制
+├── 维度2：项目维度
+│   └── 各项目独立控制
+├── 维度3：费用项维度
+│   └── 各费用项独立控制
+└── 维度4：时间维度
+    └── 月度/季度/年度控制</code></pre>
+<p>#### 3.4.3 预警规则</p>
+<table>
+<tr><th>预警级别</th><th>触发条件</th><th>通知方式</th></tr>
+<tr><th>L1 提醒</th><th>达到 70%</th><th>站内信</th></tr>
+<tr><th>L2 预警</th><th>达到 90%</th><th>站内信 + 邮件</th></tr>
+<tr><th>L3 警告</th><th>达到 100%</th><th>全渠道通知</th></tr>
+<tr><th>L4 超限</th><th>超过 100%</th><th>全渠道 + 阻断审批</th></tr>
+</table>
+<h3>3.5 预算调整</h3>
+<p>#### 3.5.1 调整类型</p>
+<table>
+<tr><th>调整类型</th><th>说明</th></tr>
+<tr><th>科目间调整</th><th>A费用项调减，B费用项调增</th></tr>
+<tr><th>部门间调整</th><th>A部门调减，B部门调增</th></tr>
+<tr><th>时间维度调整</th><th>Q1调减，Q2调增</th></tr>
+<tr><th>追加预算</th><th>整体追加，需额外审批</th></tr>
+</table>
+<p>#### 3.5.2 调整流程</p>
+<pre><code>调整申请 -> 填写调整金额 -> 选择调整原因 -> 提交审批
+  -> 财务经理审批 -> 财务总监审批（>50万）-> 执行调整</code></pre>
+<h3>3.6 预算分析</h3>
+<p>#### 3.6.1 分析报表</p>
+<table>
+<tr><th>报表名称</th><th>说明</th></tr>
+<tr><th>预算执行进度表</th><th>各部门/项目预算执行率</th></tr>
+<tr><th>预算与实际对比表</th><th>预算vs实际vs差异</th></tr>
+<tr><th>预算差异分析表</th><th>差异原因分析</th></tr>
+<tr><th>滚动预测表</th><th>基于执行数据的未来预测</th></tr>
+<tr><th>预算考核表</th><th>各部门考核结果</th></tr>
+</table>
+<p>#### 3.6.2 分析维度</p>
+<pre><code>分析维度：
+├── 时间维度：年度/季度/月度
+├── 组织维度：公司/事业部/部门/项目
+├── 科目维度：收入/成本/费用
+└── 对比维度：预算/实际/差异/执行率</code></pre>
+<p>---</p>
+<h2>四、数据库设计</h2>
+<h3>4.1 核心表结构</h3>
+<p>#### 预算主表（BUDGET_MASTER）</p>
+<table>
+<tr><th>字段</th><th>类型</th><th>说明</th></tr>
+<tr><th>BUDGET_ID</th><th>VARCHAR(32)</th><th>预算ID（PK）</th></tr>
+<tr><th>BUDGET_YEAR</th><th>INT</th><th>预算年度</th></tr>
+<tr><th>BUDGET_PERIOD</th><th>VARCHAR(10)</th><th>预算周期（年度/季度/月度）</th></tr>
+<tr><th>ORG_ID</th><th>VARCHAR(32)</th><th>组织ID</th></tr>
+<tr><th>DEPT_ID</th><th>VARCHAR(32)</th><th>部门ID</th></tr>
+<tr><th>PROJECT_ID</th><th>VARCHAR(32)</th><th>项目ID（可选）</th></tr>
+<tr><th>BUDGET_AMOUNT</th><th>DECIMAL(18,2)</th><th>预算金额</th></tr>
+<tr><th>STATUS</th><th>VARCHAR(20)</th><th>状态（草稿/审批中/已发布/已锁定）</th></tr>
+<tr><th>CREATED_BY</th><th>VARCHAR(32)</th><th>创建人</th></tr>
+<tr><th>CREATED_TIME</th><th>DATETIME</th><th>创建时间</th></tr>
+<tr><th>UPDATED_BY</th><th>VARCHAR(32)</th><th>更新人</th></tr>
+<tr><th>UPDATED_TIME</th><th>DATETIME</th><th>更新时间</th></tr>
+</table>
+<p>#### 预算明细表（BUDGET_DETAIL）</p>
+<table>
+<tr><th>字段</th><th>类型</th><th>说明</th></tr>
+<tr><th>DETAIL_ID</th><th>VARCHAR(32)</th><th>明细ID（PK）</th></tr>
+<tr><th>BUDGET_ID</th><th>VARCHAR(32)</th><th>预算ID（FK）</th></tr>
+<tr><th>ACCOUNT_ID</th><th>VARCHAR(32)</th><th>科目ID</th></tr>
+<tr><th>JAN_AMOUNT</th><th>DECIMAL(18,2)</th><th>1月金额</th></tr>
+<tr><th>FEB_AMOUNT</th><th>DECIMAL(18,2)</th><th>2月金额</th></tr>
+<tr><th>...</th><th>...</th><th>...</th></tr>
+<tr><th>DEC_AMOUNT</th><th>DECIMAL(18,2)</th><th>12月金额</th></tr>
+<tr><th>ANNUAL_AMOUNT</th><th>DECIMAL(18,2)</th><th>年度合计</th></tr>
+</table>
+<p>#### 预算调整表（BUDGET_ADJUST）</p>
+<table>
+<tr><th>字段</th><th>类型</th><th>说明</th></tr>
+<tr><th>ADJUST_ID</th><th>VARCHAR(32)</th><th>调整ID（PK）</th></tr>
+<tr><th>BUDGET_ID</th><th>VARCHAR(32)</th><th>原预算ID</th></tr>
+<tr><th>ADJUST_TYPE</th><th>VARCHAR(20)</th><th>调整类型</th></tr>
+<tr><th>FROM_ACCOUNT</th><th>VARCHAR(32)</th><th>调出科目</th></tr>
+<tr><th>TO_ACCOUNT</th><th>VARCHAR(32)</th><th>调入科目</th></tr>
+<tr><th>ADJUST_AMOUNT</th><th>DECIMAL(18,2)</th><th>调整金额</th></tr>
+<tr><th>ADJUST_REASON</th><th>VARCHAR(500)</th><th>调整原因</th></tr>
+<tr><th>STATUS</th><th>VARCHAR(20)</th><th>状态</th></tr>
+<tr><th>APPROVAL_ID</th><th>VARCHAR(32)</th><th>审批ID</th></tr>
+</table>
+<p>#### 预算执行表（BUDGET_EXECUTION）</p>
+<table>
+<tr><th>字段</th><th>类型</th><th>说明</th></tr>
+<tr><th>EXEC_ID</th><th>VARCHAR(32)</th><th>执行ID（PK）</th></tr>
+<tr><th>BUDGET_ID</th><th>VARCHAR(32)</th><th>预算ID</th></tr>
+<tr><th>BUDGET_DETAIL_ID</th><th>VARCHAR(32)</th><th>预算明细ID</th></tr>
+<tr><th>DOCUMENT_TYPE</th><th>VARCHAR(20)</th><th>单据类型（报销/采购等）</th></tr>
+<tr><th>DOCUMENT_ID</th><th>VARCHAR(32)</th><th>单据ID</th></tr>
+<tr><th>EXEC_AMOUNT</th><th>DECIMAL(18,2)</th><th>执行金额</th></tr>
+<tr><th>EXEC_TIME</th><th>DATETIME</th><th>执行时间</th></tr>
+</table>
+<p>---</p>
+<h2>五、业务流程图</h2>
+<p>详见配套流程图文件：<code>预算管理总流程图.html</code></p>
+<h3>5.1 核心流程</h3>
+<pre><code>1. 预算编制流程
+   启动编制 -> 模板选择 -> 数据填报 -> 校验 -> 提交审批 -> 发布
+
+2. 预算控制流程
+   报销申请 -> 预算检查 -> 额度判断 -> 通过/预警/拒绝 -> 执行/调整
+
+3. 预算调整流程
+   调整申请 -> 原因填写 -> 审批 -> 执行调整 -> 更新台账
+
+4. 预算分析流程
+   数据采集 -> 执行率计算 -> 差异分析 -> 生成报表 -> 考核评价</code></pre>
+<p>---</p>
+<h2>六、集成关系</h2>
+<h3>6.1 上游系统</h3>
+<table>
+<tr><th>系统</th><th>数据内容</th></tr>
+<tr><th>销售管理</th><th>销售计划数据</th></tr>
+<tr><th>生产管理</th><th>生产成本预算</th></tr>
+<tr><th>人力资源</th><th>人工成本预算</th></tr>
+</table>
+<h3>6.2 下游系统</h3>
+<table>
+<tr><th>系统</th><th>数据内容</th></tr>
+<tr><th>费用报销</th><th>预算扣减/控制</th></tr>
+<tr><th>采购管理</th><th>预算扣减/控制</th></tr>
+<tr><th>应付管理</th><th>预算执行记录</th></tr>
+<tr><th>财务总账</th><th>预算凭证生成</th></tr>
+</table>
+<p>---</p>
+<h2>七、验收标准</h2>
+<h3>7.1 功能验收</h3>
+<table>
+<tr><th>序号</th><th>验收项</th><th>验收标准</th></tr>
+<tr><th>1</th><th>预算编制</th><th>支持按模板编制，数据校验通过</th></tr>
+<tr><th>2</th><th>预算审批</th><th>多级审批流程正常流转</th></tr>
+<tr><th>3</th><th>预算控制</th><th>超限预警/阻断功能正常</th></tr>
+<tr><th>4</th><th>预算调整</th><th>调整申请-审批-执行闭环</th></tr>
+<tr><th>5</th><th>预算分析</th><th>执行率计算准确，报表生成正确</th></tr>
+</table>
+<h3>7.2 性能要求</h3>
+<table>
+<tr><th>指标</th><th>要求</th></tr>
+<tr><th>响应时间</th><th>< 2秒</th></tr>
+<tr><th>并发用户</th><th>>= 50</th></tr>
+<tr><th>数据准确性</th><th>100%</th></tr>
+</table>
+<h3>7.3 报表清单</h3>
+<table>
+<tr><th>报表名称</th><th>格式</th></tr>
+<tr><th>预算执行进度表</th><th>Excel/PDF</th></tr>
+<tr><th>预算与实际对比表</th><th>Excel/PDF</th></tr>
+<tr><th>预算差异分析表</th><th>Excel/PDF</th></tr>
+<tr><th>预算考核汇总表</th><th>Excel/PDF</th></tr>
+</table>
+<p>---</p>
+<h2>八、实施建议</h2>
+<h3>8.1 实施步骤</h3>
+<pre><code>Phase 1: 基础设置（1-2周）
+  - 组织架构定义
+  - 科目体系定义
+  - 预算模板配置
+
+Phase 2: 编制上线（2-3周）
+  - 历史数据迁移
+  - 用户培训
+  - 试运行
+
+Phase 3: 控制启用（1-2周）
+  - 控制规则配置
+  - 预警规则配置
+  - 正式启用
+
+Phase 4: 分析深化（持续）
+  - 分析模型优化
+  - 考核体系完善</code></pre>
+<h3>8.2 关键成功因素</h3>
+<table>
+<tr><th>因素</th><th>说明</th></tr>
+<tr><th>领导支持</th><th>高层支持是预算管理成功的关键</th></tr>
+<tr><th>数据质量</th><th>基础数据准确是预算有效的前提</th></tr>
+<tr><th>持续优化</th><th>根据执行情况持续调整预算模型</th></tr>
+<tr><th>全员参与</th><th>各部门参与才能保证预算落地</th></tr>
+</table>
+
+  </div>
+</div>
+</body>
+</html>
