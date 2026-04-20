@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>费用报销模块</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'PingFang SC', 'Microsoft YaHei', -apple-system, sans-serif; background: #f8fafc; color: #334155; line-height: 1.8; font-size: 15px; }
+.container { max-width: 960px; margin: 0 auto; background: #fff; border-radius: 12px; box-shadow: 0 4px 24px rgba(0,0,0,0.06); padding: 3rem 3.5rem; }
+.back-link { display: inline-block; margin-bottom: 1.5rem; color: #6366f1; text-decoration: none; font-size: 0.875rem; }
+.back-link:hover { text-decoration: underline; }
+.doc-header { border-bottom: 3px solid #6366f1; padding-bottom: 1.5rem; margin-bottom: 2rem; }
+.doc-header h1 { font-size: 1.75rem; color: #1e293b; margin-bottom: 0.75rem; }
+.doc-meta { display: flex; gap: 1.5rem; flex-wrap: wrap; font-size: 0.85rem; color: #64748b; }
+.doc-meta span { background: #f1f5f9; padding: 0.25rem 0.75rem; border-radius: 20px; }
+.content h1 { font-size: 1.4rem; margin: 2rem 0 1rem; color: #6366f1; border-bottom: 2px solid #e2e8f0; padding-bottom: 0.5rem; }
+.content h2 { font-size: 1.2rem; margin: 1.75rem 0 0.75rem; color: #1e293b; }
+.content h3 { font-size: 1.05rem; margin: 1.25rem 0 0.5rem; color: #475569; }
+.content h4 { font-size: 1rem; margin: 1rem 0 0.5rem; color: #64748b; }
+.content p { margin: 0.75rem 0; }
+.content ul, .content ol { margin: 0.75rem 0; padding-left: 1.75rem; }
+.content li { margin: 0.4rem 0; }
+.content table { width: 100%; border-collapse: collapse; margin: 1.25rem 0; font-size: 0.875rem; border-radius: 8px; overflow: hidden; border: 1px solid #e2e8f0; }
+.content th, .content td { border: 1px solid #e2e8f0; padding: 0.75rem 1rem; text-align: left; }
+.content th { background: #f1f5f9; font-weight: 600; color: #1e293b; }
+.content tr:hover td { background: #fafbfc; }
+.content pre { background: #1e293b; color: #e2e8f0; padding: 1.25rem; border-radius: 8px; overflow-x: auto; margin: 1rem 0; font-size: 0.8rem; line-height: 1.6; }
+.content code { background: #f1f5f9; color: #6366f1; padding: 0.15rem 0.4rem; border-radius: 4px; font-size: 0.85em; font-family: 'Consolas', monospace; }
+.content pre code { background: transparent; color: inherit; padding: 0; }
+.content blockquote { border-left: 4px solid #6366f1; margin: 1rem 0; padding: 0.75rem 1.25rem; background: #f8fafc; color: #475569; }
+.content strong { color: #1e293b; }
+.content hr { border: none; border-top: 2px solid #e2e8f0; margin: 2rem 0; }
+</style>
+</head>
+<body>
+<div class="container">
+  <a href="../index.html" class="back-link">&larr; 返回目录</a>
+  <div class="doc-header">
+    <h1>费用报销模块</h1>
+    <div class="doc-meta">
+      <span>📋 V1.0</span>
+      <span>📅 2026-04-20</span>
+      <span>🏢 Dev_Dept</span>
+    </div>
+  </div>
+  <div class="content">
+<h1>费用报销模块 — 需求分析与技术规格说明书</h1>
+<h2>Expense Reimbursement Module — Technical Specification</h2>
+<blockquote><p><strong>项目</strong>: Dev_Dept ERP 财务管理系统</p></blockquote>
+<blockquote><p><strong>模块</strong>: 费用报销管理 (Expense Reimbursement Management)</p></blockquote>
+<blockquote><p><strong>版本</strong>: v1.0</p></blockquote>
+<blockquote><p><strong>日期</strong>: 2026-04-20</p></blockquote>
+<blockquote><p><strong>对标系统</strong>: 金蝶云星空 → 费用管理 → 费用报销/差旅报销</p></blockquote>
+<blockquote><p><strong>关联模块</strong>: 预算管理模块规格书.md（预算控制）→ 本模块（费用发生）→ AP应付模块规格书.md（付款）→ 总账凭证引擎规格书.md（凭证落地）</p></blockquote>
+<blockquote><p><strong>优先级</strong>: <strong>P1（核心缺失）</strong> — 企业日常费用管控的关键模块</p></blockquote>
+<blockquote><p><strong>状态</strong>: 规格设计阶段</p></blockquote>
+<hr>
+<h2>1. 模块定位与业务目标</h2>
+<h3>1.1 一句话定义</h3>
+<p><strong>费用报销模块是ERP系统中"申请-审批-支付-记账"闭环的费用管控中枢，负责从员工费用申请开始，经过多级审批、票据关联、预算扣减、费用分摊，最终生成报销付款和费用凭证写入总账的全流程管理。</strong></p>
+<h3>1.2 在整体流程中的位置</h3>
+<pre><code>
+┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────────────────┐
+│ 费用申请  │─▶│ 审批流转  │─▶│ 票据关联  │─▶│ 预算校验          │
+│ 员工发起  │  │ 多级审批  │  │ 发票/行程 │  │ 预算余额检查      │
+└──────────┘  └──────────┘  └──────────┘  └────────┬─────────┘
+                                                       │ 通过
+                                                       ▼
+                               ┌─────────────────────────────────────────┐
+                               │  💰 费用报销管理（本模块）                │
+                               │                                         │
+                               │  F1 费用申请    →  多类型费用+差旅标准     │
+                               │  F2 审批流转    →  多级审批+金额阈值      │
+                               │  F3 票据管理    →  发票关联+查验+验真     │
+                               │  F4 预算控制    →  预算校验+冻结+扣减     │
+                               │  F5 费用分摊    →  多维度分摊+成本中心    │
+                               │  F6 报销支付    →  付款申请+银行代发      │
+                               │  F7 凭证生成    →  自动凭证+费用归集      │
+                               └─────────────────┬───────────────────────┘
+                                                 │
+                      ┌──────────────────────────┼──────────────────────┐
+                      ▼                          ▼                      ▼
+              ┌──────────────┐         ┌──────────────┐       ┌──────────────┐
+              │ 🧾 总账凭证    │         │ 💳 实付付款    │       │ 📊 预算管理    │
+              │ EX01~EX07    │         │ 报销付款      │       │ 预算扣减回写  │
+              └──────────────┘         └──────────────┘       └──────────────┘
+</pre>
+<h3>1.3 与已有模块的衔接关系</h3>
+<table><thead>
+<tr><th>上游模块</th><th>衔接点</th><th>本模块消费的数据</th></tr>
+</thead><tbody>
+<tr><td><strong>发票查验模块</strong></td><td>报销关联发票验真</td><td>查验结果、票面信息、发票状态</td></tr>
+<tr><td><strong>预算管理模块</strong></td><td>费用申请时预算校验</td><td>预算科目、预算余额、预算控制策略</td></tr>
+<tr><td><strong>组织架构/HR</strong></td><td>审批流+员工信息</td><td>部门层级、审批权限、差旅标准</td></tr>
+<tr><td><strong>成本中心</strong></td><td>费用分摊维度</td><td>成本中心编码、分摊比例</td></tr>
+</tbody>
+</table>
+<table><thead>
+<tr><th>下游模块</th><th>衔接点</th><th>本模块产出的数据</th></tr>
+</thead><tbody>
+<tr><td><strong>实付付款模块</strong></td><td>报销审批通过 → 付款申请</td><td>报销单号、金额、收款人、银行账户</td></tr>
+<tr><td><strong>总账凭证引擎</strong></td><td>报销确认 → 自动凭证</td><td>EX01~EX07 凭证模板触发事件</td></tr>
+<tr><td><strong>预算管理模块</strong></td><td>报销完成 → 预算扣减回写</td><td>占用金额、实际发生金额</td></tr>
+<tr><td><strong>成本核算模块</strong></td><td>费用归集 → 成本分摊</td><td>费用科目、成本中心、分摊规则</td></tr>
+</tbody>
+</table>
+<h3>1.4 核心业务目标</h3>
+<table><thead>
+<tr><th>目标</th><th>指标</th><th>当前痛点</th></tr>
+</thead><tbody>
+<tr><td><strong>报销时效</strong></td><td>从申请到到账不超过5个工作日</td><td>纸质单据流转慢，审批堵点不可见</td></tr>
+<tr><td><strong>预算准确率</strong></td><td>费用100%受预算控制，超预算0%漏过</td><td>报销与预算脱节，事后才知道超支</td></tr>
+<tr><td><strong>发票合规率</strong></td><td>关联发票100%通过查验</td><td>手工审核发票，重复报销/假票难发现</td></tr>
+<tr><td><strong>审批效率</strong></td><td>平均审批链路不超过3级</td><td>审批层级过多，领导出差即卡住</td></tr>
+<tr><td><strong>凭证自动化</strong></td><td>报销凭证100%自动生成</td><td>手工录入费用凭证，科目容易选错</td></tr>
+</tbody>
+</table>
+<hr>
+<h2>2. 功能域分解</h2>
+<h3>F1 费用申请管理</h3>
+<table><thead>
+<tr><th>功能点</th><th>说明</th><th>优先级</th></tr>
+</thead><tbody>
+<tr><td>F1.1 日常费用申请</td><td>办公费、招待费、交通费、通讯费等</td><td>P0</td></tr>
+<tr><td>F1.2 差旅费用申请</td><td>出差申请+行程规划+预估费用</td><td>P0</td></tr>
+<tr><td>F1.3 项目费用申请</td><td>关联项目WBS的费用申请</td><td>P1</td></tr>
+<tr><td>F1.4 借款申请</td><td>出差/采购预借款，需后续核销</td><td>P0</td></tr>
+<tr><td>F1.5 费用标准校验</td><td>差旅标准/招待标准自动比对</td><td>P0</td></tr>
+<tr><td>F1.6 紧急申请通道</td><td>特殊情况加急审批</td><td>P2</td></tr>
+</tbody>
+</table>
+<h3>F2 审批流转管理</h3>
+<table><thead>
+<tr><th>功能点</th><th>说明</th><th>优先级</th></tr>
+</thead><tbody>
+<tr><td>F2.1 多级审批配置</td><td>按金额/部门/费用类型配置审批链</td><td>P0</td></tr>
+<tr><td>F2.2 金额阈值审批</td><td>不同金额区间走不同审批层级</td><td>P0</td></tr>
+<tr><td>F2.3 审批代理/转交</td><td>领导出差可委托代理人审批</td><td>P1</td></tr>
+<tr><td>F2.4 审批催办提醒</td><td>超时自动催办+升级机制</td><td>P1</td></tr>
+<tr><td>F2.5 审批意见记录</td><td>每级审批意见可追溯</td><td>P0</td></tr>
+<tr><td>F2.6 驳回修改重提</td><td>驳回后修改可重新提交</td><td>P0</td></tr>
+</tbody>
+</table>
+<h3>F3 票据关联管理</h3>
+<table><thead>
+<tr><th>功能点</th><th>说明</th><th>优先级</th></tr>
+</thead><tbody>
+<tr><td>F3.1 发票关联</td><td>报销单关联一张或多张发票</td><td>P0</td></tr>
+<tr><td>F3.2 发票自动查验</td><td>关联发票自动调查验真接口</td><td>P0</td></tr>
+<tr><td>F3.3 重复报销拦截</td><td>同一发票号不可重复报销</td><td>P0</td></tr>
+<tr><td>F3.4 发票金额匹配</td><td>发票金额与报销金额自动核对</td><td>P0</td></tr>
+<tr><td>F3.5 行程单/票根关联</td><td>差旅关联机票/火车票/行程单</td><td>P1</td></tr>
+<tr><td>F3.6 票据影像上传</td><td>发票/收据拍照上传存档</td><td>P1</td></tr>
+</tbody>
+</table>
+<h3>F4 预算控制管理</h3>
+<table><thead>
+<tr><th>功能点</th><th>说明</th><th>优先级</th></tr>
+</thead><tbody>
+<tr><td>F4.1 预算余额校验</td><td>申请时实时检查预算余额</td><td>P0</td></tr>
+<tr><td>F4.2 预算占用冻结</td><td>审批通过后冻结预算额度</td><td>P0</td></tr>
+<tr><td>F4.3 预算扣减确认</td><td>报销完成后实际扣减预算</td><td>P0</td></tr>
+<tr><td>F4.4 超预算控制策略</td><td>禁止/警告/特批三级策略</td><td>P0</td></tr>
+<tr><td>F4.5 预算占用释放</td><td>驳回/撤销时释放已占用预算</td><td>P0</td></tr>
+<tr><td>F4.6 跨期预算处理</td><td>费用归属期与预算期间不一致</td><td>P1</td></tr>
+</tbody>
+</table>
+<h3>F5 费用分摊管理</h3>
+<table><thead>
+<tr><th>功能点</th><th>说明</th><th>优先级</th></tr>
+</thead><tbody>
+<tr><td>F5.1 成本中心分摊</td><td>按成本中心分摊费用</td><td>P0</td></tr>
+<tr><td>F5.2 部门分摊</td><td>按组织架构分摊费用</td><td>P0</td></tr>
+<tr><td>F5.3 项目分摊</td><td>按项目WBS分摊费用</td><td>P1</td></tr>
+<tr><td>F5.4 自定义分摊规则</td><td>按比例/按金额手动分摊</td><td>P1</td></tr>
+<tr><td>F5.5 分摊凭证拆分</td><td>分摊后生成多行明细凭证</td><td>P0</td></tr>
+</tbody>
+</table>
+<h3>F6 报销支付管理</h3>
+<table><thead>
+<tr><th>功能点</th><th>说明</th><th>优先级</th></tr>
+</thead><tbody>
+<tr><td>F6.1 报销单生成</td><td>审批通过后自动生成报销单</td><td>P0</td></tr>
+<tr><td>F6.2 付款申请提交</td><td>报销单转付款申请到AP模块</td><td>P0</td></tr>
+<tr><td>F6.3 银行代发集成</td><td>对接银行代发批量付款</td><td>P1</td></tr>
+<tr><td>F6.4 借款核销</td><td>预借款与报销单对冲核销</td><td>P0</td></tr>
+<tr><td>F6.5 部分支付</td><td>金额争议时可部分支付</td><td>P2</td></tr>
+<tr><td>F6.6 支付状态跟踪</td><td>付款进度实时查看</td><td>P0</td></tr>
+</tbody>
+</table>
+<h3>F7 凭证与报表</h3>
+<table><thead>
+<tr><th>功能点</th><th>说明</th><th>优先级</th></tr>
+</thead><tbody>
+<tr><td>F7.1 自动凭证生成</td><td>报销确认自动触发凭证</td><td>P0</td></tr>
+<tr><td>F7.2 凭证模板配置</td><td>EX01~EX07凭证模板维护</td><td>P0</td></tr>
+<tr><td>F7.3 费用统计报表</td><td>按部门/人员/类型/期间统计</td><td>P0</td></tr>
+<tr><td>F7.4 差旅费明细表</td><td>差旅费逐项对比标准</td><td>P1</td></tr>
+<tr><td>F7.5 预算执行分析</td><td>预算vs实际费用对比分析</td><td>P1</td></tr>
+<tr><td>F7.6 费用趋势分析</td><td>同比环比趋势图表</td><td>P2</td></tr>
+</tbody>
+</table>
+<hr>
+<h2>3. 数据库设计</h2>
+<h3>3.1 核心表结构</h3>
+<h4>expense_application — 费用申请单</h4>
+<table><thead>
+<tr><th>字段</th><th>类型</th><th>说明</th><th>约束</th></tr>
+</thead><tbody>
+<tr><td>app_id</td><td>VARCHAR(32)</td><td>申请单号</td><td>PK, EX+YYYYMMDD+4位流水</td></tr>
+<tr><td>app_type</td><td>ENUM</td><td>申请类型</td><td>日常/差旅/项目/借款</td></tr>
+<tr><td>title</td><td>VARCHAR(200)</td><td>申请标题</td><td>NOT NULL</td></tr>
+<tr><td>applicant_id</td><td>VARCHAR(20)</td><td>申请人工号</td><td>FK → employee</td></tr>
+<tr><td>dept_id</td><td>VARCHAR(20)</td><td>申请部门</td><td>FK → department</td></tr>
+<tr><td>cost_center</td><td>VARCHAR(20)</td><td>成本中心</td><td>FK → cost_center</td></tr>
+<tr><td>project_code</td><td>VARCHAR(30)</td><td>项目编码</td><td>可选, FK → project</td></tr>
+<tr><td>total_amount</td><td>DECIMAL(14,2)</td><td>申请总额</td><td>NOT NULL</td></tr>
+<tr><td>currency</td><td>CHAR(3)</td><td>币种</td><td>默认CNY</td></tr>
+<tr><td>status</td><td>ENUM</td><td>单据状态</td><td>草稿/审批中/已通过/已驳回/已撤销/已报销</td></tr>
+<tr><td>budget_check</td><td>ENUM</td><td>预算校验</td><td>通过/警告/超预算/未控制</td></tr>
+<tr><td>budget_occupy_amt</td><td>DECIMAL(14,2)</td><td>预算占用金额</td><td>审批通过时写入</td></tr>
+<tr><td>travel_start</td><td>DATE</td><td>出差开始日期</td><td>差旅类型必填</td></tr>
+<tr><td>travel_end</td><td>DATE</td><td>出差结束日期</td><td>差旅类型必填</td></tr>
+<tr><td>travel_dest</td><td>VARCHAR(100)</td><td>出差目的地</td><td>差旅类型选填</td></tr>
+<tr><td>loan_flag</td><td>BOOLEAN</td><td>是否借款</td><td>默认false</td></tr>
+<tr><td>loan_amount</td><td>DECIMAL(14,2)</td><td>借款金额</td><td>借款时必填</td></tr>
+<tr><td>loan_balance</td><td>DECIMAL(14,2)</td><td>借款未核销余额</td><td>初始=loan_amount</td></tr>
+<tr><td>remark</td><td>TEXT</td><td>申请说明</td><td></td></tr>
+<tr><td>created_at</td><td>DATETIME</td><td>创建时间</td><td></td></tr>
+<tr><td>updated_at</td><td>DATETIME</td><td>更新时间</td><td></td></tr>
+</tbody>
+</table>
+<h4>expense_line — 费用明细行</h4>
+<table><thead>
+<tr><th>字段</th><th>类型</th><th>说明</th><th>约束</th></tr>
+</thead><tbody>
+<tr><td>line_id</td><td>BIGINT</td><td>明细行ID</td><td>PK, AUTO</td></tr>
+<tr><td>app_id</td><td>VARCHAR(32)</td><td>申请单号</td><td>FK → expense_application</td></tr>
+<tr><td>expense_type</td><td>ENUM</td><td>费用类型</td><td>交通/住宿/餐饮/办公/招待/通讯/其他</td></tr>
+<tr><td>expense_date</td><td>DATE</td><td>费用发生日期</td><td>NOT NULL</td></tr>
+<tr><td>amount</td><td>DECIMAL(14,2)</td><td>金额</td><td>NOT NULL</td></tr>
+<tr><td>tax_amount</td><td>DECIMAL(14,2)</td><td>税额</td><td>默认0</td></tr>
+<tr><td>invoice_id</td><td>VARCHAR(32)</td><td>关联发票ID</td><td>FK → invoice, 可选</td></tr>
+<tr><td>std_amount</td><td>DECIMAL(14,2)</td><td>标准金额</td><td>差旅标准对照</td></tr>
+<tr><td>over_std_amount</td><td>DECIMAL(14,2)</td><td>超标金额</td><td>amount - std_amount</td></tr>
+<tr><td>over_std_reason</td><td>VARCHAR(200)</td><td>超标原因</td><td>超标时必填</td></tr>
+<tr><td>cost_center</td><td>VARCHAR(20)</td><td>分摊成本中心</td><td>默认取主表</td></tr>
+<tr><td>allocate_pct</td><td>DECIMAL(5,2)</td><td>分摊比例</td><td>默认100%</td></tr>
+<tr><td>allocate_amt</td><td>DECIMAL(14,2)</td><td>分摊金额</td><td>amount * allocate_pct</td></tr>
+<tr><td>remark</td><td>VARCHAR(200)</td><td>明细说明</td><td></td></tr>
+</tbody>
+</table>
+<h4>expense_approval — 审批记录</h4>
+<table><thead>
+<tr><th>字段</th><th>类型</th><th>说明</th><th>约束</th></tr>
+</thead><tbody>
+<tr><td>approval_id</td><td>BIGINT</td><td>审批ID</td><td>PK, AUTO</td></tr>
+<tr><td>app_id</td><td>VARCHAR(32)</td><td>申请单号</td><td>FK → expense_application</td></tr>
+<tr><td>node_order</td><td>INT</td><td>审批节点序号</td><td>1,2,3...</td></tr>
+<tr><td>node_name</td><td>VARCHAR(50)</td><td>审批节点名称</td><td>如"部门经理审批"</td></tr>
+<tr><td>approver_id</td><td>VARCHAR(20)</td><td>审批人工号</td><td>FK → employee</td></tr>
+<tr><td>approver_name</td><td>VARCHAR(30)</td><td>审批人姓名</td><td></td></tr>
+<tr><td>action</td><td>ENUM</td><td>审批动作</td><td>通过/驳回/转交/待审批</td></tr>
+<tr><td>opinion</td><td>TEXT</td><td>审批意见</td><td></td></tr>
+<tr><td>delegate_from</td><td>VARCHAR(20)</td><td>代理原审批人</td><td>代理审批时记录</td></tr>
+<tr><td>acted_at</td><td>DATETIME</td><td>操作时间</td><td></td></tr>
+<tr><td>time_limit_hrs</td><td>INT</td><td>该节点时限</td><td>超时催办</td></tr>
+<tr><td>timeout_flag</td><td>BOOLEAN</td><td>是否超时</td><td></td></tr>
+</tbody>
+</table>
+<h4>expense_reimbursement — 报销单</h4>
+<table><thead>
+<tr><th>字段</th><th>类型</th><th>说明</th><th>约束</th></tr>
+</thead><tbody>
+<tr><td>reimb_id</td><td>VARCHAR(32)</td><td>报销单号</td><td>PK, RB+YYYYMMDD+4位流水</td></tr>
+<tr><td>app_id</td><td>VARCHAR(32)</td><td>关联申请单号</td><td>FK → expense_application</td></tr>
+<tr><td>applicant_id</td><td>VARCHAR(20)</td><td>报销人</td><td>FK → employee</td></tr>
+<tr><td>payee_name</td><td>VARCHAR(30)</td><td>收款人姓名</td><td>默认取员工姓名</td></tr>
+<tr><td>payee_bank</td><td>VARCHAR(50)</td><td>收款银行</td><td></td></tr>
+<tr><td>payee_account</td><td>VARCHAR(30)</td><td>银行账号</td><td></td></tr>
+<tr><td>reimb_amount</td><td>DECIMAL(14,2)</td><td>报销总额</td><td>NOT NULL</td></tr>
+<tr><td>deduct_loan</td><td>DECIMAL(14,2)</td><td>扣减借款</td><td>默认0</td></tr>
+<tr><td>actual_pay</td><td>DECIMAL(14,2)</td><td>实付金额</td><td>reimb_amount - deduct_loan</td></tr>
+<tr><td>status</td><td>ENUM</td><td>报销状态</td><td>待支付/支付中/已支付/部分支付/已退回</td></tr>
+<tr><td>payment_id</td><td>VARCHAR(32)</td><td>付款单号</td><td>FK → payment, 可选</td></tr>
+<tr><td>voucher_no</td><td>VARCHAR(20)</td><td>凭证字号</td><td>凭证生成后回写</td></tr>
+<tr><td>budget_deducted</td><td>BOOLEAN</td><td>预算已扣减</td><td>默认false</td></tr>
+<tr><td>paid_at</td><td>DATETIME</td><td>支付完成时间</td><td></td></tr>
+<tr><td>created_at</td><td>DATETIME</td><td>创建时间</td><td></td></tr>
+</tbody>
+</table>
+<h4>expense_standard — 费用标准配置</h4>
+<table><thead>
+<tr><th>字段</th><th>类型</th><th>说明</th><th>约束</th></tr>
+</thead><tbody>
+<tr><td>std_id</td><td>INT</td><td>标准ID</td><td>PK, AUTO</td></tr>
+<tr><td>expense_type</td><td>ENUM</td><td>费用类型</td><td>交通/住宿/餐饮/招待</td></tr>
+<tr><td>employee_level</td><td>ENUM</td><td>员工职级</td><td>普通/主管/经理/总监/高管</td></tr>
+<tr><td>city_tier</td><td>ENUM</td><td>城市等级</td><td>一线/二线/三线/海外</td></tr>
+<tr><td>std_amount</td><td>DECIMAL(14,2)</td><td>标准金额</td><td></td></tr>
+<tr><td>unit</td><td>ENUM</td><td>计量单位</td><td>次/天/人</td></tr>
+<tr><td>over_std_action</td><td>ENUM</td><td>超标处理</td><td>允许/需说明/需特批/禁止</td></tr>
+<tr><td>effective_from</td><td>DATE</td><td>生效日期</td><td></td></tr>
+<tr><td>effective_to</td><td>DATE</td><td>失效日期</td><td>可空=长期有效</td></tr>
+</tbody>
+</table>
+<h4>expense_approval_config — 审批流配置</h4>
+<table><thead>
+<tr><th>字段</th><th>类型</th><th>说明</th><th>约束</th></tr>
+</thead><tbody>
+<tr><td>config_id</td><td>INT</td><td>配置ID</td><td>PK, AUTO</td></tr>
+<tr><td>expense_type</td><td>ENUM</td><td>费用类型</td><td></td></tr>
+<tr><td>min_amount</td><td>DECIMAL(14,2)</td><td>金额下限</td><td></td></tr>
+<tr><td>max_amount</td><td>DECIMAL(14,2)</td><td>金额上限</td><td>上限为空=不限</td></tr>
+<tr><td>node_order</td><td>INT</td><td>审批节点序号</td><td></td></tr>
+<tr><td>node_name</td><td>VARCHAR(50)</td><td>节点名称</td><td></td></tr>
+<tr><td>approver_type</td><td>ENUM</td><td>审批人类型</td><td>部门主管/指定人员/角色/金额阈值上级</td></tr>
+<tr><td>approver_id</td><td>VARCHAR(20)</td><td>指定审批人</td><td>approver_type=指定时必填</td></tr>
+<tr><td>timeout_hours</td><td>INT</td><td>超时时限</td><td></td></tr>
+<tr><td>timeout_action</td><td>ENUM</td><td>超时动作</td><td>催办/自动转交/自动通过</td></tr>
+</tbody>
+</table>
+<h3>3.2 ER关系</h3>
+<pre><code>
+expense_application 1──N expense_line
+expense_application 1──N expense_approval
+expense_application 1──1 expense_reimbursement
+expense_line N──1 invoice (可选)
+expense_reimbursement 1──1 payment (可选)
+expense_application N──1 budget_subject (预算科目)
+expense_standard 独立配置表
+expense_approval_config 独立配置表
+</pre>
+<hr>
+<h2>4. 凭证模板体系</h2>
+<h3>EX01 — 日常费用报销凭证</h3>
+<table><thead>
+<tr><th>触发事件</th><th>报销单确认支付</th></tr>
+</thead><tbody>
+<tr><td><strong>借方</strong></td><td></td></tr>
+<tr><td>6602 管理费用-xx费</td><td>报销费用明细(按费用类型分列)</td></tr>
+<tr><td>2221-01 应交税费-进项税</td><td>发票可抵扣进项税额</td></tr>
+<tr><td><strong>贷方</strong></td><td></td></tr>
+<tr><td>1002 银行存款</td><td>实付金额(actual_pay)</td></tr>
+</tbody>
+</table>
+<blockquote><p>示例：员工张三报销办公用品500元(含税)，发票为专票税额57.52元</p></blockquote>
+<blockquote><p>- 借：管理费用-办公费 442.48</p></blockquote>
+<blockquote><p>- 借：应交税费-进项税 57.52</p></blockquote>
+<blockquote><p>- 贷：银行存款 500.00</p></blockquote>
+<h3>EX02 — 差旅费报销凭证</h3>
+<table><thead>
+<tr><th>触发事件</th><th>差旅报销单确认支付</th></tr>
+</thead><tbody>
+<tr><td><strong>借方</strong></td><td></td></tr>
+<tr><td>6601 销售费用-差旅费</td><td>差旅费用明细</td></tr>
+<tr><td>6602 管理费用-差旅费</td><td>管理部门差旅费</td></tr>
+<tr><td>2221-01 应交税费-进项税</td><td>机票/住宿专票进项税</td></tr>
+<tr><td><strong>贷方</strong></td><td></td></tr>
+<tr><td>1002 银行存款</td><td>实付金额</td></tr>
+</tbody>
+</table>
+<blockquote><p>机票/火车票可抵扣进项税：票价/(1+9%)x9%</p></blockquote>
+<h3>EX03 — 招待费报销凭证</h3>
+<table><thead>
+<tr><th>触发事件</th><th>招待费报销单确认支付</th></tr>
+</thead><tbody>
+<tr><td><strong>借方</strong></td><td></td></tr>
+<tr><td>6602 管理费用-业务招待费</td><td>招待费金额(全额不可抵扣)</td></tr>
+<tr><td><strong>贷方</strong></td><td></td></tr>
+<tr><td>1002 银行存款</td><td>实付金额</td></tr>
+</tbody>
+</table>
+<blockquote><p>注意：业务招待费进项税不可抵扣，全额计入费用</p></blockquote>
+<h3>EX04 — 借款凭证</h3>
+<table><thead>
+<tr><th>触发事件</th><th>借款申请审批通过</th></tr>
+</thead><tbody>
+<tr><td><strong>借方</strong></td><td></td></tr>
+<tr><td>1221 其他应收款-员工借款</td><td>借款金额</td></tr>
+<tr><td><strong>贷方</strong></td><td></td></tr>
+<tr><td>1002 银行存款</td><td>借款金额</td></tr>
+</tbody>
+</table>
+<h3>EX05 — 借款核销凭证</h3>
+<table><thead>
+<tr><th>触发事件</th><th>报销单扣减借款核销</th></tr>
+</thead><tbody>
+<tr><td><strong>借方</strong></td><td></td></tr>
+<tr><td>6602 管理费用-xx费</td><td>报销费用(全额)</td></tr>
+<tr><td>2221-01 应交税费-进项税</td><td>可抵扣税额</td></tr>
+<tr><td><strong>贷方</strong></td><td></td></tr>
+<tr><td>1221 其他应收款-员工借款</td><td>核销借款金额(deduct_loan)</td></tr>
+<tr><td>1002 银行存款</td><td>差额支付(actual_pay)</td></tr>
+</tbody>
+</table>
+<blockquote><p>示例：借款5000，报销4200，核销后借款余额800</p></blockquote>
+<blockquote><p>- 借：管理费用 4200</p></blockquote>
+<blockquote><p>- 贷：其他应收款-员工借款 4200</p></blockquote>
+<blockquote><p>- 借款余额自动更新为 5000-4200=800</p></blockquote>
+<h3>EX06 — 超标费用特批凭证</h3>
+<table><thead>
+<tr><th>触发事件</th><th>超标费用经特批后报销</th></tr>
+</thead><tbody>
+<tr><td><strong>借方</strong></td><td></td></tr>
+<tr><td>6602 管理费用-xx费-标准内</td><td>标准内金额</td></tr>
+<tr><td>6701 营业外支出-超标费用</td><td>超标金额(不可税前扣除)</td></tr>
+<tr><td><strong>贷方</strong></td><td></td></tr>
+<tr><td>1002 银行存款</td><td>实付金额</td></tr>
+</tbody>
+</table>
+<blockquote><p>超标部分需单独列示，年末汇算清缴时纳税调整</p></blockquote>
+<h3>EX07 — 费用分摊凭证</h3>
+<table><thead>
+<tr><th>触发事件</th><th>费用分摊到多个成本中心</th></tr>
+</thead><tbody>
+<tr><td><strong>借方</strong></td><td></td></tr>
+<tr><td>6602 管理费用-xx费-A中心</td><td>分摊金额(按比例)</td></tr>
+<tr><td>6602 管理费用-xx费-B中心</td><td>分摊金额(按比例)</td></tr>
+<tr><td>6601 销售费用-xx费-C中心</td><td>分摊金额(按比例)</td></tr>
+<tr><td><strong>贷方</strong></td><td></td></tr>
+<tr><td>1002 银行存款</td><td>实付总额</td></tr>
+</tbody>
+</table>
+<blockquote><p>一笔费用按比例分摊到多个成本中心，各中心独立核算</p></blockquote>
+<hr>
+<h2>5. API设计</h2>
+<h3>5.1 费用申请 API</h3>
+<table><thead>
+<tr><th>方法</th><th>路径</th><th>说明</th></tr>
+</thead><tbody>
+<tr><td>POST</td><td>/api/expense/applications</td><td>创建费用申请</td></tr>
+<tr><td>GET</td><td>/api/expense/applications</td><td>查询费用申请列表</td></tr>
+<tr><td>GET</td><td>/api/expense/applications/{app_id}</td><td>获取费用申请详情</td></tr>
+<tr><td>PUT</td><td>/api/expense/applications/{app_id}</td><td>修改费用申请(草稿状态)</td></tr>
+<tr><td>DELETE</td><td>/api/expense/applications/{app_id}</td><td>撤销费用申请(仅草稿)</td></tr>
+<tr><td>POST</td><td>/api/expense/applications/{app_id}/submit</td><td>提交审批</td></tr>
+<tr><td>GET</td><td>/api/expense/applications/my</td><td>我的费用申请</td></tr>
+<tr><td>GET</td><td>/api/expense/applications/pending</td><td>待我审批</td></tr>
+</tbody>
+</table>
+<h3>5.2 费用明细 API</h3>
+<table><thead>
+<tr><th>方法</th><th>路径</th><th>说明</th></tr>
+</thead><tbody>
+<tr><td>POST</td><td>/api/expense/applications/{app_id}/lines</td><td>添加费用明细</td></tr>
+<tr><td>PUT</td><td>/api/expense/applications/{app_id}/lines/{line_id}</td><td>修改费用明细</td></tr>
+<tr><td>DELETE</td><td>/api/expense/applications/{app_id}/lines/{line_id}</td><td>删除费用明细</td></tr>
+<tr><td>POST</td><td>/api/expense/applications/{app_id}/lines/batch</td><td>批量添加费用明细</td></tr>
+</tbody>
+</table>
+<h3>5.3 审批 API</h3>
+<table><thead>
+<tr><th>方法</th><th>路径</th><th>说明</th></tr>
+</thead><tbody>
+<tr><td>POST</td><td>/api/expense/approval/{app_id}/approve</td><td>审批通过</td></tr>
+<tr><td>POST</td><td>/api/expense/approval/{app_id}/reject</td><td>审批驳回</td></tr>
+<tr><td>POST</td><td>/api/expense/approval/{app_id}/delegate</td><td>转交他人</td></tr>
+<tr><td>GET</td><td>/api/expense/approval/config</td><td>获取审批流配置</td></tr>
+<tr><td>PUT</td><td>/api/expense/approval/config</td><td>更新审批流配置</td></tr>
+</tbody>
+</table>
+<h3>5.4 发票关联 API</h3>
+<table><thead>
+<tr><th>方法</th><th>路径</th><th>说明</th></tr>
+</thead><tbody>
+<tr><td>POST</td><td>/api/expense/applications/{app_id}/invoices</td><td>关联发票</td></tr>
+<tr><td>DELETE</td><td>/api/expense/applications/{app_id}/invoices/{invoice_id}</td><td>取消关联</td></tr>
+<tr><td>POST</td><td>/api/expense/invoices/verify</td><td>发票查验(调用查验模块)</td></tr>
+<tr><td>GET</td><td>/api/expense/invoices/duplicate-check</td><td>重复报销检查</td></tr>
+</tbody>
+</table>
+<h3>5.5 预算控制 API</h3>
+<table><thead>
+<tr><th>方法</th><th>路径</th><th>说明</th></tr>
+</thead><tbody>
+<tr><td>GET</td><td>/api/expense/budget/check</td><td>预算余额校验</td></tr>
+<tr><td>POST</td><td>/api/expense/budget/occupy</td><td>预算占用</td></tr>
+<tr><td>POST</td><td>/api/expense/budget/release</td><td>预算释放</td></tr>
+<tr><td>POST</td><td>/api/expense/budget/deduct</td><td>预算扣减</td></tr>
+</tbody>
+</table>
+<h3>5.6 报销支付 API</h3>
+<table><thead>
+<tr><th>方法</th><th>路径</th><th>说明</th></tr>
+</thead><tbody>
+<tr><td>POST</td><td>/api/expense/reimbursements</td><td>生成报销单</td></tr>
+<tr><td>GET</td><td>/api/expense/reimbursements</td><td>报销单列表</td></tr>
+<tr><td>GET</td><td>/api/expense/reimbursements/{reimb_id}</td><td>报销单详情</td></tr>
+<tr><td>POST</td><td>/api/expense/reimbursements/{reimb_id}/pay</td><td>提交付款</td></tr>
+<tr><td>POST</td><td>/api/expense/reimbursements/{reimb_id}/loan-offset</td><td>借款核销</td></tr>
+<tr><td>GET</td><td>/api/expense/loans/balance</td><td>借款余额查询</td></tr>
+</tbody>
+</table>
+<h3>5.7 报表 API</h3>
+<table><thead>
+<tr><th>方法</th><th>路径</th><th>说明</th></tr>
+</thead><tbody>
+<tr><td>GET</td><td>/api/expense/reports/summary</td><td>费用汇总统计</td></tr>
+<tr><td>GET</td><td>/api/expense/reports/travel-detail</td><td>差旅费明细</td></tr>
+<tr><td>GET</td><td>/api/expense/reports/budget-vs-actual</td><td>预算执行对比</td></tr>
+<tr><td>GET</td><td>/api/expense/reports/trend</td><td>费用趋势分析</td></tr>
+</tbody>
+</table>
+<hr>
+<h2>6. 关键业务规则</h2>
+<h3>6.1 审批流规则</h3>
+<table><thead>
+<tr><th>条件</th><th>审批链路</th><th>说明</th></tr>
+</thead><tbody>
+<tr><td>日常费用 ≤ 2,000元</td><td>部门主管 → 财务审核</td><td>2级</td></tr>
+<tr><td>日常费用 2,000~10,000元</td><td>部门主管 → 部门经理 → 财务审核</td><td>3级</td></tr>
+<tr><td>日常费用 > 10,000元</td><td>部门主管 → 部门经理 → 分管副总 → 财务审核</td><td>4级</td></tr>
+<tr><td>差旅费用</td><td>部门主管 → 部门经理 → 财务审核</td><td>3级</td></tr>
+<tr><td>招待费</td><td>部门主管 → 部门经理 → 分管副总 → 财务审核</td><td>4级</td></tr>
+<tr><td>借款</td><td>部门主管 → 财务审核 → 出纳确认</td><td>3级</td></tr>
+</tbody>
+</table>
+<h3>6.2 差旅标准（示例）</h3>
+<table><thead>
+<tr><th>职级</th><th>交通标准</th><th>住宿标准(一线)</th><th>住宿标准(二线)</th><th>餐补/天</th></tr>
+</thead><tbody>
+<tr><td>普通员工</td><td>火车硬座/二等座</td><td>300元/天</td><td>200元/天</td><td>80元</td></tr>
+<tr><td>主管</td><td>火车一等座</td><td>400元/天</td><td>300元/天</td><td>100元</td></tr>
+<tr><td>经理</td><td>高铁一等座</td><td>500元/天</td><td>400元/天</td><td>120元</td></tr>
+<tr><td>总监</td><td>飞机经济舱</td><td>700元/天</td><td>500元/天</td><td>150元</td></tr>
+<tr><td>高管</td><td>飞机商务舱</td><td>实报实销</td><td>实报实销</td><td>200元</td></tr>
+</tbody>
+</table>
+<h3>6.3 预算控制策略</h3>
+<table><thead>
+<tr><th>策略</th><th>说明</th><th>适用场景</th></tr>
+</thead><tbody>
+<tr><td><strong>禁止</strong></td><td>超预算直接拦截，不允许提交</td><td>严格控制类(招待费/福利费)</td></tr>
+<tr><td><strong>警告</strong></td><td>超预算提示警告，可继续提交但需说明</td><td>一般控制类(办公费/差旅费)</td></tr>
+<tr><td><strong>特批</strong></td><td>超预算需额外审批层级</td><td>预算外特殊费用</td></tr>
+<tr><td><strong>不控制</strong></td><td>不做预算校验</td><td>不可预见费用</td></tr>
+</tbody>
+</table>
+<h3>6.4 发票处理规则</h3>
+<table><thead>
+<tr><th>规则</th><th>说明</th></tr>
+</thead><tbody>
+<tr><td>专票可抵扣</td><td>增值税专用发票的进项税额可抵扣，税额单独列示</td></tr>
+<tr><td>普票不可抵扣</td><td>增值税普通发票全额计入费用</td></tr>
+<tr><td>机票可抵扣</td><td>国内旅客运输机票可按9%计算抵扣</td></tr>
+<tr><td>招待费不可抵扣</td><td>业务招待费即使取得专票也不可抵扣</td></tr>
+<tr><td>重复发票拦截</td><td>同一发票代码+号码不可关联两次报销</td></tr>
+<tr><td>发票金额核对</td><td>发票金额合计应不超过报销金额</td></tr>
+</tbody>
+</table>
+<hr>
+<h2>7. 状态机设计</h2>
+<h3>7.1 费用申请状态流转</h3>
+<pre><code>
+草稿 ──提交──▶ 审批中 ──全部通过──▶ 已通过 ──生成报销──▶ 已报销
+  │              │                                    │
+  │              ├──驳回──▶ 已驳回 ──修改重提──▶ 审批中   │
+  │              │                                    │
+  └──撤销──▶ 已撤销                          ──撤销──▶ 已撤销
+</pre>
+<h3>7.2 报销单状态流转</h3>
+<pre><code>
+待支付 ──提交付款──▶ 支付中 ──银行回执──▶ 已支付
+  │                    │
+  │                    └──退回──▶ 已退回
+  └──撤销──▶ 已撤销
+</pre>
+<h3>7.3 预算占用生命周期</h3>
+<pre><code>
+                  审批通过                报销确认
+预算余额 ────────▶ 预算占用 ────────▶ 预算扣减
+                  (冻结额度)           (实际发生)
+                     │
+                     └──驳回/撤销──▶ 预算释放(归还余额)
+</pre>
+<hr>
+<h2>8. 非功能性需求</h2>
+<table><thead>
+<tr><th>类别</th><th>要求</th></tr>
+</thead><tbody>
+<tr><td><strong>性能</strong></td><td>费用申请列表查询不超过2秒，预算校验实时响应不超过500ms</td></tr>
+<tr><td><strong>并发</strong></td><td>支持500人同时提交报销申请，预算余额校验需加行锁防超扣</td></tr>
+<tr><td><strong>审计</strong></td><td>所有审批操作、预算占用/释放/扣减全程留痕，不可删除</td></tr>
+<tr><td><strong>安全</strong></td><td>员工只能查看自己的申请，审批人只能操作自己节点的审批</td></tr>
+<tr><td><strong>可用性</strong></td><td>移动端可提交申请和审批，PC端做复杂报表和配置</td></tr>
+<tr><td><strong>集成</strong></td><td>对接发票查验模块(已建)、预算管理模块(已建)、实付付款模块(已建)</td></tr>
+</tbody>
+</table>
+<hr>
+<h2>9. 开发路线图</h2>
+<table><thead>
+<tr><th>阶段</th><th>时间</th><th>交付物</th></tr>
+</thead><tbody>
+<tr><td><strong>Phase 1 基础框架</strong></td><td>第1-3天</td><td>费用申请CRUD + 审批流引擎 + 状态机</td></tr>
+<tr><td><strong>Phase 2 核心流程</strong></td><td>第4-6天</td><td>发票关联+查验 + 预算校验+占用 + 借款管理</td></tr>
+<tr><td><strong>Phase 3 支付凭证</strong></td><td>第7-8天</td><td>报销单生成 + 付款集成 + 凭证模板EX01~EX07</td></tr>
+<tr><td><strong>Phase 4 分摊报表</strong></td><td>第9-10天</td><td>费用分摊 + 统计报表 + 差旅标准配置</td></tr>
+<tr><td><strong>Phase 5 测试上线</strong></td><td>第11-12天</td><td>端到端测试 + 审批流配置 + 用户培训</td></tr>
+</tbody>
+</table>
+<hr>
+<h2>10. 验收标准</h2>
+<table><thead>
+<tr><th>验收项</th><th>标准</th></tr>
+</thead><tbody>
+<tr><td>费用申请</td><td>支持日常/差旅/项目/借款4种类型，可在线提交并跟踪状态</td></tr>
+<tr><td>审批流转</td><td>按金额阈值自动路由审批链，驳回可修改重提</td></tr>
+<tr><td>发票关联</td><td>关联发票自动查验，重复发票100%拦截</td></tr>
+<tr><td>预算控制</td><td>申请时实时校验预算，审批通过自动占用，报销完成自动扣减</td></tr>
+<tr><td>借款核销</td><td>借款与报销自动对冲，余额实时更新</td></tr>
+<tr><td>凭证生成</td><td>7套凭证模板100%自动生成，分摊正确拆分到多成本中心</td></tr>
+<tr><td>报表分析</td><td>按部门/人员/类型/期间4维度统计，预算vs实际对比可查</td></tr>
+</tbody>
+</table>
+  </div>
+</div>
+</body>
+</html>
