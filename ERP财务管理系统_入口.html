@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ERP财务管理系统 - 流程图与原型索引</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+            color: #e8e8e8;
+        }
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+        header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+        header h1 {
+            font-size: 2.2em;
+            color: #ffffff;
+            margin-bottom: 10px;
+            letter-spacing: 2px;
+        }
+        header .subtitle {
+            color: #7eb8da;
+            font-size: 1.1em;
+            margin-bottom: 20px;
+        }
+        .badge {
+            display: inline-block;
+            padding: 6px 16px;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 20px;
+            font-size: 0.85em;
+            color: #a8d8ea;
+        }
+        .section {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 30px;
+            backdrop-filter: blur(10px);
+        }
+        .section-title {
+            font-size: 1.4em;
+            color: #ffffff;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid rgba(255,255,255,0.15);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .section-title .icon {
+            font-size: 1.2em;
+        }
+        .stats {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        .stat-card {
+            flex: 1;
+            min-width: 140px;
+            background: rgba(255,255,255,0.07);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+        }
+        .stat-card .number {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #7eb8da;
+        }
+        .stat-card .label {
+            color: #a0a0a0;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 16px;
+        }
+        .card {
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            padding: 18px 22px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            text-decoration: none;
+            color: #e0e0e0;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .card:hover {
+            background: rgba(255,255,255,0.12);
+            border-color: rgba(126,184,218,0.5);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+        }
+        .card .card-icon {
+            font-size: 1.8em;
+            flex-shrink: 0;
+            width: 44px;
+            text-align: center;
+        }
+        .card .card-info {
+            flex: 1;
+        }
+        .card .card-title {
+            font-size: 1em;
+            font-weight: 600;
+            color: #ffffff;
+            margin-bottom: 4px;
+        }
+        .card .card-type {
+            font-size: 0.8em;
+            color: #7eb8da;
+            background: rgba(126,184,218,0.15);
+            padding: 2px 8px;
+            border-radius: 4px;
+            display: inline-block;
+        }
+        .card .card-arrow {
+            color: #7eb8da;
+            font-size: 1.2em;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .card:hover .card-arrow {
+            opacity: 1;
+        }
+        .tag-flow { background: rgba(76,175,80,0.2); color: #81c784; }
+        .tag-ui { background: rgba(156,39,176,0.2); color: #ce93d8; }
+        .tag-spec { background: rgba(255,152,0,0.2); color: #ffb74d; }
+        .tag-summary { background: rgba(33,150,243,0.2); color: #64b5f6; }
+        footer {
+            text-align: center;
+            color: #666;
+            font-size: 0.85em;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255,255,255,0.08);
+        }
+        footer a {
+            color: #7eb8da;
+            text-decoration: none;
+        }
+        footer a:hover {
+            text-decoration: underline;
+        }
+        .notice {
+            background: rgba(255,193,7,0.1);
+            border: 1px solid rgba(255,193,7,0.3);
+            border-radius: 10px;
+            padding: 14px 18px;
+            margin-bottom: 30px;
+            color: #ffd54f;
+            font-size: 0.95em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .notice .icon { font-size: 1.2em; }
+        .feishu-badge {
+            background: linear-gradient(135deg, #00a1d9, #0066cc);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 8px;
+            font-weight: bold;
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="feishu-badge">📄 腾讯文档 · ERP财务管理系统</div>
+            <h1>ERP财务管理模块</h1>
+            <p class="subtitle">流程图 · UI原型 · 规格说明书</p>
+            <span class="badge">🕐 2026-04-14 更新</span>
+        </header>
+
+        <!-- 统计 -->
+        <div class="stats">
+            <div class="stat-card">
+                <div class="number">11</div>
+                <div class="label">流程图 / 原型</div>
+            </div>
+            <div class="stat-card">
+                <div class="number">8</div>
+                <div class="label">规格说明书</div>
+            </div>
+            <div class="stat-card">
+                <div class="number">6</div>
+                <div class="label">核心模块</div>
+            </div>
+        </div>
+
+        <!-- 注意 -->
+        <div class="notice">
+            <span class="icon">⚠️</span>
+            <span>本地文件路径仅供参考，请点击下方链接跳转到飞书云文档在线查看</span>
+        </div>
+
+        <!-- 一、总流程图 -->
+        <div class="section">
+            <h2 class="section-title"><span class="icon">🗺️</span> 一、总览</h2>
+            <div class="grid">
+                <a class="card" href="flowcharts/财务总流程图.html" target="_blank">
+                    <span class="card-icon">🗺️</span>
+                    <div class="card-info">
+                        <div class="card-title">财务总流程图</div>
+                        <span class="card-type tag-flow">Mermaid流程图</span>
+                    </div>
+                    <span class="card-arrow">→</span>
+                </a>
+                <a class="card" href="flowcharts/总账凭证引擎流程图.html" target="_blank">
+                    <span class="card-icon">⚙️</span>
+                    <div class="card-info">
+                        <div class="card-title">总账凭证引擎流程图</div>
+                        <span class="card-type tag-flow">Mermaid流程图</span>
+                    </div>
+                    <span class="card-arrow">→</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- 二、应收模块 -->
+        <div class="section">
+            <h2 class="section-title"><span class="icon">📥</span> 二、应收模块</h2>
+            <div class="grid">
+                <a class="card" href="flowcharts/实收收款详细流程图.html" target="_blank">
+                    <span class="card-icon">🔄</span>
+                    <div class="card-info">
+                        <div class="card-title">实收收款详细流程图</div>
+                        <span class="card-type tag-flow">Mermaid流程图</span>
+                    </div>
+                    <span class="card-arrow">→</span>
+                </a>
+                <a class="card" href="flowcharts/实收收款UI原型.html" target="_blank">
+                    <span class="card-icon">🖥️</span>
+                    <div class="card-info">
+                        <div class="card-title">实收收款UI原型</div>
+                        <span class="card-type tag-ui">HTML原型</span>
+                    </div>
+                    <span class="card-arrow">→</span>
+                </a>
+                <a class="card" href="flowcharts/应收票据详细流程图.html" target="_blank">
+                    <span class="card-icon">📋</span>
+                    <div class="card-info">
+                        <div class="card-title">应收票据详细流程图</div>
+                        <span class="card-type tag-flow">Mermaid流程图</span>
+                    </div>
+                    <span class="card-arrow">→</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- 三、应付模块 -->
+        <div class="section">
+            <h2 class="section-title"><span class="icon">📤</span> 三、应付模块</h2>
+            <div class="grid">
+                <a class="card" href="flowcharts/实付付款详细流程图.html" target="_blank">
+                    <span class="card-icon">🔄</span>
+                    <div class="card-info">
+                        <div class="card-title">实付付款详细流程图</div>
+                        <span class="card-type tag-flow">Mermaid流程图</span>
+                    </div>
+                    <span class="card-arrow">→</span>
+                </a>
+                <a class="card" href="flowcharts/实付付款UI原型.html" target="_blank">
+                    <span class="card-icon">🖥️</span>
+                    <div class="card-info">
+                        <div class="card-title">实付付款UI原型</div>
+                        <span class="card-type tag-ui">HTML原型</span>
+                    </div>
+                    <span class="card-arrow">→</span>
+                </a>
+                <a class="card" href="flowcharts/应付票据详细流程图.html" target="_blank">
+                    <span class="card-icon">📋</span>
+                    <div class="card-info">
+                        <div class="card-title">应付票据详细流程图</div>
+                        <span class="card-type tag-flow">Mermaid流程图</span>
+                    </div>
+                    <span class="card-arrow">→</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- 四、票据管理 -->
+        <div class="section">
+            <h2 class="section-title"><span class="icon">🎫</span> 四、票据管理</h2>
+            <div class="grid">
+                <a class="card" href="flowcharts/票据管理UI原型.html" target="_blank">
+                    <span class="card-icon">🖥️</span>
+                    <div class="card-info">
+                        <div class="card-title">票据管理UI原型</div>
+                        <span class="card-type tag-ui">HTML原型</span>
+                    </div>
+                    <span class="card-arrow">→</span>
+                </a>
+                <a class="card" href="flowcharts/海外发票管理流程图.html" target="_blank">
+                    <span class="card-icon">🌏</span>
+                    <div class="card-info">
+                        <div class="card-title">海外发票管理流程图</div>
+                        <span class="card-type tag-flow">Mermaid流程图</span>
+                    </div>
+                    <span class="card-arrow">→</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- 五、规格说明书 -->
+        <div class="section">
+            <h2 class="section-title"><span class="icon">📖</span> 五、规格说明书</h2>
+            <div class="grid">
+                <a class="card" href="specs/总账凭证引擎规格书.md" target="_blank">
+                    <span class="card-icon">⚙️</span>
+                    <div class="card-info">
+                        <div class="card-title">总账凭证引擎规格书</div>
+                        <span class="card-type tag-spec">Markdown</span>
+                    </div>
+                    <span class="card-arrow">→</span>
+                </a>
+                <a class="card" href="specs/实收收款模块规格书.md" target="_blank">
+                    <span class="card-icon">📥</span>
+                    <div class="card-info">
+                        <div class="card-title">实收收款模块规格书</div>
+                        <span class="card-type tag-spec">Markdown</span>
+                    </div>
+                    <span class="card-arrow">→</span>
+                </a>
+                <a class="card" href="specs/实付付款模块规格书.md" target="_blank">
+                    <span class="card-icon">📤</span>
+                    <div class="card-info">
+                        <div class="card-title">实付付款模块规格书</div>
+                        <span class="card-type tag-spec">Markdown</span>
+                    </div>
+                    <span class="card-arrow">→</span>
+                </a>
+                <a class="card" href="specs/应付票据模块规格书.md" target="_blank">
+                    <span class="card-icon">📋</span>
+                    <div class="card-info">
+                        <div class="card-title">应付票据模块规格书</div>
+                        <span class="card-type tag-spec">Markdown</span>
+                    </div>
+                    <span class="card-arrow">→</span>
+                </a>
+                <a class="card" href="specs/票据往来模块规格书.md" target="_blank">
+                    <span class="card-icon">🎫</span>
+                    <div class="card-info">
+                        <div class="card-title">票据往来模块规格书</div>
+                        <span class="card-type tag-spec">Markdown</span>
+                    </div>
+                    <span class="card-arrow">→</span>
+                </a>
+                <a class="card" href="specs/海外发票管理规格书.md" target="_blank">
+                    <span class="card-icon">🌏</span>
+                    <div class="card-info">
+                        <div class="card-title">海外发票管理规格书</div>
+                        <span class="card-type tag-spec">Markdown</span>
+                    </div>
+                    <span class="card-arrow">→</span>
+                </a>
+                <a class="card" href="specs/发票查验模块规格书.md" target="_blank">
+                    <span class="card-icon">🔍</span>
+                    <div class="card-info">
+                        <div class="card-title">发票查验模块规格书</div>
+                        <span class="card-type tag-spec">Markdown</span>
+                    </div>
+                    <span class="card-arrow">→</span>
+                </a>
+                <a class="card" href="specs/会计科目设定模块规格书.md" target="_blank">
+                    <span class="card-icon">📊</span>
+                    <div class="card-info">
+                        <div class="card-title">会计科目设定模块规格书</div>
+                        <span class="card-type tag-spec">Markdown</span>
+                    </div>
+                    <span class="card-arrow">→</span>
+                </a>
+            </div>
+        </div>
+
+        <footer>
+            <p>📁 本地路径：<code>C:\Users\it_zzy\WorkBuddy\20260414154347\erp-finance\</code></p>
+            <p style="margin-top: 8px;">📄 腾讯文档 · 飞书云文档 · <a href="https://docs.qq.com" target="_blank">docs.qq.com</a></p>
+        </footer>
+    </div>
+</body>
+</html>
