@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AP进项发票管理模块 — 详细流程图 | Dev_Dept ERP 财务管理系统</title>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, "Microsoft YaHei", "Segoe UI", sans-serif; background: #f0f2f5; color: #1a1a2e; }
+  
+  .header { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); color: #fff; padding: 32px 40px; }
+  .header h1 { font-size: 28px; margin-bottom: 8px; }
+  .header .meta { color: #a8b2d1; font-size: 14px; display: flex; gap: 24px; flex-wrap: wrap; }
+  .header .meta span { display: inline-flex; align-items: center; gap: 6px; }
+  
+  .nav-bar { background: #fff; border-bottom: 2px solid #e94560; padding: 0 40px; display: flex; gap: 0; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 8px rgba(0,0,0,0.08); overflow-x: auto; }
+  .nav-bar a { padding: 14px 20px; text-decoration: none; color: #555; font-size: 14px; font-weight: 500; border-bottom: 3px solid transparent; transition: all 0.2s; white-space: nowrap; }
+  .nav-bar a:hover { color: #e94560; background: #fff5f7; }
+  .nav-bar a.active { color: #e94560; border-bottom-color: #e94560; }
+  
+  .container { max-width: 1200px; margin: 0 auto; padding: 24px 40px 60px; }
+  
+  .section { background: #fff; border-radius: 12px; padding: 28px 32px; margin-bottom: 24px; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
+  .section h2 { font-size: 20px; color: #1a1a2e; margin-bottom: 6px; display: flex; align-items: center; gap: 10px; }
+  .section h2 .badge { background: #e94560; color: #fff; font-size: 11px; padding: 2px 10px; border-radius: 12px; font-weight: 600; }
+  .section h2 .badge.blue { background: #0f3460; }
+  .section h2 .badge.green { background: #27ae60; }
+  .section h2 .badge.orange { background: #f39c12; }
+  .section h3 { font-size: 16px; color: #333; margin: 18px 0 10px; padding-left: 12px; border-left: 3px solid #e94560; }
+  .section p.desc { color: #666; font-size: 14px; margin-bottom: 16px; line-height: 1.6; }
+  
+  .flow-container { display: flex; justify-content: center; padding: 16px 0; overflow-x: auto; }
+  .flow-container .mermaid { max-width: 100%; min-width: 60%; }
+  
+  /* 流程图缩放控制 */
+  .zoom-controls { position: fixed; bottom: 30px; right: 30px; display: flex; gap: 8px; z-index: 200; }
+  .zoom-btn { width: 40px; height: 40px; border-radius: 50%; border: 2px solid #e94560; background: #fff; color: #e94560; font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(0,0,0,0.15); transition: all 0.2s; }
+  .zoom-btn:hover { background: #e94560; color: #fff; }
+  .zoom-label { background: #fff; padding: 8px 12px; border-radius: 20px; font-size: 13px; color: #333; box-shadow: 0 2px 8px rgba(0,0,0,0.1); display: flex; align-items: center; }
+  
+  .note-box { background: #fff3cd; border-left: 4px solid #f39c12; padding: 12px 16px; margin: 12px 0; border-radius: 0 8px 8px 0; font-size: 13px; color: #856404; }
+  .note-box.info { background: #d1ecf1; border-left-color: #17a2b8; color: #0c5460; }
+  .note-box.danger { background: #f8d7da; border-left-color: #dc3545; color: #721c24; }
+  .note-box.success { background: #d4edda; border-left-color: #28a745; color: #155724; }
+  
+  table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 13px; }
+  table th { background: #f8f9fa; padding: 8px 12px; text-align: left; border-bottom: 2px solid #dee2e6; font-weight: 600; color: #333; }
+  table td { padding: 8px 12px; border-bottom: 1px solid #eee; color: #555; }
+  table tr:hover td { background: #f8f9fa; }
+  
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  @media (max-width: 768px) { .grid-2 { grid-template-columns: 1fr; } }
+  
+  .stat-card { background: linear-gradient(135deg, #667eea, #764ba2); color: #fff; padding: 16px; border-radius: 8px; text-align: center; }
+  .stat-card .num { font-size: 28px; font-weight: 700; }
+  .stat-card .label { font-size: 12px; opacity: 0.9; margin-top: 4px; }
+  
+  .timeline { position: relative; padding-left: 24px; }
+  .timeline::before { content: ''; position: absolute; left: 8px; top: 0; bottom: 0; width: 2px; background: #e94560; }
+  .timeline .item { position: relative; margin-bottom: 16px; }
+  .timeline .item::before { content: ''; position: absolute; left: -20px; top: 6px; width: 10px; height: 10px; background: #e94560; border-radius: 50%; border: 2px solid #fff; }
+  .timeline .item .title { font-weight: 600; color: #333; }
+  .timeline .item .detail { font-size: 13px; color: #666; margin-top: 2px; }
+  
+  .tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; }
+  .tag.red { background: #fee; color: #c0392b; }
+  .tag.green { background: #d4edda; color: #155724; }
+  .tag.blue { background: #d1ecf1; color: #0c5460; }
+  .tag.orange { background: #fff3cd; color: #856404; }
+  
+  .footer { text-align: center; padding: 24px; color: #999; font-size: 12px; border-top: 1px solid #eee; margin-top: 40px; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>🧾 AP进项发票管理模块 — 详细流程图</h1>
+  <div class="meta">
+    <span>📦 项目: Dev_Dept ERP 财务管理系统</span>
+    <span>🎯 模块: AP进项发票管理 (Purchase Invoice Management)</span>
+    <span>📊 对标: 金蝶云星空 → 应付管理 → 进项发票/采购发票</span>
+    <span>📅 日期: 2026-04-20</span>
+    <span class="tag red">P0 优先级</span>
+  </div>
+</div>
+
+<div class="nav-bar">
+  <a href="#overview" class="active" onclick="navTo(this)">📊 架构总览</a>
+  <a href="#main-flow" onclick="navTo(this)">🔄 主流程</a>
+  <a href="#three-match" onclick="navTo(this)">🔗 三单匹配</a>
+  <a href="#tax-auth" onclick="navTo(this)">🏛️ 认证抵扣</a>
+  <a href="#voucher" onclick="navTo(this)">🧾 凭证模板</a>
+  <a href="#special" onclick="navTo(this)">⚡ 特殊场景</a>
+  <a href="#exception" onclick="navTo(this)">⚠️ 异常处理</a>
+</div>
+
+<div class="container">
+
+<!-- ==================== ① 架构总览 ==================== -->
+<div class="section" id="overview">
+  <h2>📊 ① AP进项发票 — 架构总览</h2>
+  <p class="desc">AP进项发票管理是"采购到付款(P2P)"流程的凭证锚点，连接发票查验（上游）与实付付款（下游），覆盖从供应商发票录入/查验、三单匹配、入账确认、税务认证、进项抵扣，到生成应付凭证写入总账的全流程。</p>
+  
+  <div class="grid-2">
+    <div style="background:#f0fff4; border-radius:8px; padding:16px; border:1px solid #c3e6cb;">
+      <strong style="color:#155724;">⬅ 上游依赖</strong>
+      <ul style="font-size:13px; color:#333; margin-top:8px; padding-left:16px; line-height:1.8;">
+        <li><strong>发票查验模块</strong> — 全电发票OCR+API验真</li>
+        <li><strong>采购订单(PO)</strong> — 采购数量/单价基准</li>
+        <li><strong>收货入库(GR)</strong> — 实收数量/质检结果</li>
+        <li><strong>会计科目设定</strong> — 进项税科目/应付科目</li>
+      </ul>
+    </div>
+    <div style="background:#fff5f7; border-radius:8px; padding:16px; border:1px solid #f5c6cb;">
+      <strong style="color:#721c24;">➡ 下游输出</strong>
+      <ul style="font-size:13px; color:#333; margin-top:8px; padding-left:16px; line-height:1.8;">
+        <li><strong>实付付款模块</strong> — 应付凭据驱动付款</li>
+        <li><strong>总账凭证引擎</strong> — 6套凭证模板AP01~AP06</li>
+        <li><strong>税务管理模块</strong> — 进项税认证/抵扣数据</li>
+        <li><strong>海外发票管理</strong> — 跨国发票走海外流程</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="flow-container">
+    <div class="mermaid">
+graph LR
+    A["📥 发票到达<br/>(纸质/电子/全电)"] --> B["🔍 查验验真<br/>发票查验模块"]
+    B --> C["📝 录入/确认<br/>AP进项发票"]
+    C --> D["🔗 三单匹配<br/>PO+GR+Invoice"]
+    D --> E{"匹配结果?"}
+    E -->|"✅ 完全匹配"| F["✅ 入账确认<br/>生成应付"]
+    E -->|"⚠️ 差异"| G["🔧 差异处理<br/>协商/调整"]
+    G --> F
+    E -->|"❌ 不匹配"| H["❌ 退回/拒收"]
+    F --> I["🏛️ 税务认证<br/>勾选确认"]
+    I --> J["💰 进项抵扣<br/>增值税抵扣"]
+    J --> K["🧾 凭证生成<br/>AP01~AP06"]
+    K --> L["📤 驱动付款<br/>实付付款模块"]
+    style A fill:#e3f2fd,stroke:#1565c0,color:#000
+    style B fill:#fff3e0,stroke:#f57c00,color:#000
+    style C fill:#e8f5e9,stroke:#2e7d32,color:#000
+    style D fill:#fce4ec,stroke:#c62828,color:#000
+    style F fill:#e8f5e9,stroke:#2e7d32,color:#000
+    style I fill:#ede7f6,stroke:#5e35b1,color:#000
+    style J fill:#e0f7fa,stroke:#00838f,color:#000
+    style K fill:#fff8e1,stroke:#f9a825,color:#000
+    style L fill:#f3e5f5,stroke:#7b1fa2,color:#000
+    </div>
+  </div>
+
+  <div class="note-box info">
+    <strong>💡 关键设计原则：</strong>本模块是发票查验模块的<strong>下游扩展</strong>——查验完成后的业务流转全部在本模块处理。海外发票走独立流程（海外发票管理模块），但凭证编码体系统一。
+  </div>
+</div>
+
+<!-- ==================== ② 主流程 ==================== -->
+<div class="section" id="main-flow">
+  <h2>🔄 ② AP进项发票 — 主流程</h2>
+  <p class="desc">从供应商发票到达开始，到生成应付凭证写入总账的完整业务流。关键决策节点：发票类型判断、三单匹配结果、税务认证时机。</p>
+
+  <div class="flow-container">
+    <div class="mermaid">
+flowchart TD
+    START(["📥 供应商发票到达"]) --> TYPE{"发票类型?"}
+    
+    TYPE -->|"全电发票<br/>(XML/PDF)"| AUTO["🤖 自动解析<br/>提取关键字段"]
+    TYPE -->|"纸质发票<br/>(扫描件)"| OCR["📄 OCR识别<br/>人工复核"]
+    TYPE -->|"海外发票"| OVERSEAS["🌍 转海外发票模块<br/>详见海外发票管理流程图"]
+    
+    AUTO --> VERIFY["🔍 发票查验<br/>调用发票查验模块"]
+    OCR --> MANUAL_INPUT["✍️ 人工补录<br/>关键字段"]
+    MANUAL_INPUT --> VERIFY
+    
+    VERIFY --> V_RESULT{"查验结果?"}
+    V_RESULT -->|"✅ 验真通过"| EXTRACT["📋 提取结构化数据<br/>发票号/金额/税额/日期"]
+    V_RESULT -->|"❌ 查验失败"| FAIL["⛔ 标记异常<br/>进入异常处理"]
+    V_RESULT -->|"⚠️ 重复发票"| DUP["🔁 重复检测<br/>关联已有记录"]
+    
+    EXTRACT --> LINK_PO["🔗 关联采购订单PO<br/>自动匹配/手动选择"]
+    DUP --> DUP_HANDLE{"重复类型?"}
+    DUP_HANDLE -->|"完全重复"| REJECT["❌ 拒收<br/>通知供应商"]
+    DUP_HANDLE -->|"部分重复<br/>(红字冲销)"| RED["🔴 关联红字发票<br/>冲销处理"]
+    
+    LINK_PO --> LINK_GR["📦 关联收货单GR<br/>匹配入库记录"]
+    LINK_GR --> THREE_MATCH["🔗 三单匹配引擎<br/>详见③三单匹配"]
+    
+    THREE_MATCH --> MATCH_RESULT{"匹配结果?"}
+    MATCH_RESULT -->|"✅ 完全匹配"| AUTO_POST["✅ 自动入账<br/>状态→已入账"]
+    MATCH_RESULT -->|"⚠️ 容差内"| TOL_POST["⚡ 容差自动入账<br/>标记差异说明"]
+    MATCH_RESULT -->|"❌ 超容差"| EXCEPTION["🔧 差异处理流程<br/>详见⑥异常处理"]
+    
+    AUTO_POST --> TAX_AUTH["🏛️ 税务认证<br/>勾选确认平台"]
+    TOL_POST --> TAX_AUTH
+    EXCEPTION -->|"协商成功"| ADJ_POST["📝 调整入账<br/>差异金额处理"]
+    ADJ_POST --> TAX_AUTH
+    
+    TAX_AUTH --> TAX_RESULT{"认证结果?"}
+    TAX_RESULT -->|"✅ 认证成功"| DEDUCT["💰 进项抵扣<br/>计入可抵扣税额"]
+    TAX_RESULT -->|"❌ 不可抵扣"| NO_DEDUCT["🚫 不予抵扣<br/>转出处理"]
+    TAX_RESULT -->|"⏳ 待认证"| PENDING["📅 加入待认证池<br/>限期180天"]
+    
+    DEDUCT --> VOUCHER["🧾 生成凭证<br/>AP01/AP02"]
+    NO_DEDUCT --> VOUCHER_ND["🧾 生成凭证<br/>AP06不予抵扣"]
+    VOUCHER --> PAYABLE["📤 应付确认<br/>驱动实付付款模块"]
+    VOUCHER_ND --> PAYABLE
+    PENDING -->|"到期自动提醒"| TAX_AUTH
+    
+    PAYABLE --> END(["✅ 流程结束<br/>等待付款"])
+    
+    FAIL --> ABORT(["⛔ 流程中止"])
+    REJECT --> ABORT2(["⛔ 流程中止"])
+    OVERSEAS --> EXT(["→ 海外发票模块"])
+    
+    style START fill:#e3f2fd,stroke:#1565c0,color:#000
+    style AUTO fill:#e8f5e9,stroke:#2e7d32,color:#000
+    style OCR fill:#fff3e0,stroke:#f57c00,color:#000
+    style VERIFY fill:#fce4ec,stroke:#c62828,color:#000
+    style THREE_MATCH fill:#ede7f6,stroke:#5e35b1,color:#000
+    style TAX_AUTH fill:#e0f7fa,stroke:#00838f,color:#000
+    style DEDUCT fill:#e8f5e9,stroke:#2e7d32,color:#000
+    style VOUCHER fill:#fff8e1,stroke:#f9a825,color:#000
+    style END fill:#c8e6c9,stroke:#2e7d32,color:#000
+    style ABORT fill:#ffcdd2,stroke:#c62828,color:#000
+    style ABORT2 fill:#ffcdd2,stroke:#c62828,color:#000
+    </div>
+  </div>
+
+  <div class="note-box">
+    <strong>⚠️ 180天认证期限：</strong>根据国家税务总局规定，增值税进项发票需在开具之日起<strong>180个自然日</strong>内完成认证。系统会在到期前30/15/7天自动提醒。
+  </div>
+</div>
+
+<!-- ==================== ③ 三单匹配 ==================== -->
+<div class="section" id="three-match">
+  <h2>🔗 ③ 三单匹配引擎</h2>
+  <p class="desc">三单匹配（PO采购订单 + GR收货单 + Invoice发票）是AP进项发票的核心风控环节，确保"订购→收货→开票"三方数据一致，防止超额付款和虚假发票。</p>
+
+  <div class="flow-container">
+    <div class="mermaid">
+flowchart TD
+    INPUT(["📥 匹配输入<br/>PO + GR + Invoice"]) --> EXTRACT_PO["📋 提取PO数据<br/>采购数量/单价/税码"]
+    INPUT --> EXTRACT_GR["📦 提取GR数据<br/>实收数量/质检状态"]
+    INPUT --> EXTRACT_INV["🧾 提取Invoice数据<br/>发票数量/金额/税额"]
+    
+    EXTRACT_PO --> QTY_CHECK["🔍 数量匹配<br/>发票数量 vs GR实收数量"]
+    EXTRACT_GR --> QTY_CHECK
+    EXTRACT_INV --> QTY_CHECK
+    
+    QTY_CHECK --> QTY_RESULT{"数量差异?"}
+    QTY_RESULT -->|"差异=0"| QTY_OK["✅ 数量完全匹配"]
+    QTY_RESULT -->|"差异≤容差<br/>默认±5%"| QTY_TOL["⚡ 数量容差内<br/>自动通过"]
+    QTY_RESULT -->|"差异>容差"| QTY_FAIL["❌ 数量超容差<br/>进入差异处理"]
+    
+    QTY_OK --> PRICE_CHECK["💰 金额匹配<br/>发票金额 vs PO×数量"]
+    QTY_TOL --> PRICE_CHECK
+    
+    PRICE_CHECK --> PRICE_RESULT{"金额差异?"}
+    PRICE_RESULT -->|"差异=0"| PRICE_OK["✅ 金额完全匹配"]
+    PRICE_RESULT -->|"差异≤容差<br/>默认±2%或¥500"| PRICE_TOL["⚡ 金额容差内<br/>自动通过"]
+    PRICE_RESULT -->|"差异>容差"| PRICE_FAIL["❌ 金额超容差<br/>进入差异处理"]
+    
+    PRICE_OK --> TAX_CHECK["🏛️ 税额匹配<br/>发票税额 vs 计算税额"]
+    PRICE_TOL --> TAX_CHECK
+    
+    TAX_CHECK --> TAX_RESULT{"税额差异?"}
+    TAX_RESULT -->|"差异≤¥0.01"| TAX_OK["✅ 税额匹配<br/>尾差自动调整"]
+    TAX_RESULT -->|"差异>¥0.01"| TAX_FAIL["❌ 税额异常<br/>进入差异处理"]
+    
+    TAX_OK --> MATCH_SUCCESS["🎉 三单匹配成功<br/>状态→已匹配"]
+    QTY_FAIL --> DIFF_HANDLE["🔧 差异处理"]
+    PRICE_FAIL --> DIFF_HANDLE
+    TAX_FAIL --> DIFF_HANDLE
+    
+    DIFF_HANDLE --> DIFF_TYPE{"差异类型?"}
+    DIFF_TYPE -->|"供应商多开"| OVER["📈 超额发票<br/>协商退款/冲红"]
+    DIFF_TYPE -->|"供应商少开"| UNDER["📉 少额发票<br/>催补/部分入账"]
+    DIFF_TYPE -->|"GR未到"| NO_GR["📦 货未到票先到<br/>暂估入账→到货冲回"]
+    DIFF_TYPE -->|"价格变更"| PRICE_CHG["💰 价格差异<br/>确认调价→更新PO"]
+    
+    OVER --> OVER_RESULT{"处理方式?"}
+    OVER_RESULT -->|"供应商冲红"| RED1["🔴 关联红字发票<br/>重新匹配"]
+    OVER_RESULT -->|"接受差异"| APPROVE1["✅ 审批通过<br/>差异入账"]
+    
+    UNDER --> UNDER_RESULT{"处理方式?"}
+    UNDER_RESULT -->|"催补发票"| WAIT1["📅 等待补票<br/>暂挂90天"]
+    UNDER_RESULT -->|"接受差异"| APPROVE2["✅ 审批通过<br/>按实际金额入账"]
+    
+    NO_GR --> ESTIMATE["📝 暂估入账<br/>AP05暂估凭证"]
+    ESTIMATE -->|"GR到达后"| REVERSE["🔄 冲回暂估<br/>重新匹配"]
+    REVERSE --> MATCH_SUCCESS
+    
+    PRICE_CHG --> PO_UPDATE["📝 更新PO价格<br/>重新匹配"]
+    PO_UPDATE --> MATCH_SUCCESS
+    
+    RED1 --> MATCH_SUCCESS
+    APPROVE1 --> MATCH_SUCCESS
+    APPROVE2 --> MATCH_SUCCESS
+    WAIT1 -->|"补票到达"| INPUT
+    
+    MATCH_SUCCESS --> OUTPUT(["✅ 匹配完成<br/>可入账确认"])
+    
+    style INPUT fill:#e3f2fd,stroke:#1565c0,color:#000
+    style MATCH_SUCCESS fill:#c8e6c9,stroke:#2e7d32,color:#000
+    style DIFF_HANDLE fill:#fff3e0,stroke:#f57c00,color:#000
+    style ESTIMATE fill:#ede7f6,stroke:#5e35b1,color:#000
+    style OUTPUT fill:#e8f5e9,stroke:#2e7d32,color:#000
+    </div>
+  </div>
+
+  <h3>📏 容差配置规则</h3>
+  <table>
+    <tr><th>匹配维度</th><th>默认容差</th><th>超容差处理</th><th>可配置</th></tr>
+    <tr><td>数量差异</td><td>±5%</td><td>自动挂起，需人工审批</td><td>✅ 按供应商/品类</td></tr>
+    <tr><td>金额差异</td><td>±2% 或 ¥500（取小）</td><td>自动挂起，需人工审批</td><td>✅ 按供应商/品类</td></tr>
+    <tr><td>税额差异</td><td>¥0.01（尾差）</td><td>自动调整到商品金额</td><td>❌ 固定规则</td></tr>
+    <tr><td>品种差异</td><td>0%（严格）</td><td>必须完全一致</td><td>❌ 不可配置</td></tr>
+  </table>
+
+  <div class="note-box danger">
+    <strong>⛔ 风控红线：</strong>同一张发票金额超过<strong>¥100万</strong>或数量差异超过<strong>±20%</strong>时，无论容差设置如何，必须走二级审批（财务经理+业务总监）。
+  </div>
+</div>
+
+<!-- ==================== ④ 税务认证与抵扣 ==================== -->
+<div class="section" id="tax-auth">
+  <h2>🏛️ ④ 税务认证与进项抵扣</h2>
+  <p class="desc">增值税进项税额的认证和抵扣是AP进项发票的关键税务环节。系统需对接增值税发票综合服务平台，实现勾选认证、抵扣申报、不可抵扣转出的全流程管理。</p>
+
+  <div class="flow-container">
+    <div class="mermaid">
+flowchart TD
+    INPUT(["📥 已入账的进项发票<br/>状态=已入账"]) --> POOL["📅 加入待认证池<br/>按月管理"]
+    
+    POOL --> CHECK_PERIOD["🔍 检查认证期限<br/>开票日+180天"]
+    CHECK_PERIOD --> PERIOD_RESULT{"是否到期?"}
+    PERIOD_RESULT -->|"未到期"| WAIT["📅 等待认证窗口<br/>每月1-15日"]
+    PERIOD_RESULT -->|"即将到期<br/>(≤30天)"| URGENT["🚨 紧急认证<br/>优先处理"]
+    PERIOD_RESULT -->|"已过期"| EXPIRED["⛔ 逾期不可认证<br/>损失税额转费用"]
+    
+    WAIT --> AUTH_WINDOW["🗓️ 进入认证窗口<br/>增值税综合服务平台"]
+    URGENT --> AUTH_WINDOW
+    
+    AUTH_WINDOW --> SELECT["☑️ 勾选认证<br/>选择本月抵扣发票"]
+    SELECT --> PLATFORM["🌐 提交认证<br/>对接增值税平台API"]
+    
+    PLATFORM --> AUTH_RESULT{"认证结果?"}
+    AUTH_RESULT -->|"✅ 认证成功"| CERTIFIED["✅ 认证通过<br/>状态→已认证"]
+    AUTH_RESULT -->|"❌ 认证失败<br/>(异常发票)"| AUTH_FAIL["❌ 认证异常<br/>退回查验环节"]
+    
+    CERTIFIED --> DEDUCT_CHECK{"可否抵扣?"}
+    
+    DEDUCT_CHECK -->|"✅ 可抵扣<br/>(一般纳税人)"| DEDUCT_OK["💰 进项抵扣<br/>状态→已抵扣"]
+    DEDUCT_CHECK -->|"🚫 不可抵扣<br/>(集体福利/个人消费)"| NO_DEDUCT["🚫 不予抵扣<br/>AP06凭证"]
+    DEDUCT_CHECK -->|"⚡ 部分抵扣<br/>(兼营简易/免税)"| PART_DEDUCT["⚡ 按比例分摊<br/>可抵扣/不可抵扣"]
+    
+    DEDUCT_OK --> TAX_RETURN["📊 汇总到税务申报<br/>进项税额转出表"]
+    NO_DEDUCT --> TAX_RETURN
+    PART_DEDUCT --> TAX_RETURN
+    
+    TAX_RETURN --> VOUCHER_GEN["🧾 生成税务凭证<br/>AP04/AP06"]
+    
+    EXPIRED --> LOSS["💸 税额损失<br/>转入当期费用"]
+    LOSS --> VOUCHER_GEN
+    AUTH_FAIL --> RE_VERIFY["🔄 重新查验<br/>发票查验模块"]
+    RE_VERIFY --> INPUT
+    
+    VOUCHER_GEN --> END(["✅ 税务处理完成"])
+    
+    style INPUT fill:#e3f2fd,stroke:#1565c0,color:#000
+    style CERTIFIED fill:#e8f5e9,stroke:#2e7d32,color:#000
+    style DEDUCT_OK fill:#c8e6c9,stroke:#2e7d32,color:#000
+    style NO_DEDUCT fill:#ffcdd2,stroke:#c62828,color:#000
+    style PART_DEDUCT fill:#fff3e0,stroke:#f57c00,color:#000
+    style EXPIRED fill:#ffcdd2,stroke:#c62828,color:#000
+    style END fill:#e8f5e9,stroke:#2e7d32,color:#000
+    </div>
+  </div>
+
+  <h3>📋 不可抵扣情形清单</h3>
+  <table>
+    <tr><th>情形</th><th>依据</th><th>系统处理</th></tr>
+    <tr><td>用于简易计税项目</td><td>财税〔2016〕36号</td><td>按比例分摊</td></tr>
+    <tr><td>用于免征增值税项目</td><td>财税〔2016〕36号</td><td>按比例分摊</td></tr>
+    <tr><td>用于集体福利</td><td>增值税暂行条例</td><td>全额不予抵扣(AP06)</td></tr>
+    <tr><td>用于个人消费</td><td>增值税暂行条例</td><td>全额不予抵扣(AP06)</td></tr>
+    <tr><td>非正常损失</td><td>增值税暂行条例</td><td>进项税额转出(AP04)</td></tr>
+    <tr><td>逾期未认证(>180天)</td><td>国家税务总局公告</td><td>全额转费用</td></tr>
+  </table>
+
+  <div class="note-box info">
+    <strong>💡 兼营分摊规则：</strong>当企业同时经营一般计税和简易/免税项目时，进项税额按<strong>销售额比例</strong>分摊。不可抵扣部分 = 进项税额 × (简易+免税销售额 / 总销售额)。系统自动计算，月末一次性分摊。
+  </div>
+</div>
+
+<!-- ==================== ⑤ 凭证模板 ==================== -->
+<div class="section" id="voucher">
+  <h2>🧾 ⑤ 凭证模板 — AP01~AP06</h2>
+  <p class="desc">AP进项发票模块共6套凭证模板，覆盖正常入账、费用发票、退货冲红、进项转出、暂估入账、不予抵扣6大场景，与总账凭证引擎无缝衔接。</p>
+
+  <div class="flow-container">
+    <div class="mermaid">
+flowchart LR
+    subgraph "AP进项发票凭证体系"
+        direction TB
+        AP01["AP01 📋 进项入账<br/>借: 库存商品/原材料<br/>借: 应交税费-进项税额<br/>贷: 应付账款"]
+        AP02["AP02 💼 费用发票<br/>借: 管理费用/销售费用<br/>借: 应交税费-进项税额<br/>贷: 应付账款"]
+        AP03["AP03 🔴 退货冲红<br/>借: 应付账款<br/>贷: 库存商品/原材料<br/>贷: 应交税费-进项税额"]
+        AP04["AP04 🔄 进项转出<br/>借: 管理费用等<br/>贷: 应交税费-进项税额转出"]
+        AP05["AP05 📝 暂估入账<br/>借: 原材料/库存商品<br/>贷: 应付账款-暂估"]
+        AP06["AP06 🚫 不予抵扣<br/>借: 管理费用等(含税)<br/>贷: 应付账款(含税)"]
+    end
+    
+    style AP01 fill:#e8f5e9,stroke:#2e7d32,color:#000
+    style AP02 fill:#e3f2fd,stroke:#1565c0,color:#000
+    style AP03 fill:#ffcdd2,stroke:#c62828,color:#000
+    style AP04 fill:#fff3e0,stroke:#f57c00,color:#000
+    style AP05 fill:#ede7f6,stroke:#5e35b1,color:#000
+    style AP06 fill:#fce4ec,stroke:#c62828,color:#000
+    </div>
+  </div>
+
+  <table>
+    <tr><th>编码</th><th>凭证名称</th><th>触发场景</th><th>借方科目</th><th>贷方科目</th></tr>
+    <tr><td><span class="tag green">AP01</span></td><td>进项入账</td><td>三单匹配成功，发票入账</td><td>库存商品/原材料 + 进项税额</td><td>应付账款</td></tr>
+    <tr><td><span class="tag blue">AP02</span></td><td>费用发票入账</td><td>无PO/GR的费用类发票</td><td>管理/销售/研发费用 + 进项税额</td><td>应付账款</td></tr>
+    <tr><td><span class="tag red">AP03</span></td><td>退货冲红</td><td>采购退货，红字发票</td><td>应付账款</td><td>库存商品 + 进项税额(红字)</td></tr>
+    <tr><td><span class="tag orange">AP04</span></td><td>进项税额转出</td><td>非正常损失/用途变更</td><td>管理费用等</td><td>应交税费-进项税额转出</td></tr>
+    <tr><td style="background:#ede7f6"><span class="tag blue">AP05</span></td><td>暂估入账</td><td>货到票未到(月末)</td><td>原材料/库存商品</td><td>应付账款-暂估</td></tr>
+    <tr><td style="background:#fce4ec"><span class="tag red">AP06</span></td><td>不予抵扣入账</td><td>集体福利/个人消费</td><td>管理费用等(含税)</td><td>应付账款(含税)</td></tr>
+  </table>
+
+  <div class="note-box success">
+    <strong>🔗 凭证衔接：</strong>AP01~AP06 与现有凭证体系(S01~S06/P01~P08/B01~B08/PA01~PA07/GL01~GL03/OP01/OS01/FX01)编码空间无冲突，总账凭证引擎中总模板数从31套增至<strong>37套</strong>。
+  </div>
+</div>
+
+<!-- ==================== ⑥ 特殊场景 ==================== -->
+<div class="section" id="special">
+  <h2>⚡ ⑥ 特殊场景处理</h2>
+  <p class="desc">涵盖货到票未到(暂估)、票到货未到(预入)、红字发票冲红、分期付款发票、费用类发票(无PO)5大特殊场景。</p>
+
+  <div class="grid-2">
+    <div>
+      <h3>📝 场景1: 货到票未到（暂估入账）</h3>
+      <div class="flow-container">
+        <div class="mermaid">
+flowchart TD
+    A["📦 货已到票未到<br/>月末结账"] --> B["📝 暂估入账<br/>AP05凭证"]
+    B --> C["📅 次月初<br/>自动冲回"]
+    C --> D{"发票到达?"}
+    D -->|"是"| E["🔄 重新匹配<br/>正式入账AP01"]
+    D -->|"否"| F["📝 再次暂估<br/>AP05冲回+重做"]
+    F --> G{"连续3月?"}
+    G -->|"是"| H["🚨 预警升级<br/>采购跟进"]
+    G -->|"否"| C
+    style A fill:#fff3e0,stroke:#f57c00,color:#000
+    style B fill:#ede7f6,stroke:#5e35b1,color:#000
+    style E fill:#e8f5e9,stroke:#2e7d32,color:#000
+        </div>
+      </div>
+    </div>
+    <div>
+      <h3>🔴 场景2: 红字发票冲红</h3>
+      <div class="flow-container">
+        <div class="mermaid">
+flowchart TD
+    A["🔴 收到红字发票<br/>退货/折让"] --> B["🔗 关联原蓝字发票<br/>自动匹配"]
+    B --> C{"原发票状态?"}
+    C -->|"已入账未认证"| D["❌ 直接作废<br/>撤销AP01凭证"]
+    C -->|"已认证已抵扣"| E["📝 进项转出<br/>AP04凭证"]
+    C -->|"已付款"| F["🔄 应付退款<br/>关联退款流程"]
+    E --> G["🧾 生成冲红凭证<br/>AP03+AP04"]
+    D --> G
+    F --> G
+    style A fill:#ffcdd2,stroke:#c62828,color:#000
+    style G fill:#fff8e1,stroke:#f9a825,color:#000
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h3>💼 场景3: 费用类发票（无PO/GR）</h3>
+  <p class="desc">差旅、办公、咨询等费用类发票，不需要走三单匹配，直接关联费用报销或费用登记流程。</p>
+  <div class="flow-container">
+    <div class="mermaid">
+flowchart TD
+    A["📄 费用类发票到达<br/>无采购订单"] --> B["🔍 查验验真<br/>发票查验模块"]
+    B --> C["✍️ 费用登记<br/>选择费用类型/部门"]
+    C --> D["🔗 关联费用申请单<br/>或直接录入"]
+    D --> E{"是否关联<br/>费用报销?"}
+    E -->|"是"| F["📋 关联报销单<br/>验证金额一致性"]
+    E -->|"否"| G["📝 独立费用发票<br/>直接入账"]
+    F --> H["✅ 入账确认<br/>AP02凭证"]
+    G --> H
+    H --> I["🏛️ 税务认证<br/>同正常流程"]
+    style A fill:#e3f2fd,stroke:#1565c0,color:#000
+    style H fill:#e8f5e9,stroke:#2e7d32,color:#000
+    </div>
+  </div>
+
+  <h3>📅 场景4: 分期付款发票</h3>
+  <p class="desc">大型设备或工程项目，一张发票对应多期付款。需拆分应付，按付款计划分批驱动付款。</p>
+  <div class="flow-container">
+    <div class="mermaid">
+flowchart TD
+    A["📄 收到大额发票<br/>分期付款协议"] --> B["📝 整体入账<br/>AP01凭证(全额)"]
+    B --> C["📋 创建付款计划<br/>按合同拆分应付"]
+    C --> D["📅 生成多笔应付凭据<br/>到期日不同"]
+    D --> E["📤 按到期日驱动付款<br/>逐笔到实付付款模块"]
+    E --> F["✅ 全部付清<br/>关闭发票"]
+    style A fill:#e3f2fd,stroke:#1565c0,color:#000
+    style B fill:#e8f5e9,stroke:#2e7d32,color:#000
+    style F fill:#c8e6c9,stroke:#2e7d32,color:#000
+    </div>
+  </div>
+</div>
+
+<!-- ==================== ⑦ 异常处理 ==================== -->
+<div class="section" id="exception">
+  <h2>⚠️ ⑦ 异常处理与风控</h2>
+  <p class="desc">覆盖AP进项发票全流程的异常场景处理和风控规则，确保资金安全和税务合规。</p>
+
+  <div class="flow-container">
+    <div class="mermaid">
+flowchart TD
+    subgraph "异常类型识别"
+        E1["❌ 查验失败<br/>假发票/无效发票"]
+        E2["🔁 重复发票<br/>同一发票号多次录入"]
+        E3["❌ 三单不匹配<br/>数量/金额/品种差异"]
+        E4["⛔ 认证失败<br/>异常/失控发票"]
+        E5["⏰ 逾期未认证<br/>超180天"]
+        E6["🚫 供应商黑名单<br/>异常供应商"]
+    end
+    
+    E1 --> H1["🔧 处理: 拒收+记录<br/>通知供应商重开"]
+    E2 --> H2["🔧 处理: 重复检测<br/>拒收/关联红字"]
+    E3 --> H3["🔧 处理: 差异协商<br/>审批调整/退回"]
+    E4 --> H4["🔧 处理: 退回查验<br/>联系税务局"]
+    E5 --> H5["🔧 处理: 税额转费用<br/>采购责任追溯"]
+    E6 --> H6["🔧 处理: 拒收冻结<br/>需财务总监审批"]
+    
+    H1 --> LOG["📝 异常日志记录<br/>异常类型/原因/处理方式"]
+    H2 --> LOG
+    H3 --> LOG
+    H4 --> LOG
+    H5 --> LOG
+    H6 --> LOG
+    
+    LOG --> ANALYTICS["📊 异常分析报表<br/>按类型/供应商/月度统计"]
+    ANALYTICS --> ALERT["🚨 风控预警规则"]
+    
+    ALERT --> R1["🔴 高风险: 单张>¥100万<br/>→ 财务总监审批"]
+    ALERT --> R2["🟡 中风险: 同供应商月累计>¥500万<br/>→ 财务经理审批"]
+    ALERT --> R3["🟠 预警: 认证到期前7天未认证<br/>→ 自动催办"]
+    ALERT --> R4["🔴 高风险: 供应商异常率>10%<br/>→ 自动冻结+审核"]
+    
+    style E1 fill:#ffcdd2,stroke:#c62828,color:#000
+    style E2 fill:#fff3e0,stroke:#f57c00,color:#000
+    style E3 fill:#fff3e0,stroke:#f57c00,color:#000
+    style E4 fill:#ffcdd2,stroke:#c62828,color:#000
+    style E5 fill:#ffcdd2,stroke:#c62828,color:#000
+    style E6 fill:#ffcdd2,stroke:#c62828,color:#000
+    style ALERT fill:#fce4ec,stroke:#c62828,color:#000
+    </div>
+  </div>
+
+  <h3>🛡️ 风控规则矩阵</h3>
+  <table>
+    <tr><th>风控维度</th><th>触发条件</th><th>处理动作</th><th>审批层级</th></tr>
+    <tr><td>单张金额</td><td>≥ ¥100万</td><td>强制二级审批</td><td>财务经理+总监</td></tr>
+    <tr><td>月累计金额</td><td>同供应商 ≥ ¥500万</td><td>汇总审批</td><td>财务经理</td></tr>
+    <tr><td>认证期限</td><td>≤ 7天到期</td><td>自动催办</td><td>系统自动</td></tr>
+    <tr><td>重复发票</td><td>同发票号</td><td>自动拦截</td><td>—</td></tr>
+    <tr><td>供应商异常率</td><td>异常率 ≥ 10%</td><td>自动冻结</td><td>财务总监</td></tr>
+    <tr><td>三单差异</td><td>超容差</td><td>挂起+审批</td><td>采购+财务</td></tr>
+    <tr><td>黑名单供应商</td><td>在黑名单中</td><td>拒收冻结</td><td>财务总监</td></tr>
+  </table>
+
+  <div class="note-box danger">
+    <strong>⛔ 不可绕过规则：</strong>以下风控规则不可通过审批流绕过：(1) 假发票/无效发票必须拒收；(2) 重复发票必须拦截；(3) 黑名单供应商发票必须冻结。任何试图绕过的操作将记录审计日志并通知合规部门。
+  </div>
+</div>
+
+<!-- ==================== 底部统计 ==================== -->
+<div class="section">
+  <h2>📊 模块数据总览</h2>
+  <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:16px;">
+    <div class="stat-card"><div class="num">6</div><div class="label">凭证模板 AP01~AP06</div></div>
+    <div class="stat-card" style="background:linear-gradient(135deg,#f093fb,#f5576c)"><div class="num">5</div><div class="label">新增DDL表</div></div>
+    <div class="stat-card" style="background:linear-gradient(135deg,#4facfe,#00f2fe)"><div class="num">8</div><div class="label">RESTful API</div></div>
+    <div class="stat-card" style="background:linear-gradient(135deg,#43e97b,#38f9d7)"><div class="num">10</div><div class="label">开发工期(天)</div></div>
+  </div>
+  <div style="margin-top:16px; font-size:13px; color:#666; text-align:center;">
+    配套文档: AP进项发票管理模块规格书.md (需求规格) + 本流程图 | 关联: 发票查验模块 → 本模块 → 实付付款模块 → 总账凭证引擎
+  </div>
+</div>
+
+</div>
+
+<div class="footer">
+  Dev_Dept ERP 财务管理系统 · AP进项发票管理模块 · 详细流程图 · v1.0 · 2026-04-20
+</div>
+
+<!-- 缩放控制按钮 -->
+<div class="zoom-controls">
+  <button class="zoom-btn" onclick="zoomOut()" title="缩小">−</button>
+  <div class="zoom-label" id="zoomLevel">100%</div>
+  <button class="zoom-btn" onclick="zoomIn()" title="放大">+</button>
+  <button class="zoom-btn" onclick="zoomReset()" title="重置">⟲</button>
+</div>
+
+<script>
+mermaid.initialize({ 
+  startOnLoad: true, 
+  theme: 'base',
+  themeVariables: { 
+    primaryColor: '#e8f5e9', 
+    primaryTextColor: '#1a1a2e', 
+    primaryBorderColor: '#2e7d32',
+    lineColor: '#666',
+    fontSize: '14px'
+  },
+  flowchart: { htmlLabels: true, curve: 'basis', padding: 15, nodeSpacing: 50, rankSpacing: 60, useMaxWidth: true }
+});
+
+/* 流程图缩放控制 */
+let currentZoom = 1;
+const zoomStep = 0.2;
+function applyZoom() {
+  document.querySelectorAll('.flow-container .mermaid').forEach(el => {
+    el.style.transform = 'scale(' + currentZoom + ')';
+    el.style.transformOrigin = 'top center';
+  });
+  const label = document.getElementById('zoomLevel');
+  if (label) label.textContent = Math.round(currentZoom * 100) + '%';
+}
+function zoomIn() { currentZoom = Math.min(3, currentZoom + zoomStep); applyZoom(); }
+function zoomOut() { currentZoom = Math.max(0.5, currentZoom - zoomStep); applyZoom(); }
+function zoomReset() { currentZoom = 1; applyZoom(); }
+document.addEventListener('DOMContentLoaded', function() { applyZoom(); });
+
+function navTo(el) {
+  document.querySelectorAll('.nav-bar a').forEach(a => a.classList.remove('active'));
+  el.classList.add('active');
+  const target = document.querySelector(el.getAttribute('href'));
+  if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+</script>
+</body>
+</html>
