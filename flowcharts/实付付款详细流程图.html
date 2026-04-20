@@ -31,7 +31,13 @@
   .section p.desc { color: #666; font-size: 14px; margin-bottom: 16px; line-height: 1.6; }
   
   .flow-container { display: flex; justify-content: center; padding: 16px 0; overflow-x: auto; }
-  .flow-container .mermaid { max-width: 100%; }
+  .flow-container .mermaid { max-width: 100%; min-width: 60%; }
+  
+  /* 流程图缩放控制 */
+  .zoom-controls { position: fixed; bottom: 30px; right: 30px; display: flex; gap: 8px; z-index: 200; }
+  .zoom-btn { width: 40px; height: 40px; border-radius: 50%; border: 2px solid #e94560; background: #fff; color: #e94560; font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(0,0,0,0.15); transition: all 0.2s; }
+  .zoom-btn:hover { background: #e94560; color: #fff; }
+  .zoom-label { background: #fff; padding: 8px 12px; border-radius: 20px; font-size: 13px; color: #333; box-shadow: 0 2px 8px rgba(0,0,0,0.1); display: flex; align-items: center; }
   
   .note-box { background: #fff3cd; border-left: 4px solid #f39c12; padding: 12px 16px; margin: 12px 0; border-radius: 0 8px 8px 0; font-size: 13px; color: #856404; }
   .note-box.info { background: #d1ecf1; border-left-color: #17a2b8; color: #0c5460; }
@@ -185,10 +191,10 @@ graph TD
 
     subgraph Stage3["阶段3: 审批流"]
         E --> F{付款金额}
-        F -->|≤ ¥5,000| G1[部门经理审批]
-        F -->|¥5,001~50,000| G2[财务主管审批]
-        F -->|> ¥50,000| G3[总经理审批]
-        F -->|> ¥200,000| G4[董事会审批]
+        F -->|"5千以下"| G1[部门经理审批]
+        F -->|"5千-5万"| G2[财务主管审批]
+        F -->|"5万-20万"| G3[总经理审批]
+        F -->|"20万以上"| G4[董事会审批]
         G1 & G2 & G3 & G4 --> H{审批结果}
         H -->|驳回| I[退回申请人<br>附审批意见]
         H -->|通过| J[进入待付款队列]
@@ -240,27 +246,24 @@ graph TD
   <div class="flow-container">
     <div class="mermaid">
 graph LR
-    subgraph 核销模式
-        direction TB
-        subgraph M1["模式1: 一对一核销<br><small>一笔付款核销一张应付</small>"]
-            M1A[付款单 ¥50,000] --> M1B[应付单A ¥50,000]
-        end
-        subgraph M2["模式2: 多对一核销<br><small>多笔付款核销一张应付<br><em>(分期付款场景)</em>"]
-            M2A[第1次付款 ¥30,000] --> M2B[应付单 ¥80,000]
-            M2C[第2次付款 ¥50,000] --> M2B
-        end
-        subgraph M3["模式3: 一对多核销<br><small>一笔付款核销多张应付<br><em>(合并付款场景)</em>"]
-            M3A[付款单 ¥100,000] --> M3B[应付单A ¥40,000]
-            M3A --> M3C[应付单B ¥35,000]
-            M3A --> M3D[应付单C ¥25,000]
-        end
-        subgraph M4["模式4: 多对多核销<br><small>多笔付款核销多张应付<br><em>(月结综合场景)</em>"]
-            M4A[付款单1 ¥60,000] --> M4E[应付单X ¥45,000]
-            M4B[付款单2 ¥40,000] --> M4E
-            M4A --> M4F[应付单Y ¥30,000]
-            M4B --> M4F
-            M4B --> M4G[应付单Z ¥25,000]
-        end
+    subgraph M1["模式1: 一对一核销 - 一笔付款核销一张应付"]
+        M1A["付款单 50,000"] --> M1B["应付单A 50,000"]
+    end
+    subgraph M2["模式2: 多对一核销 - 多笔付款核销一张应付(分期)"]
+        M2A["第1次付款 30,000"] --> M2B["应付单 80,000"]
+        M2C["第2次付款 50,000"] --> M2B
+    end
+    subgraph M3["模式3: 一对多核销 - 一笔付款核销多张应付(合并)"]
+        M3A["付款单 100,000"] --> M3B["应付单A 40,000"]
+        M3A --> M3C["应付单B 35,000"]
+        M3A --> M3D["应付单C 25,000"]
+    end
+    subgraph M4["模式4: 多对多核销 - 多笔付款核销多张应付(月结)"]
+        M4A["付款单1 60,000"] --> M4E["应付单X 45,000"]
+        M4B["付款单2 40,000"] --> M4E
+        M4A --> M4F["应付单Y 30,000"]
+        M4B --> M4F
+        M4B --> M4G["应付单Z 25,000"]
     end
   </div>
 
@@ -288,7 +291,7 @@ graph TD
     
     D --> D1[核销金额 = 本次付款金额]
     D1 --> D2[应付余额 = 原余额 - 核销金额]
-    D2 --> D3[尾差 ≤ ¥1 ?]
+    D2 --> D3{"尾差1元以内?"}
     D3 -->|是| D4[自动全额核销<br>尾差计入财务费用-尾差]
     D3 -->|否| D5[保留未核销余额<br>等下次继续付]
 
@@ -479,7 +482,7 @@ graph TD
   <div class="flow-container">
     <div class="mermaid">
 graph TD
-    subgraph E1["异常1: 付款失败"]
+    subgraph E1["异常1 — 付款失败"]
         A1[银行返回失败] --> B1{失败原因}
         B1 -->|余额不足| C1[通知出纳<br>充值或换账户]
         B1 -->|账户冻结| C2[联系银行解冻<br>标记账户异常]
@@ -488,7 +491,7 @@ graph TD
         C1 & C2 & C3 & C4 --> D1[修正后重新走审批]
     end
 
-    subgraph E2["异常2: 付款后供应商否认"]
+    subgraph E2["异常2 — 付款后供应商否认"]
         A2[供应商称未收到] --> B2[查询银行流水]
         B2 --> C5{银行状态}
         C5 -->|已到账| D2[提供银行回单<br>要求供应商核实]
@@ -496,7 +499,7 @@ graph TD
         C5 -->|处理中| D4[等待2小时<br>仍异常则人工介入]
     end
 
-    subgraph E3["异常3: 重复付款"]
+    subgraph E3["异常3 — 重复付款"]
         A3[系统检测/人工发现<br>重复付款] --> B3[立即冻结<br>重复金额]
         B3 --> C6{资金状态}
         C6 -->|未出账| D5[取消付款指令]
@@ -504,7 +507,7 @@ graph TD
         D6 --> D7[供应商退款后<br>红字冲销]
     end
 
-    subgraph E4["异常4: 退货/冲销"]
+    subgraph E4["异常4 — 退货冲销"]
         A4[采购退货] --> B4[生成退货单]
         B4 --> C7{已付款?}
         C7 -->|已付全款| D8[全额冲销<br>红字凭证]
@@ -540,6 +543,14 @@ graph TD
   Dev_Dept ERP 财务管理系统 — 实付付款模块详细流程图 v1.0 | 对标金蝶云星空 | 2026-04-15
 </div>
 
+<!-- 缩放控制按钮 -->
+<div class="zoom-controls">
+  <button class="zoom-btn" onclick="zoomOut()" title="缩小">−</button>
+  <div class="zoom-label" id="zoomLevel">150%</div>
+  <button class="zoom-btn" onclick="zoomIn()" title="放大">+</button>
+  <button class="zoom-btn" onclick="zoomReset()" title="重置">⟲</button>
+</div>
+
 <script>
   mermaid.initialize({ 
     startOnLoad: true, 
@@ -551,9 +562,26 @@ graph TD
       lineColor: '#555',
       secondaryColor: '#0f3460',
       tertiaryColor: '#f8f9fa',
-      fontSize: '13px'
-    }
+      fontSize: '18px'
+    },
+    flowchart: { htmlLabels: true, curve: 'basis', padding: 16, useMaxWidth: false }
   });
+
+  /* 流程图缩放控制 */
+  let currentZoom = 1.5;
+  const zoomStep = 0.25;
+  function applyZoom() {
+    document.querySelectorAll('.flow-container .mermaid').forEach(el => {
+      el.style.transform = 'scale(' + currentZoom + ')';
+      el.style.transformOrigin = 'top center';
+    });
+    const label = document.getElementById('zoomLevel');
+    if (label) label.textContent = Math.round(currentZoom * 100) + '%';
+  }
+  function zoomIn() { currentZoom = Math.min(3, currentZoom + zoomStep); applyZoom(); }
+  function zoomOut() { currentZoom = Math.max(0.5, currentZoom - zoomStep); applyZoom(); }
+  function zoomReset() { currentZoom = 1.5; applyZoom(); }
+  document.addEventListener('DOMContentLoaded', function() { applyZoom(); });
 
   function navTo(el) {
     document.querySelectorAll('.nav-bar a').forEach(a => a.classList.remove('active'));
