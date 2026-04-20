@@ -1,0 +1,1119 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>发票查验模块规格书</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: 'PingFang SC', 'Microsoft YaHei', -apple-system, sans-serif;
+  background: #f8fafc;
+  color: #334155;
+  line-height: 1.8;
+  font-size: 15px;
+}
+.container {
+  max-width: 960px;
+  margin: 0 auto;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+  padding: 3rem 3.5rem;
+}
+.back-link {
+  display: inline-block;
+  margin-bottom: 1.5rem;
+  color: #6366f1;
+  text-decoration: none;
+  font-size: 0.875rem;
+}
+.back-link:hover { text-decoration: underline; }
+.doc-header {
+  border-bottom: 3px solid #6366f1;
+  padding-bottom: 1.5rem;
+  margin-bottom: 2rem;
+}
+.doc-header h1 {
+  font-size: 1.75rem;
+  color: #1e293b;
+  margin-bottom: 0.75rem;
+}
+.doc-meta {
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  font-size: 0.85rem;
+  color: #64748b;
+}
+.doc-meta span { background: #f1f5f9; padding: 0.25rem 0.75rem; border-radius: 20px; }
+.content h1 { font-size: 1.4rem; margin: 2rem 0 1rem; color: #6366f1; border-bottom: 2px solid #e2e8f0; padding-bottom: 0.5rem; }
+.content h2 { font-size: 1.2rem; margin: 1.75rem 0 0.75rem; color: #1e293b; }
+.content h3 { font-size: 1.05rem; margin: 1.25rem 0 0.5rem; color: #475569; }
+.content p { margin: 0.75rem 0; }
+.content ul, .content ol { margin: 0.75rem 0; padding-left: 1.75rem; }
+.content li { margin: 0.4rem 0; }
+.content table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.25rem 0;
+  font-size: 0.875rem;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid #e2e8f0;
+}
+.content th, .content td {
+  border: 1px solid #e2e8f0;
+  padding: 0.75rem 1rem;
+  text-align: left;
+}
+.content th { background: #f1f5f9; font-weight: 600; color: #1e293b; }
+.content tr:hover td { background: #fafbfc; }
+.content pre {
+  background: #1e293b;
+  color: #e2e8f0;
+  padding: 1.25rem;
+  border-radius: 8px;
+  overflow-x: auto;
+  margin: 1rem 0;
+  font-size: 0.8rem;
+  line-height: 1.6;
+}
+.content code {
+  background: #f1f5f9;
+  color: #6366f1;
+  padding: 0.15rem 0.4rem;
+  border-radius: 4px;
+  font-size: 0.85em;
+  font-family: 'Consolas', monospace;
+}
+.content pre code {
+  background: transparent;
+  color: inherit;
+  padding: 0;
+}
+.toc { background: #f8fafc; padding: 1.5rem; border-radius: 8px; margin: 1.5rem 0; }
+.toc h3 { margin-top: 0 !important; }
+.toc ul { margin: 0.5rem 0; }
+</style>
+</head>
+<body>
+<div class="container">
+  <a href="../index.html" class="back-link">← 返回目录</a>
+  <div class="doc-header">
+    <h1>发票查验模块规格书</h1>
+    <div class="doc-meta">
+      <span>📋 V1.0</span>
+      <span>📅 2025-01-15</span>
+      <span>🏢 Dev_Dept</span>
+    </div>
+  </div>
+  <div class="content">
+    <h1>发票查验模块 - 技术规格说明书</h1>
+<h2>Invoice Verification Module — Technical Specification</h2>
+<p>> <strong>项目</strong>: Dev_Dept ERP 财务管理系统  </p>
+<p>> <strong>模块</strong>: 发票查验（Invoice Verification）  </p>
+<p>> <strong>版本</strong>: v1.0  </p>
+<p>> <strong>日期</strong>: 2026-04-14  </p>
+<p>> <strong>对标系统</strong>: 金蝶云星空 → 发票管理 → 发票采集/查验  </p>
+<p>> <strong>状态</strong>: P0优先级 — 合规底线需求  </p>
+<p>---</p>
+<h2>1. 模块概述</h2>
+<h3>1.1 业务定位</h3>
+<p>发票查验模块是ERP财务系统的<strong>合规防火墙</strong>，负责对进入系统的所有增值税发票进行真伪核验、状态检查和信息提取。它位于"发票录入"节点之后、"应付/应收挂账"之前，是业财数据质量的第一道关卡。</p>
+<pre><code>┌─────────────┐     ┌──────────────┐     ┌──────────────┐
+│   OCR/手工    │────▶│  🛡️ 发票查验   │────▶│  应收/应付    │
+│   录入发票    │     │  (本模块)      │     │  挂账入账     │
+└─────────────┘     └──────────────┘     └──────────────┘
+                          │
+                   ┌──────┴──────┐
+                   ▼             ▼
+              ┌─────────┐  ┌──────────┐
+              │ 真伪校验 │  │ 状态检测  │
+              └─────────┘  │ 作废/红冲 │
+                           └──────────┘</code></pre>
+<h3>1.2 核心能力</h3>
+<table>
+<tr><th>能力</th><th>描述</th><th>优先级</th></tr>
+<tr><th>🔍 发票真伪查验</th><th>通过税局数据库实时核验发票是否存在、信息是否匹配</th><th>P0</th></tr>
+<tr><th>⚠️ 异常状态检测</th><th>自动识别作废、红冲、异常等状态发票</th><th>P0</th></tr>
+<tr><th>📄 全票种支持</th><th>支持专票、普票、电子票、机动车、通行费等12种发票类型</th><th>P0</th></tr>
+<tr><th>🔄 批量查验</th><th>支持Excel/图片批量导入，异步批量处理</th><th>P1</th></tr>
+<tr><th>📊 查验台账</th><th>完整的查验记录留存，满足审计追溯要求</th><th>P0</th></tr>
+<tr><th>🔗 与业务单据联动</th><th>查验结果自动回写采购入库单/销售发货单</th><th>P1</th></tr>
+</table>
+<p>---</p>
+<h2>2. 接口选型</h2>
+<h3>2.1 选型结论：腾讯云 VatInvoiceVerifyNew（新版）</h3>
+<p>> 你之前访问的老接口 <code>VatInvoiceVerify</code> 已下线，<strong>新版接口为 <code>VatInvoiceVerifyNew</code></strong>。</p>
+<table>
+<tr><th>维度</th><th>说明</th></tr>
+<tr><th>**服务商**</th><th>腾讯云 OCR 文字识别</th></tr>
+<tr><th>**接口名称**</th><th>`VatInvoiceVerifyNew`</th></tr>
+<tr><th>**请求域名**</th><th>`ocr.tencentcloudapi.com`</th></tr>
+<tr><th>**API版本**</th><th>`2018-11-19`</th></tr>
+<tr><th>**QPS限制**</th><th>20次/秒（默认）</th></tr>
+<tr><th>**SDK支持**</th><th>Python / Java / Node.js / Go / PHP / .NET / C++ / Ruby</th></tr>
+<tr><th>**计费方式**</th><th>按调用次数计费（需在控制台开通）</th></tr>
+</table>
+<h3>2.2 选型理由</h3>
+<ul><li>✅ 我们技术栈与腾讯生态天然亲近（公众号、小程序均在腾讯平台）</li><li>✅ 支持12种发票类型，覆盖全电发票（数电票）</li><li>✅ 返回完整票面信息，不仅验真还能提取结构化数据</li><li>✅ Python SDK 成熟，对接效率高</li><li>✅ 相比阿里云/百度的同类接口，文档更清晰</li></ul>
+<h3>2.3 备选方案</h3>
+<table>
+<tr><th>方案</th><th>适用场景</th><th>切换条件</th></tr>
+<tr><th>阿里云 `VerifyVATInvoice`</th><th>多云容灾</th><th>腾讯云服务不可用时</th></tr>
+<tr><th>电子税务局直连API</th><th>零成本、最高权威性</th><th>日均查验量 > 500次后考虑切换</th></tr>
+<tr><th>国税局查验平台 + RPA</th><th>零成本但自动化程度低</th><th>MVP阶段临时方案</th></tr>
+</table>
+<p>---</p>
+<h2>3. 技术规格</h2>
+<h3>3.1 支持的发票类型（12种）</h3>
+<table>
+<tr><th>票种代码</th><th>发票类型</th><th>必填特殊字段</th><th>备注</th></tr>
+<tr><th>`01`</th><th>增值税专用发票</th><th>Amount(不含税金额)</th><th>最常用</th></tr>
+<tr><th>`02`</th><th>货物运输业增值税专用发票</th><th>Amount</th><th>较少使用</th></tr>
+<tr><th>`03`</th><th>机动车销售统一发票</th><th>Amount</th><th>含车辆信息返回</th></tr>
+<tr><th>`04`</th><th>增值税普通发票</th><th>CheckCode(后6位)</th><th>个人消费常见</th></tr>
+<tr><th>`08`</th><th>增值税电子专用发票（含全电）</th><th>Amount(全电时为价税合计)</th><th>**全面推广中★**</th></tr>
+<tr><th>`10`</th><th>增值税电子普通发票（含全电）</th><th>CheckCode(后6位)</th><th>**全面推广中★**</th></tr>
+<tr><th>`11`</th><th>增值税普通发票（卷式）</th><th>CheckCode(后6位)</th><th>餐饮/零售常见</th></tr>
+<tr><th>`14`</th><th>增值税电子（通行费）发票</th><th>CheckCode</th><th>ETC相关</th></tr>
+<tr><th>`15`</th><th>二手车销售统一发票</th><th>Amount</th><th>含车辆信息返回</th></tr>
+<tr><th>`16`</th><th>财政发票</th><th>Amount</th><th>医疗票据等</th></tr>
+<tr><th>`32`</th><th>区块链发票（深圳）</th><th>SellerTaxCode + Amount</th><th>注：云南已下线</th></tr>
+<tr><th>—</th><th>**通用机打电子发票**</th><th>RegionCode + SellerTaxCode</th><th>地方性电子发票</th></tr>
+</table>
+<h3>3.2 API请求规范</h3>
+<p>#### 请求地址</p>
+<pre><code>POST https://ocr.tencentcloudapi.com/
+Content-Type: application/json
+X-TC-Action: VatInvoiceVerifyNew</code></pre>
+<p>#### 公共参数</p>
+<pre><code>{
+    "SecretId": "你的腾讯云SecretId",
+    "SecretKey": "你的腾讯云SecretKey",
+    "Action": "VatInvoiceVerifyNew",
+    "Version": "2018-11-19",
+    "Region": "ap-guangzhou",
+    "Timestamp": 1744656000,
+    "Nonce": 123456789
+}</code></pre>
+<p>> 公共参数由腾讯云SDK自动签名处理，手动调用需按签名算法v3生成Authorization头。</p>
+<p>#### 业务请求参数</p>
+<table>
+<tr><th>参数名</th><th>类型</th><th>必填</th><th>说明</th><th>示例值</th></tr>
+<tr><th>`InvoiceNo`</th><th>String</th><th>✅</th><th>发票号码（8位或20位全电票）</th><th>`"04138864"`</th></tr>
+<tr><th>`InvoiceDate`</th><th>String</th><th>✅</th><th>开票日期，格式 YYYY-MM-DD，不支持当天</th><th>`"2025-01-15"`</th></tr>
+<tr><th>`InvoiceCode`</th><th>String</th><th>条件</th><th>发票代码（10或12位），**全电发票为空**</th><th>`"144002288010"`</th></tr>
+<tr><th>`InvoiceKind`</th><th>String</th><th>否</th><th>票种类型代码</th><th>`"04"`</th></tr>
+<tr><th>`CheckCode`</th><th>String</th><th>条件</th><th>校验码后6位（普票/卷票/通行费必填）</th><th>`"921630"`</th></tr>
+<tr><th>`Amount`</th><th>String</th><th>条件</th><th>不含税金额（专票必填）；全电票填**价税合计**</th><th>`"498.90"`</th></tr>
+<tr><th>`RegionCode`</th><th>String</th><th>条件</th><th>地区编码（通用机打电子发票必填）</th><th>`"4400"`</th></tr>
+<tr><th>`SellerTaxCode`</th><th>String</th><th>条件</th><th>销方税号（区块链/通用机打必填）</th><th>`"44078***401X"`</th></tr>
+<tr><th>`EnableCommonElectronic`</th><th>Boolean</th><th>否</th><th>是否开启通用机打电子发票，默认false</th><th>`true`</th></tr>
+<tr><th>`EnableTodayInvoice`</th><th>Boolean</th><th>否</th><th>是否允许查验当日发票，默认false</th><th>`true`</th></tr>
+</table>
+<p>#### 各票种参数组合速查表</p>
+<pre><code>┌──────────────────────────────────────────────────────────────┐
+│                  参数组合决策树                                │
+├──────────────────────────────────────────────────────────────┤
+│                                                              │
+│  输入: 发票类型?                                              │
+│  ├── 专票(01)/电子专票(08)  → InvoiceNo + Date + Amount       │
+│  ├── 普票(04)/电子普票(10)/卷票(11)/通行费(14)                │
+│  │   → InvoiceNo + Date + CheckCode                           │
+│  ├── 机动车(03)/二手车(15)  → InvoiceNo + Date + Amount       │
+│  ├── 全电发票(无InvoiceCode) → InvoiceNo + Date + Amount(价税) │
+│  ├── 通用机打电子        → + RegionCode + SellerTaxCode       │
+│  └── 区块链(32)          → + SellerTaxCode + Amount           │
+│                                                              │
+│  ★ 所有场景共同必填: InvoiceNo(发票号码) + InvoiceDate(开票日期)│
+└──────────────────────────────────────────────────────────────┘</code></pre>
+<h3>3.3 返回数据结构</h3>
+<p>#### 顶层响应</p>
+<pre><code>{
+    "Response": {
+        "RequestId": "f3cd280c-6d3a-41c5-8493-4ed98f8b2755",
+        
+        // 增值税发票基础信息（大部分票种都有）
+        "Invoice": { /* 见下方详细字段 */ },
+        
+        // 机动车发票特有信息（仅03类型）
+        "VehicleInvoiceInfo": { },
+        
+        // 二手车发票特有信息（仅15类型）
+        "UsedVehicleInvoiceInfo": { },
+        
+        // 通行费发票列表（仅14类型）
+        "PassInvoiceInfoList": [ ],
+        
+        // 全电铁路客票
+        "ElectronicTrainTicket": { },
+        
+        // 全电航空行程单
+        "ElectronicAirTransport": { },
+        
+        // 财政发票（仅16类型）
+        "FinancialBill": { }
+    }
+}</code></pre>
+<p>#### Invoice 核心字段（最重要）</p>
+<table>
+<tr><th>字段名</th><th>类型</th><th>说明</th><th>示例</th></tr>
+<tr><th>`Code`</th><th>String</th><th>发票代码</th><th>`"144002288010"`</th></tr>
+<tr><th>`Number`</th><th>String</th><th>发票号码</th><th>`"04138864"`</th></tr>
+<tr><th>`Date`</th><th>String</th><th>开票日期</th><th>`"2025-01-15"`</th></tr>
+<tr><th>`AmountWithTax`</th><th>String</th><th>价税合计（含税金额）</th><th>`"573.70"`</th></tr>
+<tr><th>`AmountWithoutTax`</th><th>String</th><th>不含税金额</th><th>`"498.90"`</th></tr>
+<tr><th>`TaxAmount`</th><th>String</th><th>税额</th><th>`"74.80"`</th></tr>
+<tr><th>`BuyerName`</th><th>String</th><th>购方名称</th><th>`"XX科技有限公司"`</th></tr>
+<tr><th>`BuyerTaxCode`</th><th>String</th><th>购方税号</th><th>`"91440***MA5XXX"`</th></tr>
+<tr><th>`SellerName`</th><th>String</th><th>销方名称</th><th>`"广州市天河区XX公司"`</th></tr>
+<tr><th>`SellerTaxCode`</th><th>String</th><th>销方税号</th><th>`"91440***401X"`</th></tr>
+<tr><th>`Type`</th><th>String</th><th>发票类型代码</th><th>`"102"`</th></tr>
+<tr><th>`CheckCode`</th><th>String</th><th>校验码</th><th>`"921630"`</th></tr>
+<tr><th>`IsAbandoned`</th><th>String</th><th>是否作废</th><th>`"Y"` / `"N"`</th></tr>
+<tr><th>`RedLetterInvoiceMark`</th><th>Boolean</th><th>红字标记</th><th>`true` / `false`</th></tr>
+<tr><th>`Items`</th><th>Array</th><th>发票明细（商品行列表）</th><th>`[{"Name":"...","Amount":"..."}]`</th></tr>
+<tr><th>`Remark`</th><th>String</th><th>备注</th><th>`""`</th></tr>
+<tr><th>`MachineNo`</th><th>String</th><th>机打号码</th><th>`""`</th></tr>
+<tr><th>`TrafficFreeFlag`</th><th>String</th><th>是否免税标志</th><th>`"N"`</th></tr>
+</table>
+<h3>3.4 关键限制条件</h3>
+<table>
+<tr><th>限制项</th><th>规则</th><th>处理建议</th></tr>
+<tr><th>**时间范围**</th><th>仅支持**5年内**开具的发票</th><th>超范围提示用户走人工渠道</th></tr>
+<tr><th>**当日发票**</th><th>默认**不支持**查验当天开票</th><th>设置 `EnableTodayInvoice=true` 可开启</th></tr>
+<tr><th>**查验频次**</th><th>同一发票每日最多**5次**</th><th>系统内做去重缓存，重复查询直接返回缓存结果</th></tr>
+<tr><th>**格式要求**</th><th>日期必须 `YYYY-MM-DD`，金额精确到分</th><th>前端录入时即校验格式</th></tr>
+<tr><th>**全电发票**</th><th>`InvoiceCode` 为空，`Amount` 为价税合计</th><th>系统根据号码长度(20位)自动识别全电票</th></tr>
+</table>
+<h3>3.5 错误码映射</h3>
+<table>
+<tr><th>错误码</th><th>含义</th><th>用户提示文案</th><th>系统处理</th></tr>
+<tr><th>`ResourceNotFound.NoInvoice`</th><th>发票不存在</th><th>❌ 该发票在税务局系统中未找到，可能为假票</th><th>**拦截**，标记为可疑</th></tr>
+<tr><th>`FailedOperation.InvoiceMismatch`</th><th>发票数据不一致</th><th>❌ 发票信息与税局记录不匹配，请核对输入</th><th>**拦截**，标记为异常</th></tr>
+<tr><th>`FailedOperation.CountLimitError`</th><th>今日次数达限</th><th>⚠️ 该发票今日查验次数已达上限(5次)，请明日再试</th><th>缓存上次结果返回</th></tr>
+<tr><th>`ResourceUnavailable.TaxNetworkError`</th><th>税务局网络异常</th><th>⚠️ 税务局系统繁忙，请稍后重试</th><th>加入重试队列</th></tr>
+<tr><th>`InvalidParameterValue.Ticket*`</th><th>参数格式错误</th><th>请检查发票代码/号码/日期是否正确</th><th>前端校验拦截</th></tr>
+</table>
+<p>---</p>
+<h2>4. 系统架构设计</h2>
+<h3>4.1 模块架构图</h3>
+<pre><code>┌────────────────────────────────────────────────────────────────┐
+│                     ERP 财务管理系统                            │
+├────────────────────────────────────────────────────────────────┤
+│                                                                │
+│  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────────────┐   │
+│  │ 采购入库单│  │销售发货单│  │ 手工录入  │  │ 批量导入     │   │
+│  └────┬─────┘  └────┬─────┘  └────┬─────┘  └──────┬───────┘   │
+│       │             │             │               │            │
+│       ▼             ▼             ▼               ▼            │
+│  ┌────────────────────────────────────────────────────────┐   │
+│  │              📥 发票输入层 (Input Layer)                │   │
+│  │  • OCR识别 (腾讯云VatInvoiceOCR)                       │   │
+│  │  • 手工录入表单 (带格式校验)                            │   │
+│  │  • Excel批量导入 (模板校验)                             │   │
+│  │  • 图片/PDF上传 (OCR预处理)                              │   │
+│  └────────────────────┬───────────────────────────────────┘   │
+│                       │                                        │
+│                       ▼                                        │
+│  ┌────────────────────────────────────────────────────────┐   │
+│  │            🛡️ 发票查验引擎 (Verification Engine)         │   │
+│  │                                                          │   │
+│  │  ┌──────────────┐  ┌──────────────┐  ┌─────────────┐  │   │
+│  │  │ 本地预校验    │→│  调用查验API  │→│ 结果解析     │  │   │
+│  │  │ 格式/去重    │  │ VatInvoice   │  │ 状态判断     │  │   │
+│  │  │              │  │ VerifyNew    │  │ 数据标准化   │  │   │
+│  │  └──────────────┘  └──────────────┘  └─────────────┘  │   │
+│  │                                                          │   │
+│  │  ┌──────────────┐  ┌──────────────┐                     │   │
+│  │  │ 查验缓存层   │  │ 重试队列     │                     │   │
+│  │  │ (Redis/Memory)│  │ (失败自动重试)│                    │   │
+│  │  └──────────────┘  └──────────────┘                     │   │
+│  └────────────────────┬───────────────────────────────────┘   │
+│                       │                                        │
+│          ┌────────────┼────────────┐                           │
+│          ▼            ▼            ▼                           │
+│   ┌──────────┐ ┌──────────┐ ┌──────────┐                      │
+│   │ ✅ 通过   │ │ ⚠️ 异常   │ │ ❌ 拒绝   │                      │
+│   │ 正常入账  │ │ 待人工审核│ │ 拦截报警  │                      │
+│   └────┬─────┘ └────┬─────┘ └────┬─────┘                      │
+│        │            │            │                             │
+│        ▼            ▼            ▼                             │
+│   ┌──────────┐ ┌──────────┐ ┌──────────┐                      │
+│   │ 应付挂账  │ │ 异常池   │ │ 日志审计  │                      │
+│   │ 应收确认  │ │ 通知财务  │ │ 风险报告  │                      │
+│   └──────────┘ └──────────┘ └──────────┘                      │
+│                                                                │
+│  ┌────────────────────────────────────────────────────────┐   │
+│  │              📊 查验台账存储层                           │   │
+│  │  • invoice_verification_log (查验记录主表)              │   │
+│  │  • invoice_verification_cache (缓存表)                  │   │
+│  │  • invoice_exception_pool (异常池)                      │   │
+│  └────────────────────────────────────────────────────────┘   │
+└────────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+                 ┌─────────────────────────┐
+                 │  腾讯云 API Gateway      │
+                 │  ocr.tencentcloudapi.com │
+                 │  Action: VatInvoiceVerifyNew │
+                 └─────────────────────────┘</code></pre>
+<h3>4.2 数据库设计</h3>
+<p>#### 主表：invoice_verification_log（查验记录）</p>
+<pre><code>CREATE TABLE invoice_verification_log (
+    id              BIGINT PRIMARY KEY AUTO_INCREMENT COMMENT '主键ID',
+    
+    -- 发票基本信息
+    invoice_code    VARCHAR(20)   DEFAULT NULL    COMMENT '发票代码(全电票为空)',
+    invoice_no      VARCHAR(20)   NOT NULL        COMMENT '发票号码',
+    invoice_date    DATE          NOT NULL        COMMENT '开票日期',
+    invoice_kind    VARCHAR(4)    DEFAULT NULL    COMMENT '票种类型代码',
+    
+    -- 查验请求信息
+    check_code      VARCHAR(10)   DEFAULT NULL    COMMENT '校验码后6位',
+    amount_input    DECIMAL(14,2) DEFAULT NULL    COMMENT '输入金额',
+    source_type     VARCHAR(20)   NOT NULL        COMMENT '来源: purchase/sale/manual/batch/import',
+    source_ref_id   BIGINT        DEFAULT NULL    COMMENT '关联的业务单据ID',
+    
+    -- 查验结果
+    verify_status   TINYINT       NOT NULL        COMMENT '状态: 0待查/1通过/2异常/3拒绝/4超时',
+    is_valid        BOOLEAN       DEFAULT NULL    COMMENT '真伪: true有效/false无效',
+    is_abandoned    CHAR(1)       DEFAULT NULL    COMMENT '作废: Y/N',
+    red_letter_mark BOOLEAN       DEFAULT NULL    COMMENT '红字标记',
+    
+    -- 税局返回的完整票面信息(JSON)
+    tax_response    JSON          DEFAULT NULL    COMMENT '税局原始响应(完整JSON)',
+    
+    -- 标准化后的关键字段(冗余存储,方便查询)
+    buyer_name      VARCHAR(200)  DEFAULT NULL    COMMENT '购方名称',
+    buyer_tax_code  VARCHAR(30)   DEFAULT NULL    COMMENT '购方税号',
+    seller_name     VARCHAR(200)  DEFAULT NULL    COMMENT '销方名称',
+    seller_tax_code VARCHAR(30)   DEFAULT NULL    COMMENT '销方税号',
+    amount_with_tax DECIMAL(14,2) DEFAULT NULL    COMMENT '价税合计',
+    amount_no_tax   DECIMAL(14,2) DEFAULT NULL    COMMENT '不含税金额',
+    tax_amount      DECIMAL(14,2) DEFAULT NULL    COMMENT '税额',
+    
+    -- 元数据
+    api_request_id  VARCHAR(50)   DEFAULT NULL    COMMENT '腾讯云RequestID(用于问题追踪)',
+    api_cost_ms     INT           DEFAULT NULL    COMMENT 'API耗时(ms)',
+    error_code      VARCHAR(50)   DEFAULT NULL    COMMENT '错误码',
+    error_message   VARCHAR(500)  DEFAULT NULL    COMMENT '错误信息',
+    retry_count     TINYINT       DEFAULT 0       COMMENT '重试次数',
+    
+    -- 审计字段
+    verified_by     VARCHAR(50)   DEFAULT NULL    COMMENT '操作人(system/user_id)',
+    verified_at     DATETIME      NOT NULL        COMMENT '查验时间',
+    created_at      DATETIME      DEFAULT CURRENT_TIMESTAMP,
+    updated_at      DATETIME      DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    
+    -- 索引
+    INDEX idx_invoice_key (invoice_code, invoice_no),
+    INDEX idx_verify_status (verify_status),
+    INDEX idx_source (source_type, source_ref_id),
+    INDEX idx_verified_at (verified_at),
+    INDEX idx_seller_tax (seller_tax_code)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 
+COMMENT='发票查验记录主表 - 每张发票每次查验一条记录';</code></pre>
+<p>#### 异常池表：invoice_exception_pool</p>
+<pre><code>CREATE TABLE invoice_exception_pool (
+    id              BIGINT PRIMARY KEY AUTO_INCREMENT,
+    verify_log_id   BIGINT        NOT NULL        COMMENT '关联查验记录ID',
+    exception_type  VARCHAR(30)   NOT NULL        COMMENT '异常类型',
+    exception_desc  VARCHAR(500)  DEFAULT NULL    COMMENT '异常描述',
+    risk_level      TINYINT       NOT NULL DEFAULT 2 COMMENT '风险等级: 1低/2中/3高/4严重',
+    status          VARCHAR(20)   DEFAULT 'PENDING' COMMENT '处理状态: PENDING/REVIEWED/RESOLVED/DISMISS',
+    assigned_to     VARCHAR(50)   DEFAULT NULL    COMMENT '指派给谁处理',
+    resolved_by     VARCHAR(50)   DEFAULT NULL    COMMENT '解决人',
+    resolved_at     DATETIME      DEFAULT NULL    COMMENT '解决时间',
+    resolution_note VARCHAR(1000) DEFAULT NULL    COMMENT '处理备注',
+    created_at      DATETIME      DEFAULT CURRENT_TIMESTAMP,
+    INDEX idx_risk_level (risk_level),
+    INDEX idx_status (status)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 
+COMMENT='发票异常处理池';</code></pre>
+<p>---</p>
+<h2>5. 业务流程设计</h2>
+<h3>5.1 单张发票查验流程</h3>
+<pre><code>┌──────────────────────────────────────────────────────────────────┐
+│                    单张发票查验标准流程                             │
+└──────────────────────────────────────────────────────────────────┘
+
+  开始
+   │
+   ▼
+┌──────────────┐
+│ ① 接收发票    │  来源: 手工录入/OCR识别/业务单据关联
+│   输入信息    │  必填: 发票号码 + 开票日期
+└──────┬───────┘
+       │
+       ▼
+┌──────────────┐     ┌──────────────────────┐
+│ ② 本地预校验  │────▶│ 格式错误?             │
+│ • 号码长度    │     │ 日期超出范围?         │
+│ • 日期格式    │     │ 必填项缺失?           │
+│ • 去重检查    │     └──────────────────────┘
+└──────┬───────┘       │
+       │          是   │  返回前端错误提示
+       │──────────────▶│  (不调用API,节省费用)
+       │ 否
+       ▼
+┌──────────────┐     ┌──────────────────────┐
+│ ③ 查询缓存    │────▶│ 缓存中有结果?         │
+│ (24小时内     │     │ 且未超过5次?          │
+│  同票去重)    │     └──────────────────────┘
+└──────┬───────┘       │
+       │          是   │  直接返回缓存结果
+       │──────────────▶│  记录来源为 CACHE_HIT
+       │ 否
+       ▼
+┌──────────────────────────┐
+│ ④ 调用腾讯云查验API       │
+│ Action: VatInvoiceVerifyNew │
+│ 超时设置: 10秒            │
+└──────────┬───────────────┘
+           │
+           ▼
+     ┌─────────────┐
+     │ 解析响应结果  │
+     └──┬──────┬───┘
+        │      │
+   正常返回   异常返回
+        │      │
+        ▼      ▼
+   ┌────────┐ ┌─────────────────────┐
+   │ ⑤ 结果 │ │ 错误码判断          │
+   │ 判断   │ │ • 网络异常→重试队列  │
+   │        │ │ • 超限→返回缓存      │
+   └──┬─┬───┘ │ • 参数错误→前端提示  │
+      │ │     │ • 发票不存在→拒绝    │
+   通过│ │异常  └─────────┬───────────┘
+      │ │                 │
+      ▼ ▼                 ▼
+   ┌────┐  ┌──────────┐  ┌──────────┐
+   │✅通过│  │⚠️异常池   │  │❌拒绝    │
+   │正常  │  │人工审核   │  │拦截+报警 │
+   └──┬─┘  └────┬─────┘  └────┬─────┘
+      │         │             │
+      ▼         ▼             ▼
+   写入台账   写入异常池     写入日志
+   返回成功   发送通知       返回失败原因</code></pre>
+<h3>5.2 查验状态定义</h3>
+<pre><code>class VerifyStatus:
+    """发票查验状态枚举"""
+    PENDING = 0      # 待查验（排队中）
+    PASSED = 1       # ✅ 通过 — 发票真实且状态正常
+    EXCEPTION = 2    # ⚠️ 异常 — 存在但有问题（作废/红冲/信息不一致）
+    REJECTED = 3     # ❌ 拒绝 — 不存在或确认为无效发票
+    TIMEOUT = 4      # ⏰ 超时 — API未及时响应，需重试
+
+
+class ExceptionType:
+    """异常类型枚举"""
+    ABANDONED = "ABANDONED"           # 已作废
+    RED_LETTER = "RED_LETTER"          # 红冲发票
+    MISMATCH = "MISMATCH"              # 信息不一致
+    DUPLICATE = "DUPLICATE"            # 重复报销风险
+    AMOUNT_DIFF = "AMOUNT_DIFF"        # 金额不符
+    TAX_CODE_INVALID = "TAX_INVALID"   # 税号异常
+    EXPIRED = "EXPIRED"                # 超过查验期限
+
+
+class RiskLevel:
+    """风险等级"""
+    LOW = 1      # 低风险 — 信息小偏差，可忽略
+    MEDIUM = 2   # 中风险 — 需要财务人工审核
+    HIGH = 3     # 高风险 — 可能涉及虚假发票
+    CRITICAL = 4 # 严重 — 确认异常，必须阻止入账</code></pre>
+<h3>5.3 批量查验流程</h3>
+<pre><code>批量导入 (Excel/图片多张)
+       │
+       ▼
+┌──────────────┐
+│ ① 解析并校验  │  Excel模板校验/图片OCR识别
+│   每张发票    │
+└──────┬───────┘
+       │
+       ▼
+┌──────────────┐
+│ ② 创建批次    │  生成 batch_id
+│   任务记录    │  状态: PROCESSING
+└──────┬───────┘
+       │
+       ▼
+┌──────────────────────────┐
+│ ③ 并发队列处理            │  并发数: 5 (QPS限制内)
+│  • 限流控制 (20次/秒)     │  • 失败自动重试 (最多3次)
+│  • 进度回调              │  • 断点续传
+└──────┬───────────────────┘
+       │
+       ▼
+┌──────────────┐
+│ ④ 汇总报告    │
+│  • 总数/通过/异常/拒绝 │
+│  • 异常清单    │
+│  • 导出Excel   │
+└──────────────┘</code></pre>
+<p>---</p>
+<h2>6. 接口设计（内部API）</h2>
+<h3>6.1 查验接口</h3>
+<pre><code>POST /api/v1/invoice/verify</code></pre>
+<p><strong>请求体：</strong></p>
+<pre><code>{
+    "invoice_code": "144002288010",
+    "invoice_no": "04138864",
+    "invoice_date": "2025-01-15",
+    "invoice_kind": "04",
+    "check_code": "921630",
+    "amount": null,
+    "source_type": "purchase",
+    "source_ref_id": 10023,
+    "force_refresh": false
+}</code></pre>
+<p><strong>响应体：</strong></p>
+<pre><code>{
+    "code": 0,
+    "message": "success",
+    "data": {
+        "verify_id": 10086,
+        "status": "PASSED",
+        "is_valid": true,
+        "result_source": "API",           // API / CACHE
+        "invoice_info": {
+            "code": "144002288010",
+            "number": "04138864",
+            "date": "2025-01-15",
+            "buyer_name": "XX科技",
+            "buyer_tax_code": "91440***MA5",
+            "seller_name": "广州市天河区XX店",
+            "seller_tax_code": "",
+            "amount_with_tax": "498.90",
+            "amount_without_tax": "0.00",
+            "tax_amount": "0.00",
+            "is_abandoned": "N"
+        },
+        "warnings": [],
+        "verified_at": "2026-04-14T16:30:00+08:00",
+        "cache_until": "2026-04-15T16:30:00+08:00"
+    }
+}</code></pre>
+<h3>6.2 查验结果查询</h3>
+<pre><code>GET /api/v1/invoice/verify/{verify_id}
+GET /api/v1/invoice/verify?invoice_no=xxx&invoice_code=xxx</code></pre>
+<h3>6.3 异常处理</h3>
+<pre><code>POST /api/v1/invoice/exception/{exception_id}/resolve
+// 人工处理异常
+
+GET /api/v1/invoice/exception/pending
+// 获取待处理的异常列表</code></pre>
+<h3>6.4 查验台账</h3>
+<pre><code>GET /api/v1/invoice/verification/log?page=1&size=20&status=PASSED&date_from=2026-01-01
+// 分页查询查验记录
+
+GET /api/v1/invoice/verification/stats?period=month
+// 查验统计: 通过率/异常率/各类型分布</code></pre>
+<p>---</p>
+<h2>7. Python实现参考</h2>
+<h3>7.1 核心调用封装</h3>
+<pre><code>"""
+发票查验核心模块 - Dev_Dept ERP Finance Module
+基于腾讯云 VatInvoiceVerifyNew 接口
+"""
+
+import json
+import hashlib
+import time
+from datetime import datetime, timedelta
+from typing import Optional, Dict, Any
+from dataclasses import dataclass, field
+from enum import IntEnum
+
+# === 依赖说明 ===
+# pip install tencentcloud-sdk-python-ocr
+# 或: pip install tencentcloud-sdk-python
+from tencentcloud.common.exception import TencentCloudSDKException
+from tencentcloud.common.profile import ClientProfile
+from tencentcloud.ocr.v20181119 import ocr_client, models
+
+
+# ==================== 数据模型 ====================
+
+class VerifyStatus(IntEnum):
+    """查验状态"""
+    PENDING = 0
+    PASSED = 1
+    EXCEPTION = 2
+    REJECTED = 3
+    TIMEOUT = 4
+
+
+class RiskLevel(IntEnum):
+    """风险等级"""
+    LOW = 1
+    MEDIUM = 2
+    HIGH = 3
+    CRITICAL = 4
+
+
+@dataclass
+class InvoiceInput:
+    """发票查验输入"""
+    invoice_no: str          # 发票号码 (必填)
+    invoice_date: str        # 开票日期 YYYY-MM-DD (必填)
+    invoice_code: str = ""   # 发票代码 (全电票为空)
+    invoice_kind: str = ""   # 票种类型
+    check_code: str = ""     # 校验码后6位
+    amount: str = ""         # 金额 (专票=不含税, 全电=价税合计)
+    region_code: str = ""    # 地区编码
+    seller_tax_code: ""      # 销方税号
+    source_type: str = "manual"  # 来源: purchase/sale/manual/batch
+    source_ref_id: int = 0   # 关联业务单据ID
+
+
+@dataclass
+class VerifyResult:
+    """查验结果"""
+    status: VerifyStatus
+    is_valid: Optional[bool] = None
+    message: str = ""
+    invoice_data: Dict[str, Any] = field(default_factory=dict)
+    warnings: list = field(default_factory=list)
+    request_id: str = ""
+    cost_ms: int = 0
+    result_source: str = ""  # API / CACHE / ERROR
+    cached_at: Optional[datetime] = None
+
+
+# ==================== 核心查验引擎 ====================
+
+class InvoiceVerifier:
+    """
+    发票查验引擎
+    
+    使用方式:
+        verifier = InvoiceVerifier(
+            secret_id="your_secret_id",
+            secret_key="your_secret_key"
+        )
+        result = verifier.verify(
+            InvoiceInput(
+                invoice_no="04138864",
+                invoice_date="2025-01-15",
+                invoice_code="144002288010",
+                amount="498.90"
+            )
+        )
+    """
+    
+    # 票种类型到必填参数的映射
+    KIND_REQUIRED_FIELDS = {
+        "01": ["amount"],       # 专票
+        "03": ["amount"],       # 机动车
+        "04": ["check_code"],   # 普票
+        "08": ["amount"],       # 电子专票
+        "10": ["check_code"],   # 电子普票
+        "11": ["check_code"],   # 卷票
+        "14": ["check_code"],   # 通行费
+        "15": ["amount"],       # 二手车
+        "16": ["amount"],       # 财政票据
+    }
+    
+    def __init__(
+        self,
+        secret_id: str,
+        secret_key: str,
+        region: str = "ap-guangzhou",
+        timeout: int = 10,
+        cache_ttl_hours: int = 24,
+    ):
+        self.secret_id = secret_id
+        self.secret_key = secret_key
+        self.region = region
+        self.timeout = timeout
+        self.cache_ttl = timedelta(hours=cache_ttl_hours)
+        
+        # 初始化腾讯云客户端
+        client_profile = ClientProfile()
+        client_profile.httpProfile.endpoint = "ocr.tencentcloudapi.com"
+        client_profile.httpProfile.reqTimeout = timeout
+        self.client = ocr_client.OcrClient(
+            credential={"secretId": secret_id, "secretKey": secret_key},
+            region=region,
+            profile=client_profile
+        )
+        
+        # 内存缓存 (生产环境应替换为Redis)
+        self._cache: Dict[str, tuple] = {}  # key -> (result_json, timestamp)
+    
+    def _make_cache_key(self, inp: InvoiceInput) -> str:
+        """生成缓存key"""
+        raw = f"{inp.invoice_code}|{inp.invoice_no}|{inp.invoice_date}"
+        return hashlib.md5(raw.encode()).hexdigest()
+    
+    def _get_from_cache(self, cache_key: str) -> Optional[Dict]:
+        """从缓存获取结果"""
+        if cache_key in self._cache:
+            result_data, ts = self._cache[cache_key]
+            if datetime.now() - ts < self.cache_ttl:
+                return result_data
+            else:
+                del self._cache[cache_key]
+        return None
+    
+    def _set_cache(self, cache_key: str, data: Dict):
+        """写入缓存"""
+        self._cache[cache_key] = (data, datetime.now())
+    
+    def _pre_validate(self, inp: InvoiceInput) -> tuple[bool, str]:
+        """
+        本地预校验
+        Returns: (is_valid, error_message)
+        """
+        # 1. 发票号码校验
+        if not inp.invoice_no or len(inp.invoice_no) < 8:
+            return False, f"发票号码格式错误: '{inp.invoice_no}'，应为8位或20位"
+        
+        # 2. 日期格式校验
+        try:
+            dt = datetime.strptime(inp.invoice_date, "%Y-%m-%d")
+            if dt > datetime.now():
+                return False, "开票日期不能晚于今天"
+            if (datetime.now() - dt).days > 365 * 5:
+                return False, "仅支持查验5年内的发票"
+        except ValueError:
+            return False, f"日期格式错误: '{inp.invoice_date}'，应为YYYY-MM-DD"
+        
+        # 3. 票种特定字段校验
+        if inp.invoice_kind:
+            required = self.KIND_REQUIRED_FIELDS.get(inp.invoice_kind, [])
+            for field in required:
+                value = getattr(inp, field, "")
+                if not value:
+                    field_names = {
+                        "amount": "不含税金额",
+                        "check_code": "校验码后6位"
+                    }
+                    return False, f"{inp.invoice_kind}型发票需要填写{field_names.get(field, field)}"
+        
+        return True, ""
+    
+    def _parse_api_result(self, response: Dict) -> VerifyResult:
+        """解析API响应为标准化结果"""
+        resp_data = response.get("Response", {})
+        invoice = resp_data.get("Invoice", {})
+        request_id = resp_data.get("RequestId", "")
+        
+        # 基础信息提取
+        result = VerifyResult(
+            status=VerifyStatus.PASSED,
+            is_valid=True,
+            request_id=request_id,
+            result_source="API",
+            invoice_data={
+                "code": invoice.get("Code", ""),
+                "number": invoice.get("Number", ""),
+                "date": invoice.get("Date", ""),
+                "buyer_name": invoice.get("BuyerName", ""),
+                "buyer_tax_code": invoice.get("BuyerTaxCode", ""),
+                "seller_name": invoice.get("SellerName", ""),
+                "seller_tax_code": invoice.get("SellerTaxCode", ""),
+                "amount_with_tax": invoice.get("AmountWithTax", ""),
+                "amount_without_tax": invoice.get("AmountWithoutTax", ""),
+                "tax_amount": invoice.get("TaxAmount", ""),
+                "type": invoice.get("Type", ""),
+            }
+        )
+        
+        # 状态判断
+        is_abandoned = invoice.get("IsAbandoned", "N") == "Y"
+        red_letter = invoice.get("RedLetterInvoiceMark", False)
+        
+        warnings = []
+        if is_abandoned:
+            result.status = VerifyStatus.EXCEPTION
+            result.is_valid = False
+            warnings.append({"type": "ABANDONED", "msg": "该发票已作废"})
+        if red_letter:
+            result.status = VerifyStatus.EXCEPTION
+            warnings.append({"type": "RED_LETTER", "msg": "该发票已被红冲"})
+        
+        result.warnings = warnings
+        return result
+    
+    def verify(self, inp: InvoiceInput, force_refresh: bool = False) -> VerifyResult:
+        """
+        执行发票查验 (主入口)
+        
+        Args:
+            inp: 发票输入信息
+            force_refresh: 强制刷新缓存
+        
+        Returns:
+            VerifyResult: 查验结果
+        """
+        start_time = time.time()
+        
+        # Step 1: 本地预校验
+        valid, err_msg = self._pre_validate(inp)
+        if not valid:
+            return VerifyResult(
+                status=VerifyStatus.REJECTED,
+                is_valid=False,
+                message=f"预校验失败: {err_msg}",
+                result_source="VALIDATION_ERROR"
+            )
+        
+        # Step 2: 查询缓存
+        cache_key = self._make_cache_key(inp)
+        if not force_refresh:
+            cached = self._get_from_cache(cache_key)
+            if cached:
+                result = VerifyResult(
+                    status=VerifyStatus.PASSED,
+                    is_valid=True,
+                    result_source="CACHE",
+                    invoice_data=cached,
+                    cached_at=self._cache[cache_key][1]
+                )
+                result.cost_ms = int((time.time() - start_time) * 1000)
+                return result
+        
+        # Step 3: 调用腾讯云API
+        try:
+            req = models.VatInvoiceVerifyNewRequest()
+            req.FromJsonString(json.dumps({
+                "InvoiceCode": inp.invoice_code or None,
+                "InvoiceNo": inp.invoice_no,
+                "InvoiceDate": inp.invoice_date,
+                "InvoiceKind": inp.invoice_kind or None,
+                "CheckCode": inp.check_code or None,
+                "Amount": inp.amount or None,
+                "RegionCode": inp.region_code or None,
+                "SellerTaxCode": inp.seller_tax_code or None,
+                "EnableCommonElectronic": bool(inp.seller_tax_code and inp.region_code),
+                "EnableTodayInvoice": True,  # 允许查验当日发票
+            }))
+            
+            resp = self.client.VatInvoiceVerifyNew(req)
+            response_dict = json.loads(resp.to_json_string())
+            
+            # 解析结果
+            result = self._parse_api_result(response_dict)
+            result.cost_ms = int((time.time() - start_time) * 1000)
+            
+            # 写入缓存
+            if result.status == VerifyStatus.PASSED:
+                self._set_cache(cache_key, result.invoice_data)
+            
+            return result
+            
+        except TencentCloudSDKException as e:
+            error_code = e.get_code()
+            error_msg = e.get_message()
+            
+            # 错误码分类处理
+            if error_code == "ResourceNotFound.NoInvoice":
+                return VerifyResult(
+                    status=VerifyStatus.REJECTED,
+                    is_valid=False,
+                    message=f"发票不存在: {error_msg}",
+                    request_id="",
+                    result_source="API_ERROR"
+                )
+            elif error_code == "FailedOperation.InvoiceMismatch":
+                return VerifyResult(
+                    status=VerifyStatus.EXCEPTION,
+                    is_valid=False,
+                    message=f"发票信息不匹配: {error_msg}",
+                    request_id="",
+                    result_source="API_ERROR"
+                )
+            elif error_code == "FailedOperation.CountLimitError":
+                # 尝试返回缓存中的旧结果
+                old_cached = self._get_from_cache(cache_key.replace("_forced", ""))
+                if old_cached:
+                    return VerifyResult(
+                        status=VerifyStatus.PASSED,
+                        is_valid=True,
+                        message="今日查验次数已达上限,返回最近一次结果",
+                        result_source="CACHE_FALLBACK",
+                        invoice_data=old_cached
+                    )
+                return VerifyResult(
+                    status=VerifyStatus.TIMEOUT,
+                    message=f"查验次数达上限且无缓存: {error_msg}",
+                    result_source="API_LIMIT"
+                )
+            else:
+                return VerifyResult(
+                    status=VerifyStatus.TIMEOUT,
+                    message=f"API调用异常 [{error_code}]: {error_msg}",
+                    result_source="API_ERROR"
+                )
+        except Exception as e:
+            return VerifyResult(
+                status=VerifyStatus.TIMEOUT,
+                message=f"系统异常: {str(e)}",
+                result_source="SYSTEM_ERROR"
+            )
+
+
+# ==================== 使用示例 ====================
+
+if __name__ == "__main__":
+    # 初始化查验器
+    verifier = InvoiceVerifier(
+        secret_id="YOUR_TENCENT_SECRET_ID",
+        secret_key="YOUR_TENCENT_SECRET_KEY"
+    )
+    
+    # 场景1: 查验一张增值税专用发票
+    result = verifier.verify(InvoiceInput(
+        invoice_no="04138864",
+        invoice_date="2025-01-15",
+        invoice_code="144002288010",
+        invoice_kind="01",
+        amount="498.90"
+    ))
+    
+    print(f"查验状态: {result.status.name}")
+    print(f"发票真伪: {'✅ 真实' if result.is_valid else '❌ 存疑'}")
+    print(f"数据来源: {result.result_source}")
+    print(f"购方名称: {result.invoice_data.get('buyer_name')}")
+    print(f"销方名称: {result.invoice_data.get('seller_name')}")
+    print(f"价税合计: ¥{result.invoice_data.get('amount_with_tax')}")
+    if result.warnings:
+        for w in result.warnings:
+            print(f"⚠️ 警告: {w['msg']}")
+    
+    # 场景2: 查验一张全电发票(无InvoiceCode)
+    result2 = verifier.verify(InvoiceInput(
+        invoice_no="12345678901234567890",  # 20位全电票号
+        invoice_date="2025-06-01",
+        amount="1130.00",  # 全电票这里填价税合计
+    ))
+    print(f"\n全电票查验: {result2.status.name}")</code></pre>
+<p>---</p>
+<h2>8. 前端交互原型</h2>
+<h3>8.1 发票录入+查验页面布局</h3>
+<pre><code>╔══════════════════════════════════════════════════════════════╗
+║  📄 发票查验                                                ║
+╠══════════════════════════════════════════════════════════════╣
+║                                                             ║
+║  ┌─ 基本信息 ──────────────────────────────────────────┐   ║
+║  │                                                      │   ║
+║  │  发票号码  [________________]  🔢 8位或20位(全电)     │   ║
+║  │  发票代码  [________________]  🔢 10或12位,全电留空   │   ║
+║  │  开牌日期  [📅 2025-01-15]                         │   ║
+║  │  票种类型  [▼ 增值税专用发票 ▼]                     │   ║
+║  │                                                      │   ║
+║  │  ┌─ 根据票种动态显示 ─────────────────────────┐     │   ║
+║  │  │  校验码后6位  [______]    (普票/卷票显示)    │     │   ║
+║  │  │  不含税金额  [______.__]  (专票显示)         │     │   ║
+║  │  │  价税合计    [____.__]    (全电票显示)        │     │   ║
+║  │  └──────────────────────────────────────────────┘     │   ║
+║  │                                                      │   ║
+║  │  来源单据  [▼ 采购入库单 #10023 ▼]                   │   ║
+║  │                                                      │   ║
+║  │          [🔍 开始查验]  [📷 OCR扫描]  [📥 批量导入]   │   ║
+║  └──────────────────────────────────────────────────────┘   ║
+║                                                             ║
+║  ┌─ 查验结果 ──────────────────────────────────────────┐   ║
+║  │                                                      │   ║
+║  │  ✅ 查验通过                                          │   ║
+║  │  ┌────────────────────────────────────────────┐     │   ║
+║  │  │  发票代码: 144002288010                      │     │   ║
+║  │  │  发票号码: 04138864                          │     │   ║
+║  │  │  开票日期: 2025-01-15                        │     │   ║
+║  │  │  ─────────────────────────────────           │     │   ║
+║  │  │  购方名称: XX科技有限公司                     │     │   ║
+║  │  │  购方税号: 91440***MA5XXX                     │     │   ║
+║  │  │  销方名称: 广州市天河区XX店                  │     │   ║
+║  │  │  销方税号: (空)                               │     │   ║
+║  │  │  ─────────────────────────────────           │     │   ║
+║  │  │  价税合计: ¥498.90    不含税: ¥0.00           │     │   ║
+║  │  │  税额:     ¥0.00      作废状态: 正常          │     │   ║
+║  │  │  数据来源: 腾讯云API  耗时: 328ms            │     │   ║
+║  │  └──────────────────────────────────────────────┘     │   ║
+║  │                                                      │   ║
+║  │  [✔ 确认入账]  [📋 导出结果]  [↻ 重新查验]            │   ║
+║  └──────────────────────────────────────────────────────┘   ║
+║                                                             ║
+╚══════════════════════════════════════════════════════════════╝</code></pre>
+<h3>8.2 异常发票处理界面</h3>
+<pre><code>╔═════════════════════════════════════════════════════════╗
+║  ⚠️ 发票异常 — 需人工处理                                ║
+╠═════════════════════════════════════════════════════════╣
+║                                                         ║
+║  🔴 风险等级: 高                                         ║
+║                                                         ║
+║  异常详情:                                               ║
+║  ┌───────────────────────────────────────────────────┐  ║
+║  │  ☑ 该发票已作废                                    │  ║
+║  │  ☑ 发票金额与输入不符 (输入:500.00, 实际:498.90)  │  ║
+║  └───────────────────────────────────────────────────┘  ║
+║                                                         ║
+║  处理方式:                                               ║
+║  ○ 作废入账（仍需记账但标记作废）                       ║
+◎ 退回修改（返回录入环节重新核对）                         ║
+║  ○ 强制通过（需要主管审批）                             ║
+║  ○ 标记为虚假发票                                       ║
+║                                                         ║
+║  处理备注: [________________________________________]  ║
+║                                                         ║
+║              [提交处理]    [查看税局原文]                ║
+╚═════════════════════════════════════════════════════════╝</code></pre>
+<p>---</p>
+<h2>9. 成本估算</h2>
+<h3>9.1 腾讯云计费参考</h3>
+<table>
+<tr><th>项目</th><th>说明</th><th>参考价格</th></tr>
+<tr><th>按次计费</th><th>每次API调用</th><th>~¥0.05 - 0.15/次 (以官方实际定价为准)</th></tr>
+<tr><th>免费额度</th><th>新用户通常有</th><th>1000次/月免费试用</th></tr>
+<tr><th>OCR识别</th><th>如果同时使用发票OCR识别</th><th>另计费 ~¥0.02-0.05/次</th></tr>
+<tr><th>包月套餐</th><th>大用量优惠</th><th>需联系商务</th></tr>
+</table>
+<h3>9.2 月度成本预估（按业务规模）</h3>
+<table>
+<tr><th>月查验量</th><th>预估费用</th><th>适用企业</th></tr>
+<tr><th>≤1,000次</th><th>免费期内 ¥0</th><th>初创/小微企业</th></tr>
+<tr><th>5,000次</th><th>~¥250-750</th><th>小型企业</th></tr>
+<tr><th>20,000次</th><th>~¥1,000-3,000</th><th>中型企业</th></tr>
+<tr><th>100,000次+</th><th>走包月/商务议价</th><th>中大型企业</th></tr>
+</table>
+<p>---</p>
+<h2>10. 实施路线图</h2>
+<table>
+<tr><th>阶段</th><th>内容</th><th>工期</th><th>交付物</th></tr>
+<tr><th>**Phase 1**</th><th>核心查验功能</th><th>3天</th><th>单张发票查验、结果展示、台账写入</th></tr>
+<tr><th>**Phase 2**</th><th>异常处理机制</th><th>2天</th><th>异常池、人工审核流程、通知机制</th></tr>
+<tr><th>**Phase 3**</th><th>OCR集成</th><th>2天</th><th>图片/PDF上传→OCR提取→自动查验</th></tr>
+<tr><th>**Phase 4**</th><th>批量处理</th><th>2天</th><th>Excel导入、并发队列、汇总报告</th></tr>
+<tr><th>**Phase 5**</th><th>业务联动</th><th>2天</th><th>与采购/销售单据自动关联、入账触发</th></tr>
+<tr><th>**Phase 6**</th><th>统计与监控</th><th>2天</th><th>查验统计仪表板、异常趋势分析、预警规则</th></tr>
+</table>
+<p><strong>总计</strong>: 约 <strong>13个工作日</strong> 可完成MVP版本（Phase 1-3）</p>
+<p>---</p>
+<h2>附录A: 快速接入清单</h2>
+<ul><li>[ ] 注册腾讯云账号 → https://cloud.tencent.com</li><li>[ ] 开通「文字识别 OCR」服务 → 控制台搜索「OCR」</li><li>[ ] 子产品中选择「增值税发票核验」并开通</li><li>[ ] 获取 SecretId 和 SecretKey → 访问管理(CAM)</li><li>[ ] 安装Python SDK: <code>pip install tencentcloud-sdk-python</code></li><li>[ ] 配置环境变量或配置文件存放密钥</li><li>[ ] 用仿真发票数据测试接口连通性</li><li>[ ] 对接本模块代码框架</li></ul>
+<p>---</p>
+<h2>附录B: 参考资料</h2>
+<table>
+<tr><th>资料</th><th>链接</th></tr>
+<tr><th>腾讯云增值税发票核验(新版)文档</th><th>https://cloud.tencent.com/document/product/866/73674</th></tr>
+<tr><th>腾讯云VTIV产品页</th><th>https://cloud.tencent.com/product/vtiv</th></tr>
+<tr><th>腾讯云OCR SDK下载</th><th>https://cloud.tencent.com/document/sdk</th></tr>
+<tr><th>国家税务总局全国查验平台</th><th>https://inv-veri.chinatax.gov.cn</th></tr>
+<tr><th>国家税务总局查验仿真平台</th><th>https://fz.chinaive.com/fpcy/</th></tr>
+<tr><th>增值税发票数据接口规范(2021年第31号公告)</th><th>国家税务总局官网</th></tr>
+</table>
+<p>---</p>
+<p>> <strong>文档维护</strong>: 财务追踪器 · Dev_Dept 团队  </p>
+<p>> <strong>最后更新</strong>: 2026-04-14 16:30  </p>
+<p>> <strong>下次评审</strong>: 与开发团队同步后更新Phase实施细节</p>
+
+  </div>
+</div>
+</body>
+</html>
