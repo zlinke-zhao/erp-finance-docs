@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>应收票据管理 — UI设计原型</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family: "Microsoft YaHei","PingFang SC",sans-serif; background:#f0f2f5; color:#333; }
+  
+  /* 顶部导航 */
+  .top-nav { background:#2e7d32; color:#fff; padding:12px 24px; display:flex; align-items:center; gap:20px; }
+  .top-nav .logo { font-size:18px; font-weight:700; }
+  .top-nav .breadcrumb { font-size:13px; opacity:0.7; }
+  
+  /* 页面切换标签 */
+  .page-tabs { background:#fff; border-bottom:2px solid #e0e0e0; padding:0 24px; display:flex; gap:0; overflow-x:auto; }
+  .page-tab { padding:12px 20px; cursor:pointer; font-size:13px; border-bottom:3px solid transparent; color:#666; white-space:nowrap; transition:all 0.2s; }
+  .page-tab:hover { color:#2e7d32; }
+  .page-tab.active { color:#2e7d32; border-bottom-color:#2e7d32; font-weight:600; }
+  
+  /* 页面容器 */
+  .page-container { display:none; padding:24px; }
+  .page-container.active { display:block; }
+  
+  /* 通用组件 */
+  .card { background:#fff; border-radius:8px; box-shadow:0 1px 3px rgba(0,0,0,0.1); padding:20px; margin-bottom:20px; }
+  .card-title { font-size:15px; font-weight:600; margin-bottom:16px; color:#2e7d32; border-left:4px solid #2e7d32; padding-left:10px; }
+  
+  .toolbar { display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-bottom:16px; }
+  .btn { padding:8px 18px; border-radius:6px; border:none; cursor:pointer; font-size:13px; font-weight:500; transition:all 0.2s; }
+  .btn-primary { background:#2e7d32; color:#fff; }
+  .btn-primary:hover { background:#388e3c; }
+  .btn-success { background:#1565c0; color:#fff; }
+  .btn-success:hover { background:#1976d2; }
+  .btn-warning { background:#f57f17; color:#fff; }
+  .btn-danger { background:#c62828; color:#fff; }
+  .btn-outline { background:#fff; border:1px solid #ddd; color:#333; }
+  .btn-outline:hover { border-color:#2e7d32; color:#2e7d32; }
+  .btn-sm { padding:5px 12px; font-size:12px; }
+  
+  .filter-group { display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+  .filter-group select, .filter-group input[type="text"], .filter-group input[type="date"] { padding:7px 12px; border:1px solid #ddd; border-radius:6px; font-size:13px; }
+  
+  /* 表格 */
+  .data-table { width:100%; border-collapse:collapse; font-size:13px; }
+  .data-table thead { background:#f5f7fa; }
+  .data-table th { padding:10px 12px; text-align:left; font-weight:600; color:#555; border-bottom:2px solid #e0e0e0; }
+  .data-table td { padding:10px 12px; border-bottom:1px solid #f0f0f0; }
+  .data-table tr:hover { background:#fafbfc; }
+  
+  /* 状态标签 */
+  .tag { display:inline-block; padding:3px 10px; border-radius:12px; font-size:12px; font-weight:500; }
+  .tag-holding { background:#e8f5e9; color:#2e7d32; }
+  .tag-pending { background:#fff3e0; color:#e65100; }
+  .tag-endorsed { background:#e3f2fd; color:#1565c0; }
+  .tag-discounted { background:#f3e5f5; color:#7b1fa2; }
+  .tag-pledged { background:#fce4ec; color:#c62828; }
+  .tag-cashed { background:#e0f2f1; color:#00695c; }
+  .tag-overdue { background:#ffebee; color:#b71c1c; }
+  .tag-cancelled { background:#f5f5f5; color:#9e9e9e; }
+  
+  /* KPI卡片 */
+  .kpi-row { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:20px; }
+  .kpi-card { background:#fff; border-radius:8px; padding:16px 20px; box-shadow:0 1px 3px rgba(0,0,0,0.08); }
+  .kpi-label { font-size:12px; color:#888; margin-bottom:6px; }
+  .kpi-value { font-size:26px; font-weight:700; }
+  .kpi-sub { font-size:12px; color:#999; margin-top:4px; }
+  .kpi-red { color:#b71c1c; }
+  .kpi-green { color:#2e7d32; }
+  .kpi-blue { color:#1565c0; }
+  .kpi-orange { color:#e65100; }
+  .kpi-purple { color:#7b1fa2; }
+  
+  /* 分页 */
+  .pagination { display:flex; justify-content:space-between; align-items:center; margin-top:16px; font-size:13px; color:#666; }
+  .page-btns { display:flex; gap:4px; }
+  .page-btns span { padding:5px 10px; border:1px solid #ddd; border-radius:4px; cursor:pointer; font-size:12px; }
+  .page-btns span.active { background:#2e7d32; color:#fff; border-color:#2e7d32; }
+  
+  /* 表单 */
+  .form-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
+  .form-group { display:flex; flex-direction:column; gap:4px; }
+  .form-group.full { grid-column:span 3; }
+  .form-label { font-size:13px; color:#555; font-weight:500; }
+  .form-label .required { color:#c62828; margin-left:2px; }
+  .form-input { padding:8px 12px; border:1px solid #ddd; border-radius:6px; font-size:13px; }
+  .form-input:focus { border-color:#2e7d32; outline:none; box-shadow:0 0 0 2px rgba(46,125,50,0.1); }
+  
+  /* 弹窗 */
+  .modal-overlay { display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.5); z-index:1000; justify-content:center; align-items:center; }
+  .modal-overlay.show { display:flex; }
+  .modal { background:#fff; border-radius:12px; width:700px; max-height:80vh; overflow-y:auto; box-shadow:0 8px 30px rgba(0,0,0,0.2); }
+  .modal-header { padding:16px 20px; border-bottom:1px solid #eee; display:flex; justify-content:space-between; align-items:center; }
+  .modal-header h3 { font-size:16px; color:#2e7d32; }
+  .modal-close { font-size:20px; cursor:pointer; color:#999; }
+  .modal-body { padding:20px; }
+  .modal-footer { padding:16px 20px; border-top:1px solid #eee; display:flex; justify-content:flex-end; gap:10px; }
+  
+  /* 时间线 */
+  .timeline { position:relative; padding-left:28px; }
+  .timeline::before { content:''; position:absolute; left:10px; top:0; bottom:0; width:2px; background:#e0e0e0; }
+  .timeline-item { position:relative; margin-bottom:20px; }
+  .timeline-item::before { content:''; position:absolute; left:-22px; top:4px; width:12px; height:12px; border-radius:50%; background:#2e7d32; border:2px solid #fff; box-shadow:0 0 0 2px #2e7d32; }
+  .timeline-item.success::before { background:#2e7d32; box-shadow:0 0 0 2px #2e7d32; }
+  .timeline-item.warning::before { background:#f57f17; box-shadow:0 0 0 2px #f57f17; }
+  .timeline-item.danger::before { background:#c62828; box-shadow:0 0 0 2px #c62828; }
+  .timeline-date { font-size:12px; color:#999; }
+  .timeline-title { font-size:14px; font-weight:600; margin-top:2px; }
+  .timeline-desc { font-size:13px; color:#666; margin-top:4px; }
+  
+  /* 双栏布局 */
+  .two-col { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+  
+  /* 进度条 */
+  .progress-bar { height:8px; background:#e0e0e0; border-radius:4px; overflow:hidden; }
+  .progress-fill { height:100%; border-radius:4px; transition:width 0.5s; }
+  .progress-green { background:#2e7d32; }
+  .progress-orange { background:#f57f17; }
+  .progress-red { background:#b71c1c; }
+  .progress-purple { background:#7b1fa2; }
+  
+  /* 操作按钮组 */
+  .action-btns { display:flex; gap:6px; }
+  
+  /* 票据类型图标 */
+  .bill-icon { display:inline-flex; align-items:center; justify-content:center; width:28px; height:28px; border-radius:6px; font-size:12px; font-weight:700; margin-right:6px; }
+  .bill-icon-bank { background:#e3f2fd; color:#1565c0; }
+  .bill-icon-commercial { background:#fff3e0; color:#e65100; }
+  
+  /* 凭证预览 */
+  .voucher-preview { background:#fafbfc; border:1px solid #e0e0e0; border-radius:8px; padding:16px; margin-top:16px; }
+  
+  /* 贴现计算 */
+  .calc-box { background:#fafbfc; border:2px dashed #2e7d32; border-radius:8px; padding:20px; }
+  .calc-result { background:linear-gradient(135deg,#2e7d32,#388e3c); color:#fff; border-radius:8px; padding:20px; margin-top:16px; }
+  .calc-result .result-row { display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid rgba(255,255,255,0.2); }
+  .calc-result .result-row:last-child { border-bottom:none; font-size:20px; font-weight:700; }
+</style>
+</head>
+<body>
+
+<!-- 顶部导航 -->
+<div class="top-nav">
+  <span class="logo">Dev_Dept ERP - 应收票据管理</span>
+  <span class="breadcrumb">首页 / 财务管理 / 应收票据</span>
+</div>
+
+<!-- 页面标签 -->
+<div class="page-tabs">
+  <div class="page-tab active" onclick="switchPage('ledger')">1. 应收票据台账</div>
+  <div class="page-tab" onclick="switchPage('receive')">2. 收票登记</div>
+  <div class="page-tab" onclick="switchPage('endorse')">3. 背书转让</div>
+  <div class="page-tab" onclick="switchPage('discount')">4. 贴现质押</div>
+  <div class="page-tab" onclick="switchPage('collect')">5. 到期托收</div>
+  <div class="page-tab" onclick="switchPage('detail')">6. 票据详情</div>
+  <div class="page-tab" onclick="switchPage('stats')">7. 统计报表</div>
+</div>
+
+<!-- ==================== 页面1: 应收票据台账 ==================== -->
+<div id="page-ledger" class="page-container active">
+  <!-- KPI -->
+  <div class="kpi-row">
+    <div class="kpi-card">
+      <div class="kpi-label">持有票据</div>
+      <div class="kpi-value kpi-green">18</div>
+      <div class="kpi-sub">银承 12 - 商承 6</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">票面总额</div>
+      <div class="kpi-value">5,680,000</div>
+      <div class="kpi-sub">较上月 +15.2%</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">30天内到期</div>
+      <div class="kpi-value kpi-orange">4</div>
+      <div class="kpi-sub">合计 1,450,000</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">已逾期</div>
+      <div class="kpi-value kpi-red">0</div>
+      <div class="kpi-sub">零逾期</div>
+    </div>
+  </div>
+  
+  <!-- 工具栏 -->
+  <div class="card">
+    <div class="toolbar">
+      <button class="btn btn-primary" onclick="switchPage('receive')">+ 收票登记</button>
+      <button class="btn btn-success">批量导入</button>
+      <button class="btn btn-outline">导出台账</button>
+      <div style="flex:1"></div>
+      <div class="filter-group">
+        <select>
+          <option>全部类型</option>
+          <option>银行承兑汇票</option>
+          <option>商业承兑汇票</option>
+          <option>支票</option>
+        </select>
+        <select>
+          <option>全部状态</option>
+          <option>持有中</option>
+          <option>已背书</option>
+          <option>已贴现</option>
+          <option>已质押</option>
+          <option>已托收</option>
+          <option>已到期</option>
+        </select>
+        <input type="text" placeholder="搜索票据号/客户" style="width:180px">
+        <button class="btn btn-primary btn-sm">查询</button>
+      </div>
+    </div>
+    
+    <!-- 数据表格 -->
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th><input type="checkbox"></th>
+          <th>票据编号</th>
+          <th>类型</th>
+          <th>票据号码</th>
+          <th>票面金额</th>
+          <th>出票客户</th>
+          <th>到期日期</th>
+          <th>剩余天数</th>
+          <th>状态</th>
+          <th>操作</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><input type="checkbox"></td>
+          <td style="font-weight:600;color:#2e7d32">AR2026040001</td>
+          <td><span class="bill-icon bill-icon-bank">银</span>银承</td>
+          <td>GA0204010001111111</td>
+          <td style="font-weight:600">800,000.00</td>
+          <td>AA客户有限公司</td>
+          <td>2026-05-20</td>
+          <td><span style="color:#2e7d32;font-weight:600">33天</span></td>
+          <td><span class="tag tag-holding">持有中</span></td>
+          <td class="action-btns">
+            <button class="btn btn-sm btn-outline" onclick="switchPage('detail')">详情</button>
+            <button class="btn btn-sm btn-primary" onclick="switchPage('endorse')">背书</button>
+            <button class="btn btn-sm btn-success" onclick="switchPage('discount')">贴现</button>
+          </td>
+        </tr>
+        <tr style="background:#fff3e0">
+          <td><input type="checkbox"></td>
+          <td style="font-weight:600;color:#2e7d32">AR2026040002</td>
+          <td><span class="bill-icon bill-icon-bank">银</span>银承</td>
+          <td>GA0204010002222222</td>
+          <td style="font-weight:600">650,000.00</td>
+          <td>BB贸易集团</td>
+          <td>2026-04-28</td>
+          <td><span style="color:#e65100;font-weight:700">11天</span></td>
+          <td><span class="tag tag-pending">即将到期</span></td>
+          <td class="action-btns">
+            <button class="btn btn-sm btn-outline" onclick="switchPage('detail')">详情</button>
+            <button class="btn btn-sm btn-warning" onclick="switchPage('collect')">托收</button>
+          </td>
+        </tr>
+        <tr>
+          <td><input type="checkbox"></td>
+          <td style="font-weight:600;color:#2e7d32">AR2026040003</td>
+          <td><span class="bill-icon bill-icon-commercial">商</span>商承</td>
+          <td>SA0204010003333333</td>
+          <td style="font-weight:600">300,000.00</td>
+          <td>CC供应链公司</td>
+          <td>2026-06-15</td>
+          <td><span style="color:#7b1fa2;font-weight:600">59天</span></td>
+          <td><span class="tag tag-pledged">已质押</span></td>
+          <td class="action-btns">
+            <button class="btn btn-sm btn-outline" onclick="switchPage('detail')">详情</button>
+            <button class="btn btn-sm btn-warning">赎回</button>
+          </td>
+        </tr>
+        <tr>
+          <td><input type="checkbox"></td>
+          <td style="font-weight:600;color:#2e7d32">AR2026030008</td>
+          <td><span class="bill-icon bill-icon-bank">银</span>银承</td>
+          <td>GA0203010004444444</td>
+          <td style="font-weight:600">450,000.00</td>
+          <td>DD实业公司</td>
+          <td>2026-03-25</td>
+          <td>-23天</td>
+          <td><span class="tag tag-cashed">已托收</span></td>
+          <td class="action-btns">
+            <button class="btn btn-sm btn-outline" onclick="switchPage('detail')">详情</button>
+          </td>
+        </tr>
+        <tr>
+          <td><input type="checkbox"></td>
+          <td style="font-weight:600;color:#2e7d32">AR2026030010</td>
+          <td><span class="bill-icon bill-icon-bank">银</span>银承</td>
+          <td>GA0203010005555555</td>
+          <td style="font-weight:600">200,000.00</td>
+          <td>EE科技公司</td>
+          <td>2026-04-10</td>
+          <td>-7天</td>
+          <td><span class="tag tag-endorsed">已背书</span></td>
+          <td class="action-btns">
+            <button class="btn btn-sm btn-outline" onclick="switchPage('detail')">详情</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    
+    <div class="pagination">
+      <span>共 18 条记录，第 1/2 页</span>
+      <div class="page-btns">
+        <span>&laquo;</span><span class="active">1</span><span>2</span><span>&raquo;</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== 页面2: 收票登记 ==================== -->
+<div id="page-receive" class="page-container">
+  <div class="card">
+    <div class="card-title">收取客户票据登记</div>
+    
+    <!-- 关联应收单 -->
+    <div style="background:#e8f5e9;padding:16px;border-radius:8px;margin-bottom:20px;">
+      <div style="font-size:13px;font-weight:600;color:#2e7d32;margin-bottom:10px;">关联应收单（可选）</div>
+      <table class="data-table" style="margin-bottom:0;">
+        <thead>
+          <tr><th><input type="checkbox"></th><th>应收单号</th><th>客户</th><th>应收金额</th><th>已收金额</th><th>未收余额</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><input type="checkbox" checked></td>
+            <td style="font-weight:600">YS2026040001</td>
+            <td>AA客户有限公司</td>
+            <td>800,000.00</td>
+            <td>0.00</td>
+            <td style="font-weight:600;color:#2e7d32">800,000.00</td>
+          </tr>
+          <tr>
+            <td><input type="checkbox"></td>
+            <td style="font-weight:600">YS2026040002</td>
+            <td>BB贸易集团</td>
+            <td>650,000.00</td>
+            <td>0.00</td>
+            <td style="font-weight:600;color:#2e7d32">650,000.00</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    
+    <!-- 票据信息 -->
+    <div style="font-size:14px;font-weight:600;color:#555;margin-bottom:12px;">票据信息</div>
+    <div class="form-grid">
+      <div class="form-group">
+        <label class="form-label">票据类型 <span class="required">*</span></label>
+        <select class="form-input">
+          <option value="">请选择</option>
+          <option value="1" selected>银行承兑汇票</option>
+          <option value="2">商业承兑汇票</option>
+          <option value="3">支票</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">票据号码 <span class="required">*</span></label>
+        <input type="text" class="form-input" placeholder="票据上的号码">
+      </div>
+      <div class="form-group">
+        <label class="form-label">票面金额 <span class="required">*</span></label>
+        <input type="number" class="form-input" value="800000" style="font-size:16px;font-weight:600">
+      </div>
+      <div class="form-group">
+        <label class="form-label">出票日期 <span class="required">*</span></label>
+        <input type="date" class="form-input" value="2026-04-10">
+      </div>
+      <div class="form-group">
+        <label class="form-label">到期日期 <span class="required">*</span></label>
+        <input type="date" class="form-input" value="2026-05-20">
+      </div>
+      <div class="form-group">
+        <label class="form-label">票据介质</label>
+        <select class="form-input">
+          <option value="1" selected>电子票据</option>
+          <option value="0">纸质票据</option>
+        </select>
+      </div>
+    </div>
+    
+    <!-- 出票人信息 -->
+    <div style="font-size:14px;font-weight:600;color:#555;margin:20px 0 12px;">出票人/承兑人信息</div>
+    <div class="form-grid">
+      <div class="form-group">
+        <label class="form-label">出票人 <span class="required">*</span></label>
+        <input type="text" class="form-input" value="AA客户有限公司" style="background:#f5f5f5" readonly>
+      </div>
+      <div class="form-group">
+        <label class="form-label">承兑人 <span class="required">*</span></label>
+        <input type="text" class="form-input" placeholder="承兑银行">
+      </div>
+      <div class="form-group">
+        <label class="form-label">承兑银行</label>
+        <select class="form-input">
+          <option value="">请选择</option>
+          <option value="1" selected>中国工商银行</option>
+          <option value="2">中国建设银行</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">收款人（我方）</label>
+        <input type="text" class="form-input" value="我方公司名称" style="background:#f5f5f5" readonly>
+      </div>
+      <div class="form-group">
+        <label class="form-label">保管人</label>
+        <input type="text" class="form-input" value="张出纳">
+      </div>
+      <div class="form-group">
+        <label class="form-label">存放位置</label>
+        <input type="text" class="form-input" placeholder="纸质票存放位置">
+      </div>
+      <div class="form-group full">
+        <label class="form-label">备注</label>
+        <input type="text" class="form-input" placeholder="备注信息">
+      </div>
+    </div>
+    
+    <!-- 凭证预览 -->
+    <div class="voucher-preview">
+      <div style="font-size:13px;font-weight:600;color:#555;margin-bottom:10px;">收票凭证预览</div>
+      <table style="width:100%;font-size:13px;border-collapse:collapse;">
+        <tr style="background:#e8f5e9"><td style="padding:8px 12px" colspan="4"><b>收-转账凭证</b></td></tr>
+        <tr><td style="padding:6px 12px;width:35%">借: 1121 应收票据-银承</td><td style="padding:6px 12px;width:20%">800,000.00</td><td style="padding:6px 12px;width:35%">贷: 1123 应收账款-AA客户</td><td style="padding:6px 12px">800,000.00</td></tr>
+        <tr><td style="padding:6px 12px;color:#999" colspan="4">摘要: 收到AA客户银行承兑汇票一张</td></tr>
+      </table>
+    </div>
+    
+    <div style="margin-top:24px;display:flex;gap:12px;justify-content:center;">
+      <button class="btn btn-outline" style="padding:10px 40px;" onclick="switchPage('ledger')">取消</button>
+      <button class="btn btn-primary" style="padding:10px 40px;">保存并登记</button>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== 页面3: 背书转让 ==================== -->
+<div id="page-endorse" class="page-container">
+  <div class="card">
+    <div class="card-title">背书转让（付给供应商）</div>
+    
+    <!-- 选择待背书票据 -->
+    <div style="background:#f5f7fa;padding:16px;border-radius:8px;margin-bottom:20px;">
+      <div style="font-size:13px;font-weight:600;color:#555;margin-bottom:10px;">选择待背书票据</div>
+      <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
+        <div style="background:#fff;border:2px solid #2e7d32;border-radius:8px;padding:12px 20px;cursor:pointer;">
+          <div style="font-size:12px;color:#999">票据编号</div>
+          <div style="font-size:14px;font-weight:700;color:#2e7d32">AR2026040001</div>
+          <div style="font-size:12px;color:#666;margin-top:4px;">银承 - 800,000 - 到期 2026-05-20</div>
+        </div>
+        <div style="background:#fff;border:1px dashed #ccc;border-radius:8px;padding:12px 20px;cursor:pointer;">
+          <div style="font-size:12px;color:#999">票据编号</div>
+          <div style="font-size:14px;font-weight:600">AR2026030015</div>
+          <div style="font-size:12px;color:#666;margin-top:4px;">银承 - 350,000 - 到期 2026-06-30</div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- 背书信息 -->
+    <div class="form-grid">
+      <div class="form-group">
+        <label class="form-label">被背书人（供应商） <span class="required">*</span></label>
+        <select class="form-input">
+          <option value="">请选择供应商</option>
+          <option value="20001" selected>YY材料有限公司</option>
+          <option value="20002">ZZ包装厂</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">背书日期</label>
+        <input type="date" class="form-input" value="2026-04-17">
+      </div>
+      <div class="form-group">
+        <label class="form-label">背书金额</label>
+        <input type="text" class="form-input" value="800,000.00" style="font-weight:600;color:#2e7d32;background:#e8f5e9" readonly>
+      </div>
+    </div>
+    
+    <!-- 关联应付核销 -->
+    <div style="font-size:14px;font-weight:600;color:#555;margin:20px 0 12px;">关联应付核销</div>
+    <table class="data-table" style="margin-bottom:16px;">
+      <thead>
+        <tr><th><input type="checkbox" checked></th><th>应付单号</th><th>供应商</th><th>应付金额</th><th>已付金额</th><th>未付余额</th><th>本次核销</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><input type="checkbox" checked></td>
+          <td style="font-weight:600">YF2026040001</td>
+          <td>YY材料有限公司</td>
+          <td>850,000.00</td>
+          <td>0.00</td>
+          <td style="color:#c62828;font-weight:600">850,000.00</td>
+          <td><input type="number" value="800000" style="width:120px;padding:5px 8px;border:1px solid #ddd;border-radius:4px;"></td>
+        </tr>
+      </tbody>
+    </table>
+    
+    <div style="background:#fff3e0;border-radius:6px;padding:12px 16px;font-size:13px;color:#e65100;">
+      提示: 背书金额800,000元小于应付单未付余额850,000元，差额50,000元需另行支付。
+    </div>
+    
+    <!-- 凭证预览 -->
+    <div class="voucher-preview">
+      <div style="font-size:13px;font-weight:600;color:#555;margin-bottom:10px;">背书凭证预览</div>
+      <table style="width:100%;font-size:13px;border-collapse:collapse;">
+        <tr style="background:#e8f5e9"><td style="padding:8px 12px" colspan="4"><b>转-转账凭证</b></td></tr>
+        <tr><td style="padding:6px 12px;width:35%">借: 2202 应付账款-YY材料</td><td style="padding:6px 12px;width:20%">800,000.00</td><td style="padding:6px 12px;width:35%">贷: 1121 应收票据-银承</td><td style="padding:6px 12px">800,000.00</td></tr>
+        <tr><td style="padding:6px 12px;color:#999" colspan="4">摘要: 票据背书转让支付YY材料货款</td></tr>
+      </table>
+    </div>
+    
+    <div style="margin-top:24px;display:flex;gap:12px;justify-content:center;">
+      <button class="btn btn-outline" style="padding:10px 40px;" onclick="switchPage('ledger')">取消</button>
+      <button class="btn btn-primary" style="padding:10px 40px;">提交背书</button>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== 页面4: 贴现质押 ==================== -->
+<div id="page-discount" class="page-container">
+  <!-- 贴现计算器 -->
+  <div class="card">
+    <div class="card-title">贴现计算器</div>
+    <div class="calc-box">
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="form-label">票面金额</label>
+          <input type="number" class="form-input" id="calcFace" value="800000" oninput="calcDiscount()">
+        </div>
+        <div class="form-group">
+          <label class="form-label">贴现年利率 (%)</label>
+          <input type="number" class="form-input" id="calcRate" value="3.0" step="0.1" oninput="calcDiscount()">
+        </div>
+        <div class="form-group">
+          <label class="form-label">贴现日期</label>
+          <input type="date" class="form-input" id="calcDate" value="2026-04-17" oninput="calcDiscount()">
+        </div>
+        <div class="form-group">
+          <label class="form-label">到期日期</label>
+          <input type="date" class="form-input" id="calcDue" value="2026-05-20" oninput="calcDiscount()">
+        </div>
+        <div class="form-group">
+          <label class="form-label">贴现银行</label>
+          <select class="form-input">
+            <option>中国工商银行</option>
+            <option>中国建设银行</option>
+            <option selected>招商银行</option>
+          </select>
+        </div>
+      </div>
+      
+      <div class="calc-result">
+        <div style="font-size:13px;opacity:0.8;margin-bottom:8px;">贴现结果</div>
+        <div class="result-row"><span>票面金额</span><span id="resFace">800,000.00</span></div>
+        <div class="result-row"><span>贴现天数</span><span id="resDays">33 天</span></div>
+        <div class="result-row"><span>贴现利息</span><span id="resInterest" style="color:#ff8a80;">- 21,698.63</span></div>
+        <div class="result-row"><span>实得金额</span><span id="resActual">778,301.37</span></div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- 贴现申请 -->
+  <div class="card">
+    <div class="card-title">贴现/质押申请</div>
+    
+    <!-- 选择票据 -->
+    <div style="background:#f5f7fa;padding:16px;border-radius:8px;margin-bottom:20px;">
+      <div style="font-size:13px;font-weight:600;color:#555;margin-bottom:10px;">选择票据</div>
+      <div style="background:#fff;border:2px solid #2e7d32;border-radius:8px;padding:12px 20px;display:inline-block;">
+        <div style="font-size:12px;color:#999">票据编号</div>
+        <div style="font-size:14px;font-weight:700;color:#2e7d32">AR2026040001</div>
+        <div style="font-size:12px;color:#666;margin-top:4px;">银承 - 800,000 - 到期 2026-05-20</div>
+      </div>
+    </div>
+    
+    <div class="form-grid">
+      <div class="form-group">
+        <label class="form-label">业务类型</label>
+        <select class="form-input">
+          <option value="1" selected>贴现</option>
+          <option value="2">质押</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">票面金额</label>
+        <input type="text" class="form-input" value="800,000.00" style="background:#f5f5f5" readonly>
+      </div>
+      <div class="form-group">
+        <label class="form-label">实得/质押金额</label>
+        <input type="text" class="form-input" value="778,301.37" style="font-weight:700;color:#2e7d32" readonly>
+      </div>
+      <div class="form-group">
+        <label class="form-label">资金到账账户</label>
+        <select class="form-input">
+          <option>基本户 - 工行 4301****890</option>
+          <option>一般户 - 建行 3200****567</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">申请日期</label>
+        <input type="date" class="form-input" value="2026-04-17">
+      </div>
+      <div class="form-group">
+        <label class="form-label">预计到账</label>
+        <input type="text" class="form-input" value="2026-04-18（下一个工作日）" style="background:#f5f5f5" readonly>
+      </div>
+      <div class="form-group full">
+        <label class="form-label">申请说明</label>
+        <input type="text" class="form-input" placeholder="贴现用途说明">
+      </div>
+    </div>
+    
+    <div style="margin-top:20px;display:flex;gap:12px;justify-content:center;">
+      <button class="btn btn-outline" style="padding:10px 40px;" onclick="switchPage('ledger')">取消</button>
+      <button class="btn btn-primary" style="padding:10px 40px;">提交贴现申请</button>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== 页面5: 到期托收 ==================== -->
+<div id="page-collect" class="page-container">
+  <div class="card">
+    <div class="card-title">到期托收确认</div>
+    
+    <!-- 选择票据 -->
+    <div style="background:#fff3e0;padding:16px;border-radius:8px;margin-bottom:20px;">
+      <div style="font-size:13px;font-weight:600;color:#e65100;margin-bottom:10px;">即将到期票据</div>
+      <div style="background:#fff;border:2px solid #e65100;border-radius:8px;padding:12px 20px;display:inline-block;">
+        <div style="font-size:12px;color:#999">票据编号</div>
+        <div style="font-size:14px;font-weight:700;color:#e65100">AR2026040002</div>
+        <div style="font-size:12px;color:#666;margin-top:4px;">银承 - 650,000 - 到期 2026-04-28（剩余11天）</div>
+      </div>
+    </div>
+    
+    <div class="form-grid">
+      <div class="form-group">
+        <label class="form-label">托收类型</label>
+        <select class="form-input">
+          <option value="1" selected>委托银行收款</option>
+          <option value="2">持票提示付款</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">托收金额</label>
+        <input type="text" class="form-input" value="650,000.00" style="font-weight:700;color:#2e7d32" readonly>
+      </div>
+      <div class="form-group">
+        <label class="form-label">托收银行</label>
+        <select class="form-input">
+          <option>中国工商银行南京分行</option>
+          <option>中国建设银行</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">提交日期</label>
+        <input type="date" class="form-input" value="2026-04-17">
+      </div>
+      <div class="form-group">
+        <label class="form-label">预计到账日</label>
+        <input type="text" class="form-input" value="2026-04-29（T+2工作日）" style="background:#f5f5f5" readonly>
+      </div>
+      <div class="form-group">
+        <label class="form-label">收款账户</label>
+        <input type="text" class="form-input" value="工行基本户 4301****890" style="background:#f5f5f5" readonly>
+      </div>
+    </div>
+    
+    <div style="background:#e3f2fd;padding:12px 16px;border-radius:6px;font-size:13px;color:#1565c0;margin-top:16px;">
+      提示: 银行承兑汇票到期后，资金将在2个工作日内到账。如选择商业承兑汇票，请确保出票人账户余额充足。
+    </div>
+    
+    <div style="margin-top:20px;display:flex;gap:12px;justify-content:center;">
+      <button class="btn btn-outline" style="padding:10px 40px;" onclick="switchPage('ledger')">取消</button>
+      <button class="btn btn-success" style="padding:10px 40px;">确认托收</button>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== 页面6: 票据详情 ==================== -->
+<div id="page-detail" class="page-container">
+  <div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+      <div class="card-title" style="margin-bottom:0">AR2026040001 票据详情</div>
+      <div style="display:flex;gap:8px;">
+        <button class="btn btn-sm btn-outline">打印</button>
+        <button class="btn btn-sm btn-primary" onclick="switchPage('endorse')">背书转让</button>
+        <button class="btn btn-sm btn-success" onclick="switchPage('discount')">贴现</button>
+      </div>
+    </div>
+    
+    <div class="two-col">
+      <!-- 左 -->
+      <div>
+        <div style="font-size:13px;font-weight:600;color:#555;margin-bottom:10px;">票面信息</div>
+        <table style="width:100%;font-size:13px;border-collapse:collapse;">
+          <tr><td style="padding:6px 12px;color:#999;width:100px">票据类型</td><td><span class="bill-icon bill-icon-bank">银</span>银行承兑汇票</td></tr>
+          <tr><td style="padding:6px 12px;color:#999">票据号码</td><td style="font-family:monospace">GA0204010001111111</td></tr>
+          <tr><td style="padding:6px 12px;color:#999">出票日期</td><td>2026-04-10</td></tr>
+          <tr><td style="padding:6px 12px;color:#999">到期日期</td><td><span style="color:#2e7d32;font-weight:600">2026-05-20</span> <span style="font-size:11px;background:#e8f5e9;padding:2px 6px;border-radius:4px;color:#2e7d32">剩余33天</span></td></tr>
+          <tr style="background:#f5f7fa"><td style="padding:8px 12px;color:#999;font-weight:600">票面金额</td><td style="font-size:20px;font-weight:700;color:#2e7d32">800,000.00</td></tr>
+          <tr><td style="padding:6px 12px;color:#999">出票人</td><td>AA客户有限公司</td></tr>
+          <tr><td style="padding:6px 12px;color:#999">承兑人</td><td>中国工商银行</td></tr>
+          <tr><td style="padding:6px 12px;color:#999">收款人</td><td>我方公司</td></tr>
+          <tr><td style="padding:6px 12px;color:#999">保管人</td><td>张出纳</td></tr>
+          <tr><td style="padding:6px 12px;color:#999">当前状态</td><td><span class="tag tag-holding">持有中</span></td></tr>
+        </table>
+      </div>
+      
+      <!-- 右：生命周期 -->
+      <div>
+        <div style="font-size:13px;font-weight:600;color:#555;margin-bottom:10px;">生命周期轨迹</div>
+        <div class="timeline">
+          <div class="timeline-item success">
+            <div class="timeline-date">2026-04-05</div>
+            <div class="timeline-title">客户开具票据</div>
+            <div class="timeline-desc">AA客户出具，工行承兑</div>
+          </div>
+          <div class="timeline-item success">
+            <div class="timeline-date">2026-04-10</div>
+            <div class="timeline-title">收取登记</div>
+            <div class="timeline-desc">关联应收单 YS2026040001</div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-date">2026-05-20</div>
+            <div class="timeline-title">到期托收</div>
+            <div class="timeline-desc">委托银行收款</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- 关联凭证 -->
+  <div class="card">
+    <div class="card-title">关联会计凭证</div>
+    <table class="data-table">
+      <thead>
+        <tr><th>凭证号</th><th>凭证字</th><th>摘要</th><th>借方科目</th><th>借方金额</th><th>贷方科目</th><th>贷方金额</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="font-weight:600;color:#2e7d32">PZ20260410001</td>
+          <td><span class="tag" style="background:#e8f5e9;color:#2e7d32">收</span></td>
+          <td>收到AA客户银承</td>
+          <td>1121 应收票据-银承</td>
+          <td style="font-weight:600">800,000.00</td>
+          <td>1123 应收账款-AA客户</td>
+          <td style="font-weight:600">800,000.00</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ==================== 页面7: 统计报表 ==================== -->
+<div id="page-stats" class="page-container">
+  <div class="kpi-row">
+    <div class="kpi-card">
+      <div class="kpi-label">持有票据</div>
+      <div class="kpi-value kpi-green">18张</div>
+      <div class="kpi-sub">金额 5,680,000</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">本月到期托收</div>
+      <div class="kpi-value">4张</div>
+      <div class="kpi-sub">金额 1,450,000</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">本月背书转让</div>
+      <div class="kpi-value kpi-blue">6张</div>
+      <div class="kpi-sub">金额 2,100,000</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">本月贴现</div>
+      <div class="kpi-value kpi-purple">3张</div>
+      <div class="kpi-sub">实得 1,850,000</div>
+    </div>
+  </div>
+  
+  <div class="two-col">
+    <div class="card">
+      <div class="card-title">票据类型分布</div>
+      <div style="display:flex;align-items:center;gap:20px;padding:20px;">
+        <div style="width:160px;height:160px;border-radius:50%;background:conic-gradient(#1565c0 0deg 240deg,#e65100 240deg 360deg);display:flex;align-items:center;justify-content:center;">
+          <div style="width:120px;height:120px;background:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-direction:column;">
+            <div style="font-size:24px;font-weight:700;color:#333;">18</div>
+            <div style="font-size:11px;color:#999;">总票据</div>
+          </div>
+        </div>
+        <div style="font-size:13px;">
+          <div style="margin-bottom:10px;"><span style="display:inline-block;width:12px;height:12px;background:#1565c0;border-radius:3px;margin-right:6px;"></span>银行承兑汇票 12张 (67%)</div>
+          <div style="margin-bottom:10px;"><span style="display:inline-block;width:12px;height:12px;background:#e65100;border-radius:3px;margin-right:6px;"></span>商业承兑汇票 6张 (33%)</div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="card">
+      <div class="card-title">到期时间分布</div>
+      <table class="data-table">
+        <thead><tr><th>时间段</th><th>票据数</th><th>金额</th><th>占比</th></tr></thead>
+        <tbody>
+          <tr><td>7天内</td><td style="font-weight:600;color:#b71c1c">1</td><td>280,000</td><td>
+            <div class="progress-bar" style="width:80px;display:inline-block;vertical-align:middle;"><div class="progress-fill progress-red" style="width:5%"></div></div> 5%
+          </td></tr>
+          <tr><td>15天内</td><td>1</td><td>650,000</td><td>
+            <div class="progress-bar" style="width:80px;display:inline-block;vertical-align:middle;"><div class="progress-fill progress-orange" style="width:11%"></div></div> 11%
+          </td></tr>
+          <tr><td>30天内</td><td>2</td><td>1,100,000</td><td>
+            <div class="progress-bar" style="width:80px;display:inline-block;vertical-align:middle;"><div class="progress-fill progress-orange" style="width:19%"></div></div> 19%
+          </td></tr>
+          <tr><td>30天以上</td><td style="font-weight:600;color:#2e7d32">14</td><td>3,650,000</td><td>
+            <div class="progress-bar" style="width:80px;display:inline-block;vertical-align:middle;"><div class="progress-fill progress-green" style="width:64%"></div></div> 64%
+          </td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  
+  <div class="card">
+    <div class="card-title">客户应收票据汇总</div>
+    <table class="data-table">
+      <thead><tr><th>客户</th><th>票据数</th><th>票面总额</th><th>最大单张</th><th>最早到期</th><th>商业承兑</th></tr></thead>
+      <tbody>
+        <tr><td>AA客户有限公司</td><td>4</td><td style="font-weight:600">1,800,000</td><td>800,000</td><td>2026-05-20</td><td>否</td></tr>
+        <tr><td>BB贸易集团</td><td>3</td><td style="font-weight:600">1,450,000</td><td>650,000</td><td>2026-04-28</td><td>否</td></tr>
+        <tr><td>CC供应链公司</td><td>2</td><td style="font-weight:600">650,000</td><td>350,000</td><td>2026-06-15</td><td>是</td></tr>
+        <tr><td>DD实业公司</td><td>3</td><td style="font-weight:600">1,000,000</td><td>500,000</td><td>2026-07-30</td><td>否</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ==================== JavaScript ==================== -->
+<script>
+function switchPage(pageId) {
+  document.querySelectorAll('.page-container').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.page-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('page-' + pageId).classList.add('active');
+  if (event && event.target) {
+    event.target.classList.add('active');
+  }
+}
+
+function calcDiscount() {
+  const face = parseFloat(document.getElementById('calcFace').value) || 0;
+  const rate = parseFloat(document.getElementById('calcRate').value) || 0;
+  const dateStr = document.getElementById('calcDate').value;
+  const dueStr = document.getElementById('calcDue').value;
+  
+  if (!dateStr || !dueStr || !face) return;
+  
+  const date1 = new Date(dateStr);
+  const date2 = new Date(dueStr);
+  const days = Math.max(0, Math.round((date2 - date1) / (1000*60*60*24)));
+  const interest = Math.round(face * (rate/100) * days / 365 * 100) / 100;
+  const actual = Math.round((face - interest) * 100) / 100;
+  
+  document.getElementById('resFace').textContent = face.toLocaleString('zh-CN', {minimumFractionDigits:2});
+  document.getElementById('resDays').textContent = days + ' 天';
+  document.getElementById('resInterest').textContent = '- ' + Math.abs(interest).toLocaleString('zh-CN', {minimumFractionDigits:2});
+  document.getElementById('resActual').textContent = actual.toLocaleString('zh-CN', {minimumFractionDigits:2});
+}
+
+calcDiscount();
+</script>
+
+</body>
+</html>
