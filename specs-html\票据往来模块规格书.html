@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>票据往来模块规格书</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: 'PingFang SC', 'Microsoft YaHei', -apple-system, sans-serif;
+  background: #f8fafc;
+  color: #334155;
+  line-height: 1.8;
+  font-size: 15px;
+}
+.container {
+  max-width: 960px;
+  margin: 0 auto;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+  padding: 3rem 3.5rem;
+}
+.back-link {
+  display: inline-block;
+  margin-bottom: 1.5rem;
+  color: #6366f1;
+  text-decoration: none;
+  font-size: 0.875rem;
+}
+.back-link:hover { text-decoration: underline; }
+.doc-header {
+  border-bottom: 3px solid #6366f1;
+  padding-bottom: 1.5rem;
+  margin-bottom: 2rem;
+}
+.doc-header h1 {
+  font-size: 1.75rem;
+  color: #1e293b;
+  margin-bottom: 0.75rem;
+}
+.doc-meta {
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  font-size: 0.85rem;
+  color: #64748b;
+}
+.doc-meta span { background: #f1f5f9; padding: 0.25rem 0.75rem; border-radius: 20px; }
+.content h1 { font-size: 1.4rem; margin: 2rem 0 1rem; color: #6366f1; border-bottom: 2px solid #e2e8f0; padding-bottom: 0.5rem; }
+.content h2 { font-size: 1.2rem; margin: 1.75rem 0 0.75rem; color: #1e293b; }
+.content h3 { font-size: 1.05rem; margin: 1.25rem 0 0.5rem; color: #475569; }
+.content p { margin: 0.75rem 0; }
+.content ul, .content ol { margin: 0.75rem 0; padding-left: 1.75rem; }
+.content li { margin: 0.4rem 0; }
+.content table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.25rem 0;
+  font-size: 0.875rem;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid #e2e8f0;
+}
+.content th, .content td {
+  border: 1px solid #e2e8f0;
+  padding: 0.75rem 1rem;
+  text-align: left;
+}
+.content th { background: #f1f5f9; font-weight: 600; color: #1e293b; }
+.content tr:hover td { background: #fafbfc; }
+.content pre {
+  background: #1e293b;
+  color: #e2e8f0;
+  padding: 1.25rem;
+  border-radius: 8px;
+  overflow-x: auto;
+  margin: 1rem 0;
+  font-size: 0.8rem;
+  line-height: 1.6;
+}
+.content code {
+  background: #f1f5f9;
+  color: #6366f1;
+  padding: 0.15rem 0.4rem;
+  border-radius: 4px;
+  font-size: 0.85em;
+  font-family: 'Consolas', monospace;
+}
+.content pre code {
+  background: transparent;
+  color: inherit;
+  padding: 0;
+}
+.toc { background: #f8fafc; padding: 1.5rem; border-radius: 8px; margin: 1.5rem 0; }
+.toc h3 { margin-top: 0 !important; }
+.toc ul { margin: 0.5rem 0; }
+</style>
+</head>
+<body>
+<div class="container">
+  <a href="../index.html" class="back-link">← 返回目录</a>
+  <div class="doc-header">
+    <h1>票据往来模块规格书</h1>
+    <div class="doc-meta">
+      <span>📋 V1.0</span>
+      <span>📅 2026-04-08</span>
+      <span>🏢 Dev_Dept</span>
+    </div>
+  </div>
+  <div class="content">
+    <h1>票据往来模块 — 需求分析规格书</h1>
+<p>> <strong>版本</strong>: v1.1  <strong>日期</strong>: 2026-04-15  <strong>优先级</strong>: P2（票据管理）  </p>
+<p>> <strong>对标系统</strong>: 金蝶云星空 · 票据管理模块  </p>
+<p>> <strong>所属流程</strong>: 销售收款 → 实收收款 → <strong>票据往来</strong> → 总账凭证  </p>
+<p>> <strong>范围说明</strong>: 本文档为<strong>应收票据</strong>规格（销售端）。应付票据（采购端）详见 → [<code>应付票据模块规格书.md</code>](./应付票据模块规格书.md)</p>
+<p>---</p>
+<h2>目录</h2>
+<p>1. [模块概述](#1-模块概述)</p>
+<p>2. [功能全景图](#2-功能全景图)</p>
+<p>3. [数据模型设计](#3-数据模型设计)</p>
+<p>4. [业务规则定义](#4-业务规则定义)</p>
+<p>5. [凭证模板矩阵](#5-凭证模板矩阵)</p>
+<p>6. [内部API设计](#6-内部api设计)</p>
+<p>7. [到期预警机制](#7-到期预警机制)</p>
+<p>8. [安全与风控](#8-安全与风控)</p>
+<p>9. [测试用例](#9-测试用例)</p>
+<p>10. [实施路线图](#10-实施路线图)</p>
+<p>---</p>
+<h2>1. 模块概述</h2>
+<h3>1.1 业务定位</h3>
+<p>票据往来模块是ERP财务管理中<strong>非现金收款</strong>的核心枢纽，负责管理商业汇票、支票、本票等票据从收取到最终处置的全生命周期。</p>
+<pre><code>┌──────────────────────────────────────────────────────────┐
+│                    票据模块架构定位                         │
+├──────────────────────────────────────────────────────────┤
+│                                                          │
+│  上游: 实收收款模块 ──── 收到票据 ────→ 票据往来模块       │
+│                                         │                │
+│                              ┌──────────┼──────────┐     │
+│                              ↓          ↓          ↓     │
+│                           背书转让    贴现/质押   到期兑付 │
+│                              │          │          │     │
+│  下游:                      ↓          ↓          ↓     │
+│  ┌──────────────┐   ┌──────────┐  ┌──────────┐         │
+│  │ 采购付款模块  │   │ 银企对接  │  │ 总账凭证  │         │
+│  │ (应付核销)   │   │ (资金)   │  │ (入账)   │         │
+│  └──────────────┘   └──────────┘  └──────────┘         │
+│                                                          │
+└──────────────────────────────────────────────────────────┘</code></pre>
+<h3>1.2 核心目标</h3>
+<table>
+<tr><th>#</th><th>目标</th><th>衡量指标</th></tr>
+<tr><th>1</th><th>票据全生命周期可视化管理</th><th>100%票据状态实时可查</th></tr>
+<tr><th>2</th><th>到期零遗漏</th><th>票据到期前分级预警，逾期率=0</th></tr>
+<tr><th>3</th><th>流转过程留痕</th><th>背书/贴现/质押全程可追溯</th></tr>
+<tr><th>4</th><th>自动生成凭证</th><th>6种场景自动匹配凭证模板</th></tr>
+<tr><th>5</th><th>信用风险控制</th><th>商业承兑汇票承兑人信用评估</th></tr>
+</table>
+<h3>1.3 对标金蝶云星空差距分析</h3>
+<table>
+<tr><th>功能点</th><th>金蝶云星空</th><th>当前差距</th><th>应对策略</th></tr>
+<tr><th>票据登记</th><th>✅ 支持OCR+手工</th><th>🔴 完全缺失</th><th>MVP: 手工录入 + OCR辅助</th></tr>
+<tr><th>票据背书</th><th>✅ 背书连续性校验</th><th>🔴 完全缺失</th><th>MVP: 基础背书记录</th></tr>
+<tr><th>票据贴现</th><th>✅ 贴现计算+银行对接</th><th>🔴 完全缺失</th><th>MVP: 贴现计算器+手工记录</th></tr>
+<tr><th>票据质押</th><th>✅ 质押+赎回全流程</th><th>🔴 完全缺失</th><th>P2: 质押登记</th></tr>
+<tr><th>到期托收</th><th>✅ 自动提醒+托收记录</th><th>🔴 完全缺失</th><th>MVP: 分级预警+手工托收</th></tr>
+<tr><th>票据池</th><th>✅ 统一票据池管理</th><th>🔴 完全缺失</th><th>P2: 票据池视图</th></tr>
+<tr><th>票据拆分</th><th>✅ 支持电子票据拆分</th><th>🟠 不支持</th><th>P3: 电子票拆分</th></tr>
+<tr><th>电子票据</th><th>✅ 对接票交所ECDS</th><th>🟠 不支持</th><th>P3: ECDS对接</th></tr>
+</table>
+<p>---</p>
+<h2>2. 功能全景图</h2>
+<h3>2.1 功能域划分</h3>
+<pre><code>票据往来模块
+├── F1 票据登记管理
+│   ├── F1.1 票据信息录入（手工）
+│   ├── F1.2 OCR识别提取（拍照/扫描）
+│   ├── F1.3 票面要素校验
+│   ├── F1.4 关联业务单据（收款单/应收单）
+│   └── F1.5 票据编号自动生成
+│
+├── F2 票据背书转让
+│   ├── F2.1 背书申请（选票据+被背书人）
+│   ├── F2.2 背书审批流程
+│   ├── F2.3 背书记录生成
+│   ├── F2.4 关联应付账款核销
+│   ├── F2.5 交接签收确认
+│   └── F2.6 背书连续性记录
+│
+├── F3 票据贴现管理
+│   ├── F3.1 贴现计算器（利息/实得金额）
+│   ├── F3.2 贴现申请+审批
+│   ├── F3.3 贴现银行维护
+│   ├── F3.4 贴现记录管理
+│   └── F3.5 贴现息分摊（按月）
+│
+├── F4 票据质押管理
+│   ├── F4.1 质押登记
+│   ├── F4.2 质押合同管理
+│   ├── F4.3 质押到期赎回
+│   └── F4.4 质押率计算
+│
+├── F5 到期托收管理
+│   ├── F5.1 托收提醒（分级预警）
+│   ├── F5.2 托收申请
+│   ├── F5.3 托收进度跟踪
+│   ├── F5.4 到期兑付确认
+│   └── F5.5 拒付处理+追索
+│
+└── F6 票据台账与报表
+    ├── F6.1 票据台账列表
+    ├── F6.2 票据池统计（类型/承兑人/到期日）
+    ├── F6.3 到期预警仪表板
+    ├── F6.4 票据流水报表
+    └── F6.5 承兑人信用分析</code></pre>
+<h3>2.2 功能清单（按优先级）</h3>
+<table>
+<tr><th>编号</th><th>功能</th><th>优先级</th><th>说明</th></tr>
+<tr><th>F1.1</th><th>票据信息录入</th><th>**P1-A**</th><th>核心基础功能</th></tr>
+<tr><th>F1.2</th><th>OCR识别提取</th><th>P1-B</th><th>提升录入效率</th></tr>
+<tr><th>F1.3</th><th>票面要素校验</th><th>P1-A</th><th>防止错录</th></tr>
+<tr><th>F1.4</th><th>关联业务单据</th><th>P1-A</th><th>打通上下游</th></tr>
+<tr><th>F1.5</th><th>票据编号生成</th><th>P1-A</th><th>BILL+年月+序号</th></tr>
+<tr><th>F2.1</th><th>背书申请</th><th>**P1-A**</th><th>高频操作</th></tr>
+<tr><th>F2.2</th><th>背书审批</th><th>P1-A</th><th>资金安全</th></tr>
+<tr><th>F2.3</th><th>背书记录</th><th>P1-A</th><th>留痕追溯</th></tr>
+<tr><th>F2.4</th><th>关联应付核销</th><th>P1-A</th><th>业务闭环</th></tr>
+<tr><th>F2.5</th><th>交接签收</th><th>P1-B</th><th>纸质票管理</th></tr>
+<tr><th>F2.6</th><th>背书连续性</th><th>P2</th><th>合规要求</th></tr>
+<tr><th>F3.1</th><th>贴现计算器</th><th>**P1-A**</th><th>决策工具</th></tr>
+<tr><th>F3.2</th><th>贴现申请+审批</th><th>P1-B</th><th>流程管控</th></tr>
+<tr><th>F3.4</th><th>贴现记录</th><th>P1-B</th><th>台账管理</th></tr>
+<tr><th>F3.5</th><th>贴现息分摊</th><th>P2</th><th>精确核算</th></tr>
+<tr><th>F4.1</th><th>质押登记</th><th>P2</th><th>非高频</th></tr>
+<tr><th>F5.1</th><th>分级到期预警</th><th>**P1-A**</th><th>零遗漏</th></tr>
+<tr><th>F5.2</th><th>托收申请</th><th>P1-B</th><th>流程记录</th></tr>
+<tr><th>F5.4</th><th>兑付确认</th><th>P1-A</th><th>资金到账</th></tr>
+<tr><th>F5.5</th><th>拒付追索</th><th>P2</th><th>异常处理</th></tr>
+<tr><th>F6.1</th><th>票据台账</th><th>**P1-A**</th><th>基础管理</th></tr>
+<tr><th>F6.2</th><th>票据池统计</th><th>P2</th><th>管理视图</th></tr>
+<tr><th>F6.3</th><th>预警仪表板</th><th>P1-B</th><th>可视化</th></tr>
+<tr><th>F6.4</th><th>票据流水报表</th><th>P2</th><th>审计追溯</th></tr>
+</table>
+<p>---</p>
+<h2>3. 数据模型设计</h2>
+<h3>3.1 核心表: <code>bill_note</code>（票据主表）</h3>
+<pre><code>CREATE TABLE bill_note (
+    id              BIGINT PRIMARY KEY AUTO_INCREMENT,
+    bill_no         VARCHAR(20)  NOT NULL UNIQUE COMMENT '票据编号 BILL+年月+4位序号',
+    
+    -- 票面基本信息
+    bill_type       TINYINT      NOT NULL COMMENT '票据类型: 1=银行承兑汇票 2=商业承兑汇票 3=支票 4=银行本票',
+    bill_number     VARCHAR(30)  NOT NULL COMMENT '票据号码',
+    bill_code       VARCHAR(20)  DEFAULT NULL COMMENT '票据代码（电子票据）',
+    draft_date      DATE         NOT NULL COMMENT '出票日期',
+    due_date        DATE         NOT NULL COMMENT '到期日期',
+    face_amount     DECIMAL(18,2) NOT NULL COMMENT '票面金额',
+    
+    -- 票据当事人
+    drawer          VARCHAR(100) NOT NULL COMMENT '出票人名称',
+    drawer_tax_no   VARCHAR(20)  DEFAULT NULL COMMENT '出票人税号',
+    payee           VARCHAR(100) NOT NULL COMMENT '收款人名称（我方）',
+    acceptor        VARCHAR(100) NOT NULL COMMENT '承兑人名称',
+    acceptor_type   TINYINT      NOT NULL COMMENT '承兑人类型: 1=银行 2=企业',
+    acceptor_bank   VARCHAR(100) DEFAULT NULL COMMENT '承兑人开户行',
+    acceptor_acct   VARCHAR(30)  DEFAULT NULL COMMENT '承兑人账号',
+    
+    -- 票据来源
+    source_type     TINYINT      NOT NULL COMMENT '来源类型: 1=客户交付 2=背书转入 3=其他',
+    source_bill_no  VARCHAR(20)  DEFAULT NULL COMMENT '来源票据编号（背书转入时）',
+    customer_id     BIGINT       DEFAULT NULL COMMENT '交付客户ID',
+    receipt_id      BIGINT       DEFAULT NULL COMMENT '关联收款单ID',
+    ar_detail_id    BIGINT       DEFAULT NULL COMMENT '关联应收明细ID',
+    
+    -- 状态管理
+    status          TINYINT      NOT NULL DEFAULT 1 COMMENT '状态: 1=待验 2=持有中 3=审批中 4=已背书 5=已贴现 6=已质押 7=已兑付 8=已追索 9=已退回 10=已作废',
+    
+    -- 实物管理
+    is_electronic   TINYINT      NOT NULL DEFAULT 0 COMMENT '是否电子票据: 0=纸质 1=电子',
+    storage_location VARCHAR(50) DEFAULT NULL COMMENT '实物存放位置（保险柜编号）',
+    custody_person  VARCHAR(20)  DEFAULT NULL COMMENT '保管人',
+    
+    -- 安全信息
+    check_code      VARCHAR(50)  DEFAULT NULL COMMENT '密文/校验码',
+    remark          TEXT         DEFAULT NULL COMMENT '备注',
+    
+    -- 系统字段
+    org_id          BIGINT       NOT NULL COMMENT '组织ID',
+    created_by      VARCHAR(20)  NOT NULL COMMENT '创建人',
+    created_at      DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_by      VARCHAR(20)  DEFAULT NULL,
+    updated_at      DATETIME     DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+    is_deleted      TINYINT      NOT NULL DEFAULT 0,
+    
+    INDEX idx_status (status),
+    INDEX idx_due_date (due_date),
+    INDEX idx_acceptor (acceptor),
+    INDEX idx_customer (customer_id),
+    INDEX idx_bill_number (bill_number)
+) COMMENT '票据主表';</code></pre>
+<h3>3.2 核心表: <code>bill_transaction</code>（票据流水表）</h3>
+<pre><code>CREATE TABLE bill_transaction (
+    id              BIGINT PRIMARY KEY AUTO_INCREMENT,
+    txn_no          VARCHAR(20)  NOT NULL UNIQUE COMMENT '流水编号 BT+年月+4位序号',
+    bill_id         BIGINT       NOT NULL COMMENT '票据ID',
+    bill_no         VARCHAR(20)  NOT NULL COMMENT '票据编号',
+    
+    -- 交易信息
+    txn_type        TINYINT      NOT NULL COMMENT '交易类型: 1=收取 2=背书转出 3=贴现 4=质押 5=赎回 6=托收 7=兑付 8=退回 9=追索 10=作废',
+    txn_date        DATE         NOT NULL COMMENT '交易日期',
+    txn_amount      DECIMAL(18,2) NOT NULL COMMENT '交易金额',
+    
+    -- 对方信息
+    counterparty    VARCHAR(100) DEFAULT NULL COMMENT '交易对手方名称',
+    counterparty_type TINYINT    DEFAULT NULL COMMENT '对手类型: 1=客户 2=供应商 3=银行',
+    counterparty_id BIGINT       DEFAULT NULL COMMENT '对手方ID',
+    
+    -- 关联信息
+    related_bill_id BIGINT       DEFAULT NULL COMMENT '背书转入的来源票据ID',
+    related_order   VARCHAR(30)  DEFAULT NULL COMMENT '关联单据号（应付单/贴现单等）',
+    voucher_id      BIGINT       DEFAULT NULL COMMENT '生成的凭证ID',
+    
+    -- 贴现/质押专用
+    discount_rate   DECIMAL(8,6) DEFAULT NULL COMMENT '贴现利率',
+    discount_days   INT          DEFAULT NULL COMMENT '贴现天数',
+    discount_interest DECIMAL(18,2) DEFAULT NULL COMMENT '贴现利息',
+    actual_amount   DECIMAL(18,2) DEFAULT NULL COMMENT '实得金额（贴现/质押）',
+    
+    -- 审批信息
+    approval_status TINYINT      NOT NULL DEFAULT 0 COMMENT '审批状态: 0=无需审批 1=待审批 2=已审批 3=已驳回',
+    approver        VARCHAR(20)  DEFAULT NULL COMMENT '审批人',
+    approved_at     DATETIME     DEFAULT NULL COMMENT '审批时间',
+    approval_remark VARCHAR(200) DEFAULT NULL COMMENT '审批意见',
+    
+    remark          TEXT         DEFAULT NULL COMMENT '备注',
+    created_by      VARCHAR(20)  NOT NULL,
+    created_at      DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    
+    INDEX idx_bill_id (bill_id),
+    INDEX idx_bill_no (bill_no),
+    INDEX idx_txn_type (txn_type),
+    INDEX idx_txn_date (txn_date),
+    INDEX idx_counterparty (counterparty_id),
+    FOREIGN KEY (bill_id) REFERENCES bill_note(id)
+) COMMENT '票据交易流水表';</code></pre>
+<h3>3.3 辅助表: <code>bill_discount_bank</code>（贴现银行维护）</h3>
+<pre><code>CREATE TABLE bill_discount_bank (
+    id              BIGINT PRIMARY KEY AUTO_INCREMENT,
+    bank_name       VARCHAR(100) NOT NULL COMMENT '银行名称',
+    bank_code       VARCHAR(20)  DEFAULT NULL COMMENT '银行代码',
+    contact_person  VARCHAR(30)  DEFAULT NULL COMMENT '联系人',
+    contact_phone   VARCHAR(20)  DEFAULT NULL COMMENT '联系电话',
+    discount_rate   DECIMAL(8,6) DEFAULT NULL COMMENT '默认贴现年利率',
+    min_amount      DECIMAL(18,2) DEFAULT NULL COMMENT '最低贴现金额',
+    is_enabled      TINYINT      NOT NULL DEFAULT 1,
+    created_at      DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at      DATETIME     DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP
+) COMMENT '贴现银行信息维护';</code></pre>
+<h3>3.4 辅助表: <code>bill_alert_config</code>（预警配置）</h3>
+<pre><code>CREATE TABLE bill_alert_config (
+    id              BIGINT PRIMARY KEY AUTO_INCREMENT,
+    org_id          BIGINT       NOT NULL,
+    alert_level     TINYINT      NOT NULL COMMENT '预警级别: 1=30天 2=15天 3=7天 4=3天',
+    alert_days      INT          NOT NULL COMMENT '提前天数',
+    notify_channel  VARCHAR(50)  NOT NULL COMMENT '通知渠道: site,email,sms,phone',
+    notify_roles    VARCHAR(200) NOT NULL COMMENT '通知角色（逗号分隔）',
+    is_enabled      TINYINT      NOT NULL DEFAULT 1,
+    UNIQUE KEY uk_org_level (org_id, alert_level)
+) COMMENT '票据到期预警配置';
+
+-- 默认配置
+INSERT INTO bill_alert_config (org_id, alert_level, alert_days, notify_channel, notify_roles) VALUES
+(1, 1, 30, 'site', 'cashier'),
+(1, 2, 15, 'site,email', 'cashier,finance_supervisor'),
+(1, 3, 7, 'site,email,sms', 'cashier,finance_supervisor'),
+(1, 4, 3, 'site,email,sms,phone', 'cashier,finance_supervisor,dept_head');</code></pre>
+<p>---</p>
+<h2>4. 业务规则定义</h2>
+<h3>4.1 票据编号规则</h3>
+<pre><code>格式: BILL + YYYYMM + 4位序号
+示例: BILL2026040001
+
+规则:
+- 按月归零重新计数
+- 同一组织内唯一
+- 一旦生成不可修改
+- 作废票据编号保留（不重用）</code></pre>
+<h3>4.2 票据类型枚举</h3>
+<pre><code>class BillType(Enum):
+    BANK_ACCEPTANCE = 1    # 银行承兑汇票
+    COMMERCIAL_ACCEPTANCE = 2  # 商业承兑汇票
+    CHECK = 3              # 支票
+    BANK_PROMISSORY = 4    # 银行本票</code></pre>
+<h3>4.3 票据状态枚举与状态机</h3>
+<pre><code>class BillStatus(Enum):
+    PENDING_VERIFY = 1     # 待验证
+    HOLDING = 2            # 持有中
+    APPROVING = 3          # 审批中
+    ENDORSED = 4           # 已背书
+    DISCOUNTED = 5         # 已贴现
+    PLEDGED = 6            # 已质押
+    REDEEMED = 7           # 已赎回（质押）
+    CASHED = 8             # 已兑付
+    RECOURSED = 9          # 已追索
+    RETURNED = 10          # 已退回
+    CANCELLED = 11         # 已作废
+
+# 状态转换规则
+STATUS_TRANSITIONS = {
+    BillStatus.PENDING_VERIFY: [BillStatus.HOLDING, BillStatus.CANCELLED],
+    BillStatus.HOLDING: [BillStatus.APPROVING, BillStatus.CANCELLED],
+    BillStatus.APPROVING: [BillStatus.HOLDING, BillStatus.ENDORSED, 
+                           BillStatus.DISCOUNTED, BillStatus.PLEDGED, BillStatus.CANCELLED],
+    BillStatus.PLEDGED: [BillStatus.REDEEMED],
+    # 终态不可再转换
+    BillStatus.ENDORSED: [],
+    BillStatus.DISCOUNTED: [],
+    BillStatus.CASHED: [],
+    BillStatus.REDEEMED: [],
+    BillStatus.RECOURSED: [],
+    BillStatus.RETURNED: [],
+    BillStatus.CANCELLED: [],
+}</code></pre>
+<h3>4.4 票面要素校验规则</h3>
+<pre><code>def validate_bill_note(bill: dict) -> list[str]:
+    """票面要素完整性校验，返回错误列表"""
+    errors = []
+    
+    # 必填字段
+    required = ['bill_type', 'bill_number', 'draft_date', 'due_date', 
+                'face_amount', 'drawer', 'acceptor']
+    for field in required:
+        if not bill.get(field):
+            errors.append(f"缺少必填字段: {field}")
+    
+    # 业务规则校验
+    if bill.get('face_amount', 0) <= 0:
+        errors.append("票面金额必须大于0")
+    
+    if bill.get('due_date') and bill.get('draft_date'):
+        if bill['due_date'] <= bill['draft_date']:
+            errors.append("到期日期必须晚于出票日期")
+        
+        days = (bill['due_date'] - bill['draft_date']).days
+        if days > 365:
+            errors.append("票据期限不得超过一年")
+    
+    # 银行承兑汇票必须填写承兑银行
+    if bill.get('bill_type') == 1 and not bill.get('acceptor_bank'):
+        errors.append("银行承兑汇票必须填写承兑银行")
+    
+    # 金额一致性（OCR场景）
+    if bill.get('amount_chinese') and bill.get('face_amount'):
+        # 大写金额与小写金额比对
+        if not amount_match(bill['amount_chinese'], bill['face_amount']):
+            errors.append("大写金额与小写金额不一致")
+    
+    return errors</code></pre>
+<h3>4.5 贴现计算规则</h3>
+<pre><code>def calculate_discount(
+    face_amount: float,     # 票面金额
+    discount_rate: float,   # 贴现年利率 (例: 0.032 = 3.2%)
+    discount_date: date,    # 贴现日期
+    due_date: date          # 到期日期
+) -> dict:
+    """
+    贴现利息计算
+    公式: 贴现利息 = 票面金额 × 贴现利率 × 贴现天数 / 360
+    """
+    discount_days = (due_date - discount_date).days
+    discount_interest = round(face_amount * discount_rate * discount_days / 360, 2)
+    actual_amount = round(face_amount - discount_interest, 2)
+    
+    return {
+        'face_amount': face_amount,
+        'discount_rate': discount_rate,
+        'discount_days': discount_days,
+        'discount_interest': discount_interest,
+        'actual_amount': actual_amount,
+    }</code></pre>
+<p>---</p>
+<h2>5. 凭证模板矩阵</h2>
+<h3>5.1 六种标准凭证模板</h3>
+<table>
+<tr><th>编号</th><th>场景</th><th>借方</th><th>贷方</th><th>凭证字</th></tr>
+<tr><th>**B01**</th><th>票据收取</th><th>应收票据-银承/商承（票面金额）</th><th>应收账款-XX客户（核销金额）</th><th>收</th></tr>
+<tr><th>**B02**</th><th>票据背书</th><th>应付账款-XX供应商（应付金额）</th><th>应收票据-XX票据（票面金额）</th><th>转</th></tr>
+<tr><th>**B03**</th><th>票据贴现</th><th>银行存款（实得金额）+ 财务费用-贴现息（贴现利息）</th><th>应收票据-XX票据（票面金额）</th><th>收</th></tr>
+<tr><th>**B04**</th><th>票据质押</th><th>银行存款（融资金额）</th><th>短期借款-票据质押借款（借款额）</th><th>收</th></tr>
+<tr><th>**B05**</th><th>质押赎回</th><th>短期借款-票据质押借款（本金）+ 财务费用-利息（利息）</th><th>银行存款（偿还总额）</th><th>付</th></tr>
+<tr><th>**B06**</th><th>到期兑付</th><th>银行存款（票面金额）</th><th>应收票据-XX票据（票面金额）</th><th>收</th></tr>
+<tr><th>**B07**</th><th>票据退回/追索</th><th>应收账款-XX客户（追回金额）</th><th>应收票据-XX票据（票面金额）</th><th>转</th></tr>
+<tr><th>**B08**</th><th>坏账核销</th><th>坏账准备（票面金额）</th><th>应收票据-XX票据（票面金额）</th><th>转</th></tr>
+</table>
+<h3>5.2 凭证模板JSON定义</h3>
+<pre><code>{
+  "B01": {
+    "name": "票据收取",
+    "voucher_word": "收",
+    "entries": [
+      {"direction": "DEBIT", "account": "1121", "sub_account": "银行承兑汇票/商业承兑汇票", "amount_source": "face_amount"},
+      {"direction": "CREDIT", "account": "1122", "sub_account": "动态-客户名称", "amount_source": "face_amount"}
+    ]
+  },
+  "B03": {
+    "name": "票据贴现",
+    "voucher_word": "收",
+    "entries": [
+      {"direction": "DEBIT", "account": "1002", "sub_account": "贴现银行", "amount_source": "actual_amount"},
+      {"direction": "DEBIT", "account": "6603", "sub_account": "贴现利息", "amount_source": "discount_interest"},
+      {"direction": "CREDIT", "account": "1121", "sub_account": "对应票据子目", "amount_source": "face_amount"}
+    ]
+  }
+}</code></pre>
+<p>---</p>
+<h2>6. 内部API设计</h2>
+<h3>6.1 票据登记</h3>
+<pre><code>POST /api/v1/bill-notes</code></pre>
+<p><strong>请求体:</strong></p>
+<pre><code>{
+  "bill_type": 1,
+  "bill_number": "GA0203010001256789",
+  "bill_code": "3200221130",
+  "draft_date": "2026-03-15",
+  "due_date": "2026-09-15",
+  "face_amount": 500000.00,
+  "drawer": "XX科技有限公司",
+  "drawer_tax_no": "91320100MA1XXXXX",
+  "payee": "我方公司名称",
+  "acceptor": "中国工商银行南京分行",
+  "acceptor_type": 1,
+  "acceptor_bank": "中国工商银行",
+  "acceptor_acct": "4301011234567890",
+  "source_type": 1,
+  "customer_id": 10086,
+  "receipt_id": 20001,
+  "is_electronic": 1,
+  "check_code": "28750493xxxxx",
+  "remark": "XX客户货款票据"
+}</code></pre>
+<p><strong>响应:</strong></p>
+<pre><code>{
+  "code": 0,
+  "message": "票据登记成功",
+  "data": {
+    "bill_id": 30001,
+    "bill_no": "BILL2026040001",
+    "status": 1,
+    "voucher_id": null
+  }
+}</code></pre>
+<h3>6.2 票据背书</h3>
+<pre><code>POST /api/v1/bill-notes/{bill_id}/endorse</code></pre>
+<p><strong>请求体:</strong></p>
+<pre><code>{
+  "endorse_date": "2026-04-20",
+  "endorsee_id": 20001,
+  "endorsee_name": "YY供应商有限公司",
+  "ap_detail_id": 50010,
+  "ap_amount": 500000.00,
+  "endorse_remark": "支付3月采购货款"
+}</code></pre>
+<h3>6.3 票据贴现</h3>
+<pre><code>POST /api/v1/bill-notes/{bill_id}/discount</code></pre>
+<p><strong>请求体:</strong></p>
+<pre><code>{
+  "discount_date": "2026-04-20",
+  "discount_bank_id": 1,
+  "discount_rate": 0.032,
+  "calculated": {
+    "discount_days": 148,
+    "discount_interest": 6555.56,
+    "actual_amount": 493444.44
+  },
+  "remark": "工行贴现"
+}</code></pre>
+<h3>6.4 到期预警查询</h3>
+<pre><code>GET /api/v1/bill-notes/alerts?level=all</code></pre>
+<p><strong>响应:</strong></p>
+<pre><code>{
+  "code": 0,
+  "data": {
+    "summary": {
+      "level_30": 3,
+      "level_15": 1,
+      "level_7": 0,
+      "level_3": 0,
+      "overdue": 0
+    },
+    "items": [
+      {
+        "bill_no": "BILL2026040001",
+        "bill_type_name": "银行承兑汇票",
+        "face_amount": 500000.00,
+        "acceptor": "中国工商银行南京分行",
+        "due_date": "2026-05-10",
+        "days_remaining": 25,
+        "alert_level": 1,
+        "customer_name": "XX科技有限公司",
+        "receipt_id": 20001
+      }
+    ]
+  }
+}</code></pre>
+<h3>6.5 票据台账查询</h3>
+<pre><code>GET /api/v1/bill-notes?status=holding&page=1&size=20&sort=due_date&order=asc</code></pre>
+<p>---</p>
+<h2>7. 到期预警机制</h2>
+<h3>7.1 分级预警规则</h3>
+<table>
+<tr><th>级别</th><th>提前天数</th><th>通知渠道</th><th>通知对象</th><th>频率</th></tr>
+<tr><th>🟢 L1</th><th>30天</th><th>站内信</th><th>出纳</th><th>每日1次</th></tr>
+<tr><th>🟡 L2</th><th>15天</th><th>站内信 + 邮件</th><th>出纳 + 财务主管</th><th>每日1次</th></tr>
+<tr><th>🟠 L3</th><th>7天</th><th>站内信 + 邮件 + 短信</th><th>出纳 + 财务主管</th><th>每日1次</th></tr>
+<tr><th>🔴 L4</th><th>3天</th><th>全渠道 + 电话</th><th>出纳 + 财务主管 + 部门负责人</th><th>每日2次</th></tr>
+</table>
+<h3>7.2 定时任务设计</h3>
+<pre><code>from apscheduler.schedulers.background import BackgroundScheduler
+
+scheduler = BackgroundScheduler()
+
+@scheduler.scheduled_job('cron', hour=8, minute=0, id='bill_alert_daily')
+def daily_bill_alert():
+    """每日8:00执行票据到期预警扫描"""
+    today = date.today()
+    
+    # 查询所有持有中+质押中的票据
+    bills = BillNote.query.filter(
+        BillNote.status.in_([BillStatus.HOLDING, BillStatus.PLEDGED]),
+        BillNote.is_deleted == 0
+    ).all()
+    
+    alert_configs = BillAlertConfig.query.filter_by(is_enabled=1).all()
+    
+    for bill in bills:
+        days_remaining = (bill.due_date - today).days
+        
+        for config in alert_configs:
+            if days_remaining <= config.alert_days:
+                # 检查是否已发送过该级别预警
+                if not has_alert_sent(bill.id, config.alert_level):
+                    send_alert(bill, config)
+                    record_alert(bill.id, config.alert_level)
+                break  # 只触发最高级别
+        
+        # 逾期检查
+        if days_remaining < 0 and bill.status == BillStatus.HOLDING:
+            escalate_overdue(bill)</code></pre>
+<p>---</p>
+<h2>8. 安全与风控</h2>
+<h3>8.1 票据实物安全</h3>
+<table>
+<tr><th>措施</th><th>说明</th></tr>
+<tr><th>保管位置登记</th><th>纸质票据必须记录保险柜编号</th></tr>
+<tr><th>保管人责任制</th><th>每张票据指定保管人，交接需签收</th></tr>
+<tr><th>盘点机制</th><th>月度票据实物盘点，系统核对</th></tr>
+<tr><th>遗失处理</th><th>48小时内挂失止付 + 公示催告</th></tr>
+</table>
+<h3>8.2 信用风险控制</h3>
+<table>
+<tr><th>风控点</th><th>规则</th></tr>
+<tr><th>商业承兑汇票限额</th><th>单一承兑人持有票据总额不超过应收账款50%</th></tr>
+<tr><th>承兑人信用评级</th><th>接入企业征信，B级以下需审批</th></tr>
+<tr><th>大额票据审批</th><th>票面金额≥50万需财务总监审批</th></tr>
+<tr><th>异常到期率</th><th>同一承兑人连续2次拒付，暂停接受其票据</th></tr>
+</table>
+<h3>8.3 操作权限</h3>
+<table>
+<tr><th>操作</th><th>角色</th><th>说明</th></tr>
+<tr><th>票据登记</th><th>出纳/财务</th><th>基础录入权限</th></tr>
+<tr><th>票据背书</th><th>出纳（申请）+ 财务主管（审批）</th><th>双人控制</th></tr>
+<tr><th>票据贴现</th><th>出纳（申请）+ 财务主管（审批）</th><th>大额需总监</th></tr>
+<tr><th>票据质押</th><th>财务主管（申请）+ 财务总监（审批）</th><th>高风险操作</th></tr>
+<tr><th>到期托收</th><th>出纳</th><th>自动提醒后执行</th></tr>
+<tr><th>凭证修改</th><th>仅财务主管</th><th>生效凭证不可删</th></tr>
+<tr><th>台账查询</th><th>出纳/财务/主管</th><th>按角色过滤数据</th></tr>
+</table>
+<p>---</p>
+<h2>9. 测试用例</h2>
+<h3>9.1 核心测试场景</h3>
+<table>
+<tr><th>#</th><th>场景</th><th>前置条件</th><th>操作</th><th>预期结果</th></tr>
+<tr><th>T01</th><th>正常收取银承汇票</th><th>收款单存在</th><th>录入票据信息 → 校验 → 入池</th><th>票据状态=持有中，生成凭证B01</th></tr>
+<tr><th>T02</th><th>OCR识别录入</th><th>票据图片</th><th>上传图片 → OCR提取 → 校对确认</th><th>自动填充80%+字段</th></tr>
+<tr><th>T03</th><th>票据背书支付</th><th>持有中票据+应付单</th><th>发起背书 → 审批 → 确认交接</th><th>状态=已背书，生成凭证B02，应付核销</th></tr>
+<tr><th>T04</th><th>票据贴现</th><th>持有中票据</th><th>贴现计算 → 申请 → 审批 → 确认到账</th><th>状态=已贴现，生成凭证B03</th></tr>
+<tr><th>T05</th><th>到期托收兑付</th><th>持有中票据到期</th><th>系统预警 → 提交托收 → 确认到账</th><th>状态=已兑付，生成凭证B06</th></tr>
+<tr><th>T06</th><th>票据拒付追索</th><th>承兑人拒付</th><th>记录拒付 → 追索通知 → 收回款项</th><th>状态=已追索，生成凭证B07</th></tr>
+<tr><th>T07</th><th>票据到期预警</th><th>到期30天内票据</th><th>等待定时任务</th><th>按规则发送分级预警</th></tr>
+<tr><th>T08</th><th>票据金额校验</th><th>-</th><th>录入到期日早于出票日</th><th>拒绝并提示错误</th></tr>
+<tr><th>T09</th><th>状态机校验</th><th>已背书票据</th><th>尝试再次背书</th><th>拒绝操作，提示"票据已背书"</th></tr>
+<tr><th>T10</th><th>票据质押赎回</th><th>已质押票据</th><th>到期偿还 → 赎回</th><th>状态=已赎回，生成凭证B05</th></tr>
+</table>
+<p>---</p>
+<h2>10. 实施路线图</h2>
+<h3>10.1 MVP阶段（约10个工作日）</h3>
+<pre><code>Phase P1-A: 基础框架 (3天)
+├── Day 1-2: 数据库建表 + 票据登记API
+│   └── 交付: bill_note + bill_transaction DDL, 登记接口
+├── Day 3: 票据编号生成 + 票面校验逻辑
+│   └── 交付: 编号生成器 + 校验规则引擎
+
+Phase P1-B: 核心流转 (4天)
+├── Day 4-5: 背书转让（申请+审批+凭证B02）
+├── Day 6: 贴现计算器 + 贴现申请（凭证B03）
+├── Day 7: 到期兑付确认（凭证B06）
+│   └── 交付: 3种核心流转的完整API
+
+Phase P1-C: 预警+台账 (3天)
+├── Day 8: 到期预警定时任务 + 分级通知
+├── Day 9: 票据台账列表 + 筛选查询
+├── Day 10: 集成测试 + Bug修复
+│   └── 交付: 预警系统 + 台账视图 + 测试报告</code></pre>
+<h3>10.2 增强阶段（约5个工作日）</h3>
+<pre><code>Phase P2-A: 高级功能 (3天)
+├── 票据质押管理（登记+赎回+凭证B04/B05）
+├── 退回追索处理（凭证B07/B08）
+├── OCR识别接入（腾讯云票据OCR）
+│   └── 交付: 完整异常流程 + OCR能力
+
+Phase P2-B: 统计分析 (2天)
+├── 票据池统计仪表板
+├── 票据流水报表
+├── 承兑人信用分析
+│   └── 交付: 3个统计视图</code></pre>
+<p>---</p>
+<h2>附录</h2>
+<h3>A. 票据类型对照表</h3>
+<table>
+<tr><th>类型代码</th><th>类型名称</th><th>常用期限</th><th>风险等级</th><th>备注</th></tr>
+<tr><th>1</th><th>银行承兑汇票</th><th>≤6个月</th><th>🟢 低</th><th>银行信用，最安全</th></tr>
+<tr><th>2</th><th>商业承兑汇票</th><th>≤6个月</th><th>🟠 中高</th><th>企业信用，需评估</th></tr>
+<tr><th>3</th><th>支票</th><th>≤10天</th><th>🟢 低</th><th>见票即付</th></tr>
+<tr><th>4</th><th>银行本票</th><th>≤2个月</th><th>🟢 低</th><th>银行签发</th></tr>
+</table>
+<h3>B. 与实收收款模块的关联</h3>
+<pre><code>实收收款模块                      票据往来模块
+┌───────────────┐              ┌───────────────┐
+│ 收款单        │──收款方式──→│ 票据收取登记   │
+│ receipt       │   =票据     │ bill_note     │
+│               │              │               │
+│ 收款方式枚举:  │              │ 来源类型枚举:   │
+│ - 银行转账    │              │ 1=客户交付    │
+│ - 现金        │              │ 2=背书转入    │
+│ - 承兑汇票 ←──│──────────────│               │
+│ - 支票      ←─│──────────────│               │
+│ - 本票      ←─│──────────────│               │
+└───────────────┘              └───────────────┘</code></pre>
+
+  </div>
+</div>
+</body>
+</html>
