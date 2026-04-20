@@ -1,0 +1,1213 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>海外企业发票管理 — 详细流程图</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Microsoft YaHei','Segoe UI',sans-serif;background:#0f172a;color:#e2e8f0;min-height:100vh}
+.header{background:linear-gradient(135deg,#1e293b 0%,#0f172a 100%);border-bottom:2px solid #3b82f6;padding:20px 30px;display:flex;align-items:center;gap:15px}
+.header h1{font-size:22px;font-weight:700;color:#f1f5f9}
+.header .badge{background:#3b82f6;color:#fff;font-size:11px;padding:3px 10px;border-radius:12px;font-weight:600}
+.header .meta{color:#94a3b8;font-size:12px;margin-left:auto}
+.tabs{display:flex;background:#1e293b;border-bottom:1px solid #334155;padding:0 20px;gap:0;overflow-x:auto}
+.tab{padding:12px 20px;cursor:pointer;font-size:13px;color:#94a3b8;border-bottom:2px solid transparent;white-space:nowrap;transition:all .2s}
+.tab:hover{color:#e2e8f0;background:#334155}
+.tab.active{color:#60a5fa;border-bottom-color:#60a5fa;background:#1e3a5f}
+.content{padding:20px 30px}
+.section{display:none}
+.section.active{display:block}
+.chart-container{background:#1e293b;border-radius:12px;border:1px solid #334155;padding:25px;margin-bottom:20px;overflow-x:auto}
+.chart-container h3{font-size:16px;color:#60a5fa;margin-bottom:15px;padding-bottom:10px;border-bottom:1px solid #334155}
+.chart-container h4{font-size:14px;color:#94a3b8;margin:15px 0 10px}
+.flow{display:flex;flex-direction:column;align-items:center;gap:8px;padding:10px 0}
+.flow-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:center}
+.box{padding:10px 18px;border-radius:8px;font-size:13px;text-align:center;min-width:100px;max-width:220px;line-height:1.4}
+.box-start{background:#065f46;border:1px solid #10b981;color:#a7f3d0}
+.box-end{background:#7f1d1d;border:1px solid #ef4444;color:#fca5a5}
+.box-process{background:#1e3a5f;border:1px solid #3b82f6;color:#bfdbfe}
+.box-decision{background:#713f12;border:1px solid #f59e0b;color:#fde68a;transform:rotate(0deg);clip-path:polygon(50% 0%,100% 50%,50% 100%,0% 50%);min-width:120px;min-height:50px;display:flex;align-items:center;justify-content:center;font-size:12px;padding:0 15px}
+.box-decision-text{background:#713f12;border:2px solid #f59e0b;color:#fde68a;border-radius:8px;padding:10px 18px;font-size:13px;text-align:center}
+.box-success{background:#14532d;border:1px solid #22c55e;color:#86efac}
+.box-warning{background:#7c2d12;border:1px solid #f97316;color:#fdba74}
+.box-danger{background:#7f1d1d;border:1px solid #ef4444;color:#fca5a5}
+.box-info{background:#1e293b;border:1px solid #6366f1;color:#c7d2fe}
+.box-purple{background:#3b0764;border:1px solid #a855f7;color:#d8b4fe}
+.box-gray{background:#374151;border:1px solid #6b7280;color:#d1d5db}
+.arrow-down{color:#60a5fa;font-size:18px;line-height:1}
+.arrow-right{color:#60a5fa;font-size:18px}
+.branch-label{color:#f59e0b;font-size:11px;font-weight:600}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:15px}
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.country-card{background:#1e293b;border:1px solid #334155;border-radius:10px;padding:15px;text-align:center}
+.country-card .flag{font-size:32px;margin-bottom:8px}
+.country-card .name{font-size:14px;font-weight:600;color:#f1f5f9;margin-bottom:5px}
+.country-card .rate{color:#22c55e;font-size:18px;font-weight:700}
+.country-card .currency{color:#94a3b8;font-size:12px}
+.country-card .tax-id{color:#60a5fa;font-size:11px;margin-top:4px}
+.country-card .tag{display:inline-block;padding:2px 8px;border-radius:10px;font-size:10px;margin-top:5px}
+.tag-einvoice{background:#065f46;color:#6ee7b7}
+.tag-manual{background:#713f12;color:#fbbf24}
+.tag-cargo{background:#3b0764;color:#d8b4fe}
+table{width:100%;border-collapse:collapse;margin:10px 0}
+th{background:#334155;color:#94a3b8;font-size:12px;padding:8px 12px;text-align:left;border:1px solid #475569}
+td{font-size:12px;padding:7px 12px;border:1px solid #334155;color:#e2e8f0}
+tr:hover td{background:#1e293b}
+.highlight{color:#fbbf24;font-weight:600}
+.sub-title{font-size:14px;color:#94a3b8;margin:18px 0 10px;padding-left:10px;border-left:3px solid #3b82f6}
+.compare-box{background:#0f172a;border:1px solid #334155;border-radius:8px;padding:15px;margin:10px 0}
+.compare-box h5{color:#60a5fa;font-size:13px;margin-bottom:8px}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:15px}
+@media(max-width:768px){.grid-2,.grid-4,.two-col{grid-template-columns:1fr}.tabs{padding:0 10px}.content{padding:15px}.box{min-width:80px;font-size:11px;padding:8px 12px}}
+.legend{display:flex;gap:15px;flex-wrap:wrap;margin:10px 0 15px;padding:8px 12px;background:#0f172a;border-radius:6px}
+.legend-item{display:flex;align-items:center;gap:5px;font-size:11px;color:#94a3b8}
+.legend-dot{width:12px;height:12px;border-radius:3px}
+.status-flow{display:flex;align-items:center;gap:5px;flex-wrap:wrap;margin:10px 0}
+.status-badge{padding:4px 12px;border-radius:12px;font-size:11px;font-weight:600}
+</style>
+<!-- 新增标签切换核心JS -->
+<script>
+// 标签切换核心函数
+function showSection(index) {
+    // 1. 隐藏所有section
+    const sections = document.querySelectorAll('.section');
+    sections.forEach(sec => sec.classList.remove('active'));
+    
+    // 2. 显示选中的section
+    const targetSec = document.getElementById(`sec${index}`);
+    if (targetSec) {
+        targetSec.classList.add('active');
+    }
+    
+    // 3. 切换tab的active样式
+    const tabs = document.querySelectorAll('.tab');
+    tabs.forEach(tab => tab.classList.remove('active'));
+    if (tabs[index]) {
+        tabs[index].classList.add('active');
+    }
+}
+
+// 页面加载默认激活第一个标签
+window.onload = function() {
+    showSection(0);
+}
+</script>
+</head>
+<body>
+
+<div class="header">
+<h1>🌏 海外企业发票管理 — 详细流程图</h1>
+<span class="badge">v1.0</span>
+<span class="meta">Dev_Dept ERP Finance · 2026-04-15 · 覆盖越南/泰国/菲律宾/沙特</span>
+</div>
+
+<div class="tabs">
+<div class="tab active" onclick="showSection(0)">① 总体架构</div>
+<div class="tab" onclick="showSection(1)">② 四国制度</div>
+<div class="tab" onclick="showSection(2)">③ 进项录入流程</div>
+<div class="tab" onclick="showSection(3)">④ 人工审核</div>
+<div class="tab" onclick="showSection(4)">⑤ 票随货走</div>
+<div class="tab" onclick="showSection(5)">⑥ 销售开票</div>
+<div class="tab" onclick="showSection(6)">⑦ 汇率处理</div>
+<div class="tab" onclick="showSection(7)">⑧ 凭证模板</div>
+</div>
+
+<div class="content">
+
+<!-- ========== Section 0: 总体架构 ========== -->
+<div class="section active" id="sec0">
+<div class="chart-container">
+<h3>🏗️ 海外发票模块 — 在ERP中的位置</h3>
+<div class="flow">
+<div class="box box-gray" style="min-width:600px;font-size:12px">
+<table>
+<tr><th>上游单据</th><th>方向</th><th>发票模块</th><th>方向</th><th>下游模块</th></tr>
+<tr><td>采购入库单</td><td>→</td><td rowspan="3" style="background:#1e3a5f;font-weight:700;font-size:14px;text-align:center">🌏 海外发票<br/>管理模块</td><td>→</td><td>应付挂账</td></tr>
+<tr><td>销售发货单</td><td>→</td><td>→</td><td>应收确认</td></tr>
+<tr><td>手工录入</td><td>→</td><td>→</td><td>总账凭证</td></tr>
+</table>
+</div>
+<div class="arrow-down">▼</div>
+<div class="box box-info" style="min-width:500px;font-size:12px">
+<b>关联模块</b>：发票查验(CN) | 实收收款 | 实付付款 | 票据往来 | 应收应付 | 总账凭证引擎(GLE)
+</div>
+</div>
+</div>
+
+<div class="chart-container">
+<h3>🔄 统一入口 · 分流处理架构</h3>
+<div class="flow">
+<div class="box box-start" style="min-width:280px">
+<b>发票录入入口（统一）</b><br/>
+<span style="font-size:11px;color:#a7f3d0">采购/销售/手工/批量</span>
+</div>
+<div class="arrow-down">▼</div>
+<div class="box box-decision-text">
+<b>invoice_region = ?</b>
+</div>
+<div style="display:flex;gap:15px;align-items:flex-start;margin-top:10px">
+<div style="flex:1">
+<div class="arrow-down" style="text-align:center">🇨🇳 CN</div>
+<div class="box box-process" style="margin-top:5px">
+<b>国内发票处理</b><br/>
+<span style="font-size:11px">已有模块</span>
+<div class="arrow-down">▼</div>
+<div class="box box-success" style="font-size:11px">
+✅ 腾讯云API自动验真<br/>
+票种代码体系(12种)<br/>
+发票代码+号码+校验码
+</div>
+</div>
+</div>
+<div style="flex:1">
+<div class="arrow-down" style="text-align:center">🌏 VN/TH/PH/SA</div>
+<div class="box box-purple" style="margin-top:5px">
+<b>海外发票处理（本模块）</b><br/>
+<span style="font-size:11px">新增扩展</span>
+<div class="arrow-down">▼</div>
+<div class="box box-warning" style="font-size:11px">
+⚠️ 人工审核 + 影像存档<br/>
+多币种 + 汇率折算<br/>
+票随货走跟踪(VN/TH)<br/>
+4国发票模板体系
+</div>
+<div class="arrow-down">▼</div>
+<div class="box box-info" style="font-size:11px">
+🔌 验真API预留<br/>
+SA: ZATCA (未来)<br/>
+VN: GDT (未来)
+</div>
+</div>
+</div>
+</div>
+<div class="arrow-down" style="margin-top:15px">▼</div>
+<div class="box box-success" style="min-width:400px">
+<b>审核通过 → 统一进入下游流程</b><br/>
+<span style="font-size:11px">应收/应付挂账 · 凭证生成 · 台账记录 — 完全复用</span>
+</div>
+</div>
+</div>
+
+<div class="chart-container">
+<h3>📊 数据模型关系</h3>
+<div class="grid-2">
+<div>
+<div class="compare-box">
+<h5>扩展表（本模块新增）</h5>
+<div style="font-size:12px;line-height:2">
+🔴 <b>fx_exchange_rate</b> — 汇率管理表<br/>
+🔴 <b>overseas_invoice_attachment</b> — 附件表<br/>
+🔴 <b>overseas_invoice_template</b> — 模板配置表<br/>
+🔴 <b>overseas_sales_invoice</b> — 销项发票表<br/>
+🔴 <b>overseas_sales_invoice_item</b> — 销项明细表
+</div>
+</div>
+</div>
+<div>
+<div class="compare-box">
+<h5>扩展字段（在已有表上ALTER）</h5>
+<div style="font-size:12px;line-height:2">
+🟡 <b>invoice_verification_log</b> 新增字段：<br/>
+&nbsp;&nbsp;· invoice_region (CN/VN/TH/PH/SA)<br/>
+&nbsp;&nbsp;· currency / exchange_rate / local_amount<br/>
+&nbsp;&nbsp;· seller_tax_id / buyer_tax_id<br/>
+&nbsp;&nbsp;· attachment_ids (必填)<br/>
+&nbsp;&nbsp;· manual_verify_* (审核字段)<br/>
+&nbsp;&nbsp;· cargo_tracking_no (票随货走)<br/>
+&nbsp;&nbsp;· invoice_delivery_status<br/>
+&nbsp;&nbsp;· original_invoice_id (补票关联)
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- ========== Section 1: 四国制度 ========== -->
+<div class="section" id="sec1">
+<div class="chart-container">
+<h3>🌏 四国发票制度全景</h3>
+<div class="grid-4">
+<div class="country-card">
+<div class="flag">🇻🇳</div>
+<div class="name">越南</div>
+<div class="rate">10%</div>
+<div class="currency">VND · 越南盾</div>
+<div class="tax-id">MST · 10位数字</div>
+<div style="margin-top:6px;font-size:11px;color:#94a3b8;text-align:left">
+<div>· 2025.6起全面电子发票</div>
+<div>· GDT平台管控</div>
+<div>· 票随货走 ✅</div>
+<div>· 验真: GDT(未来API)</div>
+</div>
+<div class="tag tag-einvoice">电子发票</div>
+<div class="tag tag-cargo">票随货走</div>
+</div>
+<div class="country-card">
+<div class="flag">🇹🇭</div>
+<div class="name">泰国</div>
+<div class="rate">7%</div>
+<div class="currency">THB · 泰铢</div>
+<div class="tax-id">VAT/TIN · 13位</div>
+<div style="margin-top:6px;font-size:11px;color:#94a3b8;text-align:left">
+<div>· 税局印发 + 电子并存</div>
+<div>· 小企业可开Receipt</div>
+<div>· 票随货走 ✅</div>
+<div>· 验真: 人工+税局网站</div>
+</div>
+<div class="tag tag-manual">人工审核</div>
+<div class="tag tag-cargo">票随货走</div>
+</div>
+<div class="country-card">
+<div class="flag">🇵🇭</div>
+<div class="name">菲律宾</div>
+<div class="rate">12%</div>
+<div class="currency">PHP · 比索</div>
+<div class="tax-id">TIN · 9-12位</div>
+<div style="margin-top:6px;font-size:11px;color:#94a3b8;text-align:left">
+<div>· BIR打印授权制</div>
+<div>· Sales Invoice(商品)</div>
+<div>· Official Receipt(服务)</div>
+<div>· 验真: 无统一API</div>
+</div>
+<div class="tag tag-manual">人工审核</div>
+</div>
+<div class="country-card">
+<div class="flag">🇸🇦</div>
+<div class="name">沙特</div>
+<div class="rate">15%</div>
+<div class="currency">SAR · 里亚尔</div>
+<div class="tax-id">VAT · 15位(3XX开头)</div>
+<div style="margin-top:6px;font-size:11px;color:#94a3b8;text-align:left">
+<div>· 2025 FATOORAH全覆盖</div>
+<div>· ZATCA电子发票</div>
+<div>· QR Code强制要求</div>
+<div>· 验真: ZATCA API(未来)</div>
+</div>
+<div class="tag tag-einvoice">电子发票</div>
+</div>
+</div>
+</div>
+
+<div class="chart-container">
+<h3>📋 验真策略分层</h3>
+<div class="flow">
+<div class="box box-decision-text" style="min-width:200px">
+<b>发票地区?</b>
+</div>
+<div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:10px">
+<div style="text-align:center">
+<div class="box box-success" style="min-width:120px;font-size:12px">
+<b>🇨🇳 CN</b><br/>腾讯云API<br/><span style="color:#86efac">✅ 已实现</span>
+</div>
+</div>
+<div style="text-align:center">
+<div class="box box-warning" style="min-width:120px;font-size:12px">
+<b>🇻🇳 VN</b><br/>GDT平台<br/><span style="color:#fde68a">⚡ 未来对接</span>
+</div>
+</div>
+<div style="text-align:center">
+<div class="box box-warning" style="min-width:120px;font-size:12px">
+<b>🇸🇦 SA</b><br/>ZATCA API<br/><span style="color:#fde68a">⚡ 未来对接</span>
+</div>
+</div>
+<div style="text-align:center">
+<div class="box box-danger" style="min-width:120px;font-size:12px">
+<b>🇹🇭 TH</b><br/>人工审核<br/><span style="color:#fca5a5">❌ 无API</span>
+</div>
+</div>
+<div style="text-align:center">
+<div class="box box-danger" style="min-width:120px;font-size:12px">
+<b>🇵🇭 PH</b><br/>人工审核<br/><span style="color:#fca5a5">❌ 无API</span>
+</div>
+</div>
+</div>
+<div class="arrow-down" style="margin-top:15px">▼</div>
+<div class="box box-gray" style="font-size:12px">
+<b>MVP阶段</b>：4国统一走人工审核流程（附件上传 + 票面比对 + 审核记录）<br/>
+<b>迭代阶段</b>：SA对接ZATCA · VN对接GDT → 自动验真替换人工
+</div>
+</div>
+</div>
+
+<div class="chart-container">
+<h3>🧾 各国发票必须包含的信息对比</h3>
+<table>
+<tr>
+<th>字段</th>
+<th style="color:#86efac">🇻🇳 越南</th>
+<th style="color:#fde68a">🇹🇭 泰国</th>
+<th style="color:#fca5a5">🇵🇭 菲律宾</th>
+<th style="color:#c7d2fe">🇸🇦 沙特</th>
+</tr>
+<tr><td>发票类型标识</td><td>✅ 电子发票编号</td><td>✅ 泰文"ใบกำกับภาษี"</td><td>✅ VAT / NON-VAT</td><td>✅ "فاتورة ضريبية"</td></tr>
+<tr><td>卖方名称+税号</td><td>✅ MST(10位)</td><td>✅ VAT(13位)</td><td>✅ TIN(9-12位)</td><td>✅ VAT(15位)</td></tr>
+<tr><td>买方名称+税号</td><td>✅ MST</td><td>✅ VAT</td><td>✅ TIN</td><td>✅ VAT</td></tr>
+<tr><td>发票编号+日期</td><td>✅ 14位编号</td><td>✅ 连续编号</td><td>✅ 序列号+PTU</td><td>✅ UUID</td></tr>
+<tr><td>商品/服务明细</td><td>✅</td><td>✅</td><td>✅</td><td>✅ 含VAT编码</td></tr>
+<tr><td>不含税金额</td><td>✅</td><td>✅</td><td>✅</td><td>✅</td></tr>
+<tr><td>VAT金额</td><td>✅ 10%</td><td>✅ 7%</td><td>✅ 12%</td><td>✅ 15%</td></tr>
+<tr><td>价税合计</td><td>✅ VND</td><td>✅ THB</td><td>✅ PHP</td><td>✅ SAR</td></tr>
+<tr><td>附件(扫描件)</td><td>⚡ 电子发票可免</td><td>✅ 必填</td><td>✅ 必填</td><td>⚡ XML/QR Code</td></tr>
+<tr><td><b>特殊要求</b></td><td>GDT平台提交</td><td>卖方签名/印章</td><td>BIR打印授权号</td><td>QR Code + XML</td></tr>
+</table>
+</div>
+</div>
+
+<!-- ========== Section 2: 进项录入流程 ========== -->
+<div class="section" id="sec2">
+<div class="chart-container">
+<h3>📥 海外进项发票录入 — 完整流程</h3>
+<div class="flow">
+<div class="box box-start"><b>开始录入</b></div>
+<div class="arrow-down">▼</div>
+
+<div class="box box-process" style="min-width:200px">
+<b>① 选择发票地区</b><br/>
+<span style="font-size:11px">VN / TH / PH / SA</span>
+</div>
+<div class="arrow-down">▼</div>
+
+<div class="box box-info" style="min-width:280px">
+<b>② 自动加载发票模板</b><br/>
+<span style="font-size:11px">根据 country_code 查询 overseas_invoice_template<br/>动态显示该国必填字段和校验规则</span>
+</div>
+<div class="arrow-down">▼</div>
+
+<div class="two-col" style="width:100%;max-width:800px">
+<div class="box box-process">
+<b>③ 填写票面信息</b><br/>
+<span style="font-size:11px">
+· 发票编号（企业自编号）<br/>
+· 开票日期<br/>
+· 卖方/买方 + 税号<br/>
+· 商品/服务明细<br/>
+· 不含税金额 + 税额 + 合计
+</span>
+</div>
+<div class="box box-process">
+<b>④ 上传附件（必填）</b><br/>
+<span style="font-size:11px">
+· 扫描件/原件照片<br/>
+· 支持 JPG/PNG/PDF<br/>
+· 支持多张(正反面/多页)<br/>
+· 可选: OCR辅助填充
+</span>
+</div>
+</div>
+<div class="arrow-down">▼</div>
+
+<div class="box box-purple" style="min-width:280px">
+<b>⑤ 币种与汇率处理</b><br/>
+<span style="font-size:11px">
+· 币种自动填充( VN→VND / TH→THB / PH→PHP / SA→SAR )<br/>
+· 系统自动查询当日汇率 · 允许手动修改<br/>
+· 自动计算本位币(CNY)金额
+</span>
+</div>
+<div class="arrow-down">▼</div>
+
+<div class="box box-decision-text" style="min-width:200px">
+<b>⑥ 票随货走?</b><br/>
+<span style="font-size:10px">(仅VN/TH显示)</span>
+</div>
+<div style="display:flex;gap:15px;margin-top:5px">
+<div style="text-align:center">
+<div class="branch-label">是</div>
+<div class="arrow-down">▼</div>
+<div class="box box-purple" style="font-size:11px;min-width:150px">
+填写物流跟踪号<br/>cargo_tracking_no<br/>关联入库单
+</div>
+</div>
+<div style="text-align:center">
+<div class="branch-label">否</div>
+<div class="arrow-down">▼</div>
+<div class="box box-gray" style="font-size:11px;min-width:100px">跳过</div>
+</div>
+</div>
+<div class="arrow-down" style="margin-top:10px">▼</div>
+
+<div class="box box-decision-text" style="min-width:200px">
+<b>⑦ 本地预校验</b>
+</div>
+<div style="display:flex;gap:15px;margin-top:5px">
+<div style="text-align:center">
+<div class="branch-label">通过</div>
+<div class="arrow-down">▼</div>
+</div>
+<div style="text-align:center">
+<div class="branch-label">失败</div>
+<div class="arrow-down">▼</div>
+<div class="box box-danger" style="font-size:11px;min-width:150px">
+❌ 拦截<br/>· 税号格式错误<br/>· 必填项缺失<br/>· 金额不平衡<br/>· 去重冲突
+</div>
+</div>
+</div>
+<div class="arrow-down" style="margin-top:5px">▼</div>
+
+<div class="box box-warning" style="min-width:280px">
+<b>⑧ 提交审核</b><br/>
+<span style="font-size:11px">
+写入 invoice_verification_log<br/>
+verify_status = PENDING<br/>
+invoice_region = VN/TH/PH/SA<br/>
+等待人工审核
+</span>
+</div>
+<div class="arrow-down">▼</div>
+
+<div class="box box-end"><b>进入人工审核队列</b></div>
+</div>
+</div>
+
+<div class="chart-container">
+<h3>🧾 税号格式校验规则</h3>
+<table>
+<tr><th>国家</th><th>税号名称</th><th>格式</th><th>正则校验</th><th>示例</th></tr>
+<tr><td>🇻🇳 越南</td><td>MST</td><td>10位数字</td><td><code>^\d{10}$</code></td><td>0101234567</td></tr>
+<tr><td>🇹🇭 泰国</td><td>VAT/TIN</td><td>13位数字</td><td><code>^\d{13}$</code></td><td>0105556000123</td></tr>
+<tr><td>🇵🇭 菲律宾</td><td>TIN</td><td>9-12位(含短横线)</td><td><code>^[\d\-]{9,12}$</code></td><td>123-456-789-000</td></tr>
+<tr><td>🇸🇦 沙特</td><td>VAT Number</td><td>15位(3XX开头)</td><td><code>^3\d{2}\d{9}\d$</code></td><td>310123456789001</td></tr>
+</table>
+</div>
+</div>
+
+<!-- ========== Section 3: 人工审核 ========== -->
+<div class="section" id="sec3">
+<div class="chart-container">
+<h3>👁️ 人工审核 — 完整操作流程</h3>
+<div class="flow">
+<div class="box box-start"><b>财务人员打开审核列表</b></div>
+<div class="arrow-down">▼</div>
+
+<div class="box box-process" style="min-width:300px">
+<b>① 筛选待审核单据</b><br/>
+<span style="font-size:11px">
+· 按地区筛选(VN/TH/PH/SA)<br/>
+· 按状态筛选(PENDING)<br/>
+· 按录入时间/金额排序
+</span>
+</div>
+<div class="arrow-down">▼</div>
+
+<div class="box box-info" style="min-width:350px">
+<b>② 查看单据详情</b><br/>
+<span style="font-size:11px">
+· 票面信息（结构化数据）<br/>
+· 附件预览（在线查看/下载）<br/>
+· 预校验结果（错误提示）
+</span>
+</div>
+<div class="arrow-down">▼</div>
+
+<div class="box box-decision-text" style="min-width:250px">
+<b>③ 票面信息 vs 附件比对</b>
+</div>
+<div style="display:flex;gap:15px;margin-top:5px">
+<div style="text-align:center">
+<div class="branch-label">一致</div>
+<div class="arrow-down">▼</div>
+</div>
+<div style="text-align:center">
+<div class="branch-label">不一致</div>
+<div class="arrow-down">▼</div>
+<div class="box box-warning" style="font-size:11px;min-width:180px">
+⚠️ 驳回 + 备注原因<br/>
+· 税号填写错误<br/>
+· 金额与附件不符<br/>
+· 发票信息缺失<br/>
+· 附件模糊/不完整
+</div>
+<div class="arrow-down">▼</div>
+<div class="box box-gray" style="font-size:11px">
+退回录入人修改 → 重新提交
+</div>
+</div>
+</div>
+<div class="arrow-down" style="margin-top:5px">▼</div>
+
+<div class="box box-decision-text" style="min-width:250px">
+<b>④ 合规性审核</b>
+</div>
+<div style="display:flex;gap:15px;margin-top:5px">
+<div style="text-align:center">
+<div class="branch-label">合规</div>
+<div class="arrow-down">▼</div>
+</div>
+<div style="text-align:center">
+<div class="branch-label">不合规</div>
+<div class="arrow-down">▼</div>
+<div class="box box-danger" style="font-size:11px;min-width:180px">
+❌ 拒绝通过<br/>
+· 发票为假/无效<br/>
+· 超期发票<br/>
+· 不符合当地税法<br/>
+· 其他违规情形
+</div>
+<div class="arrow-down">▼</div>
+<div class="box box-gray" style="font-size:11px">
+记录拒绝原因 → 流程终止
+</div>
+</div>
+</div>
+<div class="arrow-down" style="margin-top:5px">▼</div>
+
+<div class="box box-process" style="min-width:300px">
+<b>⑤ 填写审核记录</b><br/>
+<span style="font-size:11px">
+· 审核人/审核时间<br/>
+· 审核意见（必填）<br/>
+· 保存审核日志
+</span>
+</div>
+<div class="arrow-down">▼</div>
+
+<div class="box box-success" style="min-width:300px">
+<b>⑥ 审核通过</b><br/>
+<span style="font-size:11px">
+· verify_status = APPROVED<br/>
+· 生成审核通过凭证<br/>
+· 推送至应收/应付模块<br/>
+· 附件归档至文档中心
+</span>
+</div>
+<div class="arrow-down">▼</div>
+
+<div class="box box-end"><b>流程结束</b></div>
+</div>
+</div>
+
+<div class="chart-container">
+<h3>📝 审核状态流转规则</h3>
+<div class="status-flow">
+<div class="box box-warning" style="min-width:120px">PENDING</div>
+<div class="arrow-right">→</div>
+<div class="box box-success" style="min-width:120px">APPROVED</div>
+<div class="arrow-right">→</div>
+<div class="box box-info" style="min-width:120px">FINISHED</div>
+</div>
+<div class="status-flow" style="margin-top:8px">
+<div class="box box-warning" style="min-width:120px">PENDING</div>
+<div class="arrow-right">→</div>
+<div class="box box-warning" style="min-width:120px">REJECTED</div>
+<div class="arrow-right">→</div>
+<div class="box box-warning" style="min-width:120px">MODIFIED</div>
+<div class="arrow-right">→</div>
+<div class="box box-warning" style="min-width:120px">PENDING</div>
+</div>
+<div class="status-flow" style="margin-top:8px">
+<div class="box box-warning" style="min-width:120px">PENDING</div>
+<div class="arrow-right">→</div>
+<div class="box box-danger" style="min-width:120px">REFUSED</div>
+<div class="arrow-right">→</div>
+<div class="box box-gray" style="min-width:120px">TERMINATED</div>
+</div>
+</div>
+</div>
+
+<!-- ========== Section 4: 票随货走 ========== -->
+<div class="section" id="sec4">
+<div class="chart-container">
+<h3>📦 票随货走 — 越南/泰国专项流程</h3>
+<div class="flow">
+<div class="box box-start"><b>采购入库单生成</b></div>
+<div class="arrow-down">▼</div>
+
+<div class="box box-process" style="min-width:280px">
+<b>① 入库单关联物流信息</b><br/>
+<span style="font-size:11px">
+· 物流跟踪号(cargo_tracking_no)<br/>
+· 启运地/目的地<br/>
+· 运输方式/承运商<br/>
+· 预计到货时间
+</span>
+</div>
+<div class="arrow-down">▼</div>
+
+<div class="box box-process" style="min-width:280px">
+<b>② 进项发票录入时关联入库单</b><br/>
+<span style="font-size:11px">
+· 录入cargo_tracking_no<br/>
+· 系统匹配入库单信息<br/>
+· 校验: 发票金额 ≤ 入库金额<br/>
+· 标记: is_cargo_invoice = 1
+</span>
+</div>
+<div class="arrow-down">▼</div>
+
+<div class="box box-decision-text" style="min-width:250px">
+<b>③ 发票审核通过?</b>
+</div>
+<div style="display:flex;gap:15px;margin-top:5px">
+<div style="text-align:center">
+<div class="branch-label">是</div>
+<div class="arrow-down">▼</div>
+<div class="box box-success" style="font-size:11px;min-width:200px">
+✅ 更新入库单状态<br/>
+· invoice_attached = 1<br/>
+· 关联发票ID<br/>
+· 记录匹配时间
+</div>
+</div>
+<div style="text-align:center">
+<div class="branch-label">否</div>
+<div class="arrow-down">▼</div>
+<div class="box box-warning" style="font-size:11px;min-width:200px">
+⚠️ 入库单状态不变<br/>
+· invoice_attached = 0<br/>
+· 待匹配发票<br/>
+· 纳入未匹配预警
+</div>
+</div>
+</div>
+<div class="arrow-down" style="margin-top:10px">▼</div>
+
+<div class="box box-decision-text" style="min-width:250px">
+<b>④ 货物清关/验收?</b>
+</div>
+<div style="display:flex;gap:15px;margin-top:5px">
+<div style="text-align:center">
+<div class="branch-label">完成</div>
+<div class="arrow-down">▼</div>
+<div class="box box-success" style="font-size:11px;min-width:200px">
+✅ 票货匹配完成<br/>
+· 入库单状态 = 完成<br/>
+· 可正常付款/结算
+</div>
+</div>
+<div style="text-align:center">
+<div class="branch-label">未完成</div>
+<div class="arrow-down">▼</div>
+<div class="box box-warning" style="font-size:11px;min-width:200px">
+⚠️ 票到货未到<br/>
+· 暂不付款<br/>
+· 跟踪物流状态<br/>
+· 定期提醒财务
+</div>
+</div>
+</div>
+<div class="arrow-down" style="margin-top:10px">▼</div>
+
+<div class="box box-end"><b>票货匹配闭环</b></div>
+</div>
+</div>
+
+<div class="chart-container">
+<h3>🚨 未匹配预警规则</h3>
+<div class="compare-box">
+<h5>预警触发条件</h5>
+<div style="font-size:12px;line-height:1.8">
+1. 入库单生成后 <span class="highlight">7天</span> 未匹配发票<br/>
+2. 发票审核通过后 <span class="highlight">15天</span> 货物未验收<br/>
+3. 同一物流跟踪号匹配 <span class="highlight">多张发票</span>（金额超入库单）<br/>
+4. 发票金额 > 入库单金额 <span class="highlight">10%</span> 以上
+</div>
+</div>
+<div class="compare-box" style="margin-top:10px">
+<h5>预警处理流程</h5>
+<div style="font-size:12px;line-height:1.8">
+1. 系统每日凌晨触发预警任务<br/>
+2. 生成预警清单推送至财务负责人<br/>
+3. 财务核实原因（发票未到/物流延迟/金额错误）<br/>
+4. 手动标记预警状态（已处理/待跟进/无需处理）<br/>
+5. 超30天未处理预警升级至财务总监
+</div>
+</div>
+</div>
+</div>
+
+<!-- ========== Section 5: 销售开票 ========== -->
+<div class="section" id="sec5">
+<div class="chart-container">
+<h3>📤 海外销售开票 — 完整流程</h3>
+<div class="flow">
+<div class="box box-start"><b>销售发货单生成</b></div>
+<div class="arrow-down">▼</div>
+
+<div class="box box-process" style="min-width:280px">
+<b>① 触发销售开票申请</b><br/>
+<span style="font-size:11px">
+· 发货单审核通过后自动触发<br/>
+· 手动发起开票申请（补充场景）<br/>
+· 申请单包含: 客户信息/商品明细/金额/地区
+</span>
+</div>
+<div class="arrow-down">▼</div>
+
+<div class="box box-info" style="min-width:280px">
+<b>② 加载对应地区销项模板</b><br/>
+<span style="font-size:11px">
+· 根据客户地区(VN/TH/PH/SA)加载模板<br/>
+· 自动填充客户税号/名称（取自客户主数据）<br/>
+· 带入发货单商品/金额信息
+</span>
+</div>
+<div class="arrow-down">▼</div>
+
+<div class="two-col" style="width:100%;max-width:800px">
+<div class="box box-process">
+<b>③ 确认开票信息</b><br/>
+<span style="font-size:11px">
+· 发票类型（增值税/普通）<br/>
+· 开票日期/发票编号<br/>
+· 商品/服务明细（多语言）<br/>
+· 不含税金额 + VAT税额 + 合计
+</span>
+</div>
+<div class="box box-process">
+<b>④ 汇率与币种处理</b><br/>
+<span style="font-size:11px">
+· 客户币种/本位币双显示<br/>
+· 取开票当日汇率（支持手动调整）<br/>
+· 自动计算税额（按当地税率）<br/>
+· 四舍五入规则（按当地税法）
+</span>
+</div>
+</div>
+<div class="arrow-down">▼</div>
+
+<div class="box box-decision-text" style="min-width:250px">
+<b>⑤ 开票信息确认?</b>
+</div>
+<div style="display:flex;gap:15px;margin-top:5px">
+<div style="text-align:center">
+<div class="branch-label">确认</div>
+<div class="arrow-down">▼</div>
+</div>
+<div style="text-align:center">
+<div class="branch-label">修改</div>
+<div class="arrow-down">▼</div>
+<div class="box box-warning" style="font-size:11px;min-width:180px">
+⚠️ 返回修改开票信息<br/>
+· 支持多次修改<br/>
+· 记录修改日志<br/>
+· 重新确认
+</div>
+</div>
+</div>
+<div class="arrow-down" style="margin-top:5px">▼</div>
+
+<div class="box box-process" style="min-width:280px">
+<b>⑥ 生成销项发票</b><br/>
+<span style="font-size:11px">
+· 写入 overseas_sales_invoice 表<br/>
+· 生成发票编号（按当地规则）<br/>
+· 标记开票状态 = 已开票<br/>
+· 关联发货单ID
+</span>
+</div>
+<div class="arrow-down">▼</div>
+
+<div class="box box-process" style="min-width:280px">
+<b>⑦ 发票交付客户</b><br/>
+<span style="font-size:11px">
+· 电子发票: 邮件/平台推送<br/>
+· 纸质发票: 随货/快递寄送<br/>
+· 记录交付方式/时间/接收人<br/>
+· 标记 delivery_status = 已交付
+</span>
+</div>
+<div class="arrow-down">▼</div>
+
+<div class="box box-success" style="min-width:280px">
+<b>⑧ 应收确认与凭证生成</b><br/>
+<span style="font-size:11px">
+· 推送至应收模块生成应收单<br/>
+· 触发总账凭证生成<br/>
+· 发票状态 = 已完成<br/>
+· 支持发票红冲/作废（特殊场景）
+</span>
+</div>
+<div class="arrow-down">▼</div>
+
+<div class="box box-end"><b>流程结束</b></div>
+</div>
+</div>
+
+<div class="chart-container">
+<h3>🔄 销项发票红冲/作废流程</h3>
+<div class="flow">
+<div class="box box-start"><b>发起红冲/作废申请</b></div>
+<div class="arrow-down">▼</div>
+
+<div class="box box-decision-text" style="min-width:250px">
+<b>红冲原因验证</b>
+</div>
+<div style="display:flex;gap:15px;margin-top:5px">
+<div style="text-align:center">
+<div class="branch-label">合规</div>
+<div class="arrow-down">▼</div>
+</div>
+<div style="text-align:center">
+<div class="branch-label">不合规</div>
+<div class="arrow-down">▼</div>
+<div class="box box-danger" style="font-size:11px;min-width:180px">
+❌ 驳回申请<br/>
+· 非红冲法定情形<br/>
+· 超红冲时限<br/>
+· 资料不全
+</div>
+</div>
+</div>
+<div class="arrow-down" style="margin-top:5px">▼</div>
+
+<div class="box box-process" style="min-width:280px">
+<b>生成红冲发票</b><br/>
+<span style="font-size:11px">
+· 全额红冲/部分红冲<br/>
+· 关联原发票ID<br/>
+· 标记原发票 = 已红冲<br/>
+· 按当地税法完成备案
+</span>
+</div>
+<div class="arrow-down">▼</div>
+
+<div class="box box-success" style="min-width:280px">
+<b>反向凭证生成</b><br/>
+<span style="font-size:11px">
+· 冲销原应收单<br/>
+· 生成红字总账凭证<br/>
+· 更新客户往来余额<br/>
+· 记录红冲日志
+</span>
+</div>
+<div class="arrow-down">▼</div>
+
+<div class="box box-end"><b>红冲流程完成</b></div>
+</div>
+</div>
+</div>
+
+<!-- ========== Section 6: 汇率处理 ========== -->
+<div class="section" id="sec6">
+<div class="chart-container">
+<h3>💱 汇率管理 — 核心流程</h3>
+<div class="flow">
+<div class="box box-start"><b>汇率基础数据维护</b></div>
+<div class="arrow-down">▼</div>
+
+<div class="two-col" style="width:100%;max-width:800px">
+<div class="box box-process">
+<b>① 汇率数据源配置</b><br/>
+<span style="font-size:11px">
+· 主数据源: 央行每日汇率（CNY基准）<br/>
+· 备用数据源: 路透社/彭博社<br/>
+· 支持手动录入应急汇率<br/>
+· 汇率精度: 6位小数
+</span>
+</div>
+<div class="box box-process">
+<b>② 自动同步汇率</b><br/>
+<span style="font-size:11px">
+· 每日凌晨3点自动同步<br/>
+· 同步币种: VND/THB/PHP/SAR<br/>
+· 写入 fx_exchange_rate 表<br/>
+· 同步失败: 触发预警通知
+</span>
+</div>
+</div>
+<div class="arrow-down">▼</div>
+
+<div class="box box-process" style="min-width:280px">
+<b>③ 汇率生效规则</b><br/>
+<span style="font-size:11px">
+· 生效时间: 当日 00:00 - 23:59<br/>
+· 优先级: 手动录入 > 自动同步<br/>
+· 历史汇率: 永久保存，支持回溯<br/>
+· 汇率类型: 中间价（默认）/ 买入价/卖出价
+</span>
+</div>
+<div class="arrow-down">▼</div>
+
+<div class="box box-decision-text" style="min-width:250px">
+<b>发票录入/开票</b>
+</div>
+<div class="arrow-down">▼</div>
+
+<div class="box box-info" style="min-width:280px">
+<b>④ 自动获取汇率</b><br/>
+<span style="font-size:11px">
+· 按发票日期查询对应汇率<br/>
+· 无当日汇率: 取最近一次汇率<br/>
+· 显示: 原币种金额 + 本位币金额<br/>
+· 允许财务手动调整（需备注原因）
+</span>
+</div>
+<div class="arrow-down">▼</div>
+
+<div class="box box-process" style="min-width:280px">
+<b>⑤ 汇率折算计算</b><br/>
+<span style="font-size:11px">
+· 计算公式: 原币金额 × 汇率 = 本位币金额<br/>
+· 税额折算: 按原币税额 × 汇率<br/>
+· 四舍五入: 保留2位小数（CNY）<br/>
+· 差异处理: 计入汇兑损益
+</span>
+</div>
+<div class="arrow-down">▼</div>
+
+<div class="box box-success" style="min-width:280px">
+<b>⑥ 汇率信息归档</b><br/>
+<span style="font-size:11px">
+· 发票表记录: 汇率/折算后金额/汇率类型<br/>
+· 支持按历史汇率重算（审计场景）<br/>
+· 汇兑损益按月归集<br/>
+· 报表支持原币/本位币双维度展示
+</span>
+</div>
+<div class="arrow-down">▼</div>
+
+<div class="box box-end"><b>汇率处理完成</b></div>
+</div>
+</div>
+
+<div class="chart-container">
+<h3>📊 汇率折算示例</h3>
+<table>
+<tr>
+<th>国家</th>
+<th>原币种</th>
+<th>原币金额</th>
+<th>当日汇率</th>
+<th>本位币(CNY)金额</th>
+<th>税额(原币)</th>
+<th>税额(CNY)</th>
+<th>价税合计(CNY)</th>
+</tr>
+<tr>
+<td>🇻🇳 越南</td>
+<td>VND</td>
+<td>10,000,000</td>
+<td>0.0003</td>
+<td>3,000.00</td>
+<td>1,000,000</td>
+<td>300.00</td>
+<td>3,300.00</td>
+</tr>
+<tr>
+<td>🇹🇭 泰国</td>
+<td>THB</td>
+<td>10,000</td>
+<td>0.20</td>
+<td>2,000.00</td>
+<td>700</td>
+<td>140.00</td>
+<td>2,140.00</td>
+</tr>
+<tr>
+<td>🇵🇭 菲律宾</td>
+<td>PHP</td>
+<td>10,000</td>
+<td>0.12</td>
+<td>1,200.00</td>
+<td>1,200</td>
+<td>144.00</td>
+<td>1,344.00</td>
+</tr>
+<tr>
+<td>🇸🇦 沙特</td>
+<td>SAR</td>
+<td>10,000</td>
+<td>1.90</td>
+<td>19,000.00</td>
+<td>1,500</td>
+<td>2,850.00</td>
+<td>21,850.00</td>
+</tr>
+</table>
+</div>
+
+<div class="chart-container">
+<h3>⚠️ 汇率异常处理规则</h3>
+<div class="compare-box">
+<h5>异常场景</h5>
+<div style="font-size:12px;line-height:1.8">
+1. 当日汇率同步失败（数据源不可用）<br/>
+2. 汇率波动超过 <span class="highlight">±5%</span>（与前一日比）<br/>
+3. 手动调整汇率幅度超过 <span class="highlight">±2%</span><br/>
+4. 历史汇率查询无数据
+</div>
+</div>
+<div class="compare-box" style="margin-top:10px">
+<h5>异常处理</h5>
+<div style="font-size:12px;line-height:1.8">
+1. 同步失败: 自动使用备用数据源 → 仍失败则触发人工介入<br/>
+2. 汇率大幅波动: 触发财务负责人审批 + 备注原因<br/>
+3. 手动调整超限: 需财务总监审批 + 留存审批记录<br/>
+4. 无历史汇率: 取最近有效汇率 + 标记"汇率预估"
+</div>
+</div>
+</div>
+</div>
+
+<!-- ========== Section 7: 凭证模板 ========== -->
+<div class="section" id="sec7">
+<div class="chart-container">
+<h3>📋 海外发票凭证模板 — 配置规则</h3>
+<div class="grid-2">
+<div class="compare-box">
+<h5>进项发票凭证模板</h5>
+<div style="font-size:12px;line-height:2">
+<b>通用模板（按税种）</b><br/>
+🔹 进项增值税凭证<br/>
+&nbsp;&nbsp;借: 原材料/费用科目<br/>
+&nbsp;&nbsp;借: 应交税费-进项税<br/>
+&nbsp;&nbsp;贷: 应付账款<br/>
+<br/>
+🔹 进项普通发票凭证<br/>
+&nbsp;&nbsp;借: 原材料/费用科目<br/>
+&nbsp;&nbsp;贷: 应付账款<br/>
+<br/>
+<b>特殊场景</b><br/>
+· 免税发票（无税额）<br/>
+· 代扣代缴税费（额外分录）<br/>
+· 汇兑损益（单独分录）
+</div>
+</div>
+<div class="compare-box">
+<h5>销项发票凭证模板</h5>
+<div style="font-size:12px;line-height:2">
+<b>通用模板（按税种）</b><br/>
+🔹 销项增值税凭证<br/>
+&nbsp;&nbsp;借: 应收账款<br/>
+&nbsp;&nbsp;贷: 主营业务收入<br/>
+&nbsp;&nbsp;贷: 应交税费-销项税<br/>
+<br/>
+🔹 销项普通发票凭证<br/>
+&nbsp;&nbsp;借: 应收账款<br/>
+&nbsp;&nbsp;贷: 主营业务收入<br/>
+<br/>
+<b>特殊场景</b><br/>
+· 红冲发票（红字分录）<br/>
+· 免税销售（无销项税）<br/>
+· 折扣折让（冲减收入）
+</div>
+</div>
+</div>
+</div>
+
+<div class="chart-container">
+<h3>🔧 凭证模板配置表结构</h3>
+<table>
+<tr>
+<th>字段名</th>
+<th>类型</th>
+<th>说明</th>
+<th>示例值</th>
+</tr>
+<tr>
+<td>template_id</td>
+<td>INT</td>
+<td>模板ID（主键）</td>
+<td>OP01 / OS01</td>
+</tr>
+<tr>
+<td>template_type</td>
+<td>VARCHAR</td>
+<td>模板类型（进项/销项）</td>
+<td>OVERSEAS_PURCHASE / OVERSEAS_SALES</td>
+</tr>
+<tr>
+<td>country_code</td>
+<td>VARCHAR</td>
+<td>国家编码</td>
+<td>VN / TH / PH / SA / ALL</td>
+</tr>
+<tr>
+<td>tax_type</td>
+<td>VARCHAR</td>
+<td>税种类型</td>
+<td>VAT / NON_VAT / TAX_FREE</td>
+</tr>
+<tr>
+<td>debit_account</td>
+<td>VARCHAR</td>
+<td>借方科目</td>
+<td>1403 (原材料) / 1122 (应收账款)</td>
+</tr>
+<tr>
+<td>credit_account</td>
+<td>VARCHAR</td>
+<td>贷方科目</td>
+<td>2202 (应付账款) / 6001 (主营业务收入)</td>
+</tr>
+<tr>
+<td>tax_account</td>
+<td>VARCHAR</td>
+<td>税费科目</td>
+<td>22210101 (进项税) / 22210102 (销项税)</td>
+</tr>
+<tr>
+<td>description</td>
+<td>VARCHAR</td>
+<td>凭证摘要模板</td>
+<td>海外采购-{供应商}-{发票号}</td>
+</tr>
+<tr>
+<td>status</td>
+<td>VARCHAR</td>
+<td>模板状态</td>
+<td>ACTIVE / INACTIVE</td>
+</tr>
+<tr>
+<td>create_time</td>
+<td>DATETIME</td>
+<td>创建时间</td>
+<td>2026-04-01 10:00:00</td>
+</tr>
+</table>
+</div>
+
+<div class="chart-container">
+<h3>🎯 凭证模板匹配规则</h3>
+<div class="flow">
+<div class="box box-start"><b>发票审核通过 → 触发凭证生成</b></div>
+<div class="arrow-down">▼</div>
+
+<div class="box box-process" style="min-width:280px">
+<b>提取匹配维度</b><br/>
+<span style="font-size:11px">
+· 发票类型（进项/销项）<br/>
+· 国家编码（VN/TH/PH/SA）<br/>
+· 税种类型（VAT/NON_VAT/TAX_FREE）<br/>
+· 特殊标记（红冲/免税/代扣代缴）
+</span>
+</div>
+<div class="arrow-down">▼</div>
+
+<div class="box box-decision-text" style="min-width:250px">
+<b>匹配优先级排序</b>
+</div>
+<div class="arrow-down">▼</div>
+
+<div class="box box-info" style="min-width:300px;line-height:1.6">
+<b>优先级从高到低</b><br/>
+1. 国家+类型+税种 精准匹配<br/>
+2. 国家+类型 匹配（通用税种）<br/>
+3. 类型+税种 匹配（通用国家）<br/>
+4. 全局通用模板（兜底）<br/>
+<span style="font-size:10px;color:#94a3b8">无匹配模板 → 触发人工配置预警</span>
+</div>
+<div class="arrow-down">▼</div>
+
+<div class="box box-success" style="min-width:280px">
+<b>生成凭证分录</b><br/>
+<span style="font-size:11px">
+· 按模板填充科目/摘要<br/>
+· 带入金额/税额数据<br/>
+· 生成总账凭证号<br/>
+· 关联发票ID/审核人
+</span>
+</div>
+<div class="arrow-down">▼</div>
+
+<div class="box box-end"><b>凭证生成完成 → 推送至总账模块</b></div>
+</div>
+</div>
+</div>
+
+</div>
+
+</body>
+</html>
