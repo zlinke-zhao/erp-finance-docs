@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>实收收款模块 — 详细流程图</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, "Microsoft YaHei", "Segoe UI", sans-serif;
+            background: linear-gradient(135deg, #f0f4f8 0%, #d9e2ec 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container { max-width: 1600px; margin: 0 auto; }
+
+        .header {
+            text-align: center;
+            padding: 28px 20px;
+            background: linear-gradient(135deg, #0d47a1 0%, #1565c0 50%, #1976d2 100%);
+            color: white;
+            border-radius: 16px;
+            margin-bottom: 24px;
+            box-shadow: 0 8px 32px rgba(13,71,161,0.3);
+        }
+        .header h1 { font-size: 2em; margin-bottom: 6px; }
+        .header p { opacity: 0.9; font-size: 1em; }
+        .badge { display: inline-block; background: rgba(255,255,255,0.18); padding: 4px 14px; border-radius: 20px; font-size: 0.85em; margin-top: 10px; }
+
+        .flow-section {
+            background: white;
+            border-radius: 16px;
+            padding: 26px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+        }
+        .flow-section h2 {
+            font-size: 1.35em; margin-bottom: 5px; display: flex; align-items: center; gap: 8px;
+        }
+        .flow-subtitle { color: #666; margin-bottom: 18px; padding-bottom: 12px; border-bottom: 2px solid #f0f0f0; font-size: 0.92em; }
+        
+        .mermaid-container { overflow-x: auto; padding: 16px 0; text-align: center; }
+
+        /* Color themes */
+        .main-flow h2 { color: #1565c0; }
+        .writeoff-flow h2 { color: #e65100; }
+        .prepay-flow h2 { color: #2e7d32; }
+        .bank-flow h2 { color: #6a1b9a; }
+        .voucher-flow h2 { color: #c62828; }
+
+        .key-points {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 12px; margin-top: 18px;
+        }
+        .key-point { padding: 14px; border-radius: 10px; border-left: 4px solid; font-size: 0.9em; }
+        .kp-blue { background: #e3f2fd; border-color: #1565c0; }
+        .kp-orange { background: #fff3e0; border-color: #e65100; }
+        .kp-green { background: #e8f5e9; border-color: #2e7d32; }
+        .kp-red { background: #ffebee; border-color: #c62828; }
+        .kp-purple { background: #f3e5f5; border-color: #6a1b9a; }
+        .key-point strong { display: block; margin-bottom: 3px; }
+        .key-point span { color: #555; }
+
+        table { width: 100%; border-collapse: collapse; margin-top: 14px; font-size: 0.88em; }
+        th { background: linear-gradient(135deg, #0d47a1, #1565c0); color: white; padding: 11px 10px; text-align: left; }
+        td { padding: 9px 10px; border-bottom: 1px solid #eee; vertical-align: middle; }
+        tr:nth-child(even) { background: #fafbff; }
+        tr:hover { background: #f0f4ff; }
+
+        .footer-note { text-align: center; padding: 18px; color: #888; font-size: 0.85em; }
+        @media (max-width: 768px) {
+            .header h1 { font-size: 1.4em; }
+            .flow-section { padding: 16px; }
+            table { font-size: 0.75em; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+
+<!-- Header -->
+<div class="header">
+    <h1>💰 实收收款模块 — 详细业务流程图</h1>
+    <p>ERP财务管理 · 销售收款全链路设计 | 对标金蝶云星空应收管理</p>
+    <span class="badge">📥 银行到账 → 📝 收款登记 → 🔗 核销匹配 → 🧾 凭证生成 → 📊 总账入账</span>
+</div>
+
+<!-- ========== 流程一：主流程（完整收款链路） ========== -->
+<div class="flow-section main-flow">
+    <h2>🔄 流程一：实收收款主流程（端到端）</h2>
+    <p class="flow-subtitle">从银行资金到账，经过登记、核销、凭证，最终写入总账的完整链路</p>
+
+    <div class="mermaid-container">
+<pre class="mermaid">
+flowchart TD
+    subgraph Main["🔄 实收收款主流程"]
+        direction TB
+
+        subgraph Phase1["① 资金到达层"]
+            B1["<b>银行资金到账</b><br/>• 银行柜台/网银转账<br/>• POS刷卡<br/>• 支付宝/微信<br/>• 承兑汇票到期"]
+        end
+
+        subgraph Phase2["② 收款登记层"]
+            R1["<b>收款单创建</b><br/>手动录入 / 银企直连自动导入"]
+            R2["<b>收款信息确认</b><br/>客户/金额/日期/<br/>收款方式/银行账户"]
+            R3["<b>关联应收单据</b><br/>系统推荐待核销<br/>应收账款列表"]
+        end
+
+        subgraph Phase3["③ 核销执行层"]
+            W1["<b>核销方案选择</b><br/>自动核销 / 半自动 / 手工"]
+            W2["<b>核销匹配</b><br/>1对1 / 多对1 / 1对多 / 多对多"]
+            W3["<b>差异处理</b><br/>尾差处理 / 折扣处理<br/>部分核销 / 剩余转预收"]
+        end
+
+        subgraph Phase4["④ 审批与凭证层"]
+            A1["<b>收款审核</b><br/>金额核对 / 单据完整性<br/>权限审批"]
+            V1["<b>凭证自动生成</b><br/>借:银行存款<br/>贷:应收账款/预收账款"]
+            V2["<b>凭证审核过账</b><br/>借贷平衡校验<br/>科目账簿更新"]
+        end
+
+        subgraph Phase5["⑤ 总账与报表层"]
+            G1["<b>总账更新</b><br/>应收余额减少<br/>银行存款增加"]
+            G2["<b>报表更新</b><br/>现金流量表<br/>应收账龄表<br/>回款分析表"]
+        end
+
+        B1 -->|"银企通知/手工发现"| R1
+        R1 --> R2
+        R2 -->|"选择关联"| R3
+        R3 -->|"进入核销"| W1
+        W1 --> W2
+        W2 -->|"有差异?"| W3
+        W3 --> A1
+        A1 -->|"审核通过"| V1
+        V1 --> V2
+        V2 --> G1
+        G1 --> G2
+
+        W3 -->|"无差异/已处理"| A1
+    end
+
+    style Main fill:#e3f2fd,stroke:#1565c0,stroke-width:2px
+    style Phase1 fill:#bbdefb,stroke:#1976d2,stroke-width:1px
+    style Phase2 fill:#90caf9,stroke:#1565c0,stroke-width:1px
+    style Phase3 fill:#64b5f6,stroke:#0d47a1,stroke-width:1px
+    style Phase4 fill:#42a5f5,stroke:#01579b,stroke-width:1px
+    style Phase5 fill:#1e88e5,stroke:#002171,stroke-width:1px
+    style R3 fill:#fff9c4,stroke:#f9a825,stroke-width:2px
+    style W2 fill:#ffe082,stroke:#ef6c00,stroke-width:2px
+    style V1 fill:#c8e6c9,stroke:#2e7d32,stroke-width:2px
+        </pre>
+    </div>
+</div>
+
+<!-- ========== 流程二：核销模式详解 ========== -->
+<div class="flow-section writeoff-flow">
+    <h2>🔗 流程二：核销模式详解（四种场景）</h2>
+    <p class="flow-subtitle">一笔收款可能对应多种核销关系——这是收款模块最复杂的部分</p>
+
+    <div class="mermaid-container">
+<pre class="mermaid">
+flowchart LR
+    subgraph Types["🔗 四种核销模式"]
+
+        subgraph T1["💵 模式A: 1对1核销"]
+            direction TB
+            t1_in["收款 ¥50,000"]
+            t1_out["应收单 #SO001<br/>¥50,000"]
+            t1_in -->|"全额核销<br/>✅ 最常见"| t1_out
+        end
+
+        subgraph T2["💴 模式B: 多对1核销"]
+            direction TB
+            t2a["收款#1<br/>¥30,000"]
+            t2b["收款#2<br/>¥20,000"]
+            t2c["应收单 #SO002<br/>¥50,000"]
+            t2a --> t2c
+            t2b --> t2c
+            t2c -.->|"分批付款<br/>✅ 分期回款"| t2a
+        end
+
+        subgraph T3["💶 模式C: 1对多核销"]
+            direction TB
+            t3_in["收款<br/>¥80,000"]
+            t3a["应收#SO003<br/>¥50,000"]
+            t3b["应收#SO004<br/>¥30,000"]
+            t3_in --> t3a
+            t3_in --> t3b
+            t3a -.->|"一次付多笔<br/>✅ 合并支付"| t3_in
+        end
+
+        subgraph T4["💷 模式D: 多对多核销"]
+            direction TB
+            t4a["收款#1 ¥40k"]
+            t4b["收款#2 ¥60k"]
+            t4c["应收#A ¥50k"]
+            t4d["应收#B ¥50k"]
+            t4a --> t4c
+            t4a --> t4d
+            t4b --> t4c
+            t4b --> t4d
+            t4c -.->|"复杂场景<br/>⚠️ 需人工确认"| t4a
+        end
+    end
+
+    style Types fill:#fff3e0,stroke:#e65100,stroke-width:2px
+    style T1 fill:#e8f5e9,stroke:#43a047
+    style T2 fill:#e8f5e9,stroke:#43a047
+    style T3 fill:#e8f5e9,stroke:#43a047
+    style T4 fill:#fce4ec,stroke:#c62828
+    style T4 fill:#fce4ec,stroke:#c62828
+        </pre>
+    </div>
+
+    <div class="key-points">
+        <div class="key-point kp-green"><strong>✅ 1对1 — 标准场景</strong><span>最常见：一笔订单对应一笔全额回款，系统可全自动核销</span></div>
+        <div class="key-point kp-green"><strong>✅ 多对1 — 分期回款</strong><span>大额订单分期付款，每笔收款部分核销，跟踪剩余未收金额</span></div>
+        <div class="key-point kp-blue"><strong>✅ 1对多 — 合并支付</strong><span>客户一次性付清多个订单，需按比例或指定分配到各应收单</span></div>
+        <div class="key-point kp-red"><strong>⚠️ 多对多 — 复杂场景</strong><span>多笔收款分配给多笔应收，必须人工确认分配方案</span></div>
+    </div>
+</div>
+
+<!-- ========== 流程三：预收款处理流程 ========== -->
+<div class="flow-section prepay-flow">
+    <h2>💚 流程三：预收款管理流程</h2>
+    <p class="flow-subtitle">先款后货 / 订金 / 无订单预收 — 三种预收款模式的处理逻辑</p>
+
+    <div class="mermaid-container">
+<pre class="mermaid">
+flowchart TD
+    subgraph PrePay["💚 预收款全流程"]
+        direction TB
+
+        P1["<b>① 收到款项</b><br/>客户打款但尚无对应销售订单"]
+        
+        P2{"<b>② 判断类型</b>"}
+        
+        P2a["<b>A. 订金模式</b><br/>已有订单,先收订金<br/>后续尾款核销"]
+        P2b["<b>B. 无订单预收</b><br/>VIP客户/频繁交易<br/>先存后用模式"]
+        P2c["<b>C. 多余款项</b><br/>核销后仍有剩余<br/>自动转为预收"]
+        
+        P3a["<b>③ 订金→挂预收</b><br/>借:银行存款<br/>贷:预收账款"]
+        P3b["<b>④ 无订单→预收池</b><br/>存入客户预收账户<br/>可用余额增加"]
+        P3c["<b>⑤ 剩余→自动转预收</b><br/>核销差额部分<br/>转入预收余额"]
+        
+        P4{"<b>⑥ 后续使用</b>"}
+        
+        P5["<b>⑦ 新订单核销</b><br/>从预收余额中<br/>自动抵扣应收"]
+        P6["<b>⑧ 退款处理</b><br/>超出期限/取消合作<br/>原路退回"]
+        
+        P1 --> P2
+        P2 -->|"有订单+部分付款"| P2a
+        P2 -->|"无订单"| P2b
+        P2 -->|"核销后剩余"| P2c
+        
+        P2a --> P3a --> P4
+        P2b --> P3b --> P4
+        P2c --> P3c --> P4
+        
+        P4 -->|"新订单产生"| P5
+        P4 -->|"申请退款"| P6
+    end
+
+    style PrePay fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px
+    style P2a fill:#c8e6c9,stroke:#388e3c
+    style P2b fill:#dcedc8,stroke:#689f38
+    style P2c fill:#fff9c4,stroke:#f9a825
+    style P5 fill:#b2dfdb,stroke:#00796b
+    style P6 fill:#ffcdd2,stroke:#c62828
+        </pre>
+    </div>
+</div>
+
+<!-- ========== 流程四：银企对接与银行流水匹配 ========== -->
+<div class="flow-section bank-flow">
+    <h2>🏦 流程四：银企对接与银行流水自动匹配</h2>
+    <p class="flow-subtitle">从银行拉取流水 → 自动识别客户 → 推荐应收单据 → 一键核销</p>
+
+    <div class="mermaid-container">
+<pre class="mermaid">
+flowchart TD
+    subgraph Bank["🏦 银企对接流程"]
+        direction TB
+
+        B1["<b>① 定时拉取</b><br/>银企直连接口<br/>每日凌晨自动拉取<br/>前一日所有流水"]
+        
+        B2["<b>② 流水解析</b><br/>解析银行返回文件<br/>提取关键字段:<br/>日期/金额/对方户名/<br/>摘要/备注/流水号"]
+        
+        B3["<b>③ 智能匹配</b><br/><b>规则1:</b>对方户名模糊匹配客户库<br/><b>规则2:</b>金额精确/容差匹配应收<br/><b>规则3:</b>备注关键词解析(订单号等)<br/><b>规则4:</b>历史核销记录学习"]
+        
+        B4{"<b>④ 匹配结果</b>"}
+        
+        B5["<b>✅ 高置信度</b>(≥95%)<br/>自动创建草稿收款单<br/>自动关联应收单据<br/>等待财务确认"]
+        
+        B6["<b>⚠️ 中置信度</b>(70-94%)<br/>创建草稿 + 标记待确认<br/>推送消息给财务<br/>人工审核后核销"]
+        
+        B7["<b>❌ 未匹配</b>(&lt;70%)<br/>归入'待认领收款'<br/>定期汇总提醒<br/>人工补录关联"]
+        
+        B8["<b>⑤ 确认入账</b><br/>财务一键确认<br/>触发核销+凭证"]
+        
+        B1 --> B2 --> B3 --> B4
+        B4 -->|置信度≥95%| B5 --> B8
+        B4 -->|70%-94%| B6 --> B8
+        B4 -->|&lt;70%| B7
+    end
+
+    style Bank fill:#f3e5f5,stroke:#6a1b9a,stroke-width:2px
+    style B1 fill:#e1bee7,stroke:#8e24aa
+    style B3 fill:#ce93d8,stroke:#6a1b9a
+    style B5 fill:#c8e6c9,stroke:#2e7d32
+    style B6 fill:#fff9c4,stroke:#f9a825
+    style B7 fill:#ffcdd2,stroke:#c62828
+    style B8 fill:#bbdefb,stroke:#1565c0
+        </pre>
+    </div>
+
+    <table>
+        <tr><th>匹配规则</th><th>权重</th><th>说明</th><th>示例</th></tr>
+        <tr><td>对方户名匹配</td><td>40%</td><td>模糊匹配客户名称（支持别名）</td><td>银行显示"上海XX科技" → 匹配客户"XX科技有限公司"</td></tr>
+        <tr><td>金额精确/容差</td><td>30%</td><td>金额完全一致或±0.5%容差内</td><td>应收¥50,000 vs 到账¥50,000 → 完全匹配</td></tr>
+        <tr><td>摘要关键词</td><td>15%</td><td>备注中含订单号/合同号</td><td>摘要"货款-SO2025001" → 关联SO2025001</td></tr>
+        <tr><td>历史核销记录</td><td>15%</td><td>该客户历史常用付款账户</td><td>该客户上个月也是这个账号打款</td></tr>
+    </table>
+</div>
+
+<!-- ========== 流程五：凭证生成模板 ========== -->
+<div class="flow-section voucher-flow">
+    <h2>🧾 流程五：收款凭证自动生成（总账联动）</h2>
+    <p class="flow-subtitle">不同收款场景对应的会计分录模板 — 这是业财一体化的核心</p>
+
+    <div class="mermaid-container">
+<pre class="mermaid">
+flowchart LR
+    subgraph Voucher["🧾 收款凭证矩阵"]
+        direction TB
+        
+        subgraph V1["场景A: 正常收款核销"]
+            v1a["借: 银行存款-xxx行<br/>　　贷: 应收账款-客户X"]
+        end
+        
+        subgraph V2["场景B: 预收款（无订单）"]
+            v2a["借: 银行存款-xxx行<br/>　　贷: 预收账款-客户X"]
+        end
+        
+        subgraph V3["场景C: 预收转应收核销"]
+            v3a["借: 预收账款-客户X<br/>　　贷: 应收账款-客户X"]
+        end
+        
+        subgraph V4["场景D: 收款+折扣/坏账"]
+            v4a["借: 银行存款<br/>借: 财务费用-折扣支出<br/>　　贷: 应收账款"]
+        end
+        
+        subgraph V5["场景E: 承兑汇票收款"]
+            v5a["借: 应收票据-承兑汇票<br/>　　贷: 应收账款-客户X"]
+        end
+        
+        subgraph V6["场景F: 汇票贴现/到期兑现"]
+            v6a["借: 银行存款<br/>借: 财务费用-贴现息<br/>　　贷: 应收票据-承兑汇票"]
+        end
+    end
+
+    style Voucher fill:#fbe9e7,stroke:#c62828,stroke-width:2px
+    style V1 fill:#e8f5e9,stroke:#2e7d32
+    style V2 fill:#e3f2fd,stroke:#1565c0
+    style V3 fill:#fff8e1,stroke:#ef6c00
+    style V4 fill:#fce4ec,stroke:#c62828
+    style V5 fill:#f3e5f5,stroke:#6a1b9a
+    style V6 fill:#efebe9,stroke:#5d4037
+        </pre>
+    </div>
+
+    <table>
+        <tr><th>场景</th><th>借方科目</th><th>贷方科目</th><th>触发条件</th></tr>
+        <tr><td>正常收款核销</td><td>银行存款</td><td>应收账款</td><td>标准收款，全额核销应收</td></tr>
+        <tr><td>纯预收款</td><td>银行存款</td><td>预收账款</td><td>收到款项但无对应订单</td></tr>
+        <tr><td>预收冲应收</td><td>预收账款</td><td>应收账款</td><td>新订单产生时用预收余额核销</td></tr>
+        <tr><td>收款+折扣</td><td>银行存款 + 财务费用</td><td>应收账款</td><td>客户享受提前付款折扣</td></tr>
+        <tr><td>收到承兑汇票</td><td>应收票据</td><td>应收账款</td><td>客户以汇票代替现金付款</td></tr>
+        <tr><td>汇票贴现/到期</td><td>银行存款 + 财务费用</td><td>应收票据</td><td>汇票贴现或到期兑现</td></tr>
+    </table>
+</div>
+
+<!-- ========== 异常处理流程 ========== -->
+<div class="flow-section" style="border-left: 4px solid #c62828;">
+    <h2 style="color: #c62828;">⚠️ 流程六：异常处理流程</h2>
+    <p class="flow-subtitle">收款过程中各种异常情况的处理路径</p>
+
+    <div class="mermaid-container">
+<pre class="mermaid">
+flowchart TD
+    subgraph Exception["⚠️ 收款异常处理"]
+        direction TB
+        
+        E1["<b>检测到异常</b>"]
+        
+        E2{"<b>异常分类</b>"}
+        
+        E3["<b>❶ 金额不符</b><br/>到账金额≠应收金额<br/>差异原因?"]
+        E3a["≤¥1 或 ≤0.1%<br/>自动尾差调整"]
+        E3b["&gt;阈值<br/>走折扣/坏账流程"]
+        
+        E4["<b>❷ 客户不明</b><br/>对方户名无法匹配<br/>任何已知客户"]
+        E4a["创建临时客户<br/>标记待确认"]
+        E4b ["归入待认领池<br/>定期清理"]
+        
+        E5["<b>❸ 重复到账</b><br/>同一笔流水号<br/>重复导入"]
+        E5a ["系统自动去重<br/>跳过不处理"]
+        E5b ["人工确认为<br/>两笔不同收款"]
+        
+        E6["<b>❹ 退款/冲销</b><br/>收款后发现错误<br/>需要撤销"]
+        E6a ["红字收款单<br/>反向凭证冲销"]
+        
+        E1 --> E2
+        E2 --> E3 & E4 & E5 & E6
+        E3 --> E3a & E3b
+        E4 --> E4a & E4b
+        E5 --> E5a & E5b
+        E6 --> E6a
+    end
+
+    style Exception fill:#fbe9e7,stroke:#c62828,stroke-width:2px
+    style E3a fill:#c8e6c9,stroke:#2e7d32
+    style E3b fill:#fff9c4,stroke:#f9a825
+    style E4a fill:#e3f2fd,stroke:#1565c0
+    style E4b fill:#ffcdd2,stroke:#c62828
+    style E5a fill:#c8e6c9,stroke:#2e7d32
+    style E5b fill:#e3f2fd,stroke:#1565c0
+    style E6a fill:#ffcdd2,stroke:#c62828
+        </pre>
+    </div>
+</div>
+
+<div class="footer-note">
+    <p>📐 基于 Mermaid Live Editor 渲染 | 🎯 对标金蝶云星空 应收管理模块 | ✍️ 财务追踪器 · Dev_Dept · 2026-04-14</p>
+</div>
+
+</div>
+
+<script>
+mermaid.initialize({
+    startOnLoad: true,
+    theme: 'base',
+    themeVariables: {
+        primaryColor: '#e3f2fd',
+        primaryTextColor: '#0d47a1',
+        primaryBorderColor: '#1565c0',
+        lineColor: '#999',
+        secondaryColor: '#fff8e1',
+        tertiaryColor: '#fce4ec',
+        fontSize: '13px'
+    },
+    flowchart: {
+        htmlLabels: true,
+        curve: 'basis',
+        padding: 12,
+        nodeSpacing: 40,
+        rankSpacing: 50,
+        useMaxWidth: true,
+        wrap: true
+    },
+    securityLevel: 'loose'
+});
+</script>
+</body>
+</html>
