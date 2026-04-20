@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>实付付款模块 — 详细流程图 | Dev_Dept ERP 财务管理系统</title>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, "Microsoft YaHei", "Segoe UI", sans-serif; background: #f0f2f5; color: #1a1a2e; }
+  
+  .header { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); color: #fff; padding: 32px 40px; }
+  .header h1 { font-size: 28px; margin-bottom: 8px; }
+  .header .meta { color: #a8b2d1; font-size: 14px; display: flex; gap: 24px; flex-wrap: wrap; }
+  .header .meta span { display: inline-flex; align-items: center; gap: 6px; }
+  
+  .nav-bar { background: #fff; border-bottom: 2px solid #e94560; padding: 0 40px; display: flex; gap: 0; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 8px rgba(0,0,0,0.08); overflow-x: auto; }
+  .nav-bar a { padding: 14px 20px; text-decoration: none; color: #555; font-size: 14px; font-weight: 500; border-bottom: 3px solid transparent; transition: all 0.2s; white-space: nowrap; }
+  .nav-bar a:hover { color: #e94560; background: #fff5f7; }
+  .nav-bar a.active { color: #e94560; border-bottom-color: #e94560; }
+  
+  .container { max-width: 1200px; margin: 0 auto; padding: 24px 40px 60px; }
+  
+  .section { background: #fff; border-radius: 12px; padding: 28px 32px; margin-bottom: 24px; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
+  .section h2 { font-size: 20px; color: #1a1a2e; margin-bottom: 6px; display: flex; align-items: center; gap: 10px; }
+  .section h2 .badge { background: #e94560; color: #fff; font-size: 11px; padding: 2px 10px; border-radius: 12px; font-weight: 600; }
+  .section h2 .badge.blue { background: #0f3460; }
+  .section h2 .badge.green { background: #27ae60; }
+  .section h2 .badge.orange { background: #f39c12; }
+  .section h3 { font-size: 16px; color: #333; margin: 18px 0 10px; padding-left: 12px; border-left: 3px solid #e94560; }
+  .section p.desc { color: #666; font-size: 14px; margin-bottom: 16px; line-height: 1.6; }
+  
+  .flow-container { display: flex; justify-content: center; padding: 16px 0; overflow-x: auto; }
+  .flow-container .mermaid { max-width: 100%; min-width: 60%; }
+  
+  /* 流程图缩放控制 */
+  .zoom-controls { position: fixed; bottom: 30px; right: 30px; display: flex; gap: 8px; z-index: 200; }
+  .zoom-btn { width: 40px; height: 40px; border-radius: 50%; border: 2px solid #e94560; background: #fff; color: #e94560; font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(0,0,0,0.15); transition: all 0.2s; }
+  .zoom-btn:hover { background: #e94560; color: #fff; }
+  .zoom-label { background: #fff; padding: 8px 12px; border-radius: 20px; font-size: 13px; color: #333; box-shadow: 0 2px 8px rgba(0,0,0,0.1); display: flex; align-items: center; }
+  
+  .note-box { background: #fff3cd; border-left: 4px solid #f39c12; padding: 12px 16px; margin: 12px 0; border-radius: 0 8px 8px 0; font-size: 13px; color: #856404; }
+  .note-box.info { background: #d1ecf1; border-left-color: #17a2b8; color: #0c5460; }
+  .note-box.danger { background: #f8d7da; border-left-color: #dc3545; color: #721c24; }
+  .note-box.success { background: #d4edda; border-left-color: #28a745; color: #155724; }
+  
+  table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 13px; }
+  table th { background: #f8f9fa; padding: 8px 12px; text-align: left; border-bottom: 2px solid #dee2e6; font-weight: 600; color: #333; }
+  table td { padding: 8px 12px; border-bottom: 1px solid #eee; color: #555; }
+  table tr:hover td { background: #f8f9fa; }
+  
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  @media (max-width: 768px) { .grid-2 { grid-template-columns: 1fr; } }
+  
+  .stat-card { background: linear-gradient(135deg, #667eea, #764ba2); color: #fff; padding: 16px; border-radius: 8px; text-align: center; }
+  .stat-card .num { font-size: 28px; font-weight: 700; }
+  .stat-card .label { font-size: 12px; opacity: 0.9; margin-top: 4px; }
+  
+  .timeline { position: relative; padding-left: 24px; }
+  .timeline::before { content: ''; position: absolute; left: 8px; top: 0; bottom: 0; width: 2px; background: #e94560; }
+  .timeline .item { position: relative; margin-bottom: 16px; }
+  .timeline .item::before { content: ''; position: absolute; left: -20px; top: 6px; width: 10px; height: 10px; background: #e94560; border-radius: 50%; border: 2px solid #fff; }
+  .timeline .item .title { font-weight: 600; color: #333; }
+  .timeline .item .detail { font-size: 13px; color: #666; margin-top: 2px; }
+  
+  .tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; }
+  .tag.red { background: #fee; color: #c0392b; }
+  .tag.green { background: #d4edda; color: #155724; }
+  .tag.blue { background: #d1ecf1; color: #0c5460; }
+  .tag.orange { background: #fff3cd; color: #856404; }
+  
+  .footer { text-align: center; padding: 24px; color: #999; font-size: 12px; border-top: 1px solid #eee; margin-top: 40px; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>💳 实付付款模块 — 详细流程图</h1>
+  <div class="meta">
+    <span>📦 项目: Dev_Dept ERP 财务管理系统</span>
+    <span>🎯 模块: 采购付款管理 (Payment Management)</span>
+    <span>📊 对标: 金蝶云星空 → 应付管理 → 付款单/核销处理</span>
+    <span>📅 日期: 2026-04-15</span>
+    <span class="tag red">P1 优先级</span>
+  </div>
+</div>
+
+<div class="nav-bar">
+  <a href="#overview" class="active" onclick="navTo(this)">📊 架构总览</a>
+  <a href="#main-flow" onclick="navTo(this)">🔄 主流程</a>
+  <a href="#writeoff" onclick="navTo(this)">✅ 核销模式</a>
+  <a href="#prepay" onclick="navTo(this)">💰 预付管理</a>
+  <a href="#bank" onclick="navTo(this)">🏦 银企对接</a>
+  <a href="#voucher" onclick="navTo(this)">🧾 凭证模板</a>
+  <a href="#exception" onclick="navTo(this)">⚠️ 异常处理</a>
+</div>
+
+<div class="container">
+
+<!-- ==================== ① 架构总览 ==================== -->
+<div class="section" id="overview">
+  <h2>📊 ① 实付付款 — 架构总览</h2>
+  <p class="desc">实付付款是ERP系统中"资金流出"的核心枢纽，从采购应付款项出发，经过付款申请、审批、资金执行、应付核销、凭证生成，最终写入总账。与实收收款的镜像关系如下：</p>
+  
+  <div class="grid-2">
+    <div style="background:#f0fff4; border-radius:8px; padding:16px; border:1px solid #c3e6cb;">
+      <div style="font-weight:700; color:#155724; margin-bottom:8px;">📥 实收收款（资金流入）</div>
+      <div style="font-size:13px; color:#333; line-height:1.8;">
+        银行到账 → 收款登记 → 应收核销 → 审批 → 凭证生成<br>
+        <strong>借:</strong> 银行存款 &nbsp; <strong>贷:</strong> 应收账款
+      </div>
+    </div>
+    <div style="background:#fff3f3; border-radius:8px; padding:16px; border:1px solid #f5c6cb;">
+      <div style="font-weight:700; color:#721c24; margin-bottom:8px;">📤 实付付款（资金流出）← <em>本模块</em></div>
+      <div style="font-size:13px; color:#333; line-height:1.8;">
+        付款申请 → 审批流 → 资金执行 → 应付核销 → 凭证生成<br>
+        <strong>借:</strong> 应付账款 &nbsp; <strong>贷:</strong> 银行存款
+      </div>
+    </div>
+  </div>
+
+  <h3>模块在采购端的位置</h3>
+  <div class="flow-container">
+    <div class="mermaid">
+graph TD
+    subgraph 采购上游
+        A1[采购申请] --> A2[采购订单]
+        A2 --> A3[收货验收]
+        A3 --> A4[应付对账]
+    end
+    
+    subgraph 票据上游
+        B1[进项发票] --> B2[发票录入/查验]
+    end
+
+    A4 --> C
+    B2 --> C
+
+    subgraph 本模块["💳 实付付款 (本模块)"]
+        C[应付核销] --> D[付款申请]
+        D --> E{审批流}
+        E -->|通过| F[资金执行]
+        E -->|驳回| G[退回修改]
+        G --> D
+        F --> H[付款登记]
+        H --> I[凭证生成]
+    end
+
+    I --> J[🧾 总账凭证]
+    
+    style A4 fill:#fff3cd,stroke:#f39c12
+    style C fill:#e94560,color:#fff
+    style D fill:#e94560,color:#fff
+    style E fill:#0f3460,color:#fff
+    style F fill:#e94560,color:#fff
+    style J fill:#1a1a2e,color:#fff
+    style 本模块 fill:#fff5f7,stroke:#e94560
+    end
+  </div>
+</div>
+
+<!-- ==================== ② 主流程 ==================== -->
+<div class="section" id="main-flow">
+  <h2>🔄 ② 付款主流程（端到端）</h2>
+  <p class="desc">从采购应付确认到资金实际流出的完整链路，包含5个核心阶段和3个审批层级。</p>
+  
+  <div class="note-box">
+    <strong>与实收的核心差异：</strong>实收是"钱先到账→再分配"，实付是"先申请审批→再出账"。<strong>实付必须有审批环节</strong>，因为涉及资金安全。
+  </div>
+
+  <div class="flow-container">
+    <div class="mermaid">
+graph TD
+    subgraph Stage1["阶段1: 付款发起"]
+        A[采购员/业务员<br>发起付款申请] --> B{付款类型}
+        B -->|普通付款| C1[选择应付单据]
+        B -->|预付款| C2[关联采购订单]
+        B -->|合同付款| C3[关联采购合同]
+    end
+
+    subgraph Stage2["阶段2: 付款申请单填写"]
+        C1 --> D[填写付款申请单]
+        C2 --> D
+        C3 --> D
+        D --> D1[供应商信息<br>自动带出]
+        D --> D2[本次付款金额<br>与应付余额校验]
+        D --> D3[付款方式选择<br>银行转账/票据/现金]
+        D --> D4[预计付款日期<br>到期日校验]
+        D1 & D2 & D3 & D4 --> E[提交付款申请]
+    end
+
+    subgraph Stage3["阶段3: 审批流"]
+        E --> F{付款金额}
+        F -->|"5千以下"| G1[部门经理审批]
+        F -->|"5千-5万"| G2[财务主管审批]
+        F -->|"5万-20万"| G3[总经理审批]
+        F -->|"20万以上"| G4[董事会审批]
+        G1 & G2 & G3 & G4 --> H{审批结果}
+        H -->|驳回| I[退回申请人<br>附审批意见]
+        H -->|通过| J[进入待付款队列]
+    end
+
+    subgraph Stage4["阶段4: 资金执行"]
+        J --> K{付款方式}
+        K -->|银行转账| L1[生成网银付款指令<br>银企直连推送]
+        K -->|承兑汇票| L2[从票据池选取<br>背书/到期兑付]
+        K -->|现金| L3[出纳开具现金支票]
+        K -->|POS/扫码| L4[财务扫码/刷卡]
+        L1 & L2 & L3 & L4 --> M[资金实际流出]
+    end
+
+    subgraph Stage5["阶段5: 核销入账"]
+        M --> N{核销方式}
+        N -->|自动核销| O1[系统自动匹配应付单]
+        N -->|手动核销| O2[出纳选择核销明细]
+        N -->|部分核销| O3[本次付部分<br>余款保留应付余额]
+        O1 & O2 & O3 --> P[更新应付余额]
+        P --> Q[生成付款凭证]
+        Q --> R[写入总账]
+        R --> S[更新供应商账龄]
+    end
+
+    style D fill:#e94560,color:#fff
+    style E fill:#e94560,color:#fff
+    style M fill:#e94560,color:#fff
+    style Q fill:#0f3460,color:#fff
+    style R fill:#1a1a2e,color:#fff
+    end
+  </div>
+
+  <h3>审批阈值配置</h3>
+  <table>
+    <tr><th>金额区间</th><th>审批层级</th><th>预计时长</th><th>备注</th></tr>
+    <tr><td>≤ ¥5,000</td><td>部门经理</td><td>≤ 2小时</td><td>日常小额付款</td></tr>
+    <tr><td>¥5,001 ~ ¥50,000</td><td>财务主管</td><td>≤ 4小时</td><td>常规采购付款</td></tr>
+    <tr><td>¥50,001 ~ ¥200,000</td><td>总经理</td><td>≤ 1工作日</td><td>大额采购付款</td></tr>
+    <tr><td>> ¥200,000</td><td>董事会/董事长</td><td>≤ 2工作日</td><td>战略级付款</td></tr>
+  </table>
+</div>
+
+<!-- ==================== ③ 核销模式 ==================== -->
+<div class="section" id="writeoff">
+  <h2>✅ ③ 应付核销模式详解</h2>
+  <p class="desc">与实收核销类似，但方向相反。实付核销是将"实际付出的钱"分配到"应付单据"上，标记哪些款项已结清。</p>
+
+  <div class="flow-container">
+    <div class="mermaid">
+graph LR
+    subgraph M1["模式1: 一对一核销 - 一笔付款核销一张应付"]
+        M1A["付款单 50,000"] --> M1B["应付单A 50,000"]
+    end
+    subgraph M2["模式2: 多对一核销 - 多笔付款核销一张应付(分期)"]
+        M2A["第1次付款 30,000"] --> M2B["应付单 80,000"]
+        M2C["第2次付款 50,000"] --> M2B
+    end
+    subgraph M3["模式3: 一对多核销 - 一笔付款核销多张应付(合并)"]
+        M3A["付款单 100,000"] --> M3B["应付单A 40,000"]
+        M3A --> M3C["应付单B 35,000"]
+        M3A --> M3D["应付单C 25,000"]
+    end
+    subgraph M4["模式4: 多对多核销 - 多笔付款核销多张应付(月结)"]
+        M4A["付款单1 60,000"] --> M4E["应付单X 45,000"]
+        M4B["付款单2 40,000"] --> M4E
+        M4A --> M4F["应付单Y 30,000"]
+        M4B --> M4F
+        M4B --> M4G["应付单Z 25,000"]
+    end
+  </div>
+
+  <h3>核销匹配规则（从实收镜像过来的核心逻辑）</h3>
+  <table>
+    <tr><th>匹配维度</th><th>权重</th><th>说明</th></tr>
+    <tr><td>供应商匹配</td><td>40%</td><td>付款单供应商 = 应付单供应商（必须完全一致）</td></tr>
+    <tr><td>金额匹配</td><td>30%</td><td>付款金额 ≈ 应付余额（允许±¥1尾差）</td></tr>
+    <tr><td>摘要/备注</td><td>15%</td><td>付款摘要关键词与采购订单号/合同号关联</td></tr>
+    <tr><td>历史核销</td><td>15%</td><td>参考过去6个月该供应商的核销习惯</td></tr>
+  </table>
+
+  <div class="note-box info">
+    <strong>智能匹配置信度：</strong>≥90% 自动推荐核销方案 → 70%~89% 提示确认 → <70% 手动选择
+  </div>
+
+  <h3>部分核销与尾差处理</h3>
+  <div class="flow-container">
+    <div class="mermaid">
+graph TD
+    A[本次付款金额] --> B{vs 应付余额}
+    B -->|等于| C[全额核销<br>应付余额清零]
+    B -->|小于| D[部分核销]
+    B -->|大于| E[超额付款<br>转入预付余额]
+    
+    D --> D1[核销金额 = 本次付款金额]
+    D1 --> D2[应付余额 = 原余额 - 核销金额]
+    D2 --> D3{"尾差1元以内?"}
+    D3 -->|是| D4[自动全额核销<br>尾差计入财务费用-尾差]
+    D3 -->|否| D5[保留未核销余额<br>等下次继续付]
+
+    E --> E1[核销应付(清零)]
+    E1 --> E2[差额转入<br>供应商预付余额]
+    E2 --> E3[下次应付自动抵扣]
+
+    style C fill:#d4edda
+    style D4 fill:#d4edda
+    style D5 fill:#fff3cd
+    style E2 fill:#d1ecf1
+    end
+  </div>
+</div>
+
+<!-- ==================== ④ 预付管理 ==================== -->
+<div class="section" id="prepay">
+  <h2>💰 ④ 预付账款管理流程</h2>
+  <p class="desc">预付是"货未到、票未到、钱先付"的场景，在制造业采购中极为常见（如订金、预付货款、预付工程款等）。</p>
+
+  <div class="flow-container">
+    <div class="mermaid">
+graph TD
+    subgraph 预付发起
+        A[采购合同约定<br>预付比例] --> B[生成预付申请单]
+        B --> C[关联采购订单/合同]
+        C --> D[填写预付金额<br>≤ 合同约定预付比例]
+        D --> E[审批流<br>同付款审批阈值]
+        E -->|通过| F[资金执行<br>银行转账]
+        F --> G[登记预付账款]
+    end
+
+    subgraph 预付跟踪
+        G --> H[预付状态: 待抵扣]
+        H --> I{到货/发票到达?}
+        I -->|到货验收| J[生成应付单]
+        J --> K[系统提示: <br>有可用预付余额]
+        K --> L{选择抵扣方式}
+        L -->|自动全额抵扣| M[预付余额 → 抵扣应付]
+        L -->|手动部分抵扣| N[选择抵扣金额]
+        L -->|暂不抵扣| O[保留预付余额]
+    end
+
+    subgraph 异常处理
+        O --> P{预付超期?}
+        P -->|超过3个月未抵扣| Q[系统预警]
+        Q --> R{供应商退款?}
+        R -->|退款| S[退款冲回预付]
+        R -->|继续等| T[延长期限<br>备注原因]
+    end
+
+    M --> U[更新预付余额]
+    N --> U
+    U --> V[预付余额=0<br>预付关闭]
+
+    style B fill:#e94560,color:#fff
+    style F fill:#e94560,color:#fff
+    style M fill:#d4edda
+    style Q fill:#fff3cd
+    style S fill:#f8d7da
+    end
+  </div>
+
+  <h3>预付场景分类</h3>
+  <table>
+    <tr><th>场景</th><th>触发条件</th><th>典型比例</th><th>抵扣时机</th></tr>
+    <tr><td>合同订金</td><td>采购合同明确约定</td><td>10%~30%</td><td>到货验收后</td></tr>
+    <tr><td>预付货款</td><td>供应商要求先款后货</td><td>50%~100%</td><td>收货后或按合同约定</td></tr>
+    <tr><td>预付工程/服务款</td><td>长期合同分期付款</td><td>按里程碑</td><td>各阶段验收后</td></tr>
+    <tr><td>预付关税/运费</td><td>进口采购预缴</td><td>100%</td><td>报关单回来后</td></tr>
+    <tr><td>无关联预付</td><td>紧急采购，尚未建档</td><td>—</td><td>后续补录订单后抵扣</td></tr>
+  </table>
+
+  <h3>预付余额抵扣规则（FIFO先进先出）</h3>
+  <div class="note-box success">
+    <strong>抵扣优先级：</strong>同一供应商有多笔预付时，按 <strong>预付日期先后（FIFO）</strong> 依次抵扣。最早的一笔先扣，避免长期挂账。
+  </div>
+</div>
+
+<!-- ==================== ⑤ 银企对接 ==================== -->
+<div class="section" id="bank">
+  <h2>🏦 ⑤ 银企直连与付款执行</h2>
+  <p class="desc">实付的银企对接比实收更复杂——实收是被动接收，实付是主动推送。涉及网银指令生成、U盾签名、实时到账确认等。</p>
+
+  <div class="flow-container">
+    <div class="mermaid">
+graph TD
+    subgraph 付款发起
+        A[审批通过的付款单] --> B[生成付款指令]
+    end
+
+    subgraph 银企直连["银企直连推送"]
+        B --> C{付款方式}
+        C -->|企业网银| D1[调用银企API<br>生成转账指令]
+        C -->|银承背书| D2[发起电子商业汇票<br>ECDS背书签发]
+        C -->|代发工资| D3[批量代发文件<br>CSV/Excel上传]
+
+        D1 --> E1[等待U盾/审批人<br>网银端确认]
+        D2 --> E2[ECDS系统确认<br>接收方签收]
+        D3 --> E3[银行代发处理<br>批次状态追踪]
+    end
+
+    subgraph 结果回传
+        E1 --> F{银行处理结果}
+        F -->|成功| G1[银行返回成功回执<br>含流水号/时间]
+        F -->|失败| G2[银行返回失败原因<br>余额不足/账户冻结等]
+        F -->|处理中| G3[定时轮询状态<br>每5分钟查一次]
+
+        G1 --> H[更新付款单状态: 已付]
+        G2 --> I[标记失败<br>通知出纳处理]
+        G3 --> J[超时阈值: 2小时]
+        J -->|仍未到账| K[标记异常<br>人工核实]
+    end
+
+    H --> L[自动触发核销流程]
+    I --> M[出纳修正后重新提交]
+    K --> N[联系银行/供应商核实]
+
+    style B fill:#e94560,color:#fff
+    style D1 fill:#0f3460,color:#fff
+    style E1 fill:#fff3cd
+    style H fill:#d4edda
+    style I fill:#f8d7da
+    style K fill:#f8d7da
+    end
+  </div>
+
+  <h3>支持的银企对接通道</h3>
+  <table>
+    <tr><th>通道类型</th><th>适用银行</th><th>指令方式</th><th>到账时效</th><th>备注</th></tr>
+    <tr><td>银企直连API</td><td>工/建/招/中行等</td><td>HTTPS+数字签名</td><td>实时~T+1</td><td>主流，推荐</td></tr>
+    <tr><td>银企直连文件</td><td>农行/交行等</td><td>CSV文件上传</td><td>T+0~T+1</td><td>适合批量代发</td></tr>
+    <tr><td>人行超级网银</td><td>全部银行</td><td>人行清算通道</td><td>实时(5万内)</td><td>跨行秒到</td></tr>
+    <tr><td>电子商业汇票ECDS</td><td>全部银行</td><td>ECDS系统</td><td>票面到期日</td><td>承兑汇票场景</td></tr>
+    <tr><td>人工网银补录</td><td>全部</td><td>手工操作</td><td>实时~T+1</td><td>兜底方案</td></tr>
+  </table>
+</div>
+
+<!-- ==================== ⑥ 凭证模板 ==================== -->
+<div class="section" id="voucher">
+  <h2>🧾 ⑥ 付款凭证模板矩阵</h2>
+  <p class="desc">不同付款场景生成不同会计凭证。以下8套模板覆盖实付模块全部场景。</p>
+
+  <div class="flow-container">
+    <div class="mermaid">
+graph TD
+    A[付款场景] --> B{付款类型}
+    
+    B -->|S01 普通付款| C1["借: 应付账款<br>　贷: 银行存款"]
+    B -->|S02 预付货款| C2["借: 预付账款<br>　贷: 银行存款"]
+    B -->|S03 预付转应付| C3["借: 应付账款<br>　贷: 预付账款"]
+    B -->|S04 付款折扣/折让| C4["借: 应付账款<br>　贷: 银行存款<br>　贷: 财务费用-折扣"]
+    B -->|S05 承兑汇票付款| C5["借: 应付账款<br>　贷: 应付票据"]
+    B -->|S06 汇票到期兑付| C6["借: 应付票据<br>　贷: 银行存款"]
+    B -->|S07 现金付款| C7["借: 应付账款<br>　贷: 库存现金"]
+    B -->|S08 退款/冲销| C8["借: 应付账款 (红字)<br>　贷: 银行存款 (红字)"]
+
+    style C1 fill:#d4edda
+    style C2 fill:#d1ecf1
+    style C3 fill:#d1ecf1
+    style C4 fill:#fff3cd
+    style C5 fill:#e2d5f1
+    style C6 fill:#e2d5f1
+    style C7 fill:#fff3cd
+    style C8 fill:#f8d7da
+    end
+  </div>
+
+  <h3>凭证模板详细对照</h3>
+  <table>
+    <tr><th>编号</th><th>场景</th><th>借方科目</th><th>贷方科目</th><th>辅助核算</th></tr>
+    <tr><td class="tag green">S01</td><td>普通银行付款</td><td>应付账款</td><td>银行存款</td><td>供应商+部门</td></tr>
+    <tr><td class="tag blue">S02</td><td>预付货款</td><td>预付账款</td><td>银行存款</td><td>供应商+采购订单</td></tr>
+    <tr><td class="tag blue">S03</td><td>预付转应付</td><td>应付账款</td><td>预付账款</td><td>供应商+订单</td></tr>
+    <tr><td class="tag orange">S04</td><td>付款折扣/折让</td><td>应付账款</td><td>银行存款 + 财务费用</td><td>供应商+部门</td></tr>
+    <tr><td class="tag red">S05</td><td>承兑汇票背书</td><td>应付账款</td><td>应付票据</td><td>供应商+票据号</td></tr>
+    <tr><td class="tag red">S06</td><td>汇票到期兑付</td><td>应付票据</td><td>银行存款</td><td>供应商+票据号</td></tr>
+    <tr><td class="tag orange">S07</td><td>现金付款</td><td>应付账款</td><td>库存现金</td><td>供应商+部门</td></tr>
+    <tr><td class="tag red">S08</td><td>付款冲销/退款</td><td>应付账款(红字)</td><td>银行存款(红字)</td><td>供应商+原凭证</td></tr>
+  </table>
+</div>
+
+<!-- ==================== ⑦ 异常处理 ==================== -->
+<div class="section" id="exception">
+  <h2>⚠️ ⑦ 付款异常处理流程</h2>
+  <p class="desc">付款涉及资金安全，异常处理比收款更加严格。以下4类异常及处理路径。</p>
+
+  <div class="flow-container">
+    <div class="mermaid">
+graph TD
+    subgraph E1["异常1 — 付款失败"]
+        A1[银行返回失败] --> B1{失败原因}
+        B1 -->|余额不足| C1[通知出纳<br>充值或换账户]
+        B1 -->|账户冻结| C2[联系银行解冻<br>标记账户异常]
+        B1 -->|收款方信息有误| C3[修正收款信息<br>重新提交]
+        B1 -->|超限额| C4[拆分多笔付款<br>或申请临时额度]
+        C1 & C2 & C3 & C4 --> D1[修正后重新走审批]
+    end
+
+    subgraph E2["异常2 — 付款后供应商否认"]
+        A2[供应商称未收到] --> B2[查询银行流水]
+        B2 --> C5{银行状态}
+        C5 -->|已到账| D2[提供银行回单<br>要求供应商核实]
+        C5 -->|退回| D3[查明退回原因<br>重新发起]
+        C5 -->|处理中| D4[等待2小时<br>仍异常则人工介入]
+    end
+
+    subgraph E3["异常3 — 重复付款"]
+        A3[系统检测/人工发现<br>重复付款] --> B3[立即冻结<br>重复金额]
+        B3 --> C6{资金状态}
+        C6 -->|未出账| D5[取消付款指令]
+        C6 -->|已出账| D6[联系供应商协商退款]
+        D6 --> D7[供应商退款后<br>红字冲销]
+    end
+
+    subgraph E4["异常4 — 退货冲销"]
+        A4[采购退货] --> B4[生成退货单]
+        B4 --> C7{已付款?}
+        C7 -->|已付全款| D8[全额冲销<br>红字凭证]
+        C7 -->|部分付款| D9[部分冲销<br>差额退款]
+        C7 -->|未付款| D10[直接取消应付<br>无需冲销]
+    end
+
+    style A1 fill:#f8d7da
+    style A2 fill:#f8d7da
+    style A3 fill:#f8d7da
+    style A4 fill:#fff3cd
+    end
+  </div>
+
+  <h3>异常等级与响应时效</h3>
+  <table>
+    <tr><th>等级</th><th>异常类型</th><th>响应时效</th><th>处理人</th><th>升级条件</th></tr>
+    <tr><td class="tag red">P0-紧急</td><td>资金已出但收款方否认</td><td>30分钟内</td><td>财务主管</td><td>24h未解决→总经理</td></tr>
+    <tr><td class="tag red">P0-紧急</td><td>检测到重复付款</td><td>立即</td><td>出纳+财务主管</td><td>任何金额→立即冻结</td></tr>
+    <tr><td class="tag orange">P1-高</td><td>银行付款失败</td><td>2小时内</td><td>出纳</td><td>影响账期→财务主管</td></tr>
+    <tr><td class="tag orange">P1-高</td><td>退货冲销</td><td>4小时内</td><td>采购+财务</td><td>金额>5万→财务主管</td></tr>
+    <tr><td class="tag blue">P2-中</td><td>付款审批超时</td><td>1工作日</td><td>申请人催办</td><td>2天未审→上级催</td></tr>
+  </table>
+
+  <div class="note-box danger">
+    <strong>安全红线：</strong>① 大额付款（>10万）必须双签（制单人≠审核人≠付款人） ② 同一供应商同日多笔付款需二次确认 ③ 付款账户变更需供应商盖章公函确认
+  </div>
+</div>
+
+</div>
+
+<div class="footer">
+  Dev_Dept ERP 财务管理系统 — 实付付款模块详细流程图 v1.0 | 对标金蝶云星空 | 2026-04-15
+</div>
+
+<!-- 缩放控制按钮 -->
+<div class="zoom-controls">
+  <button class="zoom-btn" onclick="zoomOut()" title="缩小">−</button>
+  <div class="zoom-label" id="zoomLevel">150%</div>
+  <button class="zoom-btn" onclick="zoomIn()" title="放大">+</button>
+  <button class="zoom-btn" onclick="zoomReset()" title="重置">⟲</button>
+</div>
+
+<script>
+  mermaid.initialize({ 
+    startOnLoad: true, 
+    theme: 'base',
+    themeVariables: { 
+      primaryColor: '#e94560', 
+      primaryTextColor: '#fff',
+      primaryBorderColor: '#c0392b',
+      lineColor: '#555',
+      secondaryColor: '#0f3460',
+      tertiaryColor: '#f8f9fa',
+      fontSize: '18px'
+    },
+    flowchart: { htmlLabels: true, curve: 'basis', padding: 16, useMaxWidth: false }
+  });
+
+  /* 流程图缩放控制 */
+  let currentZoom = 1.5;
+  const zoomStep = 0.25;
+  function applyZoom() {
+    document.querySelectorAll('.flow-container .mermaid').forEach(el => {
+      el.style.transform = 'scale(' + currentZoom + ')';
+      el.style.transformOrigin = 'top center';
+    });
+    const label = document.getElementById('zoomLevel');
+    if (label) label.textContent = Math.round(currentZoom * 100) + '%';
+  }
+  function zoomIn() { currentZoom = Math.min(3, currentZoom + zoomStep); applyZoom(); }
+  function zoomOut() { currentZoom = Math.max(0.5, currentZoom - zoomStep); applyZoom(); }
+  function zoomReset() { currentZoom = 1.5; applyZoom(); }
+  document.addEventListener('DOMContentLoaded', function() { applyZoom(); });
+
+  function navTo(el) {
+    document.querySelectorAll('.nav-bar a').forEach(a => a.classList.remove('active'));
+    el.classList.add('active');
+    const target = document.querySelector(el.getAttribute('href'));
+    if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+</script>
+</body>
+</html>
