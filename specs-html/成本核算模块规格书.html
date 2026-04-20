@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>成本核算模块</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'PingFang SC', 'Microsoft YaHei', -apple-system, sans-serif; background: #f8fafc; color: #334155; line-height: 1.8; font-size: 15px; }
+.container { max-width: 960px; margin: 0 auto; background: #fff; border-radius: 12px; box-shadow: 0 4px 24px rgba(0,0,0,0.06); padding: 3rem 3.5rem; }
+.back-link { display: inline-block; margin-bottom: 1.5rem; color: #6366f1; text-decoration: none; font-size: 0.875rem; }
+.back-link:hover { text-decoration: underline; }
+.doc-header { border-bottom: 3px solid #6366f1; padding-bottom: 1.5rem; margin-bottom: 2rem; }
+.doc-header h1 { font-size: 1.75rem; color: #1e293b; margin-bottom: 0.75rem; }
+.doc-meta { display: flex; gap: 1.5rem; flex-wrap: wrap; font-size: 0.85rem; color: #64748b; }
+.doc-meta span { background: #f1f5f9; padding: 0.25rem 0.75rem; border-radius: 20px; }
+.content h1 { font-size: 1.4rem; margin: 2rem 0 1rem; color: #6366f1; border-bottom: 2px solid #e2e8f0; padding-bottom: 0.5rem; }
+.content h2 { font-size: 1.2rem; margin: 1.75rem 0 0.75rem; color: #1e293b; }
+.content h3 { font-size: 1.05rem; margin: 1.25rem 0 0.5rem; color: #475569; }
+.content h4 { font-size: 1rem; margin: 1rem 0 0.5rem; color: #64748b; }
+.content p { margin: 0.75rem 0; }
+.content ul, .content ol { margin: 0.75rem 0; padding-left: 1.75rem; }
+.content li { margin: 0.4rem 0; }
+.content table { width: 100%; border-collapse: collapse; margin: 1.25rem 0; font-size: 0.875rem; border-radius: 8px; overflow: hidden; border: 1px solid #e2e8f0; }
+.content th, .content td { border: 1px solid #e2e8f0; padding: 0.75rem 1rem; text-align: left; }
+.content th { background: #f1f5f9; font-weight: 600; color: #1e293b; }
+.content tr:hover td { background: #fafbfc; }
+.content pre { background: #1e293b; color: #e2e8f0; padding: 1.25rem; border-radius: 8px; overflow-x: auto; margin: 1rem 0; font-size: 0.8rem; line-height: 1.6; }
+.content code { background: #f1f5f9; color: #6366f1; padding: 0.15rem 0.4rem; border-radius: 4px; font-size: 0.85em; font-family: 'Consolas', monospace; }
+.content pre code { background: transparent; color: inherit; padding: 0; }
+.content blockquote { border-left: 4px solid #6366f1; margin: 1rem 0; padding: 0.75rem 1.25rem; background: #f8fafc; color: #475569; }
+.content strong { color: #1e293b; }
+.content hr { border: none; border-top: 2px solid #e2e8f0; margin: 2rem 0; }
+</style>
+</head>
+<body>
+<div class="container">
+  <a href="../index.html" class="back-link">&larr; 返回目录</a>
+  <div class="doc-header">
+    <h1>成本核算模块</h1>
+    <div class="doc-meta">
+      <span>📋 V1.0</span>
+      <span>📅 2026-04-20</span>
+      <span>🏢 Dev_Dept</span>
+    </div>
+  </div>
+  <div class="content">
+<h1>成本核算模块 — 需求分析与技术规格说明书</h1>
+<h2>Cost Accounting Module — Technical Specification</h2>
+<blockquote><p><strong>项目</strong>: Dev_Dept ERP 财务管理系统</p></blockquote>
+<blockquote><p><strong>模块</strong>: 成本核算管理 (Cost Accounting Management)</p></blockquote>
+<blockquote><p><strong>版本</strong>: v1.0</p></blockquote>
+<blockquote><p><strong>日期</strong>: 2026-04-20</p></blockquote>
+<blockquote><p><strong>对标系统</strong>: 金蝶云星空 → 成本管理 → 成本核算/成本分析</p></blockquote>
+<blockquote><p><strong>关联模块</strong>: 费用报销模块规格书.md（费用归集）→ 本模块（成本核算）→ 总账凭证引擎规格书.md（凭证落地）</p></blockquote>
+<blockquote><p><strong>优先级</strong>: <strong>P2（重要补充）</strong> — 制造型企业成本管控的核心模块</p></blockquote>
+<blockquote><p><strong>状态</strong>: 规格设计阶段</p></blockquote>
+<hr>
+<h2>1. 模块定位与业务目标</h2>
+<h3>1.1 一句话定义</h3>
+<p><strong>成本核算模块是ERP系统中"归集-分摊-核算-结转"闭环的成本管控引擎，负责从直接材料/直接人工/制造费用归集开始，经过多维度分摊、在制品核算、完工产品成本计算，最终生成成本结转凭证写入总账的全流程管理。</strong></p>
+<h3>1.2 在整体流程中的位置</h3>
+<pre><code>
+┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────────────────┐
+│ 采购入库  │─▶│ 生产领料  │─▶│ 工时采集  │─▶│ 费用报销归集      │
+│ 材料成本  │  │ 直接材料  │  │ 直接人工  │  │ 制造费用          │
+└──────────┘  └──────────┘  └──────────┘  └────────┬─────────┘
+                                                       │
+                                                       ▼
+                               ┌─────────────────────────────────────────┐
+                               │  🏭 成本核算管理（本模块）                │
+                               │                                         │
+                               │  F1 成本归集    →  材料+人工+制费三要素   │
+                               │  F2 制费分摊    →  多动因分摊到成本中心   │
+                               │  F3 在制品核算  →  约当产量法/定额法     │
+                               │  F4 完工结转    →  产品成本计算+结转     │
+                               │  F5 差异分析    →  标准/实际差异对比      │
+                               │  F6 成本报表    →  成本明细+趋势+结构    │
+                               │  F7 凭证生成    →  自动凭证+成本归集      │
+                               └─────────────────┬───────────────────────┘
+                                                 │
+                      ┌──────────────────────────┼──────────────────────┐
+                      ▼                          ▼                      ▼
+              ┌──────────────┐         ┌──────────────┐       ┌──────────────┐
+              │ 🧾 总账凭证    │         │ 📊 成本分析    │       │ 📋 存货核算    │
+              │ CT01~CT08    │         │ 差异+趋势     │       │ 产成品入库    │
+              └──────────────┘         └──────────────┘       └──────────────┘
+</pre>
+<h3>1.3 与已有模块的衔接关系</h3>
+<table><thead>
+<tr><th>上游模块</th><th>衔接点</th><th>本模块消费的数据</th></tr>
+</thead><tbody>
+<tr><td><strong>采购入库</strong></td><td>材料入库成本</td><td>采购单价、运杂费、关税</td></tr>
+<tr><td><strong>生产领料</strong></td><td>直接材料归集</td><td>领料单号、物料、数量、单价</td></tr>
+<tr><td><strong>工时管理</strong></td><td>直接人工归集</td><td>工时记录、人工费率</td></tr>
+<tr><td><strong>费用报销模块</strong></td><td>制造费用归集</td><td>车间/工厂相关费用</td></tr>
+<tr><td><strong>固定资产模块</strong></td><td>折旧费归集</td><td>设备折旧、按部门分摊</td></tr>
+<tr><td><strong>存货核算</strong></td><td>期初期末在制品</td><td>在制品数量、完工程度</td></tr>
+</tbody>
+</table>
+<table><thead>
+<tr><th>下游模块</th><th>衔接点</th><th>本模块产出的数据</th></tr>
+</thead><tbody>
+<tr><td><strong>总账凭证引擎</strong></td><td>成本结转 → 自动凭证</td><td>CT01~CT08 凭证模板触发事件</td></tr>
+<tr><td><strong>存货核算</strong></td><td>完工产品入库</td><td>产品单位成本、入库数量</td></tr>
+<tr><td><strong>销售出库</strong></td><td>销售成本结转</td><td>产品成本、出库成本</td></tr>
+<tr><td><strong>成本分析</strong></td><td>多维度分析</td><td>实际成本、标准成本、差异</td></tr>
+</tbody>
+</table>
+<h3>1.4 核心业务目标</h3>
+<table><thead>
+<tr><th>目标</th><th>指标</th><th>当前痛点</th></tr>
+</thead><tbody>
+<tr><td><strong>成本核算及时性</strong></td><td>月结后3个工作日内完成成本核算</td><td>手工统计耗时2周，数据滞后</td></tr>
+<tr><td><strong>成本准确性</strong></td><td>实际成本与标准成本差异率不超过5%</td><td>分摊基准不合理，成本失真</td></tr>
+<tr><td><strong>在制品核算</strong></td><td>在制品估值误差不超过3%</td><td>约当产量手工估算，偏差大</td></tr>
+<tr><td><strong>成本可追溯</strong></td><td>每笔成本可追溯到原始单据</td><td>费用归集链路断裂，无法追溯</td></tr>
+<tr><td><strong>差异可分析</strong></td><td>量差/价差自动拆分</td><td>只看总额差异，无法定位原因</td></tr>
+</tbody>
+</table>
+<hr>
+<h2>2. 功能域分解</h2>
+<h3>F1 成本归集管理</h3>
+<table><thead>
+<tr><th>功能点</th><th>说明</th><th>优先级</th></tr>
+</thead><tbody>
+<tr><td>F1.1 直接材料归集</td><td>从领料单自动归集到生产订单/工单</td><td>P0</td></tr>
+<tr><td>F1.2 直接人工归集</td><td>从工时记录自动归集到生产订单/工单</td><td>P0</td></tr>
+<tr><td>F1.3 制造费用归集</td><td>从费用报销/折旧/辅助生产归集</td><td>P0</td></tr>
+<tr><td>F1.4 委外加工费归集</td><td>委外订单的加工费+材料费归集</td><td>P1</td></tr>
+<tr><td>F1.5 成本归集审核</td><td>归集数据审核确认</td><td>P0</td></tr>
+<tr><td>F1.6 归集撤销重做</td><td>归集错误可撤销重新归集</td><td>P1</td></tr>
+</tbody>
+</table>
+<h3>F2 制造费用分摊</h3>
+<table><thead>
+<tr><th>功能点</th><th>说明</th><th>优先级</th></tr>
+</thead><tbody>
+<tr><td>F2.1 分摊基准配置</td><td>按工时/产量/机器工时/直接人工等分摊</td><td>P0</td></tr>
+<tr><td>F2.2 一级分摊</td><td>辅助生产成本分摊到基本生产成本</td><td>P0</td></tr>
+<tr><td>F2.3 二级分摊</td><td>制造费用分摊到各产品/工单</td><td>P0</td></tr>
+<tr><td>F2.4 分摊顺序配置</td><td>交互分摊/顺序分摊/代数分摊</td><td>P1</td></tr>
+<tr><td>F2.5 分摊结果审核</td><td>分摊结果确认后不可修改</td><td>P0</td></tr>
+<tr><td>F2.6 分摊模拟试算</td><td>正式分摊前可试算查看结果</td><td>P1</td></tr>
+</tbody>
+</table>
+<h3>F3 在制品核算</h3>
+<table><thead>
+<tr><th>功能点</th><th>说明</th><th>优先级</th></tr>
+</thead><tbody>
+<tr><td>F3.1 约当产量计算</td><td>按完工程度折算约当产量</td><td>P0</td></tr>
+<tr><td>F3.2 在制品成本分配</td><td>期初在制+本期发生按约当产量分配</td><td>P0</td></tr>
+<tr><td>F3.3 定额成本法</td><td>按定额成本计算在制品</td><td>P1</td></tr>
+<tr><td>F3.4 在制品盘点</td><td>期末在制品数量盘点录入</td><td>P0</td></tr>
+<tr><td>F3.5 完工程度维护</td><td>各工序完工程度百分比配置</td><td>P0</td></tr>
+</tbody>
+</table>
+<h3>F4 完工产品结转</h3>
+<table><thead>
+<tr><th>功能点</th><th>说明</th><th>优先级</th></tr>
+</thead><tbody>
+<tr><td>F4.1 产品成本计算</td><td>完工产品总成本和单位成本计算</td><td>P0</td></tr>
+<tr><td>F4.2 完工入库结转</td><td>完工产品成本结转到产成品</td><td>P0</td></tr>
+<tr><td>F4.3 销售成本结转</td><td>销售出库时结转销售成本</td><td>P0</td></tr>
+<tr><td>F4.4 联副产品分配</td><td>联产品/副产品成本分配</td><td>P1</td></tr>
+<tr><td>F4.5 退货成本处理</td><td>销售退货的成本冲回</td><td>P1</td></tr>
+<tr><td>F4.6 月末结账</td><td>成本模块月末结账处理</td><td>P0</td></tr>
+</tbody>
+</table>
+<h3>F5 差异分析</h3>
+<table><thead>
+<tr><th>功能点</th><th>说明</th><th>优先级</th></tr>
+</thead><tbody>
+<tr><td>F5.1 标准成本维护</td><td>物料标准成本BOM价配置</td><td>P0</td></tr>
+<tr><td>F5.2 材料差异分析</td><td>量差+价差拆分</td><td>P0</td></tr>
+<tr><td>F5.3 人工差异分析</td><td>效率差异+工资率差异</td><td>P0</td></tr>
+<tr><td>F5.4 制费差异分析</td><td>耗费差异+效率差异</td><td>P1</td></tr>
+<tr><td>F5.5 差异分摊结转</td><td>差异按比例分摊到存货和销售成本</td><td>P1</td></tr>
+<tr><td>F5.6 差异预警</td><td>差异超阈值自动预警</td><td>P2</td></tr>
+</tbody>
+</table>
+<h3>F6 成本报表</h3>
+<table><thead>
+<tr><th>功能点</th><th>说明</th><th>优先级</th></tr>
+</thead><tbody>
+<tr><td>F6.1 产品成本明细表</td><td>按产品列示材料+人工+制费</td><td>P0</td></tr>
+<tr><td>F6.2 成本结构分析表</td><td>材料占比/人工占比/制费占比</td><td>P0</td></tr>
+<tr><td>F6.3 成本趋势分析</td><td>同比环比趋势图</td><td>P1</td></tr>
+<tr><td>F6.4 部门成本汇总表</td><td>按车间/部门汇总成本</td><td>P0</td></tr>
+<tr><td>F6.5 在制品成本明细表</td><td>在制品余额明细</td><td>P0</td></tr>
+<tr><td>F6.6 标准vs实际对比表</td><td>差异对比分析</td><td>P1</td></tr>
+</tbody>
+</table>
+<h3>F7 凭证与结转</h3>
+<table><thead>
+<tr><th>功能点</th><th>说明</th><th>优先级</th></tr>
+</thead><tbody>
+<tr><td>F7.1 自动凭证生成</td><td>成本结转自动触发凭证</td><td>P0</td></tr>
+<tr><td>F7.2 凭证模板配置</td><td>CT01~CT08凭证模板维护</td><td>P0</td></tr>
+<tr><td>F7.3 结转顺序控制</td><td>材料→人工→制费→完工→销售</td><td>P0</td></tr>
+<tr><td>F7.4 反结转处理</td><td>结账后反结账处理</td><td>P1</td></tr>
+</tbody>
+</table>
+<hr>
+<h2>3. 数据库设计</h2>
+<h3>3.1 核心表结构</h3>
+<h4>cost_pool — 成本池</h4>
+<table><thead>
+<tr><th>字段</th><th>类型</th><th>说明</th><th>约束</th></tr>
+</thead><tbody>
+<tr><td>pool_id</td><td>VARCHAR(20)</td><td>成本池编码</td><td>PK</td></tr>
+<tr><td>pool_name</td><td>VARCHAR(100)</td><td>成本池名称</td><td>NOT NULL</td></tr>
+<tr><td>pool_type</td><td>ENUM</td><td>成本池类型</td><td>直接材料/直接人工/制造费用/辅助生产</td></tr>
+<tr><td>period</td><td>CHAR(7)</td><td>会计期间</td><td>YYYY-MM</td></tr>
+<tr><td>dept_id</td><td>VARCHAR(20)</td><td>归属部门/车间</td><td>FK → department</td></tr>
+<tr><td>total_amount</td><td>DECIMAL(14,2)</td><td>归集总额</td><td></td></tr>
+<tr><td>allocated_amount</td><td>DECIMAL(14,2)</td><td>已分摊额</td><td></td></tr>
+<tr><td>status</td><td>ENUM</td><td>状态</td><td>归集中/已审核/已分摊/已结转</td></tr>
+<tr><td>created_at</td><td>DATETIME</td><td>创建时间</td><td></td></tr>
+</tbody>
+</table>
+<h4>cost_collection — 成本归集明细</h4>
+<table><thead>
+<tr><th>字段</th><th>类型</th><th>说明</th><th>约束</th></tr>
+</thead><tbody>
+<tr><td>collect_id</td><td>BIGINT</td><td>归集ID</td><td>PK, AUTO</td></tr>
+<tr><td>pool_id</td><td>VARCHAR(20)</td><td>成本池编码</td><td>FK → cost_pool</td></tr>
+<tr><td>source_type</td><td>ENUM</td><td>来源类型</td><td>领料单/工时单/费用报销/折旧/委外</td></tr>
+<tr><td>source_id</td><td>VARCHAR(32)</td><td>来源单号</td><td>FK对应各来源表</td></tr>
+<tr><td>production_order</td><td>VARCHAR(20)</td><td>生产订单号</td><td>FK → production_order</td></tr>
+<tr><td>product_code</td><td>VARCHAR(30)</td><td>产品编码</td><td>FK → product</td></tr>
+<tr><td>cost_element</td><td>ENUM</td><td>成本要素</td><td>材料/人工/制费/委外</td></tr>
+<tr><td>amount</td><td>DECIMAL(14,2)</td><td>归集金额</td><td>NOT NULL</td></tr>
+<tr><td>quantity</td><td>DECIMAL(14,4)</td><td>归集数量</td><td>可选</td></tr>
+<tr><td>price</td><td>DECIMAL(14,4)</td><td>单价</td><td>可选</td></tr>
+<tr><td>dept_id</td><td>VARCHAR(20)</td><td>归属部门</td><td></td></tr>
+<tr><td>collected_at</td><td>DATE</td><td>归集日期</td><td></td></tr>
+</tbody>
+</table>
+<h4>cost_allocation_rule — 分摊规则</h4>
+<table><thead>
+<tr><th>字段</th><th>类型</th><th>说明</th><th>约束</th></tr>
+</thead><tbody>
+<tr><td>rule_id</td><td>INT</td><td>规则ID</td><td>PK, AUTO</td></tr>
+<tr><td>rule_name</td><td>VARCHAR(100)</td><td>规则名称</td><td>NOT NULL</td></tr>
+<tr><td>pool_type</td><td>ENUM</td><td>源成本池类型</td><td>制造费用/辅助生产</td></tr>
+<tr><td>allocation_base</td><td>ENUM</td><td>分摊基准</td><td>工时/产量/机器工时/直接人工/固定比例</td></tr>
+<tr><td>target_type</td><td>ENUM</td><td>分摊目标</td><td>产品/工单/成本中心</td></tr>
+<tr><td>priority</td><td>INT</td><td>分摊顺序</td><td>一级分摊在前</td></tr>
+<tr><td>effective_from</td><td>DATE</td><td>生效日期</td><td></td></tr>
+<tr><td>effective_to</td><td>DATE</td><td>失效日期</td><td></td></tr>
+</tbody>
+</table>
+<h4>cost_allocation_result — 分摊结果</h4>
+<table><thead>
+<tr><th>字段</th><th>类型</th><th>说明</th><th>约束</th></tr>
+</thead><tbody>
+<tr><td>result_id</td><td>BIGINT</td><td>结果ID</td><td>PK, AUTO</td></tr>
+<tr><td>period</td><td>CHAR(7)</td><td>会计期间</td><td></td></tr>
+<tr><td>rule_id</td><td>INT</td><td>分摊规则</td><td>FK → cost_allocation_rule</td></tr>
+<tr><td>source_pool_id</td><td>VARCHAR(20)</td><td>源成本池</td><td>FK → cost_pool</td></tr>
+<tr><td>target_product</td><td>VARCHAR(30)</td><td>目标产品</td><td>FK → product</td></tr>
+<tr><td>target_dept</td><td>VARCHAR(20)</td><td>目标部门</td><td></td></tr>
+<tr><td>base_value</td><td>DECIMAL(14,4)</td><td>分摊基准值</td><td>如工时数</td></tr>
+<tr><td>base_total</td><td>DECIMAL(14,4)</td><td>基准值合计</td><td></td></tr>
+<tr><td>allocation_pct</td><td>DECIMAL(8,6)</td><td>分摊比例</td><td>base_value/base_total</td></tr>
+<tr><td>allocated_amount</td><td>DECIMAL(14,2)</td><td>分摊金额</td><td></td></tr>
+<tr><td>status</td><td>ENUM</td><td>状态</td><td>试算/正式</td></tr>
+</tbody>
+</table>
+<h4>wip_accounting — 在制品核算</h4>
+<table><thead>
+<tr><th>字段</th><th>类型</th><th>说明</th><th>约束</th></tr>
+</thead><tbody>
+<tr><td>wip_id</td><td>BIGINT</td><td>在制品ID</td><td>PK, AUTO</td></tr>
+<tr><td>period</td><td>CHAR(7)</td><td>会计期间</td><td></td></tr>
+<tr><td>product_code</td><td>VARCHAR(30)</td><td>产品编码</td><td>FK → product</td></tr>
+<tr><td>production_order</td><td>VARCHAR(20)</td><td>生产订单号</td><td>FK → production_order</td></tr>
+<tr><td>wip_qty_begin</td><td>DECIMAL(14,4)</td><td>期初在制品数量</td><td></td></tr>
+<tr><td>wip_cost_begin</td><td>DECIMAL(14,2)</td><td>期初在制品成本</td><td></td></tr>
+<tr><td>input_qty</td><td>DECIMAL(14,4)</td><td>本期投入数量</td><td></td></tr>
+<tr><td>input_cost</td><td>DECIMAL(14,2)</td><td>本期投入成本</td><td></td></tr>
+<tr><td>completion_pct</td><td>DECIMAL(5,2)</td><td>完工程度</td><td>%</td></tr>
+<tr><td>equiv_qty</td><td>DECIMAL(14,4)</td><td>约当产量</td><td></td></tr>
+<tr><td>completed_qty</td><td>DECIMAL(14,4)</td><td>本期完工数量</td><td></td></tr>
+<tr><td>completed_cost</td><td>DECIMAL(14,2)</td><td>本期完工成本</td><td></td></tr>
+<tr><td>wip_qty_end</td><td>DECIMAL(14,4)</td><td>期末在制品数量</td><td></td></tr>
+<tr><td>wip_cost_end</td><td>DECIMAL(14,2)</td><td>期末在制品成本</td><td></td></tr>
+<tr><td>method</td><td>ENUM</td><td>核算方法</td><td>约当产量法/定额成本法</td></tr>
+</tbody>
+</table>
+<h4>product_cost — 产品成本</h4>
+<table><thead>
+<tr><th>字段</th><th>类型</th><th>说明</th><th>约束</th></tr>
+</thead><tbody>
+<tr><td>cost_id</td><td>BIGINT</td><td>成本ID</td><td>PK, AUTO</td></tr>
+<tr><td>period</td><td>CHAR(7)</td><td>会计期间</td><td></td></tr>
+<tr><td>product_code</td><td>VARCHAR(30)</td><td>产品编码</td><td>FK → product</td></tr>
+<tr><td>material_cost</td><td>DECIMAL(14,2)</td><td>直接材料</td><td></td></tr>
+<tr><td>labor_cost</td><td>DECIMAL(14,2)</td><td>直接人工</td><td></td></tr>
+<tr><td>overhead_cost</td><td>DECIMAL(14,2)</td><td>制造费用</td><td></td></tr>
+<tr><td>outsource_cost</td><td>DECIMAL(14,2)</td><td>委外加工费</td><td></td></tr>
+<tr><td>total_cost</td><td>DECIMAL(14,2)</td><td>总成本</td><td></td></tr>
+<tr><td>completed_qty</td><td>DECIMAL(14,4)</td><td>完工数量</td><td></td></tr>
+<tr><td>unit_cost</td><td>DECIMAL(14,4)</td><td>单位成本</td><td>total_cost/completed_qty</td></tr>
+<tr><td>std_cost</td><td>DECIMAL(14,4)</td><td>标准单位成本</td><td></td></tr>
+<tr><td>variance</td><td>DECIMAL(14,4)</td><td>单位差异</td><td>unit_cost - std_cost</td></tr>
+</tbody>
+</table>
+<h3>3.2 ER关系</h3>
+<pre><code>
+cost_pool 1──N cost_collection
+cost_pool 1──N cost_allocation_result
+cost_allocation_rule 1──N cost_allocation_result
+wip_accounting N──1 product
+product_cost N──1 product
+production_order 1──N cost_collection
+production_order 1──1 wip_accounting
+</pre>
+<hr>
+<h2>4. 凭证模板体系</h2>
+<h3>CT01 — 材料费用归集凭证</h3>
+<table><thead>
+<tr><th>触发事件</th><th>生产领料归集确认</th></tr>
+</thead><tbody>
+<tr><td><strong>借方</strong></td><td></td></tr>
+<tr><td>5001 生产成本-直接材料</td><td>各产品领料金额(按产品分列)</td></tr>
+<tr><td><strong>贷方</strong></td><td></td></tr>
+<tr><td>1403 原材料</td><td>领料总金额</td></tr>
+</tbody>
+</table>
+<h3>CT02 — 人工费用归集凭证</h3>
+<table><thead>
+<tr><th>触发事件</th><th>工时归集确认</th></tr>
+</thead><tbody>
+<tr><td><strong>借方</strong></td><td></td></tr>
+<tr><td>5001 生产成本-直接人工</td><td>各产品人工费(按工时x费率)</td></tr>
+<tr><td><strong>贷方</strong></td><td></td></tr>
+<tr><td>2211 应付职工薪酬</td><td>人工费总额</td></tr>
+</tbody>
+</table>
+<h3>CT03 — 制造费用归集凭证</h3>
+<table><thead>
+<tr><th>触发事件</th><th>制造费用归集确认</th></tr>
+</thead><tbody>
+<tr><td><strong>借方</strong></td><td></td></tr>
+<tr><td>5101 制造费用</td><td>各项制造费用明细</td></tr>
+<tr><td><strong>贷方</strong></td><td></td></tr>
+<tr><td>1002 银行存款 / 2211 应付职工薪酬 / 1602 累计折旧</td><td>按费用来源分列</td></tr>
+</tbody>
+</table>
+<h3>CT04 — 制造费用分摊凭证</h3>
+<table><thead>
+<tr><th>触发事件</th><th>制造费用分摊确认</th></tr>
+</thead><tbody>
+<tr><td><strong>借方</strong></td><td></td></tr>
+<tr><td>5001 生产成本-制造费用</td><td>各产品分摊金额(按分摊基准)</td></tr>
+<tr><td><strong>贷方</strong></td><td></td></tr>
+<tr><td>5101 制造费用</td><td>分摊总金额(转入生产成本)</td></tr>
+</tbody>
+</table>
+<h3>CT05 — 辅助生产分配凭证</h3>
+<table><thead>
+<tr><th>触发事件</th><th>辅助生产成本分配</th></tr>
+</thead><tbody>
+<tr><td><strong>借方</strong></td><td></td></tr>
+<tr><td>5101 制造费用</td><td>分配到基本生产车间的金额</td></tr>
+<tr><td>5001 生产成本</td><td>直接分配到产品的金额</td></tr>
+<tr><td><strong>贷方</strong></td><td></td></tr>
+<tr><td>5001 生产成本-辅助生产</td><td>辅助生产成本转出</td></tr>
+</tbody>
+</table>
+<h3>CT06 — 完工产品入库凭证</h3>
+<table><thead>
+<tr><th>触发事件</th><th>完工产品成本结转</th></tr>
+</thead><tbody>
+<tr><td><strong>借方</strong></td><td></td></tr>
+<tr><td>1405 库存商品</td><td>完工产品总成本(按产品分列)</td></tr>
+<tr><td><strong>贷方</strong></td><td></td></tr>
+<tr><td>5001 生产成本</td><td>生产成本转出(材料+人工+制费)</td></tr>
+</tbody>
+</table>
+<h3>CT07 — 销售成本结转凭证</h3>
+<table><thead>
+<tr><th>触发事件</th><th>销售出库确认</th></tr>
+</thead><tbody>
+<tr><td><strong>借方</strong></td><td></td></tr>
+<tr><td>6401 主营业务成本</td><td>销售产品成本(按产品分列)</td></tr>
+<tr><td><strong>贷方</strong></td><td></td></tr>
+<tr><td>1405 库存商品</td><td>出库产品成本</td></tr>
+</tbody>
+</table>
+<h3>CT08 — 成本差异结转凭证</h3>
+<table><thead>
+<tr><th>触发事件</th><th>月末成本差异处理</th></tr>
+</thead><tbody>
+<tr><td><strong>借方</strong></td><td></td></tr>
+<tr><td>6401 主营业务成本</td><td>差异分摊到销售成本的部分</td></tr>
+<tr><td>1405 库存商品</td><td>差异分摊到存货的部分</td></tr>
+<tr><td><strong>贷方</strong></td><td></td></tr>
+<tr><td>5001 生产成本-成本差异</td><td>成本差异转出</td></tr>
+</tbody>
+</table>
+<hr>
+<h2>5. API设计</h2>
+<h3>5.1 成本归集 API</h3>
+<table><thead>
+<tr><th>方法</th><th>路径</th><th>说明</th></tr>
+</thead><tbody>
+<tr><td>POST</td><td>/api/cost/collection/material</td><td>材料费用归集</td></tr>
+<tr><td>POST</td><td>/api/cost/collection/labor</td><td>人工费用归集</td></tr>
+<tr><td>POST</td><td>/api/cost/collection/overhead</td><td>制造费用归集</td></tr>
+<tr><td>GET</td><td>/api/cost/collection</td><td>查询归集明细</td></tr>
+<tr><td>POST</td><td>/api/cost/collection/{collect_id}/confirm</td><td>归集审核确认</td></tr>
+<tr><td>POST</td><td>/api/cost/collection/{collect_id}/cancel</td><td>归集撤销</td></tr>
+</tbody>
+</table>
+<h3>5.2 制造费用分摊 API</h3>
+<table><thead>
+<tr><th>方法</th><th>路径</th><th>说明</th></tr>
+</thead><tbody>
+<tr><td>GET</td><td>/api/cost/allocation/rules</td><td>获取分摊规则列表</td></tr>
+<tr><td>POST</td><td>/api/cost/allocation/rules</td><td>创建分摊规则</td></tr>
+<tr><td>PUT</td><td>/api/cost/allocation/rules/{rule_id}</td><td>修改分摊规则</td></tr>
+<tr><td>POST</td><td>/api/cost/allocation/simulate</td><td>分摊试算</td></tr>
+<tr><td>POST</td><td>/api/cost/allocation/execute</td><td>正式执行分摊</td></tr>
+<tr><td>GET</td><td>/api/cost/allocation/results</td><td>查询分摊结果</td></tr>
+</tbody>
+</table>
+<h3>5.3 在制品核算 API</h3>
+<table><thead>
+<tr><th>方法</th><th>路径</th><th>说明</th></tr>
+</thead><tbody>
+<tr><td>GET</td><td>/api/cost/wip</td><td>在制品列表</td></tr>
+<tr><td>POST</td><td>/api/cost/wip/completion-pct</td><td>维护完工程度</td></tr>
+<tr><td>POST</td><td>/api/cost/wip/calculate</td><td>约当产量计算</td></tr>
+<tr><td>POST</td><td>/api/cost/wip/inventory</td><td>在制品盘点录入</td></tr>
+<tr><td>GET</td><td>/api/cost/wip/summary</td><td>在制品汇总</td></tr>
+</tbody>
+</table>
+<h3>5.4 完工结转 API</h3>
+<table><thead>
+<tr><th>方法</th><th>路径</th><th>说明</th></tr>
+</thead><tbody>
+<tr><td>POST</td><td>/api/cost/completion/calculate</td><td>完工产品成本计算</td></tr>
+<tr><td>POST</td><td>/api/cost/completion/transfer</td><td>完工入库结转</td></tr>
+<tr><td>POST</td><td>/api/cost/completion/cogs</td><td>销售成本结转</td></tr>
+<tr><td>GET</td><td>/api/cost/completion/product-cost</td><td>产品成本查询</td></tr>
+</tbody>
+</table>
+<h3>5.5 差异分析 API</h3>
+<table><thead>
+<tr><th>方法</th><th>路径</th><th>说明</th></tr>
+</thead><tbody>
+<tr><td>GET</td><td>/api/cost/variance/material</td><td>材料差异分析</td></tr>
+<tr><td>GET</td><td>/api/cost/variance/labor</td><td>人工差异分析</td></tr>
+<tr><td>GET</td><td>/api/cost/variance/overhead</td><td>制费差异分析</td></tr>
+<tr><td>POST</td><td>/api/cost/variance/allocate</td><td>差异分摊结转</td></tr>
+<tr><td>GET</td><td>/api/cost/variance/summary</td><td>差异汇总</td></tr>
+</tbody>
+</table>
+<h3>5.6 成本报表 API</h3>
+<table><thead>
+<tr><th>方法</th><th>路径</th><th>说明</th></tr>
+</thead><tbody>
+<tr><td>GET</td><td>/api/cost/reports/product-detail</td><td>产品成本明细</td></tr>
+<tr><td>GET</td><td>/api/cost/reports/cost-structure</td><td>成本结构分析</td></tr>
+<tr><td>GET</td><td>/api/cost/reports/trend</td><td>成本趋势分析</td></tr>
+<tr><td>GET</td><td>/api/cost/reports/dept-summary</td><td>部门成本汇总</td></tr>
+<tr><td>GET</td><td>/api/cost/reports/wip-detail</td><td>在制品成本明细</td></tr>
+<tr><td>GET</td><td>/api/cost/reports/std-vs-actual</td><td>标准vs实际对比</td></tr>
+</tbody>
+</table>
+<h3>5.7 月末结账 API</h3>
+<table><thead>
+<tr><th>方法</th><th>路径</th><th>说明</th></tr>
+</thead><tbody>
+<tr><td>POST</td><td>/api/cost/period/close</td><td>月末结账</td></tr>
+<tr><td>POST</td><td>/api/cost/period/reopen</td><td>反结账</td></tr>
+<tr><td>GET</td><td>/api/cost/period/status</td><td>结账状态查询</td></tr>
+</tbody>
+</table>
+<hr>
+<h2>6. 关键业务规则</h2>
+<h3>6.1 成本核算方法</h3>
+<table><thead>
+<tr><th>方法</th><th>适用场景</th><th>核算逻辑</th></tr>
+</thead><tbody>
+<tr><td><strong>品种法</strong></td><td>大量单步骤生产</td><td>按产品品种归集+分配</td></tr>
+<tr><td><strong>分批法</strong></td><td>单件小批生产</td><td>按生产订单/批号归集</td></tr>
+<tr><td><strong>分步法</strong></td><td>大量多步骤生产</td><td>按生产步骤逐步结转</td></tr>
+<tr><td><strong>作业成本法</strong></td><td>间接费用占比高</td><td>按作业动因分摊制费</td></tr>
+</tbody>
+</table>
+<h3>6.2 在制品核算方法</h3>
+<table><thead>
+<tr><th>方法</th><th>计算逻辑</th><th>适用场景</th></tr>
+</thead><tbody>
+<tr><td><strong>约当产量法</strong></td><td>期末在制品数量 x 完工程度 = 约当产量，再按比例分配成本</td><td>均匀投料、加工进度可测</td></tr>
+<tr><td><strong>定额成本法</strong></td><td>期末在制品按定额成本计价，实际成本与定额差异由完工产品承担</td><td>定额管理完善</td></tr>
+<tr><td><strong>不计算在制品</strong></td><td>当期发生的成本全部由完工产品承担</td><td>在制品数量少或稳定</td></tr>
+</tbody>
+</table>
+<h3>6.3 制造费用分摊基准</h3>
+<table><thead>
+<tr><th>分摊基准</th><th>计算方式</th><th>适用场景</th></tr>
+</thead><tbody>
+<tr><td><strong>生产工时</strong></td><td>制费总额 x 某产品工时/总工时</td><td>人工密集型</td></tr>
+<tr><td><strong>机器工时</strong></td><td>制费总额 x 某产品机时/总机时</td><td>设备密集型</td></tr>
+<tr><td><strong>直接材料成本</strong></td><td>制费总额 x 某产品材料/总材料</td><td>材料相关制费</td></tr>
+<tr><td><strong>直接人工成本</strong></td><td>制费总额 x 某产品人工/总人工</td><td>人工相关制费</td></tr>
+<tr><td><strong>产品产量</strong></td><td>制费总额 x 某产品产量/总产量</td><td>单一产品或类似产品</td></tr>
+<tr><td><strong>固定比例</strong></td><td>按预设比例分摊</td><td>无法确定单一基准</td></tr>
+</tbody>
+</table>
+<h3>6.4 成本结转顺序</h3>
+<pre><code>
+1. 材料费用归集 → CT01
+2. 人工费用归集 → CT02  
+3. 制造费用归集 → CT03
+4. 辅助生产分配 → CT05
+5. 制造费用分摊 → CT04
+6. 在制品核算 → 约当产量计算
+7. 完工产品入库 → CT06
+8. 销售成本结转 → CT07
+9. 成本差异处理 → CT08
+10. 月末结账
+</pre>
+<blockquote><p>⚠️ 结转顺序不可逆，前一步未完成不可执行下一步</p></blockquote>
+<h3>6.5 差异分析公式</h3>
+<table><thead>
+<tr><th>差异类型</th><th>计算公式</th></tr>
+</thead><tbody>
+<tr><td><strong>材料量差</strong></td><td>(实际用量 - 标准用量) x 标准单价</td></tr>
+<tr><td><strong>材料价差</strong></td><td>(实际单价 - 标准单价) x 实际用量</td></tr>
+<tr><td><strong>人工效率差异</strong></td><td>(实际工时 - 标准工时) x 标准工资率</td></tr>
+<tr><td><strong>工资率差异</strong></td><td>(实际工资率 - 标准工资率) x 实际工时</td></tr>
+<tr><td><strong>制费耗费差异</strong></td><td>实际制费 - 预算制费(按实际产量调整)</td></tr>
+<tr><td><strong>制费效率差异</strong></td><td>(实际工时 - 标准工时) x 标准分摊率</td></tr>
+</tbody>
+</table>
+<hr>
+<h2>7. 状态机设计</h2>
+<h3>7.1 成本核算期间状态</h3>
+<pre><code>
+未开始 ──材料归集──▶ 材料已归集 ──人工归集──▶ 人工已归集
+  │                                               │
+  └──────全部归集完成后──▶ 制费已归集 ──制费分摊──▶ 制费已分摊
+                                                        │
+                              辅助生产分配 ──▶ 在制品核算 ──▶ 完工结转
+                                                              │
+                                                    销售成本结转 ──▶ 差异处理 ──▶ 已结账
+</pre>
+<h3>7.2 成本池状态流转</h3>
+<pre><code>
+归集中 ──审核确认──▶ 已审核 ──执行分摊──▶ 已分摊 ──成本结转──▶ 已结转
+  │                    │
+  └──撤销──▶ 归集中     └──撤销审核──▶ 归集中
+</pre>
+<hr>
+<h2>8. 非功能性需求</h2>
+<table><thead>
+<tr><th>类别</th><th>要求</th></tr>
+</thead><tbody>
+<tr><td><strong>性能</strong></td><td>成本计算(单产品)不超过5秒，全量分摊计算不超过3分钟</td></tr>
+<tr><td><strong>并发</strong></td><td>月末结账时支持多人同时查询，但结账操作需加锁</td></tr>
+<tr><td><strong>审计</strong></td><td>所有归集/分摊/结转操作全程留痕，不可删除</td></tr>
+<tr><td><strong>安全</strong></td><td>成本数据按部门权限隔离，非授权人员不可查看</td></tr>
+<tr><td><strong>可用性</strong></td><td>分摊试算可反复执行不影响正式数据</td></tr>
+<tr><td><strong>集成</strong></td><td>对接生产领料、工时管理、费用报销、固定资产折旧等上游模块</td></tr>
+</tbody>
+</table>
+<hr>
+<h2>9. 开发路线图</h2>
+<table><thead>
+<tr><th>阶段</th><th>时间</th><th>交付物</th></tr>
+</thead><tbody>
+<tr><td><strong>Phase 1 基础框架</strong></td><td>第1-4天</td><td>成本池CRUD + 归集引擎 + 成本要素分类</td></tr>
+<tr><td><strong>Phase 2 分摊核算</strong></td><td>第5-8天</td><td>制费分摊规则 + 辅助生产分配 + 分摊试算</td></tr>
+<tr><td><strong>Phase 3 在制品+完工</strong></td><td>第9-12天</td><td>约当产量法 + 完工结转 + 销售成本结转</td></tr>
+<tr><td><strong>Phase 4 差异分析</strong></td><td>第13-15天</td><td>标准成本 + 量差价差分析 + 差异分摊</td></tr>
+<tr><td><strong>Phase 5 报表结账</strong></td><td>第16-18天</td><td>成本报表 + 月末结账 + 凭证模板CT01~CT08</td></tr>
+<tr><td><strong>Phase 6 测试上线</strong></td><td>第19-20天</td><td>端到端测试 + 数据校验 + 用户培训</td></tr>
+</tbody>
+</table>
+<hr>
+<h2>10. 验收标准</h2>
+<table><thead>
+<tr><th>验收项</th><th>标准</th></tr>
+</thead><tbody>
+<tr><td>成本归集</td><td>材料/人工/制费三要素自动归集率不低于90%，可追溯到原始单据</td></tr>
+<tr><td>制费分摊</td><td>支持至少5种分摊基准，分摊试算结果与正式结果一致</td></tr>
+<tr><td>在制品核算</td><td>约当产量法+定额法双模式，与手工核算偏差不超过1%</td></tr>
+<tr><td>完工结转</td><td>产品单位成本计算正确，完工入库+销售成本自动结转</td></tr>
+<tr><td>差异分析</td><td>量差/价差自动拆分，差异率超5%自动预警</td></tr>
+<tr><td>凭证生成</td><td>8套凭证模板100%自动生成，结转顺序严格受控</td></tr>
+<tr><td>报表分析</td><td>6类成本报表可查，支持按产品/部门/期间多维度</td></tr>
+</tbody>
+</table>
+  </div>
+</div>
+</body>
+</html>
