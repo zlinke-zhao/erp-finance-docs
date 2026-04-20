@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>税务管理模块规格书</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: 'PingFang SC', 'Microsoft YaHei', -apple-system, sans-serif;
+  background: #f8fafc;
+  color: #334155;
+  line-height: 1.8;
+  font-size: 15px;
+}
+.container {
+  max-width: 960px;
+  margin: 0 auto;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+  padding: 3rem 3.5rem;
+}
+.back-link {
+  display: inline-block;
+  margin-bottom: 1.5rem;
+  color: #6366f1;
+  text-decoration: none;
+  font-size: 0.875rem;
+}
+.back-link:hover { text-decoration: underline; }
+.doc-header {
+  border-bottom: 3px solid #6366f1;
+  padding-bottom: 1.5rem;
+  margin-bottom: 2rem;
+}
+.doc-header h1 {
+  font-size: 1.75rem;
+  color: #1e293b;
+  margin-bottom: 0.75rem;
+}
+.doc-meta {
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  font-size: 0.85rem;
+  color: #64748b;
+}
+.doc-meta span { background: #f1f5f9; padding: 0.25rem 0.75rem; border-radius: 20px; }
+.content h1 { font-size: 1.4rem; margin: 2rem 0 1rem; color: #6366f1; border-bottom: 2px solid #e2e8f0; padding-bottom: 0.5rem; }
+.content h2 { font-size: 1.2rem; margin: 1.75rem 0 0.75rem; color: #1e293b; }
+.content h3 { font-size: 1.05rem; margin: 1.25rem 0 0.5rem; color: #475569; }
+.content p { margin: 0.75rem 0; }
+.content ul, .content ol { margin: 0.75rem 0; padding-left: 1.75rem; }
+.content li { margin: 0.4rem 0; }
+.content table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.25rem 0;
+  font-size: 0.875rem;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid #e2e8f0;
+}
+.content th, .content td {
+  border: 1px solid #e2e8f0;
+  padding: 0.75rem 1rem;
+  text-align: left;
+}
+.content th { background: #f1f5f9; font-weight: 600; color: #1e293b; }
+.content tr:hover td { background: #fafbfc; }
+.content pre {
+  background: #1e293b;
+  color: #e2e8f0;
+  padding: 1.25rem;
+  border-radius: 8px;
+  overflow-x: auto;
+  margin: 1rem 0;
+  font-size: 0.8rem;
+  line-height: 1.6;
+}
+.content code {
+  background: #f1f5f9;
+  color: #6366f1;
+  padding: 0.15rem 0.4rem;
+  border-radius: 4px;
+  font-size: 0.85em;
+  font-family: 'Consolas', monospace;
+}
+.content pre code {
+  background: transparent;
+  color: inherit;
+  padding: 0;
+}
+.toc { background: #f8fafc; padding: 1.5rem; border-radius: 8px; margin: 1.5rem 0; }
+.toc h3 { margin-top: 0 !important; }
+.toc ul { margin: 0.5rem 0; }
+</style>
+</head>
+<body>
+<div class="container">
+  <a href="../index.html" class="back-link">← 返回目录</a>
+  <div class="doc-header">
+    <h1>税务管理模块规格书</h1>
+    <div class="doc-meta">
+      <span>📋 V1.0</span>
+      <span>📅 2026-04-08</span>
+      <span>🏢 Dev_Dept</span>
+    </div>
+  </div>
+  <div class="content">
+    <h1>税务管理模块 - 技术规格说明书</h1>
+<h2>Tax Management Module — Technical Specification</h2>
+<p>> <strong>项目</strong>: Dev_Dept ERP 财务管理系统</p>
+<p>> <strong>模块</strong>: 税务管理（Tax Management）</p>
+<p>> <strong>版本</strong>: v1.0</p>
+<p>> <strong>日期</strong>: 2026-04-17</p>
+<p>> <strong>对标系统</strong>: 金蝶云星空 → 税务管理</p>
+<p>> <strong>状态</strong>: P0优先级 — 核心税务功能</p>
+<p>---</p>
+<h2>1. 模块概述</h2>
+<h3>1.1 业务定位</h3>
+<p>税务管理模块是ERP财务系统的<strong>税务数据中心</strong>，负责税务基础配置、税金自动计提、税务申报管理、税负分析等全流程税务管理工作。它与总账、应收应付、发票管理模块深度集成，实现业财税一体化。</p>
+<pre><code>┌─────────────────────────────────────────────────────────────────┐
+│                      🏛️ 税务管理模块                              │
+├─────────────────────────────────────────────────────────────────┤
+│  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────────┐       │
+│  │ 税务基础  │  │ 税金计提  │  │ 税务申报  │  │ 税负分析  │       │
+│  │  配置    │  │          │  │          │  │          │       │
+│  └────┬─────┘  └────┬─────┘  └────┬─────┘  └────┬─────┘       │
+│       │             │             │             │              │
+│       └─────────────┴─────────────┴─────────────┘              │
+│                          │                                      │
+│                    ┌─────┴─────┐                                │
+│                    ▼           ▼                                │
+│              ┌──────────┐ ┌──────────┐                          │
+│              │  总账凭证  │ │  申报表   │                          │
+│              │   生成    │ │   输出   │                          │
+│              └──────────┘ └──────────┘                          │
+└─────────────────────────────────────────────────────────────────┘
+                           │
+           ┌───────────────┼───────────────┐
+           ▼               ▼               ▼
+     ┌──────────┐   ┌──────────┐   ┌──────────┐
+     │ 发票管理  │   │ 应收应付  │   │  报表中心  │
+     └──────────┘   └──────────┘   └──────────┘</code></pre>
+<h3>1.2 核心能力</h3>
+<table>
+<tr><th>能力</th><th>描述</th><th>优先级</th></tr>
+<tr><th>🏗️ 税务基础配置</th><th>税种、税率、申报周期、税收优惠等基础数据管理</th><th>P0</th></tr>
+<tr><th>💰 税金自动计提</th><th>根据业务数据自动计算增值税、所得税、附加税等</th><th>P0</th></tr>
+<tr><th>📋 税务申报管理</th><th>申报表自动生成、申报状态跟踪、缴款管理</th><th>P0</th></tr>
+<tr><th>📊 税负分析</th><th>税负率分析、同比环比分析、税务风险预警</th><th>P1</th></tr>
+<tr><th>🔗 业财税一体化</th><th>与发票、总账、应收应付深度集成</th><th>P0</th></tr>
+<tr><th>📑 申报台账</th><th>完整的申报记录留存，满足税务稽查要求</th><th>P0</th></tr>
+</table>
+<h3>1.3 金蝶云星空对标</h3>
+<table>
+<tr><th>金蝶云星空功能</th><th>本系统实现</th><th>说明</th></tr>
+<tr><th>税务组织管理</th><th>✅ 实现</th><th>支持多税务组织/分公司</th></tr>
+<tr><th>税种/税率设置</th><th>✅ 实现</th><th>增值税、所得税、附加税等</th></tr>
+<tr><th>税金及附加税计提方案</th><th>✅ 实现</th><th>自动计提规则配置</th></tr>
+<tr><th>增值税申报方案</th><th>✅ 实现</th><th>一般纳税人/小规模</th></tr>
+<tr><th>所得税预缴方案</th><th>✅ 实现</th><th>季度预缴、年度汇算</th></tr>
+<tr><th>税务申报台账</th><th>✅ 实现</th><th>申报状态全流程跟踪</th></tr>
+<tr><th>税负分析报表</th><th>✅ 实现</th><th>税负率、同比分析</th></tr>
+</table>
+<p>---</p>
+<h2>2. 业务架构</h2>
+<h3>2.1 税务管理业务流程</h3>
+<pre><code>┌──────────────────────────────────────────────────────────────────────────┐
+│                           税务管理主流程                                   │
+└──────────────────────────────────────────────────────────────────────────┘
+
+   ┌─────────────┐      ┌─────────────┐      ┌─────────────┐
+   │  1.基础配置  │ ───▶ │  2.业务发生  │ ───▶ │  3.发票归集  │
+   │  Tax Setup  │      │  Business   │      │  Invoice    │
+   └─────────────┘      └─────────────┘      └──────┬──────┘
+         │                                           │
+         ▼                                           ▼
+   ┌─────────────┐                           ┌─────────────┐
+   │ • 税种设置   │                           │ • 进项发票   │
+   │ • 税率配置   │                           │ • 销项发票   │
+   │ • 申报周期   │                           │ • 海关缴款书 │
+   │ • 计提规则   │                           └──────┬──────┘
+   └─────────────┘                                  │
+                                                    ▼
+┌──────────────────────────────────────────────────────────────────────┐
+│                        4. 税金计算与计提                               │
+│  ┌────────────────────────────────────────────────────────────┐     │
+│  │                                                             │     │
+│  │   进项税  ─┐                                                │     │
+│  │   销项税  ─┼──▶ 应纳税额 = 销项税 - 进项税                   │     │
+│  │   进项转出 ─┘                                                │     │
+│  │                                                             │     │
+│  │   附加税 = (增值税 + 消费税) × 附加税率                      │     │
+│  │                                                             │     │
+│  │   所得税 = 应税所得额 × 所得税率                            │     │
+│  │                                                             │     │
+│  └────────────────────────────────────────────────────────────┘     │
+└──────────────────────────────────────────────────────────────────────┘
+         │
+         ▼
+   ┌─────────────┐      ┌─────────────┐      ┌─────────────┐
+   │  5.申报管理  │ ───▶ │  6.税款缴纳  │ ───▶ │  7.凭证生成  │
+   │  Filing     │      │  Payment    │      │  Voucher    │
+   └─────────────┘      └─────────────┘      └──────┬──────┘
+         │                                            │
+         ▼                                            ▼
+   ┌─────────────┐                           ┌─────────────┐
+   │ • 申报表生成 │                           │ • 自动生成   │
+   │ • 确认申报   │                           │ • 总账凭证   │
+   │ • 状态跟踪   │                           │ • 完税凭证   │
+   └─────────────┘                           └─────────────┘</code></pre>
+<h3>2.2 税务管理子系统划分</h3>
+<pre><code>┌─────────────────────────────────────────────────────────────────┐
+│                     税务管理系统（TaxMS）                          │
+├──────────────────────┬──────────────────────┬──────────────────┤
+│    税务基础设置       │      税金管理         │     申报管理      │
+├──────────────────────┼──────────────────────┼──────────────────┤
+│ • 税务组织管理       │ • 增值税管理          │ • 申报日历        │
+│ • 税种税率设置       │ • 所得税管理          │ • 申报表生成      │
+│ • 申报周期配置       │ • 附加税管理          │ • 申报确认        │
+│ • 税收优惠政策       │ • 税金计提方案        │ • 缴款管理        │
+│ • 地区税率维护       │ • 税金计算引擎        │ • 申报台账        │
+└──────────────────────┴──────────────────────┴──────────────────┘</code></pre>
+<p>---</p>
+<h2>3. 功能详述</h2>
+<h3>3.1 税务基础设置</h3>
+<p>#### 3.1.1 税务组织管理</p>
+<table>
+<tr><th>字段</th><th>类型</th><th>说明</th></tr>
+<tr><th>组织编码</th><th>String(20)</th><th>唯一编码</th></tr>
+<tr><th>组织名称</th><th>String(100)</th><th>税务登记名称</th></tr>
+<tr><th>纳税人识别号</th><th>String(20)</th><th>统一社会信用代码</th></tr>
+<tr><th>纳税人类型</th><th>Enum</th><th>一般纳税人/小规模纳税人</th></tr>
+<tr><th>主管税务机关</th><th>String(100)</th><th>所属税务局</th></tr>
+<tr><th>税务申报周期</th><th>Enum</th><th>月报/季报/年报</th></tr>
+<tr><th>启用状态</th><th>Boolean</th><th>启用/停用</th></tr>
+</table>
+<p>#### 3.1.2 税种税率设置</p>
+<table>
+<tr><th>税种</th><th>税率类型</th><th>标准税率</th><th>适用范围</th></tr>
+<tr><th>增值税-一般纳税人</th><th>13%/9%/6%/0%</th><th>多档</th><th>销售货物/服务</th></tr>
+<tr><th>增值税-小规模</th><th>3%/5%/0%</th><th>3%</th><th>小规模纳税人</th></tr>
+<tr><th>企业所得税</th><th>25%/15%/20%</th><th>25%</th><th>企业利润</th></tr>
+<tr><th>个人所得税</th><th>3%-45%累进</th><th>7级累进</th><th>员工薪酬</th></tr>
+<tr><th>附加税-城建税</th><th>7%/5%/1%</th><th>7%</th><th>增值税基数</th></tr>
+<tr><th>附加税-教育费附加</th><th>3%</th><th>3%</th><th>增值税基数</th></tr>
+<tr><th>附加税-地方教育附加</th><th>2%</th><th>2%</th><th>增值税基数</th></tr>
+<tr><th>印花税</th><th>0.03%-1‰</th><th>按税目</th><th>合同/账簿</th></tr>
+</table>
+<p>#### 3.1.3 税收优惠政策</p>
+<pre><code>优惠政策库:
+  - 名称: 小微企业所得税优惠
+    条件: 年应税所得额≤300万
+    优惠: 应税所得额×20%
+    有效期: 2027-12-31
+
+  - 名称: 增值税小规模纳税人免税
+    条件: 月销售额≤10万/季销售额≤30万
+    优惠: 免征增值税
+    有效期: 长期
+
+  - 名称: 加计抵减政策
+    条件: 生产性服务业纳税人
+    优惠: 可抵扣进项税额×10%加计抵减
+    有效期: 2027-12-31</code></pre>
+<h3>3.2 税金管理</h3>
+<p>#### 3.2.1 增值税管理</p>
+<pre><code>┌─────────────────────────────────────────────────────────────┐
+│                    增值税计算逻辑                            │
+├─────────────────────────────────────────────────────────────┤
+│                                                             │
+│  销项税额 = Σ(销售收入 × 税率)                               │
+│                                                             │
+│  进项税额 = Σ(采购成本 × 税率)                               │
+│            + Σ(费用支出 × 税率)                              │
+│            + 海关缴款书税额                                  │
+│            - 进项转出额                                      │
+│                                                             │
+│  可抵扣进项 = MIN(进项税额, 销项税额)                        │
+│              + 加计抵减额（符合条件）                        │
+│                                                             │
+│  应纳增值税 = MAX(销项税额 - 可抵扣进项, 0)                  │
+│                                                             │
+│  留抵税额 = MAX(可抵扣进项 - 销项税额, 0)  → 结转下期抵扣    │
+│                                                             │
+└─────────────────────────────────────────────────────────────┘</code></pre>
+<p>#### 3.2.2 所得税管理</p>
+<pre><code>┌─────────────────────────────────────────────────────────────┐
+│                    所得税计算逻辑                            │
+├─────────────────────────────────────────────────────────────┤
+│                                                             │
+│  收入总额 = 主营业务收入 + 其他业务收入 + 营业外收入          │
+│                                                             │
+│  扣除项目 = 营业成本 + 期间费用 + 税金及附加                  │
+│           + 损失及其他                                        │
+│                                                             │
+│  应税所得额 = 收入总额 - 不征税收入                          │
+│             - 免税收入 - 扣除项目                            │
+│             ± 纳税调整项                                      │
+│                                                             │
+│  应纳所得税 = 应税所得额 × 适用税率                          │
+│              - 减免税额 + 抵免税额                          │
+│                                                             │
+│  季度预缴 = 应税所得额 × 25% / 4  (一般企业)                 │
+│                                                             │
+│  年度汇算 = 年度应纳所得税 - 已预缴总额                      │
+│                                                             │
+└─────────────────────────────────────────────────────────────┘</code></pre>
+<p>#### 3.2.3 附加税管理</p>
+<pre><code># 附加税计算规则
+附加税基数 = 增值税应纳税额 + 消费税额
+
+城建税 = 附加税基数 × 城建税税率  # 7%/5%/1%
+教育费附加 = 附加税基数 × 3%
+地方教育附加 = 附加税基数 × 2%
+
+# 减免规则
+if 小规模纳税人 and 季度销售额 <= 30万:
+    附加税 = 0  # 免征</code></pre>
+<p>#### 3.2.4 税金计提方案</p>
+<table>
+<tr><th>方案编码</th><th>方案名称</th><th>计提规则</th><th>凭证模板</th></tr>
+<tr><th>TX-001</th><th>增值税计提</th><th>应纳增值税×100%</th><th>借: 税金及附加 贷: 应交税费-增值税</th></tr>
+<tr><th>TX-002</th><th>附加税计提</th><th>附加税合计×100%</th><th>借: 税金及附加 贷: 应交税费-附加税</th></tr>
+<tr><th>TX-003</th><th>所得税计提</th><th>应纳所得税×100%</th><th>借: 所得税费用 贷: 应交税费-所得税</th></tr>
+<tr><th>TX-004</th><th>个税代扣</th><th>代扣代缴金额×100%</th><th>借: 应付职工薪酬 贷: 应交税费-个税</th></tr>
+</table>
+<h3>3.3 税务申报管理</h3>
+<p>#### 3.3.1 申报日历</p>
+<pre><code>申报周期:
+  增值税:
+    一般纳税人: 每月1-15日
+    小规模纳税人: 季度申报（1/4/7/10月1-15日）
+
+  企业所得税:
+    季度预缴: 季度结束后15日内
+    年度汇算: 次年5月31日前
+
+  个人所得税:
+    工资薪金: 每月7日内
+    年终奖: 次年3月31日前
+
+  附加税:
+    与增值税同步申报</code></pre>
+<p>#### 3.3.2 申报状态流转</p>
+<pre><code>┌──────────┐    ┌──────────┐    ┌──────────┐    ┌──────────┐
+│  待申报   │───▶│  申报中   │───▶│  已申报   │───▶│  已缴款   │
+│ PREPARE   │    │ FILING   │    │  FILED   │    │  PAID    │
+└──────────┘    └──────────┘    └──────────┘    └──────────┘
+     │                                                    │
+     │ 撤回                                               │ 完成
+     │                                                    │
+     └────────────────────────────────────────────────────┘</code></pre>
+<p>#### 3.3.3 申报台账字段</p>
+<table>
+<tr><th>字段</th><th>说明</th></tr>
+<tr><th>申报编号</th><th>自动生成，唯一标识</th></tr>
+<tr><th>申报期间</th><th>所属税务期间</th></tr>
+<tr><th>税种</th><th>增值税/所得税/附加税等</th></tr>
+<tr><th>申报类型</th><th>正常申报/更正申报/补充申报</th></tr>
+<tr><th>申报金额</th><th>本期应纳税额</th></tr>
+<tr><th>申报日期</th><th>实际申报日期</th></tr>
+<tr><th>申报状态</th><th>待申报/申报中/已申报/已缴款</th></tr>
+<tr><th>缴款期限</th><th>最迟缴款日期</th></tr>
+<tr><th>缴款日期</th><th>实际缴款日期</th></tr>
+<tr><th>电子凭证</th><th>完税凭证PDF/电子税票</th></tr>
+</table>
+<p>---</p>
+<h2>4. 与其他模块集成</h2>
+<h3>4.1 模块集成关系图</h3>
+<pre><code>┌──────────────────────────────────────────────────────────────────┐
+│                                                                  │
+│  ┌─────────────┐        ┌─────────────┐        ┌─────────────┐  │
+│  │  销售管理   │───────▶│  税务管理   │◀───────│  采购管理   │  │
+│  │  Sales     │  销项   │  Tax       │  进项   │  Purchase   │  │
+│  └─────────────┘        └──────┬──────┘        └─────────────┘  │
+│                                │                                   │
+│                                ▼                                   │
+│  ┌─────────────┐        ┌─────────────┐        ┌─────────────┐  │
+│  │  发票管理   │◀───────▶│             │◀───────│  发票管理   │  │
+│  │  销项发票   │        │   总账模块   │        │  进项发票   │  │
+│  └─────────────┘        └──────┬──────┘        └─────────────┘  │
+│                                │                                   │
+│                                ▼                                   │
+│                         ┌─────────────┐                           │
+│                         │   报表中心   │                           │
+│                         │  财务报表    │                           │
+│                         └─────────────┘                           │
+│                                                                  │
+└──────────────────────────────────────────────────────────────────┘</code></pre>
+<h3>4.2 接口规范</h3>
+<p>#### 4.2.1 销项发票接口</p>
+<pre><code>{
+  "interface": "tax_output_invoice",
+  "source": "发票管理-销项发票",
+  "target": "税务管理-增值税申报",
+  "frequency": "实时",
+  "data": {
+    "invoice_id": "发票编号",
+    "invoice_date": "开票日期",
+    "customer_name": "购买方名称",
+    "tax_rate": "税率",
+    "tax_amount": "税额",
+    "total_amount": "价税合计"
+  }
+}</code></pre>
+<p>#### 4.2.2 进项发票接口</p>
+<pre><code>{
+  "interface": "tax_input_invoice",
+  "source": "发票管理-进项发票",
+  "target": "税务管理-增值税申报",
+  "frequency": "实时",
+  "data": {
+    "invoice_id": "发票编号",
+    "invoice_date": "认证日期",
+    "supplier_name": "销售方名称",
+    "tax_rate": "税率",
+    "tax_amount": "税额",
+    "deductible_amount": "可抵扣税额"
+  }
+}</code></pre>
+<p>#### 4.2.3 凭证生成接口</p>
+<pre><code>{
+  "interface": "tax_voucher_generate",
+  "source": "税务管理-税金计提",
+  "target": "总账-凭证管理",
+  "frequency": "按需/自动",
+  "data": {
+    "voucher_date": "凭证日期",
+    "voucher_type": "记账凭证",
+    "entries": [
+      {"account_code": "5001", "account_name": "税金及附加", "debit": 1000, "credit": 0},
+      {"account_code": "2221", "account_name": "应交税费", "debit": 0, "credit": 1000}
+    ]
+  }
+}</code></pre>
+<p>---</p>
+<h2>5. 税负分析报表</h2>
+<h3>5.1 核心分析指标</h3>
+<table>
+<tr><th>指标</th><th>计算公式</th><th>参考值</th></tr>
+<tr><th>增值税税负率</th><th>本期应纳增值税 / 本期销售收入 × 100%</th><th>1%-3%</th></tr>
+<tr><th>所得税税负率</th><th>本期应纳所得税 / 本期利润总额 × 100%</th><th>15%-25%</th></tr>
+<tr><th>综合税负率</th><th>本期总税金 / 本期销售收入 × 100%</th><th>3%-6%</th></tr>
+<tr><th>税前利润率</th><th>利润总额 / 销售收入 × 100%</th><th>行业参考</th></tr>
+<tr><th>税后利润率</th><th>净利润 / 销售收入 × 100%</th><th>行业参考</th></tr>
+</table>
+<h3>5.2 风险预警规则</h3>
+<pre><code>风险预警:
+  - 等级: 高风险
+    条件: 增值税税负率 < 0.5%
+    建议: 请检查进项发票是否充分取得
+
+  - 等级: 中风险
+    条件: 所得税税负率 < 10%
+    建议: 请核实成本费用扣除是否合规
+
+  - 等级: 提醒
+    条件: 申报截止日前3天未申报
+    建议: 请尽快完成本期税务申报</code></pre>
+<p>---</p>
+<h2>6. 数据库设计</h2>
+<h3>6.1 核心表结构</h3>
+<p>#### tax_org（税务组织表）</p>
+<pre><code>CREATE TABLE tax_org (
+    id VARCHAR(36) PRIMARY KEY,
+    org_code VARCHAR(20) NOT NULL UNIQUE,
+    org_name VARCHAR(100) NOT NULL,
+    tax_id VARCHAR(20),           -- 纳税人识别号
+    taxpayer_type VARCHAR(20),     -- 纳税人类型
+    tax_authority VARCHAR(100),    -- 主管税务机关
+    filing_cycle VARCHAR(20),      -- 申报周期
+    status TINYINT DEFAULT 1,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);</code></pre>
+<p>#### tax_rate（税率配置表）</p>
+<pre><code>CREATE TABLE tax_rate (
+    id VARCHAR(36) PRIMARY KEY,
+    tax_type VARCHAR(20) NOT NULL,     -- 税种
+    tax_name VARCHAR(50) NOT NULL,      -- 税种名称
+    rate DECIMAL(8,4),                  -- 税率
+    rate_type VARCHAR(20),              -- 税率类型
+    effective_date DATE,                -- 生效日期
+    expiry_date DATE,                   -- 失效日期
+    status TINYINT DEFAULT 1
+);</code></pre>
+<p>#### tax_accrual（税金计提表）</p>
+<pre><code>CREATE TABLE tax_accrual (
+    id VARCHAR(36) PRIMARY KEY,
+    org_id VARCHAR(36),
+    tax_period VARCHAR(7),              -- 所属期 2026-04
+    tax_type VARCHAR(20),               -- 税种
+    tax_base DECIMAL(18,2),             -- 计税基础
+    tax_rate DECIMAL(8,4),              -- 适用税率
+    tax_amount DECIMAL(18,2),           -- 应纳税额
+    accrued_amount DECIMAL(18,2),       -- 已计提金额
+    accrued_date DATE,                  -- 计提日期
+    voucher_id VARCHAR(36),             -- 凭证ID
+    status VARCHAR(20),                 -- 状态
+    remark TEXT
+);</code></pre>
+<p>#### tax_filing（申报表）</p>
+<pre><code>CREATE TABLE tax_filing (
+    id VARCHAR(36) PRIMARY KEY,
+    filing_no VARCHAR(30) UNIQUE,       -- 申报编号
+    org_id VARCHAR(36),
+    tax_period VARCHAR(7),
+    tax_type VARCHAR(20),
+    filing_type VARCHAR(20),            -- 正常/更正/补充
+    taxable_amount DECIMAL(18,2),       -- 计税金额
+    tax_amount DECIMAL(18,2),           -- 申报税额
+    filing_date DATE,                   -- 申报日期
+    filing_status VARCHAR(20),          -- 待申报/申报中/已申报/已缴款
+    payment_due_date DATE,              -- 缴款期限
+    payment_date DATE,                  -- 缴款日期
+    certificate_no VARCHAR(50),         -- 电子凭证号
+    operator VARCHAR(50),
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);</code></pre>
+<p>---</p>
+<h2>7. 验收标准</h2>
+<h3>7.1 功能验收</h3>
+<table>
+<tr><th>序号</th><th>测试项</th><th>验收条件</th><th>优先级</th></tr>
+<tr><th>1</th><th>税务组织管理</th><th>支持增删改查、多组织切换</th><th>P0</th></tr>
+<tr><th>2</th><th>税率配置</th><th>支持多税率设置、生效失效日期</th><th>P0</th></tr>
+<tr><th>3</th><th>增值税计算</th><th>自动汇总销项/进项，计算应纳税额</th><th>P0</th></tr>
+<tr><th>4</th><th>附加税计算</th><th>基于增值税自动计算附加税</th><th>P0</th></tr>
+<tr><th>5</th><th>所得税计算</th><th>支持季度预缴、年度汇算</th><th>P0</th></tr>
+<tr><th>6</th><th>申报表生成</th><th>自动生成申报数据汇总表</th><th>P0</th></tr>
+<tr><th>7</th><th>申报状态管理</th><th>全流程状态跟踪、到期提醒</th><th>P0</th></tr>
+<tr><th>8</th><th>凭证生成</th><th>自动生成计提凭证到总账</th><th>P1</th></tr>
+<tr><th>9</th><th>税负分析</th><th>税负率、同比环比分析图表</th><th>P1</th></tr>
+<tr><th>10</th><th>发票集成</th><th>自动读取发票模块数据</th><th>P0</th></tr>
+</table>
+<h3>7.2 性能要求</h3>
+<table>
+<tr><th>指标</th><th>要求</th></tr>
+<tr><th>页面响应时间</th><th>≤ 2秒</th></tr>
+<tr><th>税金计算（单期间）</th><th>≤ 5秒</th></tr>
+<tr><th>申报表生成</th><th>≤ 10秒</th></tr>
+<tr><th>批量数据处理</th><th>支持10万条/月</th></tr>
+</table>
+<h3>7.3 合规要求</h3>
+<ul><li>申报数据保留10年</li><li>支持税务稽查导出</li><li>符合电子发票归档规范</li><li>满足金税四期数据对接要求（预留接口）</li></ul>
+<p>---</p>
+<h2>8. 开发计划</h2>
+<h3>8.1 迭代规划</h3>
+<table>
+<tr><th>阶段</th><th>内容</th><th>工作量</th><th>优先级</th></tr>
+<tr><th>Phase 1</th><th>基础配置 + 增值税管理</th><th>2周</th><th>P0</th></tr>
+<tr><th>Phase 2</th><th>附加税 + 所得税管理</th><th>2周</th><th>P0</th></tr>
+<tr><th>Phase 3</th><th>申报管理 + 凭证生成</th><th>2周</th><th>P0</th></tr>
+<tr><th>Phase 4</th><th>税负分析 + 风险预警</th><th>1周</th><th>P1</th></tr>
+</table>
+<h3>8.2 里程碑</h3>
+<ul><li><strong>M1</strong>: 税务基础配置上线</li><li><strong>M2</strong>: 增值税全流程上线</li><li><strong>M3</strong>: 税务申报管理上线</li><li><strong>M4</strong>: 税负分析上线</li></ul>
+<p>---</p>
+<p><em>文档版本: v1.0</em></p>
+<p><em>最后更新: 2026-04-17</em></p>
+<p><em>编制: Dev_Dept</em></p>
+
+  </div>
+</div>
+</body>
+</html>
