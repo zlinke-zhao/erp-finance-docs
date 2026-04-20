@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>预算管理模块 - 总流程图 | ERP财务管理</title>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Microsoft YaHei', 'PingFang SC', sans-serif; background: #f0f2f5; color: #333; }
+.header { background: linear-gradient(135deg, #1565c0 0%, #1976d2 50%, #1e88e5 100%); color: white; padding: 30px 40px; box-shadow: 0 2px 10px rgba(0,0,0,0.2); }
+.header h1 { font-size: 28px; margin-bottom: 8px; }
+.header p { font-size: 14px; opacity: 0.85; }
+.header .meta { margin-top: 10px; font-size: 12px; opacity: 0.7; }
+.container { max-width: 1400px; margin: 0 auto; padding: 30px 40px; }
+.toc { background: white; border-radius: 12px; padding: 24px 32px; margin-bottom: 30px; box-shadow: 0 1px 6px rgba(0,0,0,0.08); }
+.toc h2 { font-size: 20px; color: #1565c0; margin-bottom: 16px; border-bottom: 2px solid #bbdefb; padding-bottom: 10px; }
+.toc-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 10px; }
+.toc-item { display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-radius: 8px; background: #f5f5f5; cursor: pointer; transition: all 0.2s; }
+.toc-item:hover { background: #e3f2fd; transform: translateX(4px); }
+.toc-item .num { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 50%; background: #1565c0; color: white; font-size: 13px; font-weight: bold; flex-shrink: 0; }
+.toc-item .label { font-size: 14px; color: #333; }
+.section { background: white; border-radius: 12px; padding: 28px 32px; margin-bottom: 24px; box-shadow: 0 1px 6px rgba(0,0,0,0.08); }
+.section h2 { font-size: 20px; color: #1565c0; margin-bottom: 6px; }
+.section .desc { font-size: 13px; color: #888; margin-bottom: 20px; }
+.mermaid { display: flex; justify-content: center; padding: 10px 0; }
+.mermaid svg { max-width: 100%; }
+.summary-box { background: linear-gradient(135deg, #e3f2fd, #bbdefb); border-radius: 12px; padding: 24px 32px; margin-top: 30px; }
+.summary-box h2 { color: #1565c0; font-size: 18px; margin-bottom: 16px; }
+.summary-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; }
+.summary-card { background: white; border-radius: 8px; padding: 16px; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
+.summary-card .title { font-size: 13px; color: #666; margin-bottom: 6px; }
+.summary-card .value { font-size: 16px; font-weight: bold; color: #1565c0; }
+.footer { text-align: center; padding: 20px; color: #999; font-size: 12px; }
+</style>
+</head>
+<body>
+<div class="header">
+  <h1>预算管理模块 - 总流程图</h1>
+  <p>ERP财务管理 - 资金计划与控制 - 对标金蝶云星空预算管理</p>
+  <div class="meta">Dev_Dept 自研ERP - 版本 1.0 - 2026-04-17</div>
+</div>
+
+<div class="container">
+<!-- 目录 -->
+<div class="toc">
+  <h2>流程图目录</h2>
+  <div class="toc-grid">
+    <div class="toc-item" onclick="document.getElementById('s1').scrollIntoView({behavior:'smooth'})"><span class="num">1</span><span class="label">预算管理全生命周期</span></div>
+    <div class="toc-item" onclick="document.getElementById('s2').scrollIntoView({behavior:'smooth'})"><span class="num">2</span><span class="label">预算编制流程</span></div>
+    <div class="toc-item" onclick="document.getElementById('s3').scrollIntoView({behavior:'smooth'})"><span class="num">3</span><span class="label">预算审批流程</span></div>
+    <div class="toc-item" onclick="document.getElementById('s4').scrollIntoView({behavior:'smooth'})"><span class="num">4</span><span class="label">预算控制流程</span></div>
+    <div class="toc-item" onclick="document.getElementById('s5').scrollIntoView({behavior:'smooth'})"><span class="num">5</span><span class="label">预算调整流程</span></div>
+    <div class="toc-item" onclick="document.getElementById('s6').scrollIntoView({behavior:'smooth'})"><span class="num">6</span><span class="label">预算分析流程</span></div>
+  </div>
+</div>
+
+<!-- 1 预算管理全生命周期 -->
+<div class="section" id="s1">
+  <h2>1 预算管理全生命周期</h2>
+  <div class="desc">预算管理从编制到考核的完整闭环</div>
+  <div class="mermaid">
+flowchart TB
+    subgraph CCS["参数配置"]
+        P1["预算周期定义"]
+        P2["组织架构定义"]
+        P3["科目体系定义"]
+        P4["预算模板管理"]
+    end
+
+    subgraph BZ["预算编制"]
+        B1["年度预算编制"]
+        B2["季度预算分解"]
+        B3["月度预算细化"]
+        B4["预算数据导入"]
+    end
+
+    subgraph SP["预算审批"]
+        SP1["编制提交"]
+        SP2["部门主管审批"]
+        SP3["财务经理审批"]
+        SP4["财务总监审批"]
+        SP5["预算发布锁定"]
+    end
+
+    subgraph KZ["预算控制"]
+        K1["报销申请"]
+        K2["预算检查"]
+        K3{"超限判断"}
+        K4["通过/预警/拒绝"]
+    end
+
+    subgraph TZ["预算调整"]
+        T1["调整申请"]
+        T2["调整原因"]
+        T3["调整审批"]
+        T4["执行调整"]
+    end
+
+    subgraph FX["预算分析"]
+        F1["执行数据采集"]
+        F2["执行率计算"]
+        F3["差异分析"]
+        F4["报表生成"]
+    end
+
+    subgraph KH["预算考核"]
+        KHK1["部门考核"]
+        KHK2["项目考核"]
+        KHK3["考核结果"]
+    end
+
+    CCS --> BZ
+    BZ --> SP
+    SP --> KZ
+    KZ --> TZ
+    TZ --> FX
+    FX --> KH
+    KH -.-> BZ
+  </div>
+</div>
+
+<!-- 2 预算编制流程 -->
+<div class="section" id="s2">
+  <h2>2 预算编制流程</h2>
+  <div class="desc">从启动编制到提交审批的完整流程</div>
+  <div class="mermaid">
+flowchart TD
+    Start["开始"] --> Q1{"编制方式"}
+    Q1 -->|"新编制"| Q2["选择预算年度"]
+    Q1 -->|"基于历史"| Q2b["选择基准年度"]
+    Q2 --> Q3["选择编制部门"]
+    Q2b --> Q3
+
+    Q3 --> Q4["选择预算模板"]
+    Q4 --> Q5["选择科目体系"]
+    Q5 --> B1["按模板填报数据"]
+
+    B1 --> B2["数据校验"]
+    B2 --> Check{"校验通过"}
+    Check -->|"否"| B3["修改数据"]
+    B3 --> B1
+    Check -->|"是"| B4["生成汇总数据"]
+
+    B4 --> B5["部门内部审核"]
+    B5 --> Q6{"审核通过"}
+    Q6 -->|"否"| B6["退回修改"]
+    B6 --> B1
+    Q6 -->|"是"| B7["提交预算审批"]
+
+    B7 --> Done["提交成功 等待审批"]
+
+    style Start fill:#e3f2fd,stroke:#1565c0
+    style Done fill:#e8f5e9,stroke:#2e7d32
+    style B3 fill:#ffebee,stroke:#c62828
+  </div>
+</div>
+
+<!-- 3 预算审批流程 -->
+<div class="section" id="s3">
+  <h2>3 预算审批流程</h2>
+  <div class="desc">多级审批，根据金额确定审批层级</div>
+  <div class="mermaid">
+flowchart TD
+    Start["预算提交"] --> Q1{"金额判断"}
+    Q1 -->|"< 10万"| SP1["部门主管审批"]
+    Q1 -->|"10-50万"| SP2["部门主管 + 财务经理"]
+    Q1 -->|"50-100万"| SP3["部门主管 + 财务经理 + 财务总监"]
+    Q1 -->|">= 100万"| SP4["部门主管 + 财务经理 + 财务总监 + 总经理"]
+
+    SP1 --> Q2{"审批结果"}
+    SP2 --> Q2
+    SP3 --> Q2
+    SP4 --> Q2
+
+    Q2 -->|"驳回"| Reject["退回编制人"]
+    Q2 -->|"通过"| Next1["财务经理审批"]
+
+    Next1 --> Q3{"审批结果"}
+    Q3 -->|"驳回"| Reject
+    Q3 -->|"通过"| Next2["财务总监审批"]
+
+    Next2 --> Q4{"审批结果"}
+    Q4 -->|"驳回"| Reject
+    Q4 -->|"通过"| Next3["总经理审批"]
+
+    Next3 --> Q5{"审批结果"}
+    Q5 -->|"驳回"| Reject
+    Q5 -->|"通过"| Publish["预算发布"]
+
+    Publish --> Lock["锁定预算数据"]
+    Lock --> Done["预算生效"]
+
+    style Start fill:#e3f2fd,stroke:#1565c0
+    style Done fill:#e8f5e9,stroke:#2e7d32
+    style Reject fill:#ffebee,stroke:#c62828
+  </div>
+</div>
+
+<!-- 4 预算控制流程 -->
+<div class="section" id="s4">
+  <h2>4 预算控制流程</h2>
+  <div class="desc">报销申请时的预算检查与控制</div>
+  <div class="mermaid">
+flowchart TD
+    Start["报销/采购申请"] --> Check1["查询可用预算"]
+    Check1 --> Check2{"申请金额 <= 可用余额"}
+
+    Check2 -->|"否"| Check3{"超限比例 <= 10%"}
+    Check3 -->|"否"| Reject["拒绝申请"]
+    Check3 -->|"是"| Warn["L2预警 需升级审批"]
+
+    Check2 -->|"是"| Check4{"执行率 < 90%"}
+
+    Check4 -->|"是"| Pass["直接通过"]
+    Check4 -->|"否"| Check5{"执行率 < 100%"}
+
+    Check5 -->|"否"| Reject
+    Check5 -->|"是"| Warn2["L1提醒 正常通过"]
+
+    Warn --> Q1{"升级审批"}
+    Q1 -->|"拒绝"| Reject
+    Q1 -->|"通过"| Pass
+
+    Pass --> Execute["执行报销"]
+    Reject --> End1["申请失败"]
+    Warn2 --> Execute
+    Execute --> Done["完成"]
+
+    style Start fill:#e3f2fd,stroke:#1565c0
+    style Done fill:#e8f5e9,stroke:#2e7d32
+    style Reject fill:#ffebee,stroke:#c62828
+    style Warn fill:#fff3e0,stroke:#e65100
+  </div>
+</div>
+
+<!-- 5 预算调整流程 -->
+<div class="section" id="s5">
+  <h2>5 预算调整流程</h2>
+  <div class="desc">预算执行过程中的调整申请与审批</div>
+  <div class="mermaid">
+flowchart TD
+    Start["发起调整申请"] --> Q1{"调整类型"}
+    Q1 -->|"科目间调整"| T1["选择调出科目"]
+    Q1 -->|"部门间调整"| T1b["选择调出部门"]
+    Q1 -->|"追加预算"| T1c["填写追加金额"]
+
+    T1 --> T2["选择调入科目"]
+    T1b --> T2b["选择调入部门"]
+    T1c --> T2c["选择追加来源"]
+
+    T2 --> T3["填写调整金额"]
+    T2b --> T3
+    T2c --> T3
+
+    T3 --> T4["选择调整原因"]
+    T4 --> T5["提交审批"]
+
+    T5 --> Q2{"调整金额"}
+    Q2 -->|"< 10万"| SP1["部门主管审批"]
+    Q2 -->|"10-50万"| SP2["部门主管 + 财务经理"]
+    Q2 -->|">= 50万"| SP3["部门主管 + 财务经理 + 财务总监"]
+
+    SP1 --> Q3{"审批结果"}
+    SP2 --> Q3
+    SP3 --> Q3
+
+    Q3 -->|"驳回"| Reject["退回修改"]
+    Q3 -->|"通过"| Exec["执行调整"]
+    Reject --> Start
+
+    Exec --> Update["更新预算台账"]
+    Update --> Done["调整完成"]
+
+    style Start fill:#e3f2fd,stroke:#1565c0
+    style Done fill:#e8f5e9,stroke:#2e7d32
+    style Reject fill:#ffebee,stroke:#c62828
+  </div>
+</div>
+
+<!-- 6 预算分析流程 -->
+<div class="section" id="s6">
+  <h2>6 预算分析流程</h2>
+  <div class="desc">预算执行数据的采集、分析与报表生成</div>
+  <div class="mermaid">
+flowchart TB
+    subgraph SJ["数据采集"]
+        S1["从报销系统采集"]
+        S2["从采购系统采集"]
+        S3["从应付系统采集"]
+    end
+
+    subgraph JS["计算"]
+        J1["计算执行金额"]
+        J2["计算执行率"]
+        J3["计算差异额"]
+    end
+
+    subgraph FX["分析"]
+        F1["预算vs实际对比"]
+        F2["部门维度分析"]
+        F3["科目维度分析"]
+        F4["时间维度分析"]
+    end
+
+    subgraph BB["报表"]
+        B1["执行进度表"]
+        B2["差异分析表"]
+        B3["滚动预测表"]
+        B4["考核汇总表"]
+    end
+
+    subgraph KH["考核"]
+        K1["部门考核"]
+        K2["项目考核"]
+        K3["考核结果发布"]
+    end
+
+    SJ --> JS --> FX --> BB --> KH
+
+    K3 -.->|"反馈"| F1
+  </div>
+</div>
+
+<!-- 汇总 -->
+<div class="summary-box">
+  <h2>预算管理模块 - 汇总统计</h2>
+  <div class="summary-grid">
+    <div class="summary-card">
+      <div class="title">流程图数量</div>
+      <div class="value">6 个子流程</div>
+    </div>
+    <div class="summary-card">
+      <div class="title">核心功能</div>
+      <div class="value">7 大功能模块</div>
+    </div>
+    <div class="summary-card">
+      <div class="title">控制模式</div>
+      <div class="value">3 种 严格/弹性/不控制</div>
+    </div>
+    <div class="summary-card">
+      <div class="title">预警级别</div>
+      <div class="value">4 级 L1-L4</div>
+    </div>
+    <div class="summary-card">
+      <div class="title">审批层级</div>
+      <div class="value">4 级 按金额</div>
+    </div>
+    <div class="summary-card">
+      <div class="title">分析报表</div>
+      <div class="value">4 类报表</div>
+    </div>
+  </div>
+</div>
+
+<div class="footer">
+  Dev_Dept 自研ERP - 财务管理模块 - 预算管理 - v1.0 - 2026-04-17
+</div>
+</div>
+
+<script>
+mermaid.initialize({
+  startOnLoad: true,
+  theme: 'base',
+  themeVariables: {
+    primaryColor: '#bbdefb',
+    primaryTextColor: '#333',
+    primaryBorderColor: '#1565c0',
+    lineColor: '#1565c0',
+    secondaryColor: '#e3f2fd',
+    tertiaryColor: '#fff'
+  },
+  flowchart: {
+    useMaxWidth: true,
+    htmlLabels: true,
+    curve: 'basis'
+  }
+});
+</script>
+</body>
+</html>
