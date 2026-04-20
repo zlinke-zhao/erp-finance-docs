@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AR销项发票管理模块 — 详细流程图 | Dev_Dept ERP 财务管理系统</title>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, "Microsoft YaHei", "Segoe UI", sans-serif; background: #f0f2f5; color: #1a1a2e; }
+  
+  .header { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); color: #fff; padding: 32px 40px; }
+  .header h1 { font-size: 28px; margin-bottom: 8px; }
+  .header .meta { color: #a8b2d1; font-size: 14px; display: flex; gap: 24px; flex-wrap: wrap; }
+  .header .meta span { display: inline-flex; align-items: center; gap: 6px; }
+  
+  .nav-bar { background: #fff; border-bottom: 2px solid #e94560; padding: 0 40px; display: flex; gap: 0; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 8px rgba(0,0,0,0.08); overflow-x: auto; }
+  .nav-bar a { padding: 14px 20px; text-decoration: none; color: #555; font-size: 14px; font-weight: 500; border-bottom: 3px solid transparent; transition: all 0.2s; white-space: nowrap; }
+  .nav-bar a:hover { color: #e94560; background: #fff5f7; }
+  .nav-bar a.active { color: #e94560; border-bottom-color: #e94560; }
+  
+  .container { max-width: 1200px; margin: 0 auto; padding: 24px 40px 60px; }
+  
+  .section { background: #fff; border-radius: 12px; padding: 28px 32px; margin-bottom: 24px; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
+  .section h2 { font-size: 20px; color: #1a1a2e; margin-bottom: 6px; display: flex; align-items: center; gap: 10px; }
+  .section h2 .badge { background: #e94560; color: #fff; font-size: 11px; padding: 2px 10px; border-radius: 12px; font-weight: 600; }
+  .section h2 .badge.blue { background: #0f3460; }
+  .section h2 .badge.green { background: #27ae60; }
+  .section h2 .badge.orange { background: #f39c12; }
+  .section h3 { font-size: 16px; color: #333; margin: 18px 0 10px; padding-left: 12px; border-left: 3px solid #e94560; }
+  .section p.desc { color: #666; font-size: 14px; margin-bottom: 16px; line-height: 1.6; }
+  
+  .flow-container { display: flex; justify-content: center; padding: 16px 0; overflow-x: auto; }
+  .flow-container .mermaid { max-width: 100%; min-width: 60%; }
+  
+  /* 流程图缩放控制 */
+  .zoom-controls { position: fixed; bottom: 30px; right: 30px; display: flex; gap: 8px; z-index: 200; }
+  .zoom-btn { width: 40px; height: 40px; border-radius: 50%; border: 2px solid #e94560; background: #fff; color: #e94560; font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(0,0,0,0.15); transition: all 0.2s; }
+  .zoom-btn:hover { background: #e94560; color: #fff; }
+  .zoom-label { background: #fff; padding: 8px 12px; border-radius: 20px; font-size: 13px; color: #333; box-shadow: 0 2px 8px rgba(0,0,0,0.1); display: flex; align-items: center; }
+  
+  .note-box { background: #fff3cd; border-left: 4px solid #f39c12; padding: 12px 16px; margin: 12px 0; border-radius: 0 8px 8px 0; font-size: 13px; color: #856404; }
+  .note-box.info { background: #d1ecf1; border-left-color: #17a2b8; color: #0c5460; }
+  .note-box.danger { background: #f8d7da; border-left-color: #dc3545; color: #721c24; }
+  .note-box.success { background: #d4edda; border-left-color: #28a745; color: #155724; }
+  
+  table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 13px; }
+  table th { background: #f8f9fa; padding: 8px 12px; text-align: left; border-bottom: 2px solid #dee2e6; font-weight: 600; color: #333; }
+  table td { padding: 8px 12px; border-bottom: 1px solid #eee; color: #555; }
+  table tr:hover td { background: #f8f9fa; }
+  
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  @media (max-width: 768px) { .grid-2 { grid-template-columns: 1fr; } }
+  
+  .stat-card { background: linear-gradient(135deg, #667eea, #764ba2); color: #fff; padding: 16px; border-radius: 8px; text-align: center; }
+  .stat-card .num { font-size: 28px; font-weight: 700; }
+  .stat-card .label { font-size: 12px; opacity: 0.9; margin-top: 4px; }
+  
+  .tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; }
+  .tag.red { background: #fee; color: #c0392b; }
+  .tag.green { background: #d4edda; color: #155724; }
+  .tag.blue { background: #d1ecf1; color: #0c5460; }
+  .tag.orange { background: #fff3cd; color: #856404; }
+  
+  .footer { text-align: center; padding: 24px; color: #999; font-size: 12px; border-top: 1px solid #eee; margin-top: 40px; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>🧾 AR销项发票管理模块 — 详细流程图</h1>
+  <div class="meta">
+    <span>📦 项目: Dev_Dept ERP 财务管理系统</span>
+    <span>🎯 模块: AR销项发票管理 (Sales Invoice Management)</span>
+    <span>📊 对标: 金蝶云星空 → 应收管理 → 销项发票/销售开票</span>
+    <span>📅 日期: 2026-04-20</span>
+    <span class="tag red">P0 优先级</span>
+  </div>
+</div>
+
+<div class="nav-bar">
+  <a href="#overview" class="active" onclick="navTo(this)">📊 架构总览</a>
+  <a href="#main-flow" onclick="navTo(this)">🔄 主流程</a>
+  <a href="#invoicing" onclick="navTo(this)">🖨️ 开票流程</a>
+  <a href="#red-letter" onclick="navTo(this)">🔴 红字冲红</a>
+  <a href="#voucher" onclick="navTo(this)">🧾 凭证模板</a>
+  <a href="#special" onclick="navTo(this)">⚡ 特殊场景</a>
+  <a href="#exception" onclick="navTo(this)">⚠️ 异常处理</a>
+</div>
+
+<div class="container">
+
+<!-- ==================== ① 架构总览 ==================== -->
+<div class="section" id="overview">
+  <h2>📊 ① AR销项发票 — 架构总览</h2>
+  <p class="desc">AR销项发票管理是"订单到收款(O2C)"流程的税务锚点，连接销售订单（上游）与实收收款（下游），覆盖从开票申请、金税开票/全电开票、发票交付、收入确认、销项税申报，到生成应收凭证写入总账的全流程。与AP进项发票构成镜像对称。</p>
+  
+  <div class="grid-2">
+    <div style="background:#f0fff4; border-radius:8px; padding:16px; border:1px solid #c3e6cb;">
+      <strong style="color:#155724;">⬅ 上游依赖</strong>
+      <ul style="font-size:13px; color:#333; margin-top:8px; padding-left:16px; line-height:1.8;">
+        <li><strong>销售订单(SO)</strong> — 销售金额/商品明细</li>
+        <li><strong>发货单(DN)</strong> — 实发数量/签收确认</li>
+        <li><strong>客户主数据</strong> — 纳税人信息/开票偏好</li>
+        <li><strong>会计科目设定</strong> — 收入科目/销项税科目</li>
+      </ul>
+    </div>
+    <div style="background:#fff5f7; border-radius:8px; padding:16px; border:1px solid #f5c6cb;">
+      <strong style="color:#721c24;">➡ 下游输出</strong>
+      <ul style="font-size:13px; color:#333; margin-top:8px; padding-left:16px; line-height:1.8;">
+        <li><strong>实收收款模块</strong> — 应收凭据驱动收款</li>
+        <li><strong>总账凭证引擎</strong> — 7套凭证模板AR01~AR07</li>
+        <li><strong>税务管理模块</strong> — 销项税汇总/申报数据</li>
+        <li><strong>海外发票管理</strong> — 海外客户走海外流程</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="flow-container">
+    <div class="mermaid">
+graph LR
+    A["📝 开票申请<br/>(自动/手动)"] --> B["✅ 审核通过<br/>金额校验"]
+    B --> C["🖨️ 发票开具<br/>金税盘/全电"]
+    C --> D["📧 发票交付<br/>电子/邮寄"]
+    D --> E["✅ 收入确认<br/>生成应收"]
+    E --> F["🧾 凭证生成<br/>AR01~AR07"]
+    F --> G["💰 驱动收款<br/>实收收款模块"]
+    C -->|"❌ 退货/折让"| H["🔴 红字冲红<br/>红字信息表"]
+    H --> I["🧾 冲回凭证<br/>AR06"]
+    
+    style A fill:#e3f2fd,stroke:#1565c0,color:#000
+    style C fill:#fff3e0,stroke:#f57c00,color:#000
+    style E fill:#e8f5e9,stroke:#2e7d32,color:#000
+    style F fill:#fff8e1,stroke:#f9a825,color:#000
+    style G fill:#f3e5f5,stroke:#7b1fa2,color:#000
+    style H fill:#ffcdd2,stroke:#c62828,color:#000
+    </div>
+  </div>
+
+  <div class="note-box info">
+    <strong>💡 镜像对称设计：</strong>AR销项发票与AP进项发票构成完整镜像——AP是"收票+认证抵扣"（采购端），AR是"开票+申报缴税"（销售端）。凭证编码AP01~AP07 vs AR01~AR07一一对应。
+  </div>
+</div>
+
+<!-- ==================== ② 主流程 ==================== -->
+<div class="section" id="main-flow">
+  <h2>🔄 ② AR销项发票 — 主流程</h2>
+  <p class="desc">从销售业务触发开票开始，到收入确认写入总账的完整业务流。关键决策节点：开票触发方式、发票类型选择、红字/作废判断。</p>
+
+  <div class="flow-container">
+    <div class="mermaid">
+flowchart TD
+    START(["📝 开票触发"]) --> TRIGGER{"触发方式?"}
+    
+    TRIGGER -->|"自动触发<br/>(发货确认后)"| AUTO["🤖 自动生成开票申请<br/>关联SO+DN"]
+    TRIGGER -->|"手动申请<br/>(销售助理)"| MANUAL["✍️ 手动填写开票申请<br/>选择SO/无SO"]
+    TRIGGER -->|"海外客户"| OVERSEAS["🌍 转海外发票模块"]
+    
+    AUTO --> FILL["📋 预填开票信息<br/>客户/商品/税率/金额"]
+    MANUAL --> FILL
+    
+    FILL --> VALIDATE["🔍 开票校验<br/>金额≤未开票余额"]
+    VALIDATE --> V_RESULT{"校验结果?"}
+    V_RESULT -->|"✅ 通过"| SUBMIT["📤 提交审核"]
+    V_RESULT -->|"❌ 超额"| OVER_LIMIT["🚫 超额拦截<br/>需特殊审批"]
+    OVER_LIMIT -->|"审批通过"| SUBMIT
+    
+    SUBMIT --> REVIEW{"审核审批"}
+    REVIEW -->|"✅ 通过"| APPROVED["✅ 审核通过<br/>状态→已审核"]
+    REVIEW -->|"❌ 驳回"| REJECTED["❌ 驳回<br/>退回修改"]
+    REJECTED --> FILL
+    
+    APPROVED --> INVOICE_TYPE{"发票类型?"}
+    INVOICE_TYPE -->|"专用发票<br/>(B2B一般纳税人)"| SPECIAL["📄 增值税专用发票"]
+    INVOICE_TYPE -->|"普通发票<br/>(小规模/B2C)"| COMMON["📄 增值税普通发票"]
+    INVOICE_TYPE -->|"全电发票<br/>(电子发票)"| ELECTRONIC["⚡ 全电发票"]
+    
+    SPECIAL --> ISSUE["🖨️ 开票执行<br/>详见③开票流程"]
+    COMMON --> ISSUE
+    ELECTRONIC --> ISSUE
+    
+    ISSUE --> ISSUE_RESULT{"开票结果?"}
+    ISSUE_RESULT -->|"✅ 成功"| INVOICED["✅ 开票成功<br/>回填发票号码"]
+    ISSUE_RESULT -->|"❌ 失败"| ISSUE_FAIL["❌ 开票失败<br/>记录原因→重试"]
+    ISSUE_FAIL -->|"重试成功"| INVOICED
+    ISSUE_FAIL -->|"重试失败"| MANUAL_HANDLE["🔧 人工处理<br/>降级队列"]
+    
+    INVOICED --> DELIVER["📧 发票交付<br/>详见交付流程"]
+    DELIVER --> DELIVER_RESULT{"交付状态?"}
+    DELIVER_RESULT -->|"✅ 已送达"| DELIVERED["✅ 交付完成"]
+    DELIVER_RESULT -->|"❌ 失败"| DELIVER_RETRY["🔄 重新交付<br/>更换方式"]
+    DELIVER_RETRY --> DELIVER
+    
+    DELIVERED --> REVENUE["✅ 收入确认<br/>自动/手动"]
+    REVENUE --> VOUCHER["🧾 生成凭证<br/>AR01~AR07"]
+    VOUCHER --> PAYABLE["📤 应收确认<br/>驱动实收收款模块"]
+    PAYABLE --> END(["✅ 流程结束<br/>等待收款"])
+    
+    OVERSEAS --> EXT(["→ 海外发票模块"])
+    MANUAL_HANDLE --> MANUAL_ISSUE["🖨️ 手动开票<br/>线下金税盘"]
+    MANUAL_ISSUE --> INVOICED
+    
+    style START fill:#e3f2fd,stroke:#1565c0,color:#000
+    style INVOICED fill:#e8f5e9,stroke:#2e7d32,color:#000
+    style REVENUE fill:#ede7f6,stroke:#5e35b1,color:#000
+    style VOUCHER fill:#fff8e1,stroke:#f9a825,color:#000
+    style END fill:#c8e6c9,stroke:#2e7d32,color:#000
+    </div>
+  </div>
+
+  <div class="note-box">
+    <strong>💡 自动开票触发条件（可配置）：</strong>默认在SO发货确认后自动触发开票申请。可配置为：(1) 发货即开票；(2) 月底集中开票；(3) 客户确认后开票。按客户维度配置不同触发策略。
+  </div>
+</div>
+
+<!-- ==================== ③ 开票流程 ==================== -->
+<div class="section" id="invoicing">
+  <h2>🖨️ ③ 开票执行流程</h2>
+  <p class="desc">从审核通过的开票申请到实际开具发票的详细流程，涵盖金税盘开票和全电开票两种方式，以及批量开票、发票作废等场景。</p>
+
+  <div class="flow-container">
+    <div class="mermaid">
+flowchart TD
+    INPUT(["📥 审核通过的开票申请"]) --> PREPARE["📋 构造开票数据<br/>商品明细+税码+客户信息"]
+    
+    PREPARE --> TAX_CODE["🏷️ 匹配税收分类编码<br/>商品→税码自动映射"]
+    TAX_CODE --> LIMIT_CHECK["📊 开票限额检查"]
+    
+    LIMIT_CHECK --> LIMIT_RESULT{"限额检查?"}
+    LIMIT_RESULT -->|"✅ 限额内"| METHOD{"开票方式?"}
+    LIMIT_RESULT -->|"⚠️ 接近限额<br/>(≥80%)"| WARN["🔔 限额预警<br/>通知税务专员"]
+    LIMIT_RESULT -->|"❌ 超限额"| BLOCK["⛔ 阻止开票<br/>需审批"]
+    WARN --> METHOD
+    BLOCK -->|"审批通过"| METHOD
+    
+    METHOD -->|"金税盘<br/>(纸质/电子)"| GOLDEN["🖨️ 金税盘开票<br/>构造XML报文"]
+    METHOD -->|"全电发票<br/>(电子税务局)"| ELECTRONIC["⚡ 全电开票<br/>调用电子税局API"]
+    METHOD -->|"批量开票<br/>(月度集中)"| BATCH["📦 批量开票队列<br/>逐张处理"]
+    
+    GOLDEN --> CALL_GT["📡 调用IssueInvoice<br/>金税适配层"]
+    ELECTRONIC --> CALL_ELECTRONIC["📡 调用全电开票接口<br/>电子税局API"]
+    BATCH --> CALL_GT
+    
+    CALL_GT --> GT_RESULT{"开票结果?"}
+    CALL_ELECTRONIC --> ELECTRONIC_RESULT{"开票结果?"}
+    
+    GT_RESULT -->|"✅ 成功"| GT_SUCCESS["✅ 回填发票号码/代码<br/>状态→已开票"]
+    GT_RESULT -->|"❌ 通信失败"| GT_RETRY["🔄 自动重试(3次)"]
+    GT_RESULT -->|"❌ 参数错误"| GT_ERROR["🔧 修正参数<br/>重新开票"]
+    
+    ELECTRONIC_RESULT -->|"✅ 成功"| E_SUCCESS["✅ 回填发票号码<br/>自动生成PDF"]
+    ELECTRONIC_RESULT -->|"❌ 接口异常"| E_RETRY["🔄 自动重试(3次)"]
+    
+    GT_RETRY -->|"重试成功"| GT_SUCCESS
+    GT_RETRY -->|"重试失败"| GT_OFFLINE["📋 加入待开票队列<br/>金税盘恢复后补开"]
+    E_RETRY -->|"重试成功"| E_SUCCESS
+    E_RETRY -->|"重试失败"| E_OFFLINE["📋 加入待开票队列"]
+    
+    GT_SUCCESS --> CHECK_VOID{"是否当月作废?"}
+    E_SUCCESS --> CHECK_VOID
+    
+    CHECK_VOID -->|"否"| PRINT["🖨️ 打印/生成PDF<br/>进入交付流程"]
+    CHECK_VOID -->|"是-当月"| VOID["❌ 发票作废<br/>标记void_flag=1"]
+    CHECK_VOID -->|"是-跨月"| RED["🔴 走红字冲红流程<br/>详见④红字冲红"]
+    
+    PRINT --> NEXT(["→ 交付流程"])
+    VOID --> VOID_VOUCHER["🧾 作废冲回凭证<br/>反向AR01"]
+    RED --> RED_FLOW(["→ 红字冲红流程"])
+    GT_OFFLINE --> MANUAL_Q(["📋 待开票队列"])
+    E_OFFLINE --> MANUAL_Q
+    GT_ERROR --> PREPARE
+    
+    style INPUT fill:#e3f2fd,stroke:#1565c0,color:#000
+    style GT_SUCCESS fill:#e8f5e9,stroke:#2e7d32,color:#000
+    style E_SUCCESS fill:#e8f5e9,stroke:#2e7d32,color:#000
+    style VOID fill:#ffcdd2,stroke:#c62828,color:#000
+    style RED fill:#fce4ec,stroke:#c62828,color:#000
+    </div>
+  </div>
+
+  <h3>📊 开票限额管理</h3>
+  <table>
+    <tr><th>限额维度</th><th>规则</th><th>预警阈值</th><th>超限处理</th></tr>
+    <tr><td>单张开票限额</td><td>金税盘授权单张限额(如¥10万/¥100万)</td><td>—</td><td>超限拆分为多张</td></tr>
+    <tr><td>月度开票限额</td><td>税局核定月开票总额</td><td>80%/90%/95%</td><td>95%后阻止+审批</td></tr>
+    <tr><td>发票份数限额</td><td>月度可用发票份数</td><td>80%</td><td>提前申领</td></tr>
+  </table>
+</div>
+
+<!-- ==================== ④ 红字冲红 ==================== -->
+<div class="section" id="red-letter">
+  <h2>🔴 ④ 红字冲红流程</h2>
+  <p class="desc">红字发票是销项发票管理的核心合规流程，涉及退货、折让、开票错误等场景。必须先申请红字信息表，经购买方确认后才能开具红字发票。</p>
+
+  <div class="flow-container">
+    <div class="mermaid">
+flowchart TD
+    START(["🔴 红字冲红触发"]) --> REASON{"红冲原因?"}
+    
+    REASON -->|"退货<br/>(全部/部分)"| RETURN["📦 退货确认<br/>关联退货单"]
+    REASON -->|"销售折让"| DISCOUNT["💰 折让确认<br/>关联折让协议"]
+    REASON -->|"开票错误<br/>(跨月)"| ERROR["❌ 开票错误<br/>原票无法作废"]
+    REASON -->|"当月发票<br/>可直接作废"| VOID["❌ 发票作废<br/>无需红字"]
+    
+    RETURN --> CHECK_TYPE{"原发票类型?"}
+    DISCOUNT --> CHECK_TYPE
+    ERROR --> CHECK_TYPE
+    
+    CHECK_TYPE -->|"专用发票"| CHECK_BUYER{"购买方<br/>是否已认证?"}
+    CHECK_TYPE -->|"普通发票"| SELLER_APPLY["📝 销售方单方申请<br/>无需购买方确认"]
+    
+    CHECK_BUYER -->|"已认证<br/>(抵扣过)"| BUYER_APPLY["📝 购买方申请<br/>购买方填红字信息表"]
+    CHECK_BUYER -->|"未认证"| SELLER_APPLY2["📝 销售方申请<br/>销售方填红字信息表"]
+    
+    BUYER_APPLY --> BUYER_CONFIRM["📧 发送确认请求<br/>购买方48小时内确认"]
+    SELLER_APPLY --> AUTO_APPROVE["✅ 自动审核通过<br/>无需确认"]
+    SELLER_APPLY2 --> AUTO_APPROVE
+    
+    BUYER_CONFIRM --> CONFIRM_RESULT{"确认结果?"}
+    CONFIRM_RESULT -->|"✅ 确认"| APPROVED["✅ 红字信息表审核通过"]
+    CONFIRM_RESULT -->|"❌ 拒绝"| REJECTED["❌ 拒绝<br/>协商解决"]
+    CONFIRM_RESULT -->|"⏰ 超时<br/>(48小时)"| TIMEOUT["⏰ 自动确认<br/>(可配置)"]
+    TIMEOUT --> APPROVED
+    
+    AUTO_APPROVE --> APPROVED
+    
+    APPROVED --> RED_INVOICE["🔴 开具红字发票<br/>关联红字信息表"]
+    RED_INVOICE --> RED_RESULT{"开具结果?"}
+    RED_RESULT -->|"✅ 成功"| RED_SUCCESS["✅ 红字发票已开具<br/>回填红字发票号"]
+    RED_RESULT -->|"❌ 失败"| RED_RETRY["🔄 重试<br/>金税接口异常"]
+    RED_RETRY --> RED_INVOICE
+    
+    RED_SUCCESS --> PARTIAL{"红冲类型?"}
+    PARTIAL -->|"全额红冲"| FULL_REVERSE["🔄 全额冲回<br/>AR06凭证(全额)"]
+    PARTIAL -->|"部分红冲<br/>(折让/部分退货)"| PARTIAL_REVERSE["🔄 部分冲回<br/>AR06凭证(部分)+AR07"]
+    
+    FULL_REVERSE --> UPDATE_AR["📋 更新应收余额<br/>原发票标记RED_REVERSED"]
+    PARTIAL_REVERSE --> UPDATE_AR
+    
+    UPDATE_AR --> TAX_UPDATE["📊 更新销项税额<br/>冲减当期销项"]
+    TAX_UPDATE --> END(["✅ 红字流程完成"])
+    
+    VOID --> VOID_HANDLE["❌ 作废处理<br/>标记void_flag"]
+    VOID_HANDLE --> VOID_END(["✅ 作废完成"])
+    
+    REJECTED --> NEGOTIATE["🤝 协商解决<br/>修改红冲金额/原因"]
+    NEGOTIATE --> BUYER_APPLY
+    
+    style START fill:#ffcdd2,stroke:#c62828,color:#000
+    style RED_INVOICE fill:#fce4ec,stroke:#c62828,color:#000
+    style RED_SUCCESS fill:#e8f5e9,stroke:#2e7d32,color:#000
+    style APPROVED fill:#e8f5e9,stroke:#2e7d32,color:#000
+    style END fill:#c8e6c9,stroke:#2e7d32,color:#000
+    </div>
+  </div>
+
+  <div class="note-box danger">
+    <strong>⛔ 合规红线：</strong>红字发票<strong>必须</strong>先有红字信息表才能开具，不允许直接开红字。当月发票可作废（未交付且当月），跨月发票<strong>必须</strong>走红字流程。违反将面临税局处罚。
+  </div>
+
+  <h3>📋 红冲场景决策表</h3>
+  <table>
+    <tr><th>场景</th><th>发票状态</th><th>处理方式</th><th>凭证</th></tr>
+    <tr><td>当月开票，未交付</td><td>INVOICED</td><td>直接作废</td><td>反向AR01冲回</td></tr>
+    <tr><td>当月开票，已交付未认证</td><td>DELIVERED</td><td>销售方申请红字</td><td>AR06全额冲回</td></tr>
+    <tr><td>当月开票，购买方已认证</td><td>DELIVERED</td><td>购买方申请红字</td><td>AR06全额冲回</td></tr>
+    <tr><td>跨月发票，退货</td><td>REVENUE_CONFIRMED</td><td>红字信息表+红字发票</td><td>AR06冲回</td></tr>
+    <tr><td>跨月发票，部分折让</td><td>REVENUE_CONFIRMED</td><td>部分红字信息表</td><td>AR06部分+AR07折让</td></tr>
+    <tr><td>开票错误(金额/品名)</td><td>INVOICED</td><td>跨月走红字，当月作废</td><td>AR06冲回+重开</td></tr>
+  </table>
+</div>
+
+<!-- ==================== ⑤ 凭证模板 ==================== -->
+<div class="section" id="voucher">
+  <h2>🧾 ⑤ 凭证模板 — AR01~AR07</h2>
+  <p class="desc">AR销项发票模块共7套凭证模板，覆盖专票入账、普票入账、预开票、外币折算、零税率/免税、红字冲回、销售折让7大场景，与AP01~AP07镜像对称。</p>
+
+  <div class="flow-container">
+    <div class="mermaid">
+flowchart LR
+    subgraph "AR销项发票凭证体系"
+        direction TB
+        AR01["AR01 📋 专票入账<br/>借: 应收账款<br/>贷: 主营业务收入<br/>贷: 应交税费-销项税额"]
+        AR02["AR02 📄 普票入账<br/>借: 应收账款<br/>贷: 主营业务收入<br/>贷: 应交税费-销项税额"]
+        AR03["AR03 📝 预开票确认<br/>借: 应收账款<br/>贷: 预收账款<br/>贷: 应交税费-销项税额"]
+        AR04["AR04 🌍 外币折算<br/>借: 应收账款(外币)<br/>贷: 主营业务收入+汇兑损益<br/>贷: 应交税费-销项税额"]
+        AR05["AR05 📭 零税率/免税<br/>借: 应收账款<br/>贷: 主营业务收入"]
+        AR06["AR06 🔴 红字冲回<br/>借: 主营业务收入(红字)<br/>借: 销项税额(红字)<br/>贷: 应收账款(红字)"]
+        AR07["AR07 💰 销售折让<br/>借: 主营业务收入(红字)<br/>贷: 应收账款(红字)"]
+    end
+    
+    style AR01 fill:#e8f5e9,stroke:#2e7d32,color:#000
+    style AR02 fill:#e3f2fd,stroke:#1565c0,color:#000
+    style AR03 fill:#ede7f6,stroke:#5e35b1,color:#000
+    style AR04 fill:#fff3e0,stroke:#f57c00,color:#000
+    style AR05 fill:#e0f7fa,stroke:#00838f,color:#000
+    style AR06 fill:#ffcdd2,stroke:#c62828,color:#000
+    style AR07 fill:#fce4ec,stroke:#c62828,color:#000
+    </div>
+  </div>
+
+  <h3>🔗 AR vs AP 凭证镜像对照</h3>
+  <table>
+    <tr><th>场景</th><th>AP进项（采购端）</th><th>AR销项（销售端）</th></tr>
+    <tr><td>正常入账</td><td><span class="tag green">AP01</span> 借:库存+进项税 贷:应付</td><td><span class="tag green">AR01</span> 借:应收 贷:收入+销项税</td></tr>
+    <tr><td>不可抵扣/普票</td><td><span class="tag blue">AP02</span> 借:库存(含税) 贷:应付</td><td><span class="tag blue">AR02</span> 借:应收 贷:收入+销项税</td></tr>
+    <tr><td>费用/预开票</td><td><span class="tag blue">AP03</span> 借:费用+进项税 贷:应付</td><td><span class="tag orange">AR03</span> 借:应收 贷:预收+销项税</td></tr>
+    <tr><td>税额转出/外币</td><td><span class="tag orange">AP04</span> 借:费用 贷:进项转出</td><td><span class="tag orange">AR04</span> 借:应收(外币) 贷:收入+汇兑</td></tr>
+    <tr><td>红字冲回</td><td><span class="tag red">AP05</span> 借:应付 贷:库存+进项税</td><td><span class="tag red">AR06</span> 借:收入+销项税(红) 贷:应收(红)</td></tr>
+    <tr><td>加计抵减/折让</td><td><span class="tag blue">AP06</span> 借:未交增值税 贷:其他收益</td><td><span class="tag red">AR07</span> 借:收入(红) 贷:应收(红)</td></tr>
+    <tr><td>进口/免税</td><td><span class="tag blue">AP07</span> 借:库存+进项税 贷:应付+关税</td><td><span class="tag blue">AR05</span> 借:应收 贷:收入</td></tr>
+  </table>
+
+  <div class="note-box success">
+    <strong>🔗 凭证总量更新：</strong>AR01~AR07(7套) + AP01~AP07(7套) + S01~S06(6套) + P01~P08(8套) + B01~B08(8套) + PA01~PA07(7套) + OP01/OS01/FX01(3套) + GL01~GL03(3套) = <strong>49套</strong>凭证模板。
+  </div>
+</div>
+
+<!-- ==================== ⑥ 特殊场景 ==================== -->
+<div class="section" id="special">
+  <h2>⚡ ⑥ 特殊场景处理</h2>
+  <p class="desc">涵盖预开票(先票后货)、合并开票、拆分开票、外币开票、出口免税/零税率5大特殊场景。</p>
+
+  <div class="grid-2">
+    <div>
+      <h3>📝 场景1: 预开票（先票后货）</h3>
+      <div class="flow-container">
+        <div class="mermaid">
+flowchart TD
+    A["📋 客户要求先开票<br/>货未发"] --> B["📝 开票申请<br/>标记为预开票"]
+    B --> C["🖨️ 正常开票流程<br/>开具发票"]
+    C --> D["🧾 AR03凭证<br/>借:应收 贷:预收+销项税"]
+    D --> E["📦 后续发货<br/>发货确认"]
+    E --> F["🔄 预收转收入<br/>借:预收 贷:收入"]
+    F --> G["✅ 完整确认收入<br/>应收余额正确"]
+    style A fill:#fff3e0,stroke:#f57c00,color:#000
+    style D fill:#ede7f6,stroke:#5e35b1,color:#000
+    style G fill:#e8f5e9,stroke:#2e7d32,color:#000
+        </div>
+      </div>
+    </div>
+    <div>
+      <h3>📦 场景2: 合并/拆分开票</h3>
+      <div class="flow-container">
+        <div class="mermaid">
+flowchart TD
+    A["📋 多个SO或1个大SO"] --> B{"开票策略?"}
+    B -->|"合并开票<br/>(同客户同税码)"| C["📋 多SO→1张发票<br/>合并明细行"]
+    B -->|"拆分开票<br/>(超限额/多税码)"| D["📋 1SO→多张发票<br/>按税码/金额拆分"]
+    C --> E["🖨️ 开具1张发票<br/>金额=SO合计"]
+    D --> F["🖨️ 开具多张发票<br/>金额=拆分后各额"]
+    style A fill:#e3f2fd,stroke:#1565c0,color:#000
+    style E fill:#e8f5e9,stroke:#2e7d32,color:#000
+    style F fill:#e8f5e9,stroke:#2e7d32,color:#000
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h3>🌍 场景3: 外币开票</h3>
+  <div class="flow-container">
+    <div class="mermaid">
+flowchart TD
+    A["📄 外币销售合同<br/>USD/EUR等"] --> B["📝 开票申请<br/>选择外币币种"]
+    B --> C["💱 获取汇率<br/>开票日中间价"]
+    C --> D["🖨️ 开具外币发票<br/>原币金额+汇率"]
+    D --> E["🧾 AR04凭证<br/>借:应收(外币) 贷:收入+汇兑+销项税"]
+    E --> F["📅 月末汇率调整<br/>汇兑损益"]
+    F --> G["💰 收款时汇率结算<br/>实际汇率差→财务费用"]
+    style A fill:#e3f2fd,stroke:#1565c0,color:#000
+    style E fill:#fff3e0,stroke:#f57c00,color:#000
+    style G fill:#e8f5e9,stroke:#2e7d32,color:#000
+    </div>
+  </div>
+
+  <h3>📭 场景4: 出口免税/零税率</h3>
+  <div class="flow-container">
+    <div class="mermaid">
+flowchart TD
+    A["📦 出口业务<br/>免税/零税率"] --> B{"税率类型?"}
+    B -->|"零税率<br/>(退税)"| C["📄 开具零税率发票<br/>税率=0%"]
+    B -->|"免税<br/>(不退税)"| D["📄 开具免税发票<br/>税率=免"]
+    C --> E["🧾 AR05凭证<br/>借:应收 贷:收入(无税)"]
+    D --> E
+    E --> F["📊 出口退税申报<br/>对接退税系统"]
+    F --> G["💰 收到退税款<br/>单独入账"]
+    style A fill:#e3f2fd,stroke:#1565c0,color:#000
+    style E fill:#e0f7fa,stroke:#00838f,color:#000
+    style G fill:#e8f5e9,stroke:#2e7d32,color:#000
+    </div>
+  </div>
+</div>
+
+<!-- ==================== ⑦ 异常处理 ==================== -->
+<div class="section" id="exception">
+  <h2>⚠️ ⑦ 异常处理与风控</h2>
+  <p class="desc">覆盖AR销项发票全流程的异常场景处理和风控规则，确保税务合规和资金安全。</p>
+
+  <div class="flow-container">
+    <div class="mermaid">
+flowchart TD
+    subgraph "异常类型识别"
+        E1["❌ 金税盘离线<br/>无法开票"]
+        E2["🔁 重复开票<br/>同一SO重复申请"]
+        E3["❌ 开票金额超额<br/>超过SO未开票余额"]
+        E4["⛔ 月度限额告警<br/>接近授权限额"]
+        E5["⚠️ 客户信息缺失<br/>纳税人识别号为空"]
+        E6["❌ 红字确认超时<br/>购买方48h未确认"]
+        E7["❌ 发票号码跳号<br/>金税盘号码不连续"]
+    end
+    
+    E1 --> H1["🔧 处理: 降级待开票队列<br/>金税恢复后自动补开"]
+    E2 --> H2["🔧 处理: 自动拦截<br/>提示已有开票申请"]
+    E3 --> H3["🔧 处理: 超额拦截<br/>需财务经理+销售总监审批"]
+    E4 --> H4["🔧 处理: 80%/90%/95%<br/>三级预警通知"]
+    E5 --> H5["🔧 处理: 阻止开票<br/>提醒补全客户信息"]
+    E6 --> H6["🔧 处理: 自动确认<br/>(可配置为人工处理)"]
+    E7 --> H7["🔧 处理: 记录跳号原因<br/>税局报备"]
+    
+    H1 --> LOG["📝 异常日志记录<br/>异常类型/原因/处理方式"]
+    H2 --> LOG
+    H3 --> LOG
+    H4 --> LOG
+    H5 --> LOG
+    H6 --> LOG
+    H7 --> LOG
+    
+    LOG --> ANALYTICS["📊 异常分析报表<br/>按类型/客户/月度统计"]
+    ANALYTICS --> ALERT["🚨 风控预警规则"]
+    
+    ALERT --> R1["🔴 高风险: 单张≥¥50万<br/>→ 财务主管审批"]
+    ALERT --> R2["🟡 中风险: 同客户月累计≥¥500万<br/>→ 财务经理审批"]
+    ALERT --> R3["🟠 预警: 月开票额≥限额80%<br/>→ 税务专员通知"]
+    ALERT --> R4["🔴 高风险: 红字率≥10%<br/>→ 风控审核+原因分析"]
+    ALERT --> R5["🟡 中风险: 客户信息不完整<br/>→ 开票拦截+补全提醒"]
+    
+    style E1 fill:#ffcdd2,stroke:#c62828,color:#000
+    style E2 fill:#fff3e0,stroke:#f57c00,color:#000
+    style E3 fill:#ffcdd2,stroke:#c62828,color:#000
+    style E4 fill:#fff3e0,stroke:#f57c00,color:#000
+    style ALERT fill:#fce4ec,stroke:#c62828,color:#000
+    </div>
+  </div>
+
+  <h3>🛡️ 审批规则矩阵</h3>
+  <table>
+    <tr><th>风控维度</th><th>触发条件</th><th>审批层级</th><th>不可绕过</th></tr>
+    <tr><td>单张开票金额</td><td>≥ ¥50万</td><td>财务主管</td><td>❌</td></tr>
+    <tr><td>超额开票</td><td>超过SO金额</td><td>财务经理+销售总监</td><td>✅</td></tr>
+    <tr><td>红字发票</td><td>任何红字申请</td><td>财务主管</td><td>✅</td></tr>
+    <tr><td>跨月红冲</td><td>跨月/跨年</td><td>财务经理</td><td>✅</td></tr>
+    <tr><td>外币开票</td><td>非CNY币种</td><td>财务主管</td><td>❌</td></tr>
+    <tr><td>月度限额</td><td>≥ 95%</td><td>财务经理+税务总监</td><td>✅</td></tr>
+    <tr><td>客户信息缺失</td><td>纳税人识别号为空</td><td>— (阻止开票)</td><td>✅</td></tr>
+  </table>
+
+  <div class="note-box danger">
+    <strong>⛔ 不可绕过规则：</strong>(1) 红字发票必须先有信息表；(2) 跨月发票不可作废，必须走红字；(3) 客户纳税人识别号缺失不可开专票；(4) 超月度限额不可继续开票。违反将产生税务风险。
+  </div>
+</div>
+
+<!-- ==================== 底部统计 ==================== -->
+<div class="section">
+  <h2>📊 模块数据总览</h2>
+  <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:16px;">
+    <div class="stat-card"><div class="num">7</div><div class="label">凭证模板 AR01~AR07</div></div>
+    <div class="stat-card" style="background:linear-gradient(135deg,#f093fb,#f5576c)"><div class="num">7</div><div class="label">新增DDL表</div></div>
+    <div class="stat-card" style="background:linear-gradient(135deg,#4facfe,#00f2fe)"><div class="num">21</div><div class="label">RESTful API</div></div>
+    <div class="stat-card" style="background:linear-gradient(135deg,#43e97b,#38f9d7)"><div class="num">10</div><div class="label">开发工期(天)</div></div>
+  </div>
+  <div style="margin-top:16px; font-size:13px; color:#666; text-align:center;">
+    配套文档: AR销项发票管理模块规格书.md (需求规格) + 本流程图 | 关联: 销售订单 → 本模块 → 实收收款 → 总账凭证引擎 | 镜像: AP进项发票(AP01~AP07) ↔ AR销项发票(AR01~AR07)
+  </div>
+</div>
+
+</div>
+
+<div class="footer">
+  Dev_Dept ERP 财务管理系统 · AR销项发票管理模块 · 详细流程图 · v1.0 · 2026-04-20
+</div>
+
+<!-- 缩放控制按钮 -->
+<div class="zoom-controls">
+  <button class="zoom-btn" onclick="zoomOut()" title="缩小">−</button>
+  <div class="zoom-label" id="zoomLevel">150%</div>
+  <button class="zoom-btn" onclick="zoomIn()" title="放大">+</button>
+  <button class="zoom-btn" onclick="zoomReset()" title="重置">⟲</button>
+</div>
+
+<script>
+mermaid.initialize({ 
+  startOnLoad: true, 
+  theme: 'base',
+  themeVariables: { 
+    primaryColor: '#e8f5e9', 
+    primaryTextColor: '#1a1a2e', 
+    primaryBorderColor: '#2e7d32',
+    lineColor: '#666',
+    fontSize: '18px'
+  },
+  flowchart: { htmlLabels: true, curve: 'basis', padding: 16, useMaxWidth: false }
+});
+
+/* 流程图缩放控制 */
+let currentZoom = 1.5;
+const zoomStep = 0.25;
+function applyZoom() {
+  document.querySelectorAll('.flow-container .mermaid').forEach(el => {
+    el.style.transform = 'scale(' + currentZoom + ')';
+    el.style.transformOrigin = 'top center';
+  });
+  const label = document.getElementById('zoomLevel');
+  if (label) label.textContent = Math.round(currentZoom * 100) + '%';
+}
+function zoomIn() { currentZoom = Math.min(3, currentZoom + zoomStep); applyZoom(); }
+function zoomOut() { currentZoom = Math.max(0.5, currentZoom - zoomStep); applyZoom(); }
+function zoomReset() { currentZoom = 1.5; applyZoom(); }
+document.addEventListener('DOMContentLoaded', function() { applyZoom(); });
+
+function navTo(el) {
+  document.querySelectorAll('.nav-bar a').forEach(a => a.classList.remove('active'));
+  el.classList.add('active');
+  const target = document.querySelector(el.getAttribute('href'));
+  if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+</script>
+</body>
+</html>
