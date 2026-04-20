@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>预算分析 - UI原型 | ERP预算管理</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Microsoft YaHei', 'PingFang SC', sans-serif; background: #f0f2f5; color: #333; }
+.page-header { background: linear-gradient(135deg, #1565c0 0%, #1976d2 100%); color: white; padding: 20px 30px; }
+.page-header h1 { font-size: 22px; margin-bottom: 6px; }
+.page-header p { font-size: 13px; opacity: 0.8; }
+.container { max-width: 1200px; margin: 24px auto; padding: 0 24px; }
+.card { background: white; border-radius: 8px; padding: 24px; margin-bottom: 20px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+.card-title { font-size: 16px; font-weight: bold; color: #333; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid #f0f0f0; }
+.stat-row { display: flex; gap: 16px; margin-bottom: 20px; }
+.stat-card { flex: 1; background: #f8f9fa; border-radius: 8px; padding: 20px 16px; text-align: center; }
+.stat-card .label { font-size: 12px; color: #666; margin-bottom: 8px; }
+.stat-card .value { font-size: 28px; font-weight: bold; }
+.stat-card .value.blue { color: #1565c0; }
+.stat-card .value.green { color: #52c41a; }
+.stat-card .value.red { color: #f5222d; }
+.stat-card .trend { font-size: 12px; margin-top: 4px; }
+.stat-card .trend.up { color: #52c41a; }
+.stat-card .trend.down { color: #f5222d; }
+.chart-placeholder { height: 280px; background: linear-gradient(135deg, #f5f5f5, #ebebeb); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #999; font-size: 14px; flex-direction: column; gap: 8px; }
+.chart-bars { display: flex; align-items: flex-end; gap: 20px; height: 200px; padding: 20px; }
+.bar-wrapper { display: flex; flex-direction: column; align-items: center; gap: 8px; flex: 1; }
+.bar { width: 40px; background: linear-gradient(180deg, #1890ff, #40a9ff); border-radius: 4px 4px 0 0; transition: height 0.3s; }
+.bar-target { width: 40px; background: #d9d9d9; border-radius: 4px 4px 0 0; }
+.bar-label { font-size: 11px; color: #666; }
+.tab-bar { display: flex; gap: 0; margin-bottom: 20px; border-bottom: 2px solid #f0f0f0; }
+.tab-item { padding: 10px 24px; cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -2px; font-size: 14px; transition: all 0.2s; }
+.tab-item:hover { color: #1890ff; }
+.tab-item.active { color: #1565c0; border-bottom-color: #1565c0; font-weight: 500; }
+.progress-wrapper { display: flex; align-items: center; gap: 8px; }
+.progress-bar { flex: 1; height: 8px; background: #f0f0f0; border-radius: 4px; overflow: hidden; }
+.progress-fill { height: 100%; border-radius: 4px; transition: width 0.3s; }
+.info-box { background: #fff7e6; border: 1px solid #ffd591; border-radius: 6px; padding: 12px 16px; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; color: #fa8c16; }
+.info-box .icon { font-size: 18px; font-weight: bold; }
+.info-box .text { font-size: 13px; }
+.btn { padding: 8px 20px; border-radius: 6px; cursor: pointer; font-size: 13px; border: none; }
+.btn-primary { background: #1565c0; color: white; }
+.btn-default { background: #fff; color: #666; border: 1px solid #d9d9d9; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+th, td { padding: 10px 12px; border: 1px solid #f0f0f0; }
+th { background: #fafafa; text-align: left; font-weight: 500; }
+.text-right { text-align: right; }
+.text-center { text-align: center; }
+tfoot td { background: #e6f7ff; font-weight: bold; }
+.status { padding: 2px 8px; border-radius: 4px; font-size: 12px; }
+.status-normal { color: #52c41a; background: #f6ffed; }
+.status-warning { color: #fa8c16; background: #fff7e6; }
+.status-danger { color: #f5222d; background: #fff2f0; }
+</style>
+</head>
+<body>
+<div class="page-header">
+  <h1>预算分析</h1>
+  <p>ERP财务管理 - 预算管理 - 执行分析与考核</p>
+</div>
+
+<div class="container">
+  <!-- 统计概览 -->
+  <div class="card">
+    <div class="card-title">预算执行概览</div>
+    <div class="stat-row">
+      <div class="stat-card">
+        <div class="label">年度预算总额</div>
+        <div class="value blue">10,300,000</div>
+        <div class="trend">同比 +12.5%</div>
+      </div>
+      <div class="stat-card">
+        <div class="label">累计执行金额</div>
+        <div class="value green">5,270,000</div>
+        <div class="trend up">同比 +15.3%</div>
+      </div>
+      <div class="stat-card">
+        <div class="label">整体执行率</div>
+        <div class="value green">51.2%</div>
+        <div class="trend">目标 50% 正常</div>
+      </div>
+      <div class="stat-card">
+        <div class="label">预算差异</div>
+        <div class="value red">-230,000</div>
+        <div class="trend down">超支 2.3%</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 执行进度图表 -->
+  <div class="card">
+    <div class="card-title">执行进度分析</div>
+    <div class="tab-bar">
+      <div class="tab-item active" onclick="switchTab(this)">按月份</div>
+      <div class="tab-item" onclick="switchTab(this)">按部门</div>
+      <div class="tab-item" onclick="switchTab(this)">按科目</div>
+    </div>
+    <div class="chart-placeholder">
+      <div class="chart-bars">
+        <div class="bar-wrapper">
+          <div class="bar" style="height: 80px;"></div>
+          <div class="bar-target" style="height: 100px; position: absolute;"></div>
+          <div class="bar-label">1月</div>
+        </div>
+        <div class="bar-wrapper">
+          <div class="bar" style="height: 120px;"></div>
+          <div class="bar-label">2月</div>
+        </div>
+        <div class="bar-wrapper">
+          <div class="bar" style="height: 100px;"></div>
+          <div class="bar-label">3月</div>
+        </div>
+        <div class="bar-wrapper">
+          <div class="bar" style="height: 140px;"></div>
+          <div class="bar-label">4月</div>
+        </div>
+        <div class="bar-wrapper">
+          <div class="bar" style="height: 160px;"></div>
+          <div class="bar-label">5月</div>
+        </div>
+        <div class="bar-wrapper">
+          <div class="bar" style="height: 180px;"></div>
+          <div class="bar-label">6月</div>
+        </div>
+      </div>
+      <div style="margin-top: 10px; color: #999; font-size: 12px;">柱状图展示各月预算执行进度 vs 目标</div>
+    </div>
+  </div>
+
+  <!-- 部门执行明细 -->
+  <div class="card">
+    <div class="card-title">部门预算执行明细</div>
+    <table>
+      <thead>
+        <tr>
+          <th>部门</th>
+          <th class="text-right">预算金额</th>
+          <th class="text-right">执行金额</th>
+          <th class="text-center">执行率</th>
+          <th class="text-right">差异</th>
+          <th class="text-center">状态</th>
+        </tr>
+      </thead>
+      <tbody id="deptTableBody">
+        <!-- 数据由JS动态填充 -->
+      </tbody>
+      <tfoot id="deptTableFoot">
+        <!-- 合计由JS动态填充 -->
+      </tfoot>
+    </table>
+  </div>
+
+  <!-- 预警信息 -->
+  <div class="card">
+    <div class="info-box">
+      <span class="icon">!</span>
+      <span class="text">管理部执行率超过预警线(60%)，建议关注并考虑提交预算调整申请。</span>
+    </div>
+    <div style="display: flex; gap: 12px;">
+      <button class="btn btn-primary" onclick="exportReport()">导出报表</button>
+      <button class="btn btn-default" onclick="budgetAdjust()">预算调整</button>
+      <button class="btn btn-default" onclick="refreshData()">刷新数据</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const deptData = [
+  { name: '销售部', budget: 3000000, actual: 1680000, rate: 56, diff: 180000, status: 'normal' },
+  { name: '采购部', budget: 2500000, actual: 1450000, rate: 58, diff: 50000, status: 'normal' },
+  { name: '生产部', budget: 3500000, actual: 1890000, rate: 54, diff: 140000, status: 'normal' },
+  { name: '管理部', budget: 1300000, actual: 780000, rate: 60, diff: -20000, status: 'warning' },
+];
+
+function formatNumber(num) {
+  return (num >= 0 ? '' : '') + (num >= 0 ? '+' : '') + num.toLocaleString();
+}
+
+function getStatusHtml(status, rate) {
+  if (rate > 60) return '<span class="status status-danger">超限</span>';
+  if (rate > 55) return '<span class="status status-warning">预警</span>';
+  return '<span class="status status-normal">正常</span>';
+}
+
+function renderDeptTable() {
+  const tbody = document.getElementById('deptTableBody');
+  const tfoot = document.getElementById('deptTableFoot');
+  
+  let totalBudget = 0, totalActual = 0;
+  
+  tbody.innerHTML = deptData.map((row, i) => {
+    totalBudget += row.budget;
+    totalActual += row.actual;
+    const diffColor = row.diff >= 0 ? '#52c41a' : '#f5222d';
+    return `
+      <tr style="background: ${i % 2 === 0 ? '#fff' : '#fafafa'}">
+        <td>${row.name}</td>
+        <td class="text-right">${row.budget.toLocaleString()}</td>
+        <td class="text-right">${row.actual.toLocaleString()}</td>
+        <td class="text-center">
+          <div class="progress-wrapper">
+            <div class="progress-bar">
+              <div class="progress-fill" style="width: ${row.rate}%; background: ${row.rate > 60 ? '#f5222d' : row.rate > 55 ? '#fa8c16' : '#52c41a'};"></div>
+            </div>
+            <span style="width: 40px;">${row.rate}%</span>
+          </div>
+        </td>
+        <td class="text-right" style="color: ${diffColor}">${formatNumber(row.diff)}</td>
+        <td class="text-center">${getStatusHtml(row.status, row.rate)}</td>
+      </tr>
+    `;
+  }).join('');
+  
+  const totalRate = Math.round(totalActual / totalBudget * 100);
+  const totalDiff = totalActual - totalBudget;
+  const diffColor = totalDiff >= 0 ? '#52c41a' : '#f5222d';
+  
+  tfoot.innerHTML = `
+    <tr>
+      <td>合计</td>
+      <td class="text-right">${totalBudget.toLocaleString()}</td>
+      <td class="text-right">${totalActual.toLocaleString()}</td>
+      <td class="text-center">
+        <div class="progress-wrapper">
+          <div class="progress-bar">
+            <div class="progress-fill" style="width: ${totalRate}%; background: #1565c0;"></div>
+          </div>
+          <span style="width: 40px;">${totalRate}%</span>
+        </div>
+      </td>
+      <td class="text-right" style="color: ${diffColor}">${formatNumber(totalDiff)}</td>
+      <td>-</td>
+    </tr>
+  `;
+}
+
+function switchTab(el) {
+  document.querySelectorAll('.tab-item').forEach(tab => tab.classList.remove('active'));
+  el.classList.add('active');
+}
+
+function exportReport() {
+  alert('导出报表功能开发中...');
+}
+
+function budgetAdjust() {
+  alert('预算调整功能开发中...');
+}
+
+function refreshData() {
+  alert('数据已刷新！');
+  renderDeptTable();
+}
+
+// 初始化
+renderDeptTable();
+</script>
+</body>
+</html>
