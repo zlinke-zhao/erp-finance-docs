@@ -1,0 +1,1067 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>银行日记账与对账管理 - UI原型</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+            background: #f0f2f5;
+            padding: 20px;
+        }
+        .page { max-width: 1400px; margin: 0 auto; }
+        .header {
+            background: linear-gradient(135deg, #1a365d 0%, #2c5282 100%);
+            color: #fff;
+            padding: 20px 30px;
+            border-radius: 12px 12px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .header h1 { font-size: 1.5em; }
+        .header-info { display: flex; gap: 20px; align-items: center; }
+        .user-info { font-size: 0.9em; opacity: 0.9; }
+        .content { background: #fff; border-radius: 0 0 12px 12px; padding: 25px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .toolbar {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9em;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .btn-primary { background: #4299e1; color: #fff; }
+        .btn-secondary { background: #e2e8f0; color: #4a5568; }
+        .btn-success { background: #48bb78; color: #fff; }
+        .btn-warning { background: #ed8936; color: #fff; }
+        .btn-danger { background: #e53e3e; color: #fff; }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .search-box {
+            display: flex;
+            gap: 10px;
+            margin-left: auto;
+        }
+        .search-box input, .search-box select {
+            padding: 8px 12px;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 0.9em;
+        }
+        .nav-bar {
+            display: flex;
+            gap: 0;
+            background: #1a365d;
+            padding: 0;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+        .nav-item {
+            padding: 12px 20px;
+            color: #a0c4e8;
+            cursor: pointer;
+            font-size: 0.95em;
+            border: none;
+            background: transparent;
+            transition: all 0.2s;
+            border-right: 1px solid rgba(255,255,255,0.1);
+        }
+        .nav-item:last-child { border-right: none; }
+        .nav-item:hover { background: rgba(255,255,255,0.1); }
+        .nav-item.active { background: #4299e1; color: #fff; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .stat-card {
+            background: #f7fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+        }
+        .stat-card .value { font-size: 1.8em; font-weight: 700; color: #2d3748; }
+        .stat-card .label { font-size: 0.85em; color: #718096; margin-top: 5px; }
+        .stat-card.success .value { color: #38a169; }
+        .stat-card.warning .value { color: #dd6b20; }
+        .stat-card.danger .value { color: #e53e3e; }
+        .table-container { overflow-x: auto; margin-bottom: 15px; }
+        table { width: 100%; border-collapse: collapse; font-size: 0.9em; }
+        th, td {
+            border: 1px solid #e2e8f0;
+            padding: 10px 12px;
+            text-align: left;
+        }
+        th {
+            background: #f7fafc;
+            font-weight: 600;
+            color: #4a5568;
+            white-space: nowrap;
+        }
+        tr:hover { background: #f7fafc; }
+        .badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            font-weight: 600;
+        }
+        .badge-success { background: #c6f6d5; color: #276749; }
+        .badge-warning { background: #fefcbf; color: #975a16; }
+        .badge-danger { background: #fed7d7; color: #c53030; }
+        .badge-info { background: #bee3f8; color: #2b6cb0; }
+        .badge-gray { background: #e2e8f0; color: #4a5568; }
+        .amount { font-family: "Consolas", monospace; font-weight: 600; }
+        .amount-plus { color: #38a169; }
+        .amount-minus { color: #e53e3e; }
+        .checkbox-col { width: 40px; text-align: center; }
+        input[type="checkbox"] { width: 16px; height: 16px; cursor: pointer; }
+        .action-btns { display: flex; gap: 5px; }
+        .action-btns button { padding: 5px 10px; font-size: 0.85em; }
+        .quick-filters {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        .quick-filter {
+            padding: 5px 12px;
+            background: #e2e8f0;
+            border: none;
+            border-radius: 15px;
+            font-size: 0.85em;
+            cursor: pointer;
+        }
+        .quick-filter.active { background: #4299e1; color: #fff; }
+        .pagination {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 15px;
+            border-top: 1px solid #e2e8f0;
+        }
+        .page-info { color: #718096; font-size: 0.9em; }
+        .page-btns { display: flex; gap: 5px; }
+        .page-btns button { padding: 5px 12px; }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .modal.show { display: flex; }
+        .modal-content {
+            background: #fff;
+            border-radius: 12px;
+            padding: 25px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+        .modal-header h3 { color: #2d3748; }
+        .modal-close { background: none; border: none; font-size: 1.5em; cursor: pointer; color: #718096; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: 500; color: #4a5568; }
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 0.95em;
+        }
+        .form-group textarea { min-height: 80px; resize: vertical; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .form-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; }
+
+        /* 对账面板 */
+        .recon-container {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .recon-panel {
+            background: #f7fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 15px;
+            max-height: 450px;
+            overflow-y: auto;
+        }
+        .recon-panel h4 {
+            position: sticky;
+            top: 0;
+            background: #f7fafc;
+            padding: 10px 0;
+            margin-bottom: 10px;
+            border-bottom: 2px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .recon-item {
+            padding: 12px;
+            background: #fff;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .recon-item:hover { border-color: #4299e1; }
+        .recon-item.selected { border-color: #4299e1; background: #ebf8ff; }
+        .recon-item .header { display: flex; justify-content: space-between; margin-bottom: 5px; }
+        .recon-item .date { font-size: 0.8em; color: #718096; }
+        .recon-item .amount { font-weight: 600; font-family: Consolas; }
+        .recon-item .detail { font-size: 0.85em; color: #4a5568; }
+        .recon-arrow {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        .recon-arrow .icon { font-size: 2em; color: #a0aec0; }
+        .recon-arrow button { white-space: nowrap; }
+        .recon-match-info {
+            text-align: center;
+            padding: 10px;
+            background: #f0fff4;
+            border: 1px solid #9ae6b4;
+            border-radius: 6px;
+            margin-bottom: 10px;
+            font-size: 0.85em;
+            color: #276749;
+        }
+
+        /* 余额调节表 */
+        .balance-report {
+            background: #f7fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 20px;
+        }
+        .balance-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px dashed #e2e8f0;
+        }
+        .balance-row:last-child { border-bottom: none; }
+        .balance-row.total { font-weight: 700; font-size: 1.1em; border-top: 2px solid #2d3748; margin-top: 10px; padding-top: 15px; }
+        .balance-row .label { color: #4a5568; }
+        .balance-row .amount { font-family: "Consolas", monospace; font-weight: 600; }
+        .balance-row .diff { color: #38a169; }
+        .balance-row.diff-row { background: #f0fff4; margin: 10px -20px; padding: 10px 20px; border: none; }
+
+        /* 看板 */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        .dashboard-card {
+            background: #fff;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 20px;
+        }
+        .dashboard-card h4 {
+            color: #2d3748;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .progress-bar {
+            height: 20px;
+            background: #e2e8f0;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+        .progress-bar .fill {
+            height: 100%;
+            border-radius: 10px;
+            transition: width 0.3s;
+        }
+        .progress-bar .fill.green { background: linear-gradient(90deg, #48bb78, #38a169); }
+        .progress-bar .fill.orange { background: linear-gradient(90deg, #ed8936, #dd6b20); }
+        .progress-bar .fill.red { background: linear-gradient(90deg, #fc8181, #e53e3e); }
+
+        /* 图表占位 */
+        .chart-placeholder {
+            background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+            border: 2px dashed #cbd5e0;
+            border-radius: 10px;
+            padding: 40px;
+            text-align: center;
+            color: #718096;
+        }
+    </style>
+</head>
+<body>
+    <div class="page">
+        <div class="header">
+            <h1>🏦 银行日记账与对账管理</h1>
+            <div class="header-info">
+                <span class="user-info">👤 张财务 | 财务部</span>
+            </div>
+        </div>
+
+        <div class="content">
+            <!-- 导航标签 -->
+            <div class="nav-bar">
+                <button class="nav-item active" onclick="switchTab(this, 'tab-account')">📋 银行账户</button>
+                <button class="nav-item" onclick="switchTab(this, 'tab-diary')">📖 企业日记账</button>
+                <button class="nav-item" onclick="switchTab(this, 'tab-statement')">📄 银行流水</button>
+                <button class="nav-item" onclick="switchTab(this, 'tab-recon')">🔗 对账处理</button>
+                <button class="nav-item" onclick="switchTab(this, 'tab-report')">📊 余额调节表</button>
+                <button class="nav-item" onclick="switchTab(this, 'tab-dashboard')">📈 对账看板</button>
+            </div>
+
+            <!-- ==================== 页签1：银行账户 ==================== -->
+            <div id="tab-account" class="tab-content active">
+                <div class="quick-filters">
+                    <button class="quick-filter active">全部账户</button>
+                    <button class="quick-filter">基本户</button>
+                    <button class="quick-filter">一般户</button>
+                    <button class="quick-filter">美元户</button>
+                </div>
+                <div class="stats-row">
+                    <div class="stat-card">
+                        <div class="value">3</div>
+                        <div class="label">银行账户数</div>
+                    </div>
+                    <div class="stat-card success">
+                        <div class="value">¥2,856,000</div>
+                        <div class="label">总余额</div>
+                    </div>
+                    <div class="stat-card warning">
+                        <div class="value">18笔</div>
+                        <div class="label">本月未达账项</div>
+                    </div>
+                    <div class="stat-card danger">
+                        <div class="value">5笔</div>
+                        <div class="label">长期未达(&gt;30天)</div>
+                    </div>
+                </div>
+                <div class="toolbar">
+                    <button class="btn btn-primary" onclick="showModal('addAccount')">➕ 新增账户</button>
+                    <button class="btn btn-secondary">🔄 余额同步</button>
+                    <div class="search-box">
+                        <input type="text" placeholder="搜索账户...">
+                        <button class="btn btn-secondary">🔍</button>
+                    </div>
+                </div>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th class="checkbox-col"><input type="checkbox"></th>
+                                <th>账号</th>
+                                <th>开户行</th>
+                                <th>类型</th>
+                                <th>币种</th>
+                                <th>当前余额</th>
+                                <th>勾对率</th>
+                                <th>未达</th>
+                                <th>状态</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><input type="checkbox"></td>
+                                <td><strong>6217***1234</strong></td>
+                                <td>工商银行深圳分行</td>
+                                <td><span class="badge badge-info">基本户</span></td>
+                                <td>CNY</td>
+                                <td class="amount">¥1,250,000</td>
+                                <td><span style="color:#38a169;font-weight:600;">92%</span></td>
+                                <td><span class="badge badge-warning">8笔</span></td>
+                                <td><span class="badge badge-success">正常</span></td>
+                                <td class="action-btns">
+                                    <button class="btn btn-secondary">✏️</button>
+                                    <button class="btn btn-secondary">🔍</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><input type="checkbox"></td>
+                                <td><strong>6230***5678</strong></td>
+                                <td>农业银行广州支行</td>
+                                <td><span class="badge badge-gray">一般户</span></td>
+                                <td>CNY</td>
+                                <td class="amount">¥986,000</td>
+                                <td><span style="color:#ed8936;font-weight:600;">78%</span></td>
+                                <td><span class="badge badge-danger">10笔</span></td>
+                                <td><span class="badge badge-warning">需关注</span></td>
+                                <td class="action-btns">
+                                    <button class="btn btn-secondary">✏️</button>
+                                    <button class="btn btn-secondary">🔍</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><input type="checkbox"></td>
+                                <td><strong>6225***9012</strong></td>
+                                <td>建设银行北京支行</td>
+                                <td><span class="badge badge-gray">美元户</span></td>
+                                <td>USD</td>
+                                <td class="amount">$86,000</td>
+                                <td><span style="color:#38a169;font-weight:600;">100%</span></td>
+                                <td><span class="badge badge-success">0笔</span></td>
+                                <td><span class="badge badge-success">完成</span></td>
+                                <td class="action-btns">
+                                    <button class="btn btn-secondary">✏️</button>
+                                    <button class="btn btn-secondary">🔍</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- ==================== 页签2：企业日记账 ==================== -->
+            <div id="tab-diary" class="tab-content">
+                <div class="stats-row">
+                    <div class="stat-card success">
+                        <div class="value">¥580,000</div>
+                        <div class="label">本月收款</div>
+                    </div>
+                    <div class="stat-card danger">
+                        <div class="value">¥320,000</div>
+                        <div class="label">本月付款</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="value">156笔</div>
+                        <div class="label">总记录数</div>
+                    </div>
+                    <div class="stat-card warning">
+                        <div class="value">12笔</div>
+                        <div class="label">未勾对</div>
+                    </div>
+                </div>
+                <div class="toolbar">
+                    <button class="btn btn-secondary">➕ 手工登记</button>
+                    <button class="btn btn-secondary">📥 批量导入</button>
+                    <button class="btn btn-secondary">📤 导出</button>
+                    <div class="search-box">
+                        <select><option>全部账户</option></select>
+                        <select><option>全部状态</option><option>已勾对</option><option>未勾对</option></select>
+                        <input type="date"> - <input type="date">
+                        <button class="btn btn-secondary">🔍</button>
+                    </div>
+                </div>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>日期</th>
+                                <th>账号</th>
+                                <th>来源单据</th>
+                                <th>金额</th>
+                                <th>对手方</th>
+                                <th>凭证号</th>
+                                <th>勾对状态</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>2026-04-15</td>
+                                <td>工行基本户</td>
+                                <td>收款单 SK202604001</td>
+                                <td class="amount amount-plus">+¥50,000</td>
+                                <td>深圳市XX公司</td>
+                                <td>PZ-2026-0456</td>
+                                <td><span class="badge badge-success">已勾对</span></td>
+                                <td><button class="btn btn-secondary">🔍</button></td>
+                            </tr>
+                            <tr>
+                                <td>2026-04-14</td>
+                                <td>工行基本户</td>
+                                <td>付款单 FK202604023</td>
+                                <td class="amount amount-minus">-¥28,000</td>
+                                <td>广州YY公司</td>
+                                <td>PZ-2026-0452</td>
+                                <td><span class="badge badge-success">已勾对</span></td>
+                                <td><button class="btn btn-secondary">🔍</button></td>
+                            </tr>
+                            <tr>
+                                <td>2026-04-13</td>
+                                <td>农行一般户</td>
+                                <td>收款单 SK202604008</td>
+                                <td class="amount amount-plus">+¥120,000</td>
+                                <td>东莞ZZ公司</td>
+                                <td>—</td>
+                                <td><span class="badge badge-warning">未勾对</span></td>
+                                <td><button class="btn btn-secondary">🔍</button></td>
+                            </tr>
+                            <tr>
+                                <td>2026-04-12</td>
+                                <td>建行美元户</td>
+                                <td>手工登记</td>
+                                <td class="amount amount-plus">+$5,000</td>
+                                <td>HONGKONG TT</td>
+                                <td>PZ-2026-0448</td>
+                                <td><span class="badge badge-success">已勾对</span></td>
+                                <td><button class="btn btn-secondary">🔍</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="pagination">
+                    <div class="page-info">显示 1-10 条，共 156 条</div>
+                    <div class="page-btns">
+                        <button class="btn btn-secondary" disabled>上一页</button>
+                        <button class="btn btn-secondary">下一页</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ==================== 页签3：银行流水 ==================== -->
+            <div id="tab-statement" class="tab-content">
+                <div class="stats-row">
+                    <div class="stat-card">
+                        <div class="value">89笔</div>
+                        <div class="label">本月流水</div>
+                    </div>
+                    <div class="stat-card success">
+                        <div class="value">¥2,125,000</div>
+                        <div class="label">收入合计</div>
+                    </div>
+                    <div class="stat-card danger">
+                        <div class="value">¥1,450,000</div>
+                        <div class="label">支出合计</div>
+                    </div>
+                    <div class="stat-card warning">
+                        <div class="value">23笔</div>
+                        <div class="label">未勾对</div>
+                    </div>
+                </div>
+                <div class="toolbar">
+                    <button class="btn btn-primary" onclick="showModal('importStatement')">📥 导入流水</button>
+                    <button class="btn btn-secondary">✏️ 手工录入</button>
+                    <button class="btn btn-secondary">📤 导出</button>
+                    <div class="search-box">
+                        <select><option>全部账户</option></select>
+                        <select><option>全部来源</option><option>Excel导入</option><option>手工录入</option></select>
+                        <button class="btn btn-secondary">🔍</button>
+                    </div>
+                </div>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>勾选</th>
+                                <th>交易日期</th>
+                                <th>账号</th>
+                                <th>流水号</th>
+                                <th>收入</th>
+                                <th>支出</th>
+                                <th>余额</th>
+                                <th>对方户名</th>
+                                <th>摘要</th>
+                                <th>来源</th>
+                                <th>勾对</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><input type="checkbox"></td>
+                                <td>2026-04-15</td>
+                                <td>工行基本户</td>
+                                <td>TXN20260415001</td>
+                                <td class="amount amount-plus">+¥50,000</td>
+                                <td>—</td>
+                                <td>¥1,250,000</td>
+                                <td>深圳市XX公司</td>
+                                <td>货款</td>
+                                <td><span class="badge badge-info">Excel</span></td>
+                                <td><span class="badge badge-success">已勾对</span></td>
+                            </tr>
+                            <tr>
+                                <td><input type="checkbox"></td>
+                                <td>2026-04-15</td>
+                                <td>工行基本户</td>
+                                <td>TXN20260415002</td>
+                                <td>—</td>
+                                <td class="amount amount-minus">-¥28,000</td>
+                                <td>¥1,222,000</td>
+                                <td>广州YY公司</td>
+                                <td>货款</td>
+                                <td><span class="badge badge-info">Excel</span></td>
+                                <td><span class="badge badge-success">已勾对</span></td>
+                            </tr>
+                            <tr>
+                                <td><input type="checkbox"></td>
+                                <td>2026-04-14</td>
+                                <td>农行一般户</td>
+                                <td>ABC20260414001</td>
+                                <td class="amount amount-plus">+¥120,000</td>
+                                <td>—</td>
+                                <td>¥986,000</td>
+                                <td>东莞ZZ公司</td>
+                                <td>预付款</td>
+                                <td><span class="badge badge-gray">手工</span></td>
+                                <td><span class="badge badge-warning">未勾对</span></td>
+                            </tr>
+                            <tr>
+                                <td><input type="checkbox"></td>
+                                <td>2026-04-13</td>
+                                <td>建行美元户</td>
+                                <td>CCB20260413005</td>
+                                <td class="amount amount-plus">+$5,000</td>
+                                <td>—</td>
+                                <td>$86,000</td>
+                                <td>HONGKONG TT</td>
+                                <td>货款USD</td>
+                                <td><span class="badge badge-info">Excel</span></td>
+                                <td><span class="badge badge-success">已勾对</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- ==================== 页签4：对账处理 ==================== -->
+            <div id="tab-recon" class="tab-content">
+                <div class="toolbar">
+                    <select style="padding:8px;border:1px solid #e2e8f0;border-radius:6px;">
+                        <option>请选择账户</option>
+                        <option>工商银行-基本户</option>
+                        <option>农业银行-一般户</option>
+                        <option>建设银行-美元户</option>
+                    </select>
+                    <input type="month" value="2026-04" style="padding:8px;border:1px solid #e2e8f0;border-radius:6px;">
+                    <button class="btn btn-success">🔗 开始对账</button>
+                    <button class="btn btn-secondary">⚙️ 自动勾对</button>
+                    <button class="btn btn-warning">🔄 刷新</button>
+                </div>
+
+                <div class="stats-row">
+                    <div class="stat-card">
+                        <div class="value">45</div>
+                        <div class="label">银行流水(未勾对)</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="value">38</div>
+                        <div class="label">企业日记账(未勾对)</div>
+                    </div>
+                    <div class="stat-card success">
+                        <div class="value">12</div>
+                        <div class="label">待确认推荐</div>
+                    </div>
+                    <div class="stat-card warning">
+                        <div class="value">P2</div>
+                        <div class="label">最高匹配规则</div>
+                    </div>
+                </div>
+
+                <div class="recon-container">
+                    <!-- 银行流水 -->
+                    <div class="recon-panel">
+                        <h4>📄 银行流水（未勾对）<span class="badge badge-warning">45笔</span></h4>
+                        <div class="recon-item" onclick="selectItem(this, 'statement')">
+                            <div class="header">
+                                <span class="date">2026-04-15</span>
+                                <span class="amount amount-plus">+¥50,000</span>
+                            </div>
+                            <div class="detail">流水号: TXN20260415001 | 对方: 深圳市XX公司</div>
+                        </div>
+                        <div class="recon-item" onclick="selectItem(this, 'statement')">
+                            <div class="header">
+                                <span class="date">2026-04-15</span>
+                                <span class="amount amount-minus">-¥28,000</span>
+                            </div>
+                            <div class="detail">流水号: TXN20260415002 | 对方: 广州YY公司</div>
+                        </div>
+                        <div class="recon-item" onclick="selectItem(this, 'statement')">
+                            <div class="header">
+                                <span class="date">2026-04-14</span>
+                                <span class="amount amount-plus">+¥120,000</span>
+                            </div>
+                            <div class="detail">流水号: ABC20260414001 | 对方: 东莞ZZ公司</div>
+                        </div>
+                        <div class="recon-item" onclick="selectItem(this, 'statement')">
+                            <div class="header">
+                                <span class="date">2026-04-13</span>
+                                <span class="amount amount-plus">+$5,000</span>
+                            </div>
+                            <div class="detail">流水号: CCB20260413005 | 对方: HONGKONG TT</div>
+                        </div>
+                    </div>
+
+                    <!-- 操作区 -->
+                    <div class="recon-arrow">
+                        <button class="btn btn-success" disabled id="btnMatch">➕ 勾对</button>
+                        <button class="btn btn-secondary" disabled id="btnCancel">❌ 取消</button>
+                    </div>
+
+                    <!-- 企业日记账 -->
+                    <div class="recon-panel">
+                        <h4>📖 企业日记账（未勾对）<span class="badge badge-warning">38笔</span></h4>
+                        <div class="recon-item" onclick="selectItem(this, 'diary')">
+                            <div class="header">
+                                <span class="date">2026-04-15</span>
+                                <span class="amount amount-plus">+¥50,000</span>
+                            </div>
+                            <div class="detail">单据: SK202604001 | 客户: 深圳市XX公司</div>
+                            <div class="recon-match-info">💡 推荐匹配（P2:金额日期）</div>
+                        </div>
+                        <div class="recon-item" onclick="selectItem(this, 'diary')">
+                            <div class="header">
+                                <span class="date">2026-04-15</span>
+                                <span class="amount amount-minus">-¥28,000</span>
+                            </div>
+                            <div class="detail">单据: FK202604023 | 供应商: 广州YY公司</div>
+                            <div class="recon-match-info">💡 推荐匹配（P2:金额日期）</div>
+                        </div>
+                        <div class="recon-item" onclick="selectItem(this, 'diary')">
+                            <div class="header">
+                                <span class="date">2026-04-14</span>
+                                <span class="amount amount-plus">+¥120,000</span>
+                            </div>
+                            <div class="detail">单据: SK202604008 | 客户: 东莞ZZ公司</div>
+                        </div>
+                        <div class="recon-item" onclick="selectItem(this, 'diary')">
+                            <div class="header">
+                                <span class="date">2026-04-13</span>
+                                <span class="amount amount-plus">+$5,000</span>
+                            </div>
+                            <div class="detail">单据: SK202604005 | 客户: HONGKONG TT</div>
+                            <div class="recon-match-info">💡 推荐匹配（P3:对手金额）</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ==================== 页签5：余额调节表 ==================== -->
+            <div id="tab-report" class="tab-content">
+                <div class="toolbar">
+                    <select style="padding:8px;border:1px solid #e2e8f0;border-radius:6px;">
+                        <option>全部账户</option>
+                        <option>工商银行-基本户</option>
+                        <option>农业银行-一般户</option>
+                    </select>
+                    <select style="padding:8px;border:1px solid #e2e8f0;border-radius:6px;">
+                        <option>2026年</option>
+                        <option>2026年3月</option>
+                        <option>2026年2月</option>
+                    </select>
+                    <select style="padding:8px;border:1px solid #e2e8f0;border-radius:6px;">
+                        <option>全部状态</option>
+                        <option>草稿</option>
+                        <option>已确认</option>
+                    </select>
+                    <button class="btn btn-primary">📊 生成调节表</button>
+                    <button class="btn btn-secondary">📤 导出PDF</button>
+                    <button class="btn btn-secondary">🖨️ 打印</button>
+                </div>
+
+                <div class="balance-report">
+                    <h4>📋 工商银行-基本户 余额调节表（2026年4月）</h4>
+                    <div class="balance-row">
+                        <span class="label">银行对账单余额</span>
+                        <span class="amount">¥1,250,000.00</span>
+                    </div>
+                    <div class="balance-row">
+                        <span class="label">加：银行已收企业未收</span>
+                        <span class="amount">+ ¥45,000.00 <span style="font-size:0.8em;color:#718096;">(2笔)</span></span>
+                    </div>
+                    <div class="balance-row">
+                        <span class="label">减：银行已付企业未付</span>
+                        <span class="amount">- ¥12,000.00 <span style="font-size:0.8em;color:#718096;">(1笔)</span></span>
+                    </div>
+                    <div class="balance-row total">
+                        <span class="label">调节后余额</span>
+                        <span class="amount">¥1,283,000.00</span>
+                    </div>
+
+                    <hr style="margin:20px 0;border:none;border-top:2px solid #2d3748;">
+
+                    <div class="balance-row">
+                        <span class="label">企业银行日记账余额</span>
+                        <span class="amount">¥1,283,000.00</span>
+                    </div>
+                    <div class="balance-row">
+                        <span class="label">加：企业已收银行未收</span>
+                        <span class="amount">+ ¥38,000.00 <span style="font-size:0.8em;color:#718096;">(3笔)</span></span>
+                    </div>
+                    <div class="balance-row">
+                        <span class="label">减：企业已付银行未付</span>
+                        <span class="amount">- ¥5,000.00 <span style="font-size:0.8em;color:#718096;">(2笔)</span></span>
+                    </div>
+                    <div class="balance-row total">
+                        <span class="label">调节后余额</span>
+                        <span class="amount">¥1,316,000.00</span>
+                    </div>
+
+                    <div class="balance-row diff-row" style="background:#f0fff4;border:1px solid #9ae6b4;margin:15px 0;padding:15px;border-radius:8px;">
+                        <span class="label">两方调节后余额差额</span>
+                        <span class="amount diff">¥0.00 ✓ 账账相符</span>
+                    </div>
+
+                    <div style="margin-top:20px;padding:15px;background:#fffbf0;border:1px solid #f6e05e;border-radius:8px;">
+                        <h5 style="color:#975a16;margin-bottom:10px;">⚠️ 未达账项明细</h5>
+                        <table style="font-size:0.85em;">
+                            <tr><th>类型</th><th>日期</th><th>金额</th><th>说明</th></tr>
+                            <tr><td>银行已收</td><td>04-28</td><td>¥30,000</td><td>转账未到账</td></tr>
+                            <tr><td>银行已收</td><td>04-30</td><td>¥15,000</td><td>客户汇款在途</td></tr>
+                            <tr><td>银行已付</td><td>04-25</td><td>¥12,000</td><td>未达供应商付款</td></tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ==================== 页签6：对账看板 ==================== -->
+            <div id="tab-dashboard" class="tab-content">
+                <div class="stats-row">
+                    <div class="stat-card success">
+                        <div class="value">89%</div>
+                        <div class="label">本月整体勾对率</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="value">3个</div>
+                        <div class="label">账户数</div>
+                    </div>
+                    <div class="stat-card warning">
+                        <div class="value">23笔</div>
+                        <div class="label">未达账项</div>
+                    </div>
+                    <div class="stat-card danger">
+                        <div class="value">5笔</div>
+                        <div class="label">长期未达(>30天)</div>
+                    </div>
+                </div>
+
+                <div class="toolbar">
+                    <select style="padding:8px;border:1px solid #e2e8f0;border-radius:6px;">
+                        <option>2026年4月</option>
+                        <option>2026年3月</option>
+                    </select>
+                    <button class="btn btn-secondary">📤 导出报表</button>
+                </div>
+
+                <div class="dashboard-grid">
+                    <!-- 账户1 -->
+                    <div class="dashboard-card">
+                        <h4>🏦 工商银行-基本户 <span class="badge badge-success">正常</span></h4>
+                        <div style="display:flex;justify-content:space-between;margin-bottom:10px;">
+                            <span style="color:#718096;">勾对进度</span>
+                            <span style="font-weight:600;color:#38a169;">92% (23/25)</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="fill green" style="width:92%;"></div>
+                        </div>
+                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:15px;font-size:0.9em;">
+                            <div><span style="color:#718096;">余额</span><br><strong>¥1,250,000</strong></div>
+                            <div><span style="color:#718096;">未达</span><br><strong class="badge badge-warning">8笔</strong></div>
+                        </div>
+                    </div>
+
+                    <!-- 账户2 -->
+                    <div class="dashboard-card">
+                        <h4>🏦 农业银行-一般户 <span class="badge badge-warning">需关注</span></h4>
+                        <div style="display:flex;justify-content:space-between;margin-bottom:10px;">
+                            <span style="color:#718096;">勾对进度</span>
+                            <span style="font-weight:600;color:#ed8936;">78% (18/23)</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="fill orange" style="width:78%;"></div>
+                        </div>
+                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:15px;font-size:0.9em;">
+                            <div><span style="color:#718096;">余额</span><br><strong>¥986,000</strong></div>
+                            <div><span style="color:#718096;">未达</span><br><strong class="badge badge-danger">10笔</strong></div>
+                        </div>
+                    </div>
+
+                    <!-- 账户3 -->
+                    <div class="dashboard-card">
+                        <h4>🏦 建设银行-美元户 <span class="badge badge-success">完成</span></h4>
+                        <div style="display:flex;justify-content:space-between;margin-bottom:10px;">
+                            <span style="color:#718096;">勾对进度</span>
+                            <span style="font-weight:600;color:#38a169;">100% (8/8)</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="fill green" style="width:100%;"></div>
+                        </div>
+                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:15px;font-size:0.9em;">
+                            <div><span style="color:#718096;">余额</span><br><strong>$86,000</strong></div>
+                            <div><span style="color:#718096;">未达</span><br><strong class="badge badge-success">0笔</strong></div>
+                        </div>
+                    </div>
+
+                    <!-- 趋势图占位 -->
+                    <div class="dashboard-card" style="grid-column:span 2;">
+                        <h4>📈 对账趋势（近6个月）</h4>
+                        <div class="chart-placeholder">
+                            趋势图区域<br>
+                            <small>勾对率走势：98% → 95% → 92% → 89% → 91% → 89%</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 弹窗 -->
+    <div class="modal" id="addAccount">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>🏦 新增银行账户</h3>
+                <button class="modal-close" onclick="closeModal('addAccount')">×</button>
+            </div>
+            <form onsubmit="event.preventDefault();closeModal('addAccount');alert('保存成功！');">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>银行代码 *</label>
+                        <select required>
+                            <option value="">请选择银行</option>
+                            <option value="ICBC">工商银行</option>
+                            <option value="ABC">农业银行</option>
+                            <option value="CCB">建设银行</option>
+                            <option value="BOC">中国银行</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>账户类型 *</label>
+                        <select required>
+                            <option value="">请选择</option>
+                            <option value="BASIC">基本户</option>
+                            <option value="GENERAL">一般户</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>银行账号 *</label>
+                    <input type="text" placeholder="请输入账号" required>
+                </div>
+                <div class="form-group">
+                    <label>开户行名称 *</label>
+                    <input type="text" placeholder="如：工商银行深圳南山支行" required>
+                </div>
+                <div class="form-group">
+                    <label>账户名称 *</label>
+                    <input type="text" placeholder="与印鉴一致的账户名称" required>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>币种 *</label>
+                        <select required>
+                            <option value="CNY" selected>人民币(CNY)</option>
+                            <option value="USD">美元(USD)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>初始余额</label>
+                        <input type="number" placeholder="0.00">
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('addAccount')">取消</button>
+                    <button type="submit" class="btn btn-primary">保存</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 导入流水弹窗 -->
+    <div class="modal" id="importStatement">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>📥 导入银行流水</h3>
+                <button class="modal-close" onclick="closeModal('importStatement')">×</button>
+            </div>
+            <div style="text-align:center;padding:30px;">
+                <div style="font-size:3em;margin-bottom:15px;">📊</div>
+                <p style="color:#4a5568;margin-bottom:20px;">拖拽Excel/CSV文件到此处，或点击上传</p>
+                <input type="file" accept=".xlsx,.xls,.csv" style="margin-bottom:20px;">
+                <div style="font-size:0.85em;color:#718096;">
+                    <p>支持格式：Excel(.xlsx/.xls)、CSV(.csv)</p>
+                    <p style="margin-top:5px;"><a href="#" style="color:#4299e1;">下载导入模板</a></p>
+                </div>
+            </div>
+            <div class="form-actions">
+                <button class="btn btn-secondary" onclick="closeModal('importStatement')">取消</button>
+                <button class="btn btn-primary" onclick="closeModal('importStatement');alert('文件解析成功！');">确认导入</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function switchTab(btn, tabId) {
+            // 切换标签
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            btn.classList.add('active');
+            // 切换内容
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+        }
+
+        function showModal(id) { document.getElementById(id).classList.add('show'); }
+        function closeModal(id) { document.getElementById(id).classList.remove('show'); }
+
+        // 对账选择
+        let selectedStatement = null;
+        let selectedDiary = null;
+
+        function selectItem(el, type) {
+            if (type === 'statement') {
+                if (selectedStatement) selectedStatement.classList.remove('selected');
+                selectedStatement = el;
+                el.classList.add('selected');
+            } else {
+                if (selectedDiary) selectedDiary.classList.remove('selected');
+                selectedDiary = el;
+                el.classList.add('selected');
+            }
+            updateMatchButtons();
+        }
+
+        function updateMatchButtons() {
+            const btnMatch = document.getElementById('btnMatch');
+            const btnCancel = document.getElementById('btnCancel');
+            const canMatch = selectedStatement && selectedDiary;
+            btnMatch.disabled = !canMatch;
+            btnCancel.disabled = !canMatch;
+        }
+
+        // 弹窗外点击关闭
+        document.querySelectorAll('.modal').forEach(modal => {
+            modal.addEventListener('click', function(e) {
+                if (e.target === this) closeModal(this.id);
+            });
+        });
+    </script>
+</body>
+</html>
