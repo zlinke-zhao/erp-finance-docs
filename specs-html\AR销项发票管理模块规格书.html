@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AR销项发票管理模块</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: 'PingFang SC', 'Microsoft YaHei', -apple-system, sans-serif;
+  background: #f8fafc;
+  color: #334155;
+  line-height: 1.8;
+  font-size: 15px;
+}
+.container {
+  max-width: 960px;
+  margin: 0 auto;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+  padding: 3rem 3.5rem;
+}
+.back-link {
+  display: inline-block;
+  margin-bottom: 1.5rem;
+  color: #6366f1;
+  text-decoration: none;
+  font-size: 0.875rem;
+}
+.back-link:hover { text-decoration: underline; }
+.doc-header {
+  border-bottom: 3px solid #6366f1;
+  padding-bottom: 1.5rem;
+  margin-bottom: 2rem;
+}
+.doc-header h1 {
+  font-size: 1.75rem;
+  color: #1e293b;
+  margin-bottom: 0.75rem;
+}
+.doc-meta {
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  font-size: 0.85rem;
+  color: #64748b;
+}
+.doc-meta span { background: #f1f5f9; padding: 0.25rem 0.75rem; border-radius: 20px; }
+.content h1 { font-size: 1.4rem; margin: 2rem 0 1rem; color: #6366f1; border-bottom: 2px solid #e2e8f0; padding-bottom: 0.5rem; }
+.content h2 { font-size: 1.2rem; margin: 1.75rem 0 0.75rem; color: #1e293b; }
+.content h3 { font-size: 1.05rem; margin: 1.25rem 0 0.5rem; color: #475569; }
+.content h4 { font-size: 1rem; margin: 1rem 0 0.5rem; color: #64748b; }
+.content p { margin: 0.75rem 0; }
+.content ul, .content ol { margin: 0.75rem 0; padding-left: 1.75rem; }
+.content li { margin: 0.4rem 0; }
+.content table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.25rem 0;
+  font-size: 0.875rem;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid #e2e8f0;
+}
+.content th, .content td {
+  border: 1px solid #e2e8f0;
+  padding: 0.75rem 1rem;
+  text-align: left;
+}
+.content th { background: #f1f5f9; font-weight: 600; color: #1e293b; }
+.content tr:hover td { background: #fafbfc; }
+.content pre {
+  background: #1e293b;
+  color: #e2e8f0;
+  padding: 1.25rem;
+  border-radius: 8px;
+  overflow-x: auto;
+  margin: 1rem 0;
+  font-size: 0.8rem;
+  line-height: 1.6;
+}
+.content code {
+  background: #f1f5f9;
+  color: #6366f1;
+  padding: 0.15rem 0.4rem;
+  border-radius: 4px;
+  font-size: 0.85em;
+  font-family: 'Consolas', monospace;
+}
+.content pre code {
+  background: transparent;
+  color: inherit;
+  padding: 0;
+}
+.content blockquote {
+  border-left: 4px solid #6366f1;
+  margin: 1rem 0;
+  padding: 0.75rem 1.25rem;
+  background: #f8fafc;
+  color: #475569;
+}
+.content strong { color: #1e293b; }
+.content hr { border: none; border-top: 2px solid #e2e8f0; margin: 2rem 0; }
+</style>
+</head>
+<body>
+<div class="container">
+  <a href="../index.html" class="back-link">&larr; 返回目录</a>
+  <div class="doc-header">
+    <h1>AR销项发票管理模块</h1>
+    <div class="doc-meta">
+      <span>📋 V1.0</span>
+      <span>📅 2026-04-20</span>
+      <span>🏢 Dev_Dept</span>
+    </div>
+  </div>
+  <div class="content">
+<h1>AR销项发票管理模块 — 需求分析与技术规格说明书</h1>
+<h2>AR Sales Invoice Management Module — Technical Specification</h2>
+<blockquote><p><strong>项目</strong>: Dev_Dept ERP 财务管理系统</p></blockquote>
+<blockquote><p><strong>模块</strong>: AR销项发票管理 (Accounts Receivable Sales Invoice Management)</p></blockquote>
+<blockquote><p><strong>版本</strong>: v1.0</p></blockquote>
+<blockquote><p><strong>日期</strong>: 2026-04-20</p></blockquote>
+<blockquote><p><strong>对标系统</strong>: 金蝶云星空 → 应收管理 → 销项发票/销售开票</p></blockquote>
+<blockquote><p><strong>关联模块</strong>: 实收收款模块规格书.md（下游收款）→ 本模块（全流程）→ 税务管理模块规格书.md（销项税申报）→ 总账凭证引擎规格书.md（凭证落地）</p></blockquote>
+<blockquote><p><strong>优先级</strong>: <strong>P0（核心缺失）</strong> — 连接销售业务与税务开票的关键桥梁</p></blockquote>
+<blockquote><p><strong>状态</strong>: 规格设计阶段</p></blockquote>
+<hr>
+<h2>1. 模块定位与业务目标</h2>
+<h3>1.1 一句话定义</h3>
+<p><strong>AR销项发票管理模块是ERP系统中"订单到收款(O2C)"流程的税务锚点，负责从销售业务出发，经过开票申请、金税开票/全电开票、发票交付、收入确认、销项税申报，最终生成应收凭证写入总账的全流程管理。</strong></p>
+<h3>1.2 在整体流程中的位置</h3>
+<pre><code>
+┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────────────────┐
+│ 销售报价  │─▶│ 销售订单  │─▶│ 发货出库  │─▶│ 客户要求开票       │
+│ QT       │  │ SO       │  │ DN       │  │ (纸质/全电/专用)   │
+└──────────┘  └──────────┘  └──────────┘  └────────┬─────────┘
+                                                       │
+                                                       ▼
+                              ┌─────────────────────────────────────┐
+                              │  🧾 AR销项发票管理 (本模块)          │
+                              │  开票→交付→收入确认→凭证→税务申报    │
+                              └──────────┬──────────────────────────┘
+                                         │
+                    ┌────────────────────┼────────────────────┐
+                    ▼                    ▼                    ▼
+             ┌──────────┐        ┌──────────┐        ┌──────────┐
+             │ 💰 实收收款 │        │ 🧾 总账凭证 │        │ 🏛️ 税务管理 │
+             │ (下游收款) │        │ (凭证落地) │        │ (销项税申报) │
+             └──────────┘        └──────────┘        └──────────┘
+</pre>
+<h3>1.3 与AP进项发票的镜像关系</h3>
+<table><thead>
+<tr><th>维度</th><th>AP进项发票（采购端）</th><th>AR销项发票（销售端）</th></tr>
+</thead><tbody>
+<tr><td>发票方向</td><td>供应商→我们（收票）</td><td>我们→客户（开票）</td></tr>
+<tr><td>触发起点</td><td>收到供应商发票</td><td>销售业务需开票</td></tr>
+<tr><td>匹配逻辑</td><td>三单匹配（PO+GR+Invoice）</td><td>开票匹配（SO+DN+Invoice）</td></tr>
+<tr><td>税务处理</td><td>进项认证→抵扣</td><td>销项开票→申报</td></tr>
+<tr><td>凭证方向</td><td>借:库存/费用 借:进项税 贷:应付</td><td>借:应收 贷:收入 贷:销项税</td></tr>
+<tr><td>下游模块</td><td>实付付款</td><td>实收收款</td></tr>
+<tr><td>凭证编码</td><td>AP01~AP07</td><td>AR01~AR07</td></tr>
+</tbody>
+</table>
+<h3>1.4 核心业务目标</h3>
+<table><thead>
+<tr><th>目标</th><th>指标</th><th>当前痛点</th></tr>
+</thead><tbody>
+<tr><td><strong>开票自动化</strong></td><td>全电发票自动开票率≥80%</td><td>手工金税系统逐张开票</td></tr>
+<tr><td><strong>税控准确率</strong></td><td>开票金额与SO/DN差异≤0.01%</td><td>人工核对容易出错</td></tr>
+<tr><td><strong>收入确认及时</strong></td><td>开票后≤1天完成收入确认</td><td>开票与入账脱节</td></tr>
+<tr><td><strong>发票交付效率</strong></td><td>全电发票≤5分钟送达客户</td><td>纸质发票邮寄2-3天</td></tr>
+<tr><td><strong>销项税完整</strong></td><td>100%销项发票纳入税务申报</td><td>漏报/错报风险</td></tr>
+<tr><td><strong>红字规范</strong></td><td>红字发票100%走规范流程</td><td>随意开红字、冲销混乱</td></tr>
+</tbody>
+</table>
+<h3>1.5 用户角色</h3>
+<table><thead>
+<tr><th>角色</th><th>权限范围</th><th>典型操作</th></tr>
+</thead><tbody>
+<tr><td><strong>销售助理</strong></td><td>申请开票、查看开票进度</td><td>提交开票申请、查询发票状态</td></tr>
+<tr><td><strong>财务会计</strong></td><td>审核开票、开具发票、入账确认</td><td>审核开票申请、金税开票、确认收入</td></tr>
+<tr><td><strong>财务主管</strong></td><td>审批异常、红字审批、参数配置</td><td>审批红字发票、配置开票规则</td></tr>
+<tr><td><strong>税务专员</strong></td><td>税务申报、销项税核对</td><td>月度销项汇总、申报表核对</td></tr>
+<tr><td><strong>系统管理员</strong></td><td>金税接口配置、开票参数</td><td>金税参数、开票限额、税码配置</td></tr>
+</tbody>
+</table>
+<hr>
+<h2>2. 功能需求清单</h2>
+<h3>2.1 功能全景图</h3>
+<pre><code>
+┌─────────────────────────────────────────────────────────────────┐
+│                    AR销项发票管理模块功能架构                       │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│  ┌────────────┐  ┌────────────┐  ┌────────────┐                │
+│  │ 🔵 开票申请 │  │ 🟠 发票开具 │  │ 🟢 发票交付 │                │
+│  │ 管理       │  │ 管理       │  │ 管理       │                │
+│  ├────────────┤  ├────────────┤  ├────────────┤                │
+│  │ • 自动开票 │  │ • 金税开票  │  │ • 全电交付  │                │
+│  │ • 手动申请 │  │ • 全电开票  │  │ • 邮寄管理  │                │
+│  │ • 合并开票 │  │ • 批量开票  │  │ • 交付确认  │                │
+│  │ • 拆分开票 │  │ • 红字开票  │  │ • 交付追踪  │                │
+│  └────────────┘  └────────────┘  └────────────┘                │
+│                                                                 │
+│  ┌────────────┐  ┌────────────┐  ┌────────────┐                │
+│  │ 🟣 收入确认 │  │ 🔴 红字冲红 │  │ 🟤 销项税务 │                │
+│  │ 处理       │  │ 管理       │  │ 管理       │                │
+│  ├────────────┤  ├────────────┤  ├────────────┤                │
+│  │ • 自动确认 │  │ • 红字申请  │  │ • 销项汇总  │                │
+│  │ • 凭证生成 │  │ • 客户确认  │  │ • 申报对接  │                │
+│  │ • 暂估调整 │  │ • 冲红凭证  │  │ • 税负分析  │                │
+│  │ • 汇率处理 │  │ • 退换票    │  │ • 开票限额  │                │
+│  └────────────┘  └────────────┘  └────────────┘                │
+│                                                                 │
+│  ┌──────────────────────────────────────────────────┐           │
+│  │ ⚙️ 基础配置: 税码/开票类型/客户开票信息/商品税收编码  │           │
+│  └──────────────────────────────────────────────────┘           │
+└─────────────────────────────────────────────────────────────────┘
+</pre>
+<h3>2.2 功能需求明细</h3>
+<h4>F1 — 开票申请管理</h4>
+<table><thead>
+<tr><th>编号</th><th>功能</th><th>描述</th><th>优先级</th></tr>
+</thead><tbody>
+<tr><td>F1-01</td><td>自动开票触发</td><td>SO发货确认后自动生成开票申请（可配置触发条件）</td><td>P0</td></tr>
+<tr><td>F1-02</td><td>手动开票申请</td><td>销售助理手动提交开票申请（关联SO/无SO）</td><td>P0</td></tr>
+<tr><td>F1-03</td><td>合并开票</td><td>多个SO/DN合并为一张发票（同一客户+同一税码）</td><td>P1</td></tr>
+<tr><td>F1-04</td><td>拆分开票</td><td>一个SO拆分为多张发票（分批开票/多税码）</td><td>P1</td></tr>
+<tr><td>F1-05</td><td>开票金额校验</td><td>开票金额≤未开票金额，超额拦截</td><td>P0</td></tr>
+<tr><td>F1-06</td><td>开票信息预填</td><td>自动从SO/客户主数据预填开票信息</td><td>P0</td></tr>
+<tr><td>F1-07</td><td>开票审批流</td><td>金额≥¥50万或红字发票需审批</td><td>P0</td></tr>
+<tr><td>F1-08</td><td>开票申请撤回</td><td>未审核前可撤回</td><td>P1</td></tr>
+</tbody>
+</table>
+<h4>F2 — 发票开具管理</h4>
+<table><thead>
+<tr><th>编号</th><th>功能</th><th>描述</th><th>优先级</th></tr>
+</thead><tbody>
+<tr><td>F2-01</td><td>金税盘开票</td><td>通过金税接口在税控盘中开具增值税专用/普通发票</td><td>P0</td></tr>
+<tr><td>F2-02</td><td>全电发票开具</td><td>通过电子发票服务平台开具全电发票</td><td>P0</td></tr>
+<tr><td>F2-03</td><td>纸质发票打印</td><td>金税发票打印+邮寄管理</td><td>P1</td></tr>
+<tr><td>F2-04</td><td>批量开票</td><td>多张申请一次性开票（月度集中开票场景）</td><td>P1</td></tr>
+<tr><td>F2-05</td><td>发票作废</td><td>当月开具的发票可作废（跨月走红字）</td><td>P0</td></tr>
+<tr><td>F2-06</td><td>发票号码分配</td><td>金税盘号码段管理/全电自动分配</td><td>P0</td></tr>
+<tr><td>F2-07</td><td>开票限额检查</td><td>单张/月累计开票限额校验</td><td>P0</td></tr>
+<tr><td>F2-08</td><td>商品税收编码</td><td>自动匹配商品→税收分类编码</td><td>P0</td></tr>
+</tbody>
+</table>
+<h4>F3 — 发票交付管理</h4>
+<table><thead>
+<tr><th>编号</th><th>功能</th><th>描述</th><th>优先级</th></tr>
+</thead><tbody>
+<tr><td>F3-01</td><td>全电发票自动交付</td><td>开票后自动推送至客户邮箱/手机</td><td>P0</td></tr>
+<tr><td>F3-02</td><td>纸质发票邮寄登记</td><td>快递单号、签收状态跟踪</td><td>P1</td></tr>
+<tr><td>F3-03</td><td>交付确认</td><td>客户确认收到发票（系统/人工）</td><td>P1</td></tr>
+<tr><td>F3-04</td><td>交付提醒</td><td>超期未送达自动提醒</td><td>P2</td></tr>
+<tr><td>F3-05</td><td>发票下载链接</td><td>生成PDF下载链接供客户自助下载</td><td>P1</td></tr>
+</tbody>
+</table>
+<h4>F4 — 收入确认处理</h4>
+<table><thead>
+<tr><th>编号</th><th>功能</th><th>描述</th><th>优先级</th></tr>
+</thead><tbody>
+<tr><td>F4-01</td><td>开票即确认收入</td><td>开票后自动生成收入确认+应收凭证</td><td>P0</td></tr>
+<tr><td>F4-02</td><td>分期确认收入</td><td>按合同约定分期确认收入（多期凭证）</td><td>P1</td></tr>
+<tr><td>F4-03</td><td>外币收入折算</td><td>外币发票按汇率折算本位币入账</td><td>P1</td></tr>
+<tr><td>F4-04</td><td>暂估收入调整</td><td>已暂估收入→实际开票后差异调整</td><td>P2</td></tr>
+<tr><td>F4-05</td><td>自动生成凭证（触发AR01~AR07）</td><td>与总账凭证引擎无缝衔接</td><td>P0</td></tr>
+<tr><td>F4-06</td><td>收入确认撤回</td><td>入账前可撤回，入账后走红字冲销</td><td>P0</td></tr>
+</tbody>
+</table>
+<h4>F5 — 红字冲红管理</h4>
+<table><thead>
+<tr><th>编号</th><th>功能</th><th>描述</th><th>优先级</th></tr>
+</thead><tbody>
+<tr><td>F5-01</td><td>红字信息表申请</td><td>需先申请红字信息表（购买方确认/销售方单方）</td><td>P0</td></tr>
+<tr><td>F5-02</td><td>客户确认流程</td><td>购买方2日内确认，超时自动确认</td><td>P0</td></tr>
+<tr><td>F5-03</td><td>红字发票开具</td><td>信息表审核通过后开具红字发票</td><td>P0</td></tr>
+<tr><td>F5-04</td><td>部分红冲</td><td>部分退货/折让，红冲部分金额</td><td>P1</td></tr>
+<tr><td>F5-05</td><td>全额红冲</td><td>全额退货，红冲全部金额</td><td>P0</td></tr>
+<tr><td>F5-06</td><td>冲红凭证自动生成</td><td>AR06红字冲回凭证</td><td>P0</td></tr>
+<tr><td>F5-07</td><td>退换票管理</td><td>退票→换票流程管理</td><td>P2</td></tr>
+</tbody>
+</table>
+<h4>F6 — 销项税务管理</h4>
+<table><thead>
+<tr><th>编号</th><th>功能</th><th>描述</th><th>优先级</th></tr>
+</thead><tbody>
+<tr><td>F6-01</td><td>销项税月度汇总</td><td>按月汇总销项税额，对接税务申报</td><td>P0</td></tr>
+<tr><td>F6-02</td><td>销项税额核对</td><td>销项发票总税额 vs 申报表数据</td><td>P0</td></tr>
+<tr><td>F6-03</td><td>开票限额预警</td><td>月度开票额接近限额预警</td><td>P1</td></tr>
+<tr><td>F6-04</td><td>零税率/免税发票管理</td><td>出口免税/零税率发票单独统计</td><td>P1</td></tr>
+<tr><td>F6-05</td><td>税负率分析</td><td>销项-进项/收入 税负率监控</td><td>P2</td></tr>
+</tbody>
+</table>
+<hr>
+<h2>3. 数据库设计</h2>
+<h3>3.1 ER关系图</h3>
+<pre><code>
+ar_invoice_apply ──1:N──▶ ar_invoice_apply_line
+       │
+       │ 1:1
+       ▼
+ar_invoice ──1:N──▶ ar_invoice_item
+       │
+       ├──1:1──▶ ar_invoice_deliver
+       ├──1:1──▶ ar_revenue_confirm
+       └──1:N──▶ ar_red_letter
+</pre>
+<h3>3.2 DDL — 核心表</h3>
+<h4>3.2.1 ar_invoice_apply — 开票申请表</h4>
+<pre><code>
+CREATE TABLE ar_invoice_apply (
+    apply_id          BIGINT PRIMARY KEY AUTO_INCREMENT,
+    apply_no          VARCHAR(32) NOT NULL UNIQUE COMMENT &#x27;申请单号 AR-AP-YYYYMMDD-NNN&#x27;,
+    so_id             BIGINT COMMENT &#x27;关联销售订单ID&#x27;,
+    so_no             VARCHAR(32) COMMENT &#x27;关联销售订单号&#x27;,
+    customer_id       BIGINT NOT NULL COMMENT &#x27;客户ID&#x27;,
+    customer_name     VARCHAR(200) NOT NULL COMMENT &#x27;客户名称&#x27;,
+    taxpayer_no       VARCHAR(30) COMMENT &#x27;客户纳税人识别号&#x27;,
+    invoice_type      VARCHAR(20) NOT NULL COMMENT &#x27;发票类型: SPECIAL/COMMON/FULL_ELECTRONIC&#x27;,
+    invoice_region    CHAR(2) DEFAULT &#x27;CN&#x27; COMMENT &#x27;开票区域: CN国内/海外走海外模块&#x27;,
+    apply_amount      DECIMAL(18,2) NOT NULL COMMENT &#x27;申请开票金额(含税)&#x27;,
+    tax_amount        DECIMAL(18,2) NOT NULL COMMENT &#x27;申请税额&#x27;,
+    exclude_tax_amount DECIMAL(18,2) NOT NULL COMMENT &#x27;不含税金额&#x27;,
+    currency          VARCHAR(3) DEFAULT &#x27;CNY&#x27; COMMENT &#x27;币种&#x27;,
+    merge_flag        TINYINT DEFAULT 0 COMMENT &#x27;合并开票标志 0否1是&#x27;,
+    merge_source_ids  JSON COMMENT &#x27;合并来源申请ID列表&#x27;,
+    status            VARCHAR(20) NOT NULL DEFAULT &#x27;DRAFT&#x27; COMMENT &#x27;状态: DRAFT/PENDING_REVIEW/APPROVED/INVOICED/CANCELLED&#x27;,
+    apply_user_id     BIGINT COMMENT &#x27;申请人ID&#x27;,
+    apply_date        DATETIME NOT NULL COMMENT &#x27;申请日期&#x27;,
+    review_user_id    BIGINT COMMENT &#x27;审核人ID&#x27;,
+    review_date       DATETIME COMMENT &#x27;审核日期&#x27;,
+    remark            VARCHAR(500) COMMENT &#x27;备注&#x27;,
+    created_at        DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at        DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    INDEX idx_so (so_id),
+    INDEX idx_customer (customer_id),
+    INDEX idx_status (status),
+    INDEX idx_date (apply_date)
+) COMMENT &#x27;AR开票申请表&#x27;;
+</pre>
+<h4>3.2.2 ar_invoice_apply_line — 开票申请明细</h4>
+<pre><code>
+CREATE TABLE ar_invoice_apply_line (
+    line_id           BIGINT PRIMARY KEY AUTO_INCREMENT,
+    apply_id          BIGINT NOT NULL COMMENT &#x27;申请ID&#x27;,
+    dn_id             BIGINT COMMENT &#x27;发货单ID&#x27;,
+    dn_no             VARCHAR(32) COMMENT &#x27;发货单号&#x27;,
+    product_id        BIGINT NOT NULL COMMENT &#x27;商品ID&#x27;,
+    product_name      VARCHAR(200) NOT NULL COMMENT &#x27;商品名称&#x27;,
+    tax_category_code VARCHAR(30) NOT NULL COMMENT &#x27;税收分类编码&#x27;,
+    unit_price        DECIMAL(18,4) NOT NULL COMMENT &#x27;单价(不含税)&#x27;,
+    quantity          DECIMAL(18,4) NOT NULL COMMENT &#x27;数量&#x27;,
+    tax_rate          DECIMAL(6,4) NOT NULL COMMENT &#x27;税率&#x27;,
+    line_amount       DECIMAL(18,2) NOT NULL COMMENT &#x27;行金额(不含税)&#x27;,
+    line_tax          DECIMAL(18,2) NOT NULL COMMENT &#x27;行税额&#x27;,
+    line_total        DECIMAL(18,2) NOT NULL COMMENT &#x27;行价税合计&#x27;,
+    discount_rate     DECIMAL(6,4) DEFAULT 0 COMMENT &#x27;折扣率&#x27;,
+    remark            VARCHAR(200) COMMENT &#x27;行备注&#x27;,
+    INDEX idx_apply (apply_id),
+    FOREIGN KEY (apply_id) REFERENCES ar_invoice_apply(apply_id)
+) COMMENT &#x27;AR开票申请明细表&#x27;;
+</pre>
+<h4>3.2.3 ar_invoice — 销项发票表</h4>
+<pre><code>
+CREATE TABLE ar_invoice (
+    invoice_id        BIGINT PRIMARY KEY AUTO_INCREMENT,
+    apply_id          BIGINT COMMENT &#x27;关联开票申请ID&#x27;,
+    invoice_no        VARCHAR(30) COMMENT &#x27;发票号码(开票后回填)&#x27;,
+    invoice_code      VARCHAR(20) COMMENT &#x27;发票代码(纸质发票)&#x27;,
+    invoice_type      VARCHAR(20) NOT NULL COMMENT &#x27;发票类型: SPECIAL/COMMON/FULL_ELECTRONIC&#x27;,
+    invoice_category  VARCHAR(20) NOT NULL DEFAULT &#x27;BLUE&#x27; COMMENT &#x27;发票种类: BLUE蓝字/RED红字&#x27;,
+    red_letter_id     BIGINT COMMENT &#x27;关联红字信息表ID&#x27;,
+    original_invoice_id BIGINT COMMENT &#x27;原蓝字发票ID(红字关联)&#x27;,
+    customer_id       BIGINT NOT NULL COMMENT &#x27;客户ID&#x27;,
+    customer_name     VARCHAR(200) NOT NULL COMMENT &#x27;客户名称&#x27;,
+    taxpayer_no       VARCHAR(30) NOT NULL COMMENT &#x27;纳税人识别号&#x27;,
+    invoice_amount    DECIMAL(18,2) NOT NULL COMMENT &#x27;开票金额(不含税)&#x27;,
+    tax_amount        DECIMAL(18,2) NOT NULL COMMENT &#x27;税额&#x27;,
+    total_amount      DECIMAL(18,2) NOT NULL COMMENT &#x27;价税合计&#x27;,
+    currency          VARCHAR(3) DEFAULT &#x27;CNY&#x27; COMMENT &#x27;币种&#x27;,
+    tax_rate          DECIMAL(6,4) NOT NULL COMMENT &#x27;主税率&#x27;,
+    invoice_date      DATE COMMENT &#x27;开票日期&#x27;,
+    invoice_method    VARCHAR(20) COMMENT &#x27;开票方式: GOLDEN_TAX金税盘/ELECTRONIC全电&#x27;,
+    status            VARCHAR(20) NOT NULL DEFAULT &#x27;DRAFT&#x27; COMMENT &#x27;状态: DRAFT/INVOICED/DELIVERED/REVENUE_CONFIRMED/VOIDED/RED_REVERSED&#x27;,
+    void_flag         TINYINT DEFAULT 0 COMMENT &#x27;作废标志 0否1是&#x27;,
+    void_date         DATE COMMENT &#x27;作废日期&#x27;,
+    period            VARCHAR(7) COMMENT &#x27;归属期间 YYYY-MM&#x27;,
+    revenue_confirmed TINYINT DEFAULT 0 COMMENT &#x27;收入确认标志 0未确认1已确认&#x27;,
+    voucher_no        VARCHAR(30) COMMENT &#x27;凭证号&#x27;,
+    voucher_id        BIGINT COMMENT &#x27;凭证ID&#x27;,
+    remark            VARCHAR(500) COMMENT &#x27;备注&#x27;,
+    created_at        DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at        DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    UNIQUE INDEX idx_invoice_no (invoice_no),
+    INDEX idx_customer (customer_id),
+    INDEX idx_status (status),
+    INDEX idx_date (invoice_date),
+    INDEX idx_period (period),
+    FOREIGN KEY (apply_id) REFERENCES ar_invoice_apply(apply_id)
+) COMMENT &#x27;AR销项发票表&#x27;;
+</pre>
+<h4>3.2.4 ar_invoice_item — 销项发票明细</h4>
+<pre><code>
+CREATE TABLE ar_invoice_item (
+    item_id           BIGINT PRIMARY KEY AUTO_INCREMENT,
+    invoice_id        BIGINT NOT NULL COMMENT &#x27;发票ID&#x27;,
+    product_id        BIGINT NOT NULL COMMENT &#x27;商品ID&#x27;,
+    product_name      VARCHAR(200) NOT NULL COMMENT &#x27;商品名称&#x27;,
+    specification     VARCHAR(200) COMMENT &#x27;规格型号&#x27;,
+    unit              VARCHAR(20) COMMENT &#x27;计量单位&#x27;,
+    tax_category_code VARCHAR(30) NOT NULL COMMENT &#x27;税收分类编码&#x27;,
+    quantity          DECIMAL(18,4) NOT NULL COMMENT &#x27;数量&#x27;,
+    unit_price        DECIMAL(18,4) NOT NULL COMMENT &#x27;单价(不含税)&#x27;,
+    discount_amount   DECIMAL(18,2) DEFAULT 0 COMMENT &#x27;折扣金额&#x27;,
+    line_amount       DECIMAL(18,2) NOT NULL COMMENT &#x27;金额(不含税)&#x27;,
+    tax_rate          DECIMAL(6,4) NOT NULL COMMENT &#x27;税率&#x27;,
+    tax_amount        DECIMAL(18,2) NOT NULL COMMENT &#x27;税额&#x27;,
+    total_amount      DECIMAL(18,2) NOT NULL COMMENT &#x27;价税合计&#x27;,
+    zero_tax_flag     TINYINT DEFAULT 0 COMMENT &#x27;零税率标志 0否1是&#x27;,
+    zero_tax_type     VARCHAR(10) COMMENT &#x27;零税率类型: EXEMPT免税/ZERO零税&#x27;,
+    INDEX idx_invoice (invoice_id),
+    FOREIGN KEY (invoice_id) REFERENCES ar_invoice(invoice_id)
+) COMMENT &#x27;AR销项发票明细表&#x27;;
+</pre>
+<h4>3.2.5 ar_invoice_deliver — 发票交付表</h4>
+<pre><code>
+CREATE TABLE ar_invoice_deliver (
+    deliver_id        BIGINT PRIMARY KEY AUTO_INCREMENT,
+    invoice_id        BIGINT NOT NULL COMMENT &#x27;发票ID&#x27;,
+    deliver_method    VARCHAR(20) NOT NULL COMMENT &#x27;交付方式: EMAIL电子/DIRECT推送/COURIER快递/HAND手递&#x27;,
+    recipient_email   VARCHAR(200) COMMENT &#x27;接收邮箱(电子交付)&#x27;,
+    recipient_phone   VARCHAR(20) COMMENT &#x27;接收手机号&#x27;,
+    courier_company   VARCHAR(100) COMMENT &#x27;快递公司&#x27;,
+    tracking_no       VARCHAR(50) COMMENT &#x27;快递单号&#x27;,
+    deliver_date      DATETIME COMMENT &#x27;交付日期&#x27;,
+    deliver_status    VARCHAR(20) NOT NULL DEFAULT &#x27;PENDING&#x27; COMMENT &#x27;交付状态: PENDING/SENT/RECEIVED/FAILED&#x27;,
+    confirm_date      DATETIME COMMENT &#x27;客户确认日期&#x27;,
+    pdf_url           VARCHAR(500) COMMENT &#x27;PDF下载链接&#x27;,
+    retry_count       INT DEFAULT 0 COMMENT &#x27;重试次数&#x27;,
+    remark            VARCHAR(500) COMMENT &#x27;备注&#x27;,
+    created_at        DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at        DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    INDEX idx_invoice (invoice_id),
+    FOREIGN KEY (invoice_id) REFERENCES ar_invoice(invoice_id)
+) COMMENT &#x27;AR发票交付表&#x27;;
+</pre>
+<h4>3.2.6 ar_revenue_confirm — 收入确认表</h4>
+<pre><code>
+CREATE TABLE ar_revenue_confirm (
+    confirm_id        BIGINT PRIMARY KEY AUTO_INCREMENT,
+    invoice_id        BIGINT NOT NULL COMMENT &#x27;发票ID&#x27;,
+    confirm_type      VARCHAR(20) NOT NULL DEFAULT &#x27;FULL&#x27; COMMENT &#x27;确认类型: FULL全额/INSTALLMENT分期/ADJUST调整&#x27;,
+    period            VARCHAR(7) NOT NULL COMMENT &#x27;确认期间 YYYY-MM&#x27;,
+    revenue_amount    DECIMAL(18,2) NOT NULL COMMENT &#x27;确认收入金额(不含税)&#x27;,
+    tax_amount        DECIMAL(18,2) NOT NULL COMMENT &#x27;确认税额&#x27;,
+    receivable_amount DECIMAL(18,2) NOT NULL COMMENT &#x27;确认应收金额(含税)&#x27;,
+    currency          VARCHAR(3) DEFAULT &#x27;CNY&#x27; COMMENT &#x27;币种&#x27;,
+    exchange_rate     DECIMAL(12,6) COMMENT &#x27;汇率(外币时)&#x27;,
+    base_amount       DECIMAL(18,2) COMMENT &#x27;本位币金额(外币折算后)&#x27;,
+    voucher_no        VARCHAR(30) COMMENT &#x27;凭证号&#x27;,
+    voucher_id        BIGINT COMMENT &#x27;凭证ID&#x27;,
+    voucher_template  VARCHAR(20) NOT NULL COMMENT &#x27;凭证模板: AR01~AR07&#x27;,
+    confirm_date      DATE NOT NULL COMMENT &#x27;确认日期&#x27;,
+    confirm_user_id   BIGINT COMMENT &#x27;确认人ID&#x27;,
+    status            VARCHAR(20) NOT NULL DEFAULT &#x27;DRAFT&#x27; COMMENT &#x27;状态: DRAFT/CONFIRMED/REVERSED&#x27;,
+    reverse_reason    VARCHAR(200) COMMENT &#x27;冲回原因&#x27;,
+    created_at        DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at        DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    INDEX idx_invoice (invoice_id),
+    INDEX idx_period (period),
+    FOREIGN KEY (invoice_id) REFERENCES ar_invoice(invoice_id)
+) COMMENT &#x27;AR收入确认表&#x27;;
+</pre>
+<h4>3.2.7 ar_red_letter — 红字信息表</h4>
+<pre><code>
+CREATE TABLE ar_red_letter (
+    red_id            BIGINT PRIMARY KEY AUTO_INCREMENT,
+    red_no            VARCHAR(32) NOT NULL UNIQUE COMMENT &#x27;红字信息表编号&#x27;,
+    original_invoice_id BIGINT NOT NULL COMMENT &#x27;原蓝字发票ID&#x27;,
+    original_invoice_no VARCHAR(30) NOT NULL COMMENT &#x27;原发票号码&#x27;,
+    apply_type        VARCHAR(20) NOT NULL COMMENT &#x27;申请类型: SELLER_SINGLE销售方单方/BUYER_CONFIRM购买方确认&#x27;,
+    red_reason        VARCHAR(200) NOT NULL COMMENT &#x27;红冲原因&#x27;,
+    red_amount        DECIMAL(18,2) NOT NULL COMMENT &#x27;红冲金额(不含税)&#x27;,
+    red_tax           DECIMAL(18,2) NOT NULL COMMENT &#x27;红冲税额&#x27;,
+    red_total         DECIMAL(18,2) NOT NULL COMMENT &#x27;红冲价税合计&#x27;,
+    is_partial        TINYINT DEFAULT 0 COMMENT &#x27;部分红冲 0否1是&#x27;,
+    buyer_confirm_status VARCHAR(20) COMMENT &#x27;购买方确认状态: PENDING/CONFIRMED/REJECTED/TIMEOUT&#x27;,
+    buyer_confirm_date DATETIME COMMENT &#x27;购买方确认日期&#x27;,
+    buyer_timeout_deadline DATETIME COMMENT &#x27;确认截止时间(申请后48小时)&#x27;,
+    status            VARCHAR(20) NOT NULL DEFAULT &#x27;DRAFT&#x27; COMMENT &#x27;状态: DRAFT/PENDING_CONFIRM/APPROVED/INVOICED/CANCELLED&#x27;,
+    red_invoice_id    BIGINT COMMENT &#x27;开具的红字发票ID&#x27;,
+    apply_user_id     BIGINT COMMENT &#x27;申请人ID&#x27;,
+    apply_date        DATETIME COMMENT &#x27;申请日期&#x27;,
+    review_user_id    BIGINT COMMENT &#x27;审核人ID&#x27;,
+    review_date       DATETIME COMMENT &#x27;审核日期&#x27;,
+    remark            VARCHAR(500) COMMENT &#x27;备注&#x27;,
+    created_at        DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at        DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    INDEX idx_original (original_invoice_id),
+    INDEX idx_status (status),
+    FOREIGN KEY (original_invoice_id) REFERENCES ar_invoice(invoice_id)
+) COMMENT &#x27;AR红字信息表&#x27;;
+</pre>
+<hr>
+<h2>4. 业务规则与凭证模板</h2>
+<h3>4.1 开票类型与税率规则</h3>
+<table><thead>
+<tr><th>发票类型</th><th>适用场景</th><th>税率</th><th>开票方式</th><th>交付方式</th></tr>
+</thead><tbody>
+<tr><td>增值税专用发票</td><td>B2B一般纳税人客户</td><td>13%/9%/6%</td><td>金税盘/全电</td><td>邮寄/电子</td></tr>
+<tr><td>增值税普通发票</td><td>B2B小规模/B2C</td><td>13%/9%/6%</td><td>金税盘/全电</td><td>邮寄/电子</td></tr>
+<tr><td>全电发票(专用)</td><td>B2B一般纳税人</td><td>13%/9%/6%</td><td>电子税务局</td><td>即时推送</td></tr>
+<tr><td>全电发票(普通)</td><td>B2B小规模/B2C</td><td>13%/9%/6%</td><td>电子税务局</td><td>即时推送</td></tr>
+<tr><td>电子发票(普通)</td><td>B2C/小额</td><td>13%/9%/6%</td><td>金税盘</td><td>邮件推送</td></tr>
+<tr><td>免税发票</td><td>出口/免税业务</td><td>0%</td><td>全电/金税</td><td>邮寄/电子</td></tr>
+</tbody>
+</table>
+<h3>4.2 开票金额校验规则</h3>
+<table><thead>
+<tr><th>校验项</th><th>规则</th><th>异常处理</th></tr>
+</thead><tbody>
+<tr><td>累计开票≤合同金额</td><td>累计已开票金额 + 本次申请 ≤ SO总金额</td><td>超额拦截，需特殊审批</td></tr>
+<tr><td>单张开票限额</td><td>不超过金税盘授权单张限额</td><td>超额需拆分开票</td></tr>
+<tr><td>月度开票限额</td><td>月累计 ≤ 月度授权限额</td><td>接近限额预警(80%/90%/95%)</td></tr>
+<tr><td>税额校验</td><td>金额 × 税率 = 税额（尾差≤¥0.01）</td><td>尾差自动调整到最后一行</td></tr>
+<tr><td>退货红冲≤原票</td><td>红冲金额 ≤ 原发票金额</td><td>超额拦截</td></tr>
+</tbody>
+</table>
+<h3>4.3 红字发票业务规则</h3>
+<table><thead>
+<tr><th>场景</th><th>申请方</th><th>流程</th><th>时效</th></tr>
+</thead><tbody>
+<tr><td>专用发票-购买方已认证</td><td>购买方申请</td><td>购买方填红字信息表→销售方确认→开红字</td><td>48小时确认</td></tr>
+<tr><td>专用发票-购买方未认证</td><td>销售方申请</td><td>销售方填红字信息表→自动通过→开红字</td><td>即时</td></tr>
+<tr><td>普通发票</td><td>销售方单方</td><td>销售方直接开红字（无需购买方确认）</td><td>即时</td></tr>
+<tr><td>全电发票</td><td>同专用发票规则</td><td>电子税务局线上流程</td><td>48小时确认</td></tr>
+<tr><td>当月发票作废</td><td>—</td><td>未交付且当月可作废（不需红字）</td><td>即时</td></tr>
+</tbody>
+</table>
+<h3>4.4 凭证模板矩阵</h3>
+<p>本模块新增 <strong>7套凭证模板</strong>，编码前缀 <code>AR</code>：</p>
+<table><thead>
+<tr><th>编码</th><th>凭证名称</th><th>借方</th><th>贷方</th><th>说明</th></tr>
+</thead><tbody>
+<tr><td><strong>AR01</strong></td><td>销项发票入账（可抵扣-专票）</td><td>应收账款-XX客户</td><td>主营业务收入 + 应交税费-销项税额</td><td>专用发票标准入账</td></tr>
+<tr><td><strong>AR02</strong></td><td>销项发票入账（不可抵扣-普票）</td><td>应收账款-XX客户</td><td>主营业务收入 + 应交税费-销项税额</td><td>普票入账（同AR01，区分统计）</td></tr>
+<tr><td><strong>AR03</strong></td><td>预开票确认收入</td><td>应收账款-XX客户</td><td>预收账款-XX客户 + 应交税费-销项税额</td><td>先开票后发货</td></tr>
+<tr><td><strong>AR04</strong></td><td>外币发票折算</td><td>应收账款(外币)</td><td>主营业务收入 + 应交税费-销项税额 + 汇兑损益</td><td>外币业务</td></tr>
+<tr><td><strong>AR05</strong></td><td>零税率/免税发票</td><td>应收账款-XX客户</td><td>主营业务收入</td><td>出口/免税无销项税</td></tr>
+<tr><td><strong>AR06</strong></td><td>红字冲回</td><td>主营业务收入 + 应交税费-销项税额</td><td>应收账款-XX客户</td><td>红字全额/部分冲回</td></tr>
+<tr><td><strong>AR07</strong></td><td>收入调整/折让</td><td>主营业务收入(红字) / 销售折让</td><td>应收账款-XX客户(红字)</td><td>销售折让单独入账</td></tr>
+</tbody>
+</table>
+<h4>AR01 详细分录（标准销项入账）</h4>
+<pre><code>
+借: 1122 应收账款-XX客户              113,000.00
+  贷: 6001 主营业务收入                 100,000.00
+  贷: 2221 应交税费-应交增值税-销项税额   13,000.00
+</pre>
+<h4>AR03 详细分录（预开票确认收入）</h4>
+<pre><code>
+借: 1122 应收账款-XX客户              113,000.00
+  贷: 2203 预收账款-XX客户             100,000.00
+  贷: 2221 应交税费-应交增值税-销项税额   13,000.00
+
+(发货确认后追加)
+借: 2203 预收账款-XX客户             100,000.00
+  贷: 6001 主营业务收入                100,000.00
+</pre>
+<h4>AR06 详细分录（红字冲回）</h4>
+<pre><code>
+借: 6001 主营业务收入                  100,000.00  (红字)
+借: 2221 应交税费-应交增值税-销项税额    13,000.00  (红字)
+  贷: 1122 应收账款-XX客户             113,000.00  (红字)
+</pre>
+<h3>4.5 凭证模板JSON定义</h3>
+<pre><code>
+{
+  &quot;AR.INVOICE.SPECIAL&quot;: &quot;AR01&quot;,
+  &quot;AR.INVOICE.COMMON&quot;: &quot;AR02&quot;,
+  &quot;AR.INVOICE.PRE_INVOICE&quot;: &quot;AR03&quot;,
+  &quot;AR.INVOICE.FOREIGN&quot;: &quot;AR04&quot;,
+  &quot;AR.INVOICE.ZERO_TAX&quot;: &quot;AR05&quot;,
+  &quot;AR.INVOICE.RED_REVERSAL&quot;: &quot;AR06&quot;,
+  &quot;AR.INVOICE.ADJUSTMENT&quot;: &quot;AR07&quot;
+}
+</pre>
+<h3>4.6 凭证触发事件映射</h3>
+<table><thead>
+<tr><th>触发时机</th><th>事件编码</th><th>凭证模板</th><th>说明</th></tr>
+</thead><tbody>
+<tr><td>专票开票确认</td><td>AR.INVOICE.SPECIAL</td><td>AR01</td><td>销售专票入账</td></tr>
+<tr><td>普票开票确认</td><td>AR.INVOICE.COMMON</td><td>AR02</td><td>销售普票入账</td></tr>
+<tr><td>预开票确认</td><td>AR.INVOICE.PRE_INVOICE</td><td>AR03</td><td>先票后货</td></tr>
+<tr><td>外币发票确认</td><td>AR.INVOICE.FOREIGN</td><td>AR04</td><td>外币折算</td></tr>
+<tr><td>零税率/免税确认</td><td>AR.INVOICE.ZERO_TAX</td><td>AR05</td><td>出口免税</td></tr>
+<tr><td>红字冲回确认</td><td>AR.INVOICE.RED_REVERSAL</td><td>AR06</td><td>红字冲销</td></tr>
+<tr><td>销售折让确认</td><td>AR.INVOICE.ADJUSTMENT</td><td>AR07</td><td>折让调整</td></tr>
+</tbody>
+</table>
+<hr>
+<h2>5. API设计</h2>
+<h3>5.1 RESTful API清单</h3>
+<table><thead>
+<tr><th>方法</th><th>路径</th><th>说明</th><th>权限</th></tr>
+</thead><tbody>
+<tr><td>POST</td><td><code>/api/ar/invoice-apply</code></td><td>创建开票申请</td><td>销售助理+</td></tr>
+<tr><td>GET</td><td><code>/api/ar/invoice-apply/{id}</code></td><td>查询开票申请详情</td><td>全部只读</td></tr>
+<tr><td>GET</td><td><code>/api/ar/invoice-apply</code></td><td>开票申请列表（分页+筛选）</td><td>全部只读</td></tr>
+<tr><td>PUT</td><td><code>/api/ar/invoice-apply/{id}</code></td><td>修改开票申请（DRAFT状态）</td><td>销售助理+</td></tr>
+<tr><td>POST</td><td><code>/api/ar/invoice-apply/{id}/submit</code></td><td>提交审核</td><td>销售助理+</td></tr>
+<tr><td>POST</td><td><code>/api/ar/invoice-apply/{id}/approve</code></td><td>审核通过</td><td>财务会计+</td></tr>
+<tr><td>POST</td><td><code>/api/ar/invoice-apply/{id}/reject</code></td><td>审核驳回</td><td>财务会计+</td></tr>
+<tr><td>POST</td><td><code>/api/ar/invoice-apply/{id}/cancel</code></td><td>撤回申请</td><td>销售助理(本人)</td></tr>
+<tr><td>POST</td><td><code>/api/ar/invoice</code></td><td>创建发票（开票）</td><td>财务会计+</td></tr>
+<tr><td>GET</td><td><code>/api/ar/invoice/{id}</code></td><td>查询发票详情</td><td>全部只读</td></tr>
+<tr><td>GET</td><td><code>/api/ar/invoice</code></td><td>发票列表（分页+筛选）</td><td>全部只读</td></tr>
+<tr><td>POST</td><td><code>/api/ar/invoice/{id}/void</code></td><td>发票作废（当月）</td><td>财务会计+</td></tr>
+<tr><td>POST</td><td><code>/api/ar/invoice/{id}/deliver</code></td><td>发票交付</td><td>财务会计+</td></tr>
+<tr><td>POST</td><td><code>/api/ar/invoice/{id}/confirm-revenue</code></td><td>收入确认</td><td>财务会计+</td></tr>
+<tr><td>POST</td><td><code>/api/ar/invoice/{id}/reverse-revenue</code></td><td>收入确认撤回</td><td>财务主管+</td></tr>
+<tr><td>POST</td><td><code>/api/ar/red-letter</code></td><td>申请红字信息表</td><td>财务会计+</td></tr>
+<tr><td>GET</td><td><code>/api/ar/red-letter/{id}</code></td><td>红字信息表详情</td><td>全部只读</td></tr>
+<tr><td>POST</td><td><code>/api/ar/red-letter/{id}/buyer-confirm</code></td><td>购买方确认</td><td>外部接口</td></tr>
+<tr><td>POST</td><td><code>/api/ar/red-letter/{id}/issue</code></td><td>开具红字发票</td><td>财务会计+</td></tr>
+<tr><td>GET</td><td><code>/api/ar/tax-summary</code></td><td>销项税月度汇总</td><td>税务专员+</td></tr>
+<tr><td>GET</td><td><code>/api/ar/invoice-statistics</code></td><td>开票统计报表</td><td>全部只读</td></tr>
+</tbody>
+</table>
+<hr>
+<h2>6. 金税接口对接</h2>
+<h3>6.1 接口架构</h3>
+<pre><code>
+┌───────────────┐     ┌───────────────────┐     ┌──────────────┐
+│  AR销项发票模块  │────▶│  金税适配层(Adapter) │────▶│  金税盘/全电平台  │
+│  (业务逻辑)    │◀────│  统一接口屏蔽差异    │◀────│  (税控设备)    │
+└───────────────┘     └───────────────────┘     └──────────────┘
+                            │
+                     ┌──────┼──────┐
+                     ▼      ▼      ▼
+              ┌─────────┐ ┌─────────┐ ┌─────────┐
+              │ 百旺金税 │ │ 航天金税 │ │ 全电发票 │
+              │ (百旺)  │ │ (航信)  │ │ (电子税局) │
+              └─────────┘ └─────────┘ └─────────┘
+</pre>
+<h3>6.2 核心接口方法</h3>
+<table><thead>
+<tr><th>方法</th><th>说明</th><th>金税盘</th><th>全电</th></tr>
+</thead><tbody>
+<tr><td><code>IssueInvoice</code></td><td>开具发票</td><td>✅</td><td>✅</td></tr>
+<tr><td><code>VoidInvoice</code></td><td>作废发票</td><td>✅</td><td>✅</td></tr>
+<tr><td><code>QueryInvoice</code></td><td>查询发票状态</td><td>✅</td><td>✅</td></tr>
+<tr><td><code>ApplyRedLetter</code></td><td>申请红字信息表</td><td>✅</td><td>✅</td></tr>
+<tr><td><code>IssueRedInvoice</code></td><td>开具红字发票</td><td>✅</td><td>✅</td></tr>
+<tr><td><code>GetInvoicePdf</code></td><td>获取发票PDF</td><td>✅</td><td>✅</td></tr>
+<tr><td><code>GetTaxCategory</code></td><td>获取税收分类编码</td><td>✅</td><td>✅</td></tr>
+</tbody>
+</table>
+<h3>6.3 开票流程（金税盘）</h3>
+<pre><code>
+开票申请审核通过 → 构造金税报文 → 调用IssueInvoice → 解析返回结果
+                                                    ↓
+                                            成功 → 回填发票号码/代码
+                                            失败 → 记录错误 → 重试/人工处理
+</pre>
+<hr>
+<h2>7. 异常处理与风控</h2>
+<h3>7.1 异常场景</h3>
+<table><thead>
+<tr><th>异常类型</th><th>触发条件</th><th>处理方式</th><th>严重度</th></tr>
+</thead><tbody>
+<tr><td>金税盘离线</td><td>开票时金税接口不可达</td><td>自动重试3次→降级为"待开票"队列</td><td>🔴 高</td></tr>
+<tr><td>开票金额超额</td><td>申请金额 > SO未开票余额</td><td>拦截+审批</td><td>🟡 中</td></tr>
+<tr><td>发票号码跳号</td><td>金税盘号码不连续</td><td>记录跳号原因→税局报备</td><td>🟡 中</td></tr>
+<tr><td>月度限额告警</td><td>开票额达到限额80%</td><td>预警通知税务专员</td><td>🟠 预警</td></tr>
+<tr><td>红字确认超时</td><td>购买方48小时未确认</td><td>自动确认(可配置)</td><td>🟡 中</td></tr>
+<tr><td>重复开票</td><td>同一SO重复申请开票</td><td>拦截+提醒已有申请</td><td>🔴 高</td></tr>
+<tr><td>客户信息缺失</td><td>纳税人识别号/地址为空</td><td>阻止开票+提醒补全</td><td>🟡 中</td></tr>
+</tbody>
+</table>
+<h3>7.2 审批规则</h3>
+<table><thead>
+<tr><th>场景</th><th>条件</th><th>审批层级</th></tr>
+</thead><tbody>
+<tr><td>大额开票</td><td>单张≥¥50万</td><td>财务主管</td></tr>
+<tr><td>超额开票</td><td>超SO金额开票</td><td>财务经理+销售总监</td></tr>
+<tr><td>红字发票</td><td>任何红字申请</td><td>财务主管</td></tr>
+<tr><td>发票作废</td><td>当月发票作废</td><td>财务会计</td></tr>
+<tr><td>跨月红冲</td><td>跨月/跨年红字</td><td>财务经理</td></tr>
+<tr><td>外币开票</td><td>非CNY币种</td><td>财务主管</td></tr>
+</tbody>
+</table>
+<hr>
+<h2>8. 与其他模块的集成</h2>
+<h3>8.1 集成矩阵</h3>
+<table><thead>
+<tr><th>模块</th><th>集成点</th><th>数据流向</th><th>方式</th></tr>
+</thead><tbody>
+<tr><td><strong>实收收款</strong></td><td>开票→应收→收款核销</td><td>AR发票 → 收款单核销</td><td>事件驱动</td></tr>
+<tr><td><strong>总账凭证引擎</strong></td><td>收入确认→凭证</td><td>AR01~AR07 → GL</td><td>事件触发</td></tr>
+<tr><td><strong>税务管理</strong></td><td>销项税汇总→申报</td><td>月度汇总 → 申报表</td><td>定时任务</td></tr>
+<tr><td><strong>发票查验</strong></td><td>发票号码校验</td><td>查重/验真</td><td>同步调用</td></tr>
+<tr><td><strong>海外发票管理</strong></td><td>海外客户发票</td><td>invoice_region=海外 → 海外模块</td><td>条件分流</td></tr>
+<tr><td><strong>预算管理</strong></td><td>开票金额 vs 预算</td><td>预算校验</td><td>同步调用</td></tr>
+</tbody>
+</table>
+<h3>8.2 凭证总览更新</h3>
+<p>本模块完成后，系统总凭证模板从 <strong>37套</strong> 增至 <strong>44套</strong>：</p>
+<table><thead>
+<tr><th>模块</th><th>编码</th><th>数量</th></tr>
+</thead><tbody>
+<tr><td>实收收款</td><td>S01~S06</td><td>6</td></tr>
+<tr><td>实付付款</td><td>P01~P08</td><td>8</td></tr>
+<tr><td>票据往来</td><td>B01~B08</td><td>8</td></tr>
+<tr><td>应付票据</td><td>PA01~PA07</td><td>7</td></tr>
+<tr><td>AP进项发票</td><td>AP01~AP07</td><td>7</td></tr>
+<tr><td><strong>AR销项发票</strong></td><td><strong>AR01~AR07</strong></td><td><strong>7</strong></td></tr>
+<tr><td>海外发票</td><td>OP01/OS01/FX01</td><td>3</td></tr>
+<tr><td>总账</td><td>GL01~GL03</td><td>3</td></tr>
+<tr><td><strong>合计</strong></td><td></td><td><strong>49→ 减海外OP01重复=44→ 加AR=51→ 不对</strong></td></tr>
+</tbody>
+</table>
+<p>修正：之前AP进项7套(37)，现在AR销项7套，合计 <strong>44套</strong>。</p>
+<hr>
+<h2>9. 开发路线图</h2>
+<table><thead>
+<tr><th>阶段</th><th>内容</th><th>工期</th><th>交付物</th></tr>
+</thead><tbody>
+<tr><td><strong>Phase 1</strong></td><td>开票申请+基础配置</td><td>2天</td><td>申请CRUD+审批流+税码/开票类型配置</td></tr>
+<tr><td><strong>Phase 2</strong></td><td>金税/全电开票</td><td>3天</td><td>金税适配层+开票接口+号码管理+批量开票</td></tr>
+<tr><td><strong>Phase 3</strong></td><td>发票交付+收入确认</td><td>2天</td><td>交付管理+收入确认+AR01~AR05凭证</td></tr>
+<tr><td><strong>Phase 4</strong></td><td>红字冲红</td><td>1.5天</td><td>红字申请+购买方确认+AR06冲回凭证</td></tr>
+<tr><td><strong>Phase 5</strong></td><td>销项税务+统计</td><td>1天</td><td>月度汇总+申报对接+开票统计</td></tr>
+<tr><td><strong>Phase 6</strong></td><td>集成测试+优化</td><td>0.5天</td><td>与实收/总账/税务联调</td></tr>
+<tr><td><strong>合计</strong></td><td></td><td><strong>10天</strong></td><td></td></tr>
+</tbody>
+</table>
+<hr>
+<h2>📝 附录</h2>
+<h3>A. 状态机</h3>
+<p><strong>开票申请状态流:</strong></p>
+<pre><code>
+DRAFT → PENDING_REVIEW → APPROVED → INVOICED
+  │           │              │
+  └── CANCELLED ←────────────┘
+</pre>
+<p><strong>销项发票状态流:</strong></p>
+<pre><code>
+DRAFT → INVOICED → DELIVERED → REVENUE_CONFIRMED
+  │         │
+  │         ├── VOIDED (当月作废)
+  │         └── RED_REVERSED (跨月红冲)
+  └── CANCELLED
+</pre>
+<p><strong>红字信息表状态流:</strong></p>
+<pre><code>
+DRAFT → PENDING_CONFIRM → APPROVED → INVOICED
+  │           │
+  └── CANCELLED ←──────────┘
+</pre>
+<h3>B. 发票号码规则</h3>
+<table><thead>
+<tr><th>发票类型</th><th>号码格式</th><th>示例</th><th>说明</th></tr>
+</thead><tbody>
+<tr><td>增值税专用发票</td><td>8位数字</td><td>01234567</td><td>金税盘分配</td></tr>
+<tr><td>增值税普通发票</td><td>8位数字</td><td>87654321</td><td>金税盘分配</td></tr>
+<tr><td>全电发票(专票)</td><td>20位</td><td>0_20260420_12345678</td><td>电子税局分配</td></tr>
+<tr><td>全电发票(普票)</td><td>20位</td><td>1_20260420_12345678</td><td>电子税局分配</td></tr>
+</tbody>
+</table>
+  </div>
+</div>
+</body>
+</html>
