@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>总账凭证引擎 — 详细流程图</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Microsoft YaHei','Segoe UI',sans-serif;background:#0f172a;color:#e2e8f0;line-height:1.6}
+.screen{max-width:1400px;margin:0 auto;padding:20px}
+.header{background:linear-gradient(135deg,#1e3a5f,#0f2847);border-radius:12px;padding:24px 32px;margin-bottom:24px;border:1px solid #2d4a6f}
+.header h1{font-size:22px;color:#60a5fa;margin-bottom:4px}
+.header .sub{font-size:13px;color:#94a3b8}
+.badge{display:inline-block;padding:2px 10px;border-radius:10px;font-size:11px;font-weight:600;margin-left:8px}
+.badge-p0{background:#ef4444;color:#fff}
+.badge-v1{background:#3b82f6;color:#fff}
+.container{display:grid;grid-template-columns:1fr 360px;gap:20px}
+.main{min-width:0}
+.panel{background:#1e293b;border-radius:10px;border:1px solid #334155;overflow:hidden;margin-bottom:16px}
+.panel-head{padding:12px 16px;background:#1a2332;border-bottom:1px solid #334155;font-size:14px;font-weight:600;color:#60a5fa;display:flex;align-items:center;gap:8px;cursor:pointer}
+.panel-head:hover{background:#1f2d3f}
+.panel-body{padding:16px}
+.flow-box{background:#0f172a;border:1px solid #334155;border-radius:8px;padding:12px 16px;margin:8px 0;text-align:center;font-size:13px;position:relative}
+.flow-box.start{background:#064e3b;border-color:#059669;color:#6ee7b7}
+.flow-box.end{background:#1e1b4b;border-color:#6366f1;color:#a5b4fc}
+.flow-box.decision{background:#422006;border-color:#d97706;color:#fcd34d;transform:rotate(0deg);clip-path:polygon(50% 0%,100% 50%,50% 100%,0% 50%);padding:20px 30px}
+.flow-box.process{background:#1e3a5f;border-color:#3b82f6;color:#93c5fd}
+.flow-box.storage{background:#172554;border-color:#2563eb;color:#bfdbfe}
+.flow-box.io{background:#3b0764;border-color:#a855f7;color:#d8b4fe}
+.flow-arrow{color:#475569;text-align:center;font-size:18px;margin:4px 0}
+.flow-arrow-l{color:#475569;font-size:18px;margin:0 8px}
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:12px}
+th{background:#1a2332;color:#60a5fa;padding:8px 10px;text-align:left;font-weight:600;white-space:nowrap;border-bottom:2px solid #334155}
+td{padding:7px 10px;border-bottom:1px solid #1e293b;color:#cbd5e1;vertical-align:top}
+tr:hover td{background:#1e293b}
+.tag{display:inline-block;padding:1px 8px;border-radius:4px;font-size:10px;font-weight:600}
+.tag-in{background:#164e63;color:#67e8f9}
+.tag-out{background:#4c1d95;color:#c4b5fd}
+.tag-sys{background:#365314;color:#bef264}
+.tag-rule{background:#7c2d12;color:#fdba74}
+.row-label{color:#64748b;font-size:11px;white-space:nowrap;width:80px;vertical-align:top;font-weight:600}
+.accent{color:#fbbf24}
+.code{font-family:'Cascadia Code','Fira Code',monospace;font-size:11px;background:#0f172a;padding:1px 6px;border-radius:3px;color:#7dd3fc}
+.side{position:sticky;top:20px}
+.info-card{background:#1e293b;border-radius:10px;border:1px solid #334155;padding:16px;margin-bottom:12px}
+.info-card h3{font-size:13px;color:#60a5fa;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid #334155}
+.info-card p,.info-card li{font-size:12px;color:#94a3b8;margin-bottom:4px}
+.info-card ul{padding-left:16px}
+.info-card li{margin-bottom:6px}
+.kv{display:flex;gap:8px;margin-bottom:6px;font-size:12px}
+.kv .k{color:#64748b;min-width:80px;flex-shrink:0}
+.kv .v{color:#e2e8f0}
+.hl-green{color:#4ade80}
+.hl-red{color:#f87171}
+.hl-yellow{color:#fbbf24}
+.hl-blue{color:#60a5fa}
+.section-title{font-size:16px;color:#f1f5f9;margin:20px 0 10px;padding-left:10px;border-left:3px solid #3b82f6}
+.connector{display:flex;align-items:center;gap:0;margin:6px 0}
+.connector .line{flex:1;height:1px;background:#334155}
+.connector .dot{width:8px;height:8px;border-radius:50%;background:#3b82f6;flex-shrink:0}
+.multi-col{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.mini-flow{background:#0f172a;border:1px solid #1e293b;border-radius:6px;padding:10px;font-size:11px}
+.mini-flow .title{color:#60a5fa;font-weight:600;margin-bottom:6px;font-size:12px}
+.mini-step{display:flex;align-items:center;gap:6px;margin:3px 0;font-size:11px}
+.mini-step .dot{width:5px;height:5px;border-radius:50%;flex-shrink:0}
+.mini-step .dot-g{background:#4ade80}
+.mini-step .dot-b{background:#3b82f6}
+.mini-step .dot-y{background:#fbbf24}
+.mini-step .dot-r{background:#f87171}
+.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0}
+.stat-box{background:#0f172a;border-radius:6px;padding:8px 10px;text-align:center}
+.stat-box .num{font-size:20px;font-weight:700}
+.stat-box .label{font-size:10px;color:#64748b;margin-top:2px}
+.template-list{font-size:11px}
+.template-item{display:flex;justify-content:space-between;align-items:center;padding:4px 8px;border-radius:4px;margin:2px 0}
+.template-item:hover{background:#1e293b}
+.template-item .code{font-family:'Cascadia Code',monospace;color:#fbbf24;font-weight:600}
+.template-item .desc{color:#94a3b8}
+.template-item .from{font-size:10px;color:#64748b}
+</style>
+</head>
+<body>
+<div class="screen">
+<div class="header">
+  <h1>🧾 总账凭证引擎 <span class="badge badge-p0">P0</span><span class="badge badge-v1">v1.0</span></h1>
+  <div class="sub">General Ledger Voucher Engine · 所有业务的最终落脚点 · 对标金蝶云星空总账模块 · 2026-04-15</div>
+</div>
+
+<div class="container">
+<div class="main">
+
+<!-- ==================== 流程1: 全局架构总览 ==================== -->
+<h2 class="section-title">① 全局架构总览</h2>
+<div class="panel"><div class="panel-head">📌 总账在ERP财务系统中的核心位置</div><div class="panel-body">
+
+<div style="text-align:center;margin-bottom:12px">
+<div style="display:inline-flex;align-items:center;gap:0;flex-wrap:wrap;justify-content:center">
+  <div class="flow-box io" style="padding:8px 14px;font-size:12px">发票查验<br><span style="font-size:10px;color:#94a3b8">IV</span></div>
+  <div class="flow-arrow-l">→</div>
+  <div class="flow-box io" style="padding:8px 14px;font-size:12px">实收收款<br><span style="font-size:10px;color:#94a3b8">CRM · S01~S06</span></div>
+  <div class="flow-arrow-l">→</div>
+  <div class="flow-box process" style="padding:8px 14px;font-size:12px;border-width:2px;border-color:#f59e0b;color:#fcd34d;font-weight:700;font-size:14px;padding:12px 20px">🧾 总账凭证引擎<br><span style="font-size:10px;font-weight:400">GLE · 本文档</span></div>
+  <div class="flow-arrow-l">→</div>
+  <div class="flow-box storage" style="padding:8px 14px;font-size:12px">财务报表<br><span style="font-size:10px;color:#94a3b8">BS/PL/CF</span></div>
+</div>
+</div>
+<div style="text-align:center;margin-bottom:8px">
+<div style="display:inline-flex;align-items:center;gap:0;flex-wrap:wrap;justify-content:center">
+  <div class="flow-box io" style="padding:8px 14px;font-size:12px">实付付款<br><span style="font-size:10px;color:#94a3b8">PM · P01~P08</span></div>
+  <div class="flow-arrow-l">→</div>
+  <div class="flow-box io" style="padding:8px 14px;font-size:12px">应收票据<br><span style="font-size:10px;color:#94a3b8">BM · B01~B08</span></div>
+  <div class="flow-arrow-l">→</div>
+  <span style="color:#475569;margin:0 4px">↗</span>
+  <div class="flow-box io" style="padding:8px 14px;font-size:12px">应付票据<br><span style="font-size:10px;color:#94a3b8">PBM · PA01~PA07</span></div>
+</div>
+</div>
+
+<div style="background:#0f172a;border:1px solid #334155;border-radius:8px;padding:14px;margin-top:12px">
+<div style="font-size:12px;color:#94a3b8;margin-bottom:8px">引擎内部五大子系统</div>
+<div style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px;text-align:center">
+  <div style="background:#1e3a5f;border-radius:6px;padding:10px 4px;font-size:11px"><div style="color:#60a5fa;font-weight:700;font-size:13px">📚</div>科目管理<br><span style="color:#94a3b8;font-size:10px">科目树·级次·余额</span></div>
+  <div style="background:#1e3a5f;border-radius:6px;padding:10px 4px;font-size:11px"><div style="color:#60a5fa;font-weight:700;font-size:13px">📝</div>凭证管理<br><span style="color:#94a3b8;font-size:10px">编辑·审核·过账</span></div>
+  <div style="background:#1e3a5f;border-radius:6px;padding:10px 4px;font-size:11px"><div style="color:#60a5fa;font-weight:700;font-size:13px">🔗</div>辅助核算<br><span style="color:#94a3b8;font-size:10px">客商·部门·项目</span></div>
+  <div style="background:#1e3a5f;border-radius:6px;padding:10px 4px;font-size:11px"><div style="color:#60a5fa;font-weight:700;font-size:13px">⚙️</div>模板引擎<br><span style="color:#94a3b8;font-size:10px">规则·映射·自动生成</span></div>
+  <div style="background:#1e3a5f;border-radius:6px;padding:10px 4px;font-size:11px"><div style="color:#60a5fa;font-weight:700;font-size:13px">📊</div>期末处理<br><span style="color:#94a3b8;font-size:10px">结转·汇兑·结账</span></div>
+</div>
+</div>
+
+</div></div>
+
+<!-- ==================== 流程2: 凭证全生命周期 ==================== -->
+<h2 class="section-title">② 凭证全生命周期</h2>
+<div class="panel"><div class="panel-head">📌 凭证状态机 — 从创建到归档</div><div class="panel-body">
+
+<div style="display:flex;flex-direction:column;align-items:center;gap:0">
+  <!-- Row 1: Creation -->
+  <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:center">
+    <div class="flow-box start" style="width:120px">业务事件<br><span style="font-size:10px">收款/付款/票据</span></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-box process" style="width:120px">模板匹配<br><span style="font-size:10px">S01~PA07</span></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-box io" style="width:120px">生成凭证<br><span style="font-size:10px">GL + 6位序号</span></div>
+    <div class="flow-arrow">→</div>
+    <div style="background:#7c2d12;border:1px solid #d97706;border-radius:8px;padding:8px 14px;text-align:center;font-size:11px;color:#fcd34d">
+      <div style="font-weight:700">审核</div>
+      <div style="font-size:10px">制单≠审核人</div>
+      <div style="margin-top:4px;font-size:10px">
+        <span style="color:#4ade80">✓通过</span> · 
+        <span style="color:#f87171">✗驳回</span>
+      </div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-box process" style="width:120px">过账记账<br><span style="font-size:10px">更新科目余额</span></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-box end" style="width:120px">已记账<br><span style="font-size:10px">不可修改</span></div>
+  </div>
+  
+  <!-- Rejection path -->
+  <div style="display:flex;align-items:center;gap:4px;margin-top:-2px;margin-left:calc(50% - 200px)">
+    <div style="width:120px"></div>
+    <div style="width:20px"></div>
+    <div style="width:120px"></div>
+    <div style="width:20px"></div>
+    <div style="color:#f87171;font-size:10px;text-align:center;width:80px">✗ 驳回</div>
+    <div style="color:#475569;font-size:10px">↩</div>
+    <div style="background:#1e293b;border:1px dashed #f87171;border-radius:6px;padding:6px 10px;font-size:10px;color:#fca5a5">返回编辑/作废</div>
+  </div>
+</div>
+
+<div class="table-wrap" style="margin-top:16px">
+<table>
+  <tr><th>状态</th><th>代码</th><th>说明</th><th>允许操作</th><th>余额影响</th></tr>
+  <tr><td><span class="hl-yellow">●</span> 草稿</td><td><span class="code">DRAFT</span></td><td>模板生成或手工创建</td><td>编辑 / 删除 / 提交审核</td><td>❌ 无</td></tr>
+  <tr><td><span class="hl-blue">●</span> 待审核</td><td><span class="code">PENDING</span></td><td>已提交等待财务审核</td><td>审核 / 驳回 / 撤回</td><td>❌ 无</td></tr>
+  <tr><td><span class="hl-red">●</span> 已驳回</td><td><span class="code">REJECTED</span></td><td>审核不通过</td><td>编辑后重新提交 / 作废</td><td>❌ 无</td></tr>
+  <tr><td><span class="hl-green">●</span> 已审核</td><td><span class="code">APPROVED</span></td><td>审核通过待过账</td><td>过账 / 反审核</td><td>❌ 无</td></tr>
+  <tr><td><span class="hl-green">●</span> 已记账</td><td><span class="code">POSTED</span></td><td>过账完成，余额已更新</td><td>红字冲销 / 创建冲销凭证</td><td>✅ 已更新</td></tr>
+  <tr><td><span style="color:#94a3b8">●</span> 已结账</td><td><span class="code">CLOSED</span></td><td>所在会计期间已结账</td><td>仅可查看</td><td>✅ 已锁定</td></tr>
+  <tr><td><span style="color:#94a3b8">●</span> 已作废</td><td><span class="code">VOID</span></td><td>凭证作废</td><td>仅可查看</td><td>❌ 无</td></tr>
+</table>
+</div>
+
+</div></div>
+
+<!-- ==================== 流程3: 凭证模板引擎 ==================== -->
+<h2 class="section-title">③ 凭证模板引擎</h2>
+<div class="panel"><div class="panel-head">📌 模板匹配与凭证自动生成流程</div><div class="panel-body">
+
+<div style="display:flex;align-items:flex-start;gap:16px;flex-wrap:wrap">
+  <div style="flex:1;min-width:280px">
+    <div class="flow-box io" style="text-align:left"><span class="tag tag-in">输入</span> 业务事件触发<br><span style="font-size:11px;color:#94a3b8">来源模块 + 业务单据ID + 操作类型</span></div>
+    <div class="flow-arrow">↓</div>
+    <div class="flow-box process" style="text-align:left"><span class="tag tag-sys">步骤1</span> 事件识别<br><span style="font-size:11px;color:#94a3b8">解析 source_module + event_type → 模板代码</span></div>
+    <div class="flow-arrow">↓</div>
+    <div class="flow-box process" style="text-align:left"><span class="tag tag-sys">步骤2</span> 模板加载<br><span style="font-size:11px;color:#94a3b8">读取模板定义: 分录行 + 金额映射规则</span></div>
+    <div class="flow-arrow">↓</div>
+    <div class="flow-box process" style="text-align:left"><span class="tag tag-sys">步骤3</span> 变量填充<br><span style="font-size:11px;color:#94a3b8">动态科目(客商名)、金额、辅助核算</span></div>
+    <div class="flow-arrow">↓</div>
+    <div class="flow-box process" style="text-align:left"><span class="tag tag-sys">步骤4</span> 借贷校验<br><span style="font-size:11px;color:#94a3b8">∑借方 = ∑贷方 (允许±0.01尾差)</span></div>
+    <div class="flow-arrow">↓</div>
+    <div style="background:#064e3b;border:1px solid #059669;border-radius:8px;padding:8px 12px;text-align:left;font-size:11px;color:#6ee7b7">
+      <span class="tag tag-out">输出</span> 凭证对象(草稿态)<br>
+      <span style="font-size:10px;color:#94a3b8">等待人工确认或自动提交审核</span>
+    </div>
+  </div>
+  
+  <div style="flex:1;min-width:280px">
+    <div style="background:#0f172a;border:1px solid #334155;border-radius:8px;padding:12px;margin-bottom:10px">
+      <div style="font-size:12px;color:#60a5fa;font-weight:600;margin-bottom:6px">模板事件映射表</div>
+      <table>
+        <tr><th>事件键</th><th>模板</th><th>来源</th></tr>
+        <tr><td><span class="code">CRM.RECEIPT.NORMAL</span></td><td>S01 正常收款</td><td>实收收款</td></tr>
+        <tr><td><span class="code">CRM.RECEIPT.PREPAY</span></td><td>S02 纯预收</td><td>实收收款</td></tr>
+        <tr><td><span class="code">CRM.RECEIPT.BILL</span></td><td>S05 收到票据</td><td>实收收款</td></tr>
+        <tr><td><span class="code">PM.PAYMENT.NORMAL</span></td><td>P01 普通付款</td><td>实付付款</td></tr>
+        <tr><td><span class="code">PM.PAYMENT.PREPAY</span></td><td>P02 预付货款</td><td>实付付款</td></tr>
+        <tr><td><span class="code">PM.PAYMENT.BILL</span></td><td>P05 承兑背书</td><td>实付付款</td></tr>
+        <tr><td><span class="code">BM.BILL.RECEIVE</span></td><td>B01 票据收取</td><td>应收票据</td></tr>
+        <tr><td><span class="code">BM.BILL.ENDORSE</span></td><td>B02 票据背书</td><td>应收票据</td></tr>
+        <tr><td><span class="code">BM.BILL.DISCOUNT</span></td><td>B03 票据贴现</td><td>应收票据</td></tr>
+        <tr><td><span class="code">BM.BILL.CASHED</span></td><td>B06 到期兑付</td><td>应收票据</td></tr>
+        <tr><td><span class="code">PBM.BILL.ISSUE</span></td><td>PA01 应付开立</td><td>应付票据</td></tr>
+        <tr><td><span class="code">PBM.BILL.SETTLE</span></td><td>PA03 到期付款</td><td>应付票据</td></tr>
+      </table>
+    </div>
+    
+    <div style="background:#0f172a;border:1px solid #334155;border-radius:8px;padding:12px">
+      <div style="font-size:12px;color:#60a5fa;font-weight:600;margin-bottom:6px">金额映射规则</div>
+      <table>
+        <tr><th>映射类型</th><th>说明</th><th>示例</th></tr>
+        <tr><td><span class="code">FIXED</span></td><td>固定金额</td><td>手续费¥5</td></tr>
+        <tr><td><span class="code">SOURCE</span></td><td>来源单据金额</td><td>收款单金额</td></tr>
+        <tr><td><span class="code">EXPR</span></td><td>表达式计算</td><td>票面-贴现息</td></tr>
+        <tr><td><span class="code">DIFF</span></td><td>差额自动补平</td><td>借方合计-贷方合计</td></tr>
+        <tr><td><span class="code">RATE</span></td><td>比例计算</td><td>票面×保证金率</td></tr>
+      </table>
+    </div>
+  </div>
+</div>
+
+</div></div>
+
+<!-- ==================== 流程4: 科目体系管理 ==================== -->
+<h2 class="section-title">④ 科目体系管理</h2>
+<div class="panel"><div class="panel-head">📌 会计科目树 · 一级科目 + 二级明细</div><div class="panel-body">
+
+<div class="multi-col">
+  <div class="mini-flow">
+    <div class="title">资产类 (1xxx)</div>
+    <div class="mini-step"><span class="dot dot-g"></span> 1001 库存现金</div>
+    <div class="mini-step"><span class="dot dot-g"></span> 1002 银行存款 <span style="color:#64748b">→ 按银行+账户</span></div>
+    <div class="mini-step"><span class="dot dot-g"></span> 1012 其他货币资金</div>
+    <div class="mini-step"><span class="dot dot-b"></span> 1121 应收票据 <span style="color:#64748b">→ 银承/商承</span></div>
+    <div class="mini-step"><span class="dot dot-b"></span> 1122 应收账款 <span style="color:#64748b">→ 按客户</span></div>
+    <div class="mini-step"><span class="dot dot-b"></span> 1123 预付账款 <span style="color:#64748b">→ 按供应商</span></div>
+    <div class="mini-step"><span class="dot dot-b"></span> 1131 应收股利</div>
+    <div class="mini-step"><span class="dot dot-b"></span> 1231 坏账准备</div>
+    <div class="mini-step"><span class="dot dot-y"></span> 1601 固定资产</div>
+    <div class="mini-step"><span class="dot dot-y"></span> 1602 累计折旧</div>
+    <div class="mini-step"><span class="dot dot-y"></span> 1604 在建工程</div>
+  </div>
+  
+  <div class="mini-flow">
+    <div class="title">负债类 (2xxx)</div>
+    <div class="mini-step"><span class="dot dot-r"></span> 2001 短期借款</div>
+    <div class="mini-step"><span class="dot dot-r"></span> 2201 应付票据 <span style="color:#64748b">→ 银承/商承</span></div>
+    <div class="mini-step"><span class="dot dot-r"></span> 2202 应付账款 <span style="color:#64748b">→ 按供应商</span></div>
+    <div class="mini-step"><span class="dot dot-r"></span> 2203 预收账款 <span style="color:#64748b">→ 按客户</span></div>
+    <div class="mini-step"><span class="dot dot-r"></span> 2211 应付职工薪酬</div>
+    <div class="mini-step"><span class="dot dot-r"></span> 2221 应交税费 <span style="color:#64748b">→ 增值税/所得税</span></div>
+    <div class="mini-step"><span class="dot dot-r"></span> 2241 其他应付款</div>
+  </div>
+  
+  <div class="mini-flow">
+    <div class="title">损益类 (6xxx)</div>
+    <div class="mini-step"><span class="dot dot-y"></span> 6001 主营业务收入</div>
+    <div class="mini-step"><span class="dot dot-y"></span> 6051 其他业务收入</div>
+    <div class="mini-step"><span class="dot dot-y"></span> 6111 投资收益</div>
+    <div class="mini-step"><span class="dot dot-y"></span> 6301 营业外收入</div>
+    <div class="mini-step"><span class="dot dot-r"></span> 6401 主营业务成本</div>
+    <div class="mini-step"><span class="dot dot-r"></span> 6402 其他业务成本</div>
+    <div class="mini-step"><span class="dot dot-r"></span> 6403 税金及附加</div>
+    <div class="mini-step"><span class="dot dot-r"></span> 6601 销售费用</div>
+    <div class="mini-step"><span class="dot dot-r"></span> 6602 管理费用</div>
+    <div class="mini-step"><span class="dot dot-r"></span> 6603 财务费用 <span style="color:#64748b">→ 贴现息/手续费/汇兑</span></div>
+  </div>
+  
+  <div class="mini-flow">
+    <div class="title">所有者权益 (4xxx)</div>
+    <div class="mini-step"><span class="dot dot-b"></span> 4001 实收资本</div>
+    <div class="mini-step"><span class="dot dot-b"></span> 4002 资本公积</div>
+    <div class="mini-step"><span class="dot dot-b"></span> 4101 盈余公积</div>
+    <div class="mini-step"><span class="dot dot-b"></span> 4103 本年利润</div>
+    <div class="mini-step"><span class="dot dot-b"></span> 4104 利润分配</div>
+    <div style="margin-top:8px;border-top:1px solid #334155;padding-top:6px">
+      <div class="title">成本类 (5xxx)</div>
+      <div class="mini-step"><span class="dot dot-y"></span> 5001 生产成本</div>
+      <div class="mini-step"><span class="dot dot-y"></span> 5101 制造费用</div>
+      <div class="mini-step"><span class="dot dot-y"></span> 5201 劳务成本</div>
+    </div>
+  </div>
+</div>
+
+<div style="background:#0f172a;border:1px solid #334155;border-radius:8px;padding:12px;margin-top:12px">
+<div style="font-size:12px;color:#60a5fa;font-weight:600;margin-bottom:6px">科目编码规则</div>
+<div class="table-wrap">
+<table>
+  <tr><th>规则</th><th>说明</th><th>示例</th></tr>
+  <tr><td>层级结构</td><td>4-2-2-2 共4级</td><td>1002-01-01-01 = 工行-基本户-RMB</td></tr>
+  <tr><td>一级科目</td><td>4位数字，遵循《企业会计准则》</td><td>1002 银行存款</td></tr>
+  <tr><td>二级科目</td><td>2位数字，按银行/客商/部门分类</td><td>1002-01 工商银行</td></tr>
+  <tr><td>三级科目</td><td>2位数字，具体账户/明细</td><td>1002-01-01 基本户</td></tr>
+  <tr><td>停用/启用</td><td>已使用科目不可删除，只能停用</td><td>停用后余额转入替代科目</td></tr>
+</table>
+</div>
+</div>
+
+</div></div>
+
+<!-- ==================== 流程5: 辅助核算体系 ==================== -->
+<h2 class="section-title">⑤ 辅助核算体系</h2>
+<div class="panel"><div class="panel-head">📌 多维度辅助核算 — 精细化管理</div><div class="panel-body">
+
+<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px">
+  <div style="background:#0f172a;border:1px solid #334155;border-radius:8px;padding:12px">
+    <div style="font-size:13px;color:#fbbf24;font-weight:700;margin-bottom:6px">👥 往来核算</div>
+    <div style="font-size:11px;color:#94a3b8">
+      <div style="margin:4px 0"><span class="code">1122</span> 应收账款 → <span class="hl-blue">按客户</span></div>
+      <div style="margin:4px 0"><span class="code">2202</span> 应付账款 → <span class="hl-blue">按供应商</span></div>
+      <div style="margin:4px 0"><span class="code">2203</span> 预收账款 → <span class="hl-blue">按客户</span></div>
+      <div style="margin:4px 0"><span class="code">1123</span> 预付账款 → <span class="hl-blue">按供应商</span></div>
+    </div>
+  </div>
+  <div style="background:#0f172a;border:1px solid #334155;border-radius:8px;padding:12px">
+    <div style="font-size:13px;color:#fbbf24;font-weight:700;margin-bottom:6px">🏦 银行核算</div>
+    <div style="font-size:11px;color:#94a3b8">
+      <div style="margin:4px 0"><span class="code">1002</span> 银行存款 → <span class="hl-green">按银行+账户</span></div>
+      <div style="margin:4px 0"><span class="code">1012</span> 其他货币资金 → <span class="hl-green">按类型</span></div>
+      <div style="margin:4px 0">支持银行日记账自动对账</div>
+      <div style="margin:4px 0">银企对接回写流水核销</div>
+    </div>
+  </div>
+  <div style="background:#0f172a;border:1px solid #334155;border-radius:8px;padding:12px">
+    <div style="font-size:13px;color:#fbbf24;font-weight:700;margin-bottom:6px">🏢 部门核算</div>
+    <div style="font-size:11px;color:#94a3b8">
+      <div style="margin:4px 0"><span class="code">6601</span> 销售费用 → <span class="hl-yellow">按部门</span></div>
+      <div style="margin:4px 0"><span class="code">6602</span> 管理费用 → <span class="hl-yellow">按部门</span></div>
+      <div style="margin:4px 0">部门利润中心核算</div>
+      <div style="margin:4px 0">部门费用预算控制</div>
+    </div>
+  </div>
+</div>
+
+<div style="background:#0f172a;border:1px solid #334155;border-radius:8px;padding:12px;margin-top:12px">
+<div style="font-size:12px;color:#60a5fa;font-weight:600;margin-bottom:6px">辅助核算配置规则</div>
+<table>
+  <tr><th>科目代码</th><th>科目名称</th><th>核算维度1</th><th>核算维度2</th><th>必填/选填</th></tr>
+  <tr><td>1002</td><td>银行存款</td><td>银行账户</td><td>—</td><td><span class="hl-red">必填</span></td></tr>
+  <tr><td>1121</td><td>应收票据</td><td>票据编号</td><td>承兑人</td><td><span class="hl-red">必填</span></td></tr>
+  <tr><td>1122</td><td>应收账款</td><td>客户</td><td>—</td><td><span class="hl-red">必填</span></td></tr>
+  <tr><td>1123</td><td>预付账款</td><td>供应商</td><td>—</td><td><span class="hl-red">必填</span></td></tr>
+  <tr><td>2201</td><td>应付票据</td><td>票据编号</td><td>供应商</td><td><span class="hl-red">必填</span></td></tr>
+  <tr><td>2202</td><td>应付账款</td><td>供应商</td><td>—</td><td><span class="hl-red">必填</span></td></tr>
+  <tr><td>2203</td><td>预收账款</td><td>客户</td><td>—</td><td><span class="hl-red">必填</span></td></tr>
+  <tr><td>6603</td><td>财务费用</td><td>费用类别</td><td>—</td><td><span class="hl-yellow">选填</span></td></tr>
+  <tr><td>6001</td><td>主营业务收入</td><td>产品/服务</td><td>部门</td><td><span class="hl-yellow">选填</span></td></tr>
+</table>
+</div>
+
+</div></div>
+
+<!-- ==================== 流程6: 过账与余额更新 ==================== -->
+<h2 class="section-title">⑥ 过账与余额更新</h2>
+<div class="panel"><div class="panel-head">📌 过账引擎 — 从凭证到科目余额</div><div class="panel-body">
+
+<div style="display:flex;flex-direction:column;align-items:center;gap:0">
+  <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:center">
+    <div class="flow-box process">审核通过凭证</div>
+    <div class="flow-arrow">→</div>
+    <div style="background:#422006;border:1px solid #d97706;border-radius:8px;padding:10px 14px;text-align:center;font-size:11px;color:#fcd34d;max-width:200px">
+      <div style="font-weight:700;margin-bottom:4px">过账前校验</div>
+      <div style="text-align:left;font-size:10px;color:#fde68a">
+        ☐ 会计期间是否开放<br>
+        ☐ 借贷是否平衡<br>
+        ☐ 必填辅助核算是否完整<br>
+        ☐ 科目是否已停用<br>
+        ☐ 冲销凭证原凭证是否存在
+      </div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-box process">开启事务<br><span style="font-size:10px">BEGIN TRANSACTION</span></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-box storage">更新科目余额表<br><span style="font-size:10px">gl_account_balance</span></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-box storage">更新辅助核算余额<br><span style="font-size:10px">gl_aux_balance</span></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-box process">标记凭证已过账<br><span style="font-size:10px">COMMIT</span></div>
+  </div>
+  
+  <div style="display:flex;gap:12px;margin-top:8px;flex-wrap:wrap;justify-content:center">
+    <div style="background:#7f1d1d;border:1px solid #f87171;border-radius:6px;padding:6px 12px;font-size:10px;color:#fca5a5;text-align:center">
+      失败 → ROLLBACK<br>所有更新回滚
+    </div>
+  </div>
+</div>
+
+<div style="background:#0f172a;border:1px solid #334155;border-radius:8px;padding:12px;margin-top:12px">
+<div style="font-size:12px;color:#60a5fa;font-weight:600;margin-bottom:6px">科目余额表结构（按期间+科目+辅助核算三维存储）</div>
+<div class="table-wrap">
+<table>
+  <tr><th>字段</th><th>类型</th><th>说明</th></tr>
+  <tr><td>account_code</td><td>VARCHAR(20)</td><td>科目代码 (4-2-2-2)</td></tr>
+  <tr><td>period</td><td>VARCHAR(7)</td><td>会计期间 (2026-04)</td></tr>
+  <tr><td>aux_type</td><td>VARCHAR(10)</td><td>辅助核算类型 (customer/supplier/bank/dept)</td></tr>
+  <tr><td>aux_id</td><td>BIGINT</td><td>辅助核算对象ID</td></tr>
+  <tr><td>begin_debit</td><td>DECIMAL(16,2)</td><td>期初借方余额</td></tr>
+  <tr><td>begin_credit</td><td>DECIMAL(16,2)</td><td>期初贷方余额</td></tr>
+  <tr><td>current_debit</td><td>DECIMAL(16,2)</td><td>本期借方发生额</td></tr>
+  <tr><td>current_credit</td><td>DECIMAL(16,2)</td><td>本期贷方发生额</td></tr>
+  <tr><td>end_debit</td><td>DECIMAL(16,2)</td><td>期末借方余额</td></tr>
+  <tr><td>end_credit</td><td>DECIMAL(16,2)</td><td>期末贷方余额</td></tr>
+</table>
+</div>
+</div>
+
+</div></div>
+
+<!-- ==================== 流程7: 期末处理 ==================== -->
+<h2 class="section-title">⑦ 期末处理</h2>
+<div class="panel"><div class="panel-head">📌 月末结转 · 结账 · 新期间初始化</div><div class="panel-body">
+
+<div style="display:flex;gap:16px;flex-wrap:wrap">
+  <div style="flex:1;min-width:200px">
+    <div style="background:#0f172a;border:1px solid #334155;border-radius:8px;padding:12px">
+      <div style="font-size:13px;color:#fbbf24;font-weight:700;margin-bottom:8px">月末自动结转</div>
+      <div class="mini-step"><span class="dot dot-b"></span> <span class="tag tag-sys">T1</span> 损益结转 — 收入→本年利润</div>
+      <div class="mini-step"><span class="dot dot-b"></span> <span class="tag tag-sys">T2</span> 损益结转 — 费用→本年利润</div>
+      <div class="mini-step"><span class="dot dot-b"></span> <span class="tag tag-sys">T3</span> 汇兑损益 — 外币科目重估</div>
+      <div class="mini-step"><span class="dot dot-y"></span> <span class="tag tag-rule">T4</span> 暂估入库冲回 — 估价入库红字</div>
+      <div class="mini-step"><span class="dot dot-y"></span> <span class="tag tag-rule">T5</span> 计提折旧 — 固定资产月折</div>
+      <div class="mini-step"><span class="dot dot-y"></span> <span class="tag tag-rule">T6</span> 摊销 — 待摊费用/无形资产</div>
+    </div>
+  </div>
+  
+  <div style="flex:1;min-width:200px">
+    <div style="background:#0f172a;border:1px solid #334155;border-radius:8px;padding:12px">
+      <div style="font-size:13px;color:#fbbf24;font-weight:700;margin-bottom:8px">结账流程</div>
+      <div class="mini-step"><span class="dot dot-g"></span> 1. 检查未审核凭证</div>
+      <div class="mini-step"><span class="dot dot-g"></span> 2. 检查未过账凭证</div>
+      <div class="mini-step"><span class="dot dot-g"></span> 3. 执行自动结转</div>
+      <div class="mini-step"><span class="dot dot-g"></span> 4. 审核结转凭证</div>
+      <div class="mini-step"><span class="dot dot-g"></span> 5. 过账结转凭证</div>
+      <div class="mini-step"><span class="dot dot-g"></span> 6. 试算平衡校验</div>
+      <div class="mini-step"><span class="dot dot-b"></span> 7. <span class="hl-green">锁定期间 → 结账完成</span></div>
+      <div class="mini-step"><span class="dot dot-b"></span> 8. 初始化下一期间</div>
+    </div>
+  </div>
+  
+  <div style="flex:1;min-width:200px">
+    <div style="background:#0f172a;border:1px solid #334155;border-radius:8px;padding:12px">
+      <div style="font-size:13px;color:#fbbf24;font-weight:700;margin-bottom:8px">反结账规则</div>
+      <div class="mini-step"><span class="dot dot-r"></span> 结账后不可直接修改</div>
+      <div class="mini-step"><span class="dot dot-r"></span> 需反结账 → 修改 → 重新结账</div>
+      <div style="margin-top:8px;padding:6px 8px;background:#7f1d1d;border-radius:4px;font-size:10px;color:#fca5a5">
+        ⚠️ 反结账限制:<br>
+        • 跨月反结账需财务总监审批<br>
+        • 跨年反结账不允许（需新建调整期）<br>
+        • 已报税期间不可反结账
+      </div>
+    </div>
+  </div>
+</div>
+
+<div style="background:#0f172a;border:1px solid #334155;border-radius:8px;padding:12px;margin-top:12px">
+<div style="font-size:12px;color:#60a5fa;font-weight:600;margin-bottom:6px">试算平衡校验</div>
+<div class="table-wrap">
+<table>
+  <tr><th>校验项</th><th>公式</th><th>不通过处理</th></tr>
+  <tr><td>借贷平衡</td><td>∑全部科目借方余额 = ∑全部科目贷方余额</td><td>提示差异科目，禁止结账</td></tr>
+  <tr><td>损益清零</td><td>所有损益科目(6xxx)期末余额 = 0</td><td>检查损益结转是否完整</td></tr>
+  <tr><td>上下期衔接</td><td>本期期初 = 上期期末</td><td>数据异常，需DBA介入</td></tr>
+  <tr><td>辅助核算平衡</td><td>科目余额 = ∑辅助核算明细余额</td><td>辅助核算数据不一致</td></tr>
+</table>
+</div>
+</div>
+
+</div></div>
+
+<!-- ==================== 流程8: 红字冲销 ==================== -->
+<h2 class="section-title">⑧ 红字冲销机制</h2>
+<div class="panel"><div class="panel-head">📌 错误凭证的两种更正方式</div><div class="panel-body">
+
+<div class="multi-col">
+  <div style="background:#0f172a;border:1px solid #334155;border-radius:8px;padding:14px">
+    <div style="font-size:13px;color:#4ade80;font-weight:700;margin-bottom:8px">方式一：全额冲销</div>
+    <div style="font-size:11px;color:#94a3b8;line-height:1.8">
+      <div>1. 创建一张红字凭证（金额全部取负）</div>
+      <div>2. 摘要标注"冲销XXX号凭证"</div>
+      <div>3. 关联原凭证ID</div>
+      <div>4. 同时创建一张蓝字正确凭证</div>
+      <div style="margin-top:6px;padding:4px 8px;background:#1e3a5f;border-radius:4px">
+        <span style="color:#93c5fd">适用场景：</span>原凭证金额/科目完全错误
+      </div>
+    </div>
+  </div>
+  
+  <div style="background:#0f172a;border:1px solid #334155;border-radius:8px;padding:14px">
+    <div style="font-size:13px;color:#60a5fa;font-weight:700;margin-bottom:8px">方式二：差额调整</div>
+    <div style="font-size:11px;color:#94a3b8;line-height:1.8">
+      <div>1. 仅对差额部分创建调整凭证</div>
+      <div>2. 摘要标注"调整XXX号凭证差额"</div>
+      <div>3. 关联原凭证ID</div>
+      <div style="margin-top:6px;padding:4px 8px;background:#1e3a5f;border-radius:4px">
+        <span style="color:#93c5fd">适用场景：</span>原凭证金额多记/少记
+      </div>
+    </div>
+  </div>
+</div>
+
+<div style="background:#0f172a;border:1px solid #334155;border-radius:8px;padding:12px;margin-top:10px">
+<div style="font-size:12px;color:#60a5fa;font-weight:600;margin-bottom:6px">冲销权限与审计</div>
+<table>
+  <tr><th>控制点</th><th>规则</th></tr>
+  <tr><td>冲销权限</td><td>财务主管及以上可创建冲销凭证</td></tr>
+  <tr><td>审批要求</td><td>已结账期间的冲销需财务总监审批</td></tr>
+  <tr><td>审计追踪</td><td>原凭证 ↔ 冲销凭证双向关联，不可断链</td></tr>
+  <tr><td>金额限制</td><td>冲销金额不得超过原凭证金额</td></tr>
+  <tr><td>凭证编号</td><td>冲销凭证自动生成，编号规则 GL+年月+序号-R</td></tr>
+</table>
+</div>
+
+</div></div>
+
+</div>
+
+<!-- ==================== 右侧说明面板 ==================== -->
+<div class="side">
+
+<div class="info-card">
+  <h3>📊 模块统计</h3>
+  <div class="stat-grid">
+    <div class="stat-box"><div class="num hl-blue">28</div><div class="label">凭证模板</div></div>
+    <div class="stat-box"><div class="num hl-green">6</div><div class="label">功能域</div></div>
+    <div class="stat-box"><div class="num hl-yellow">4</div><div class="label">上游模块</div></div>
+    <div class="stat-box"><div class="num hl-red">P0</div><div class="label">最高优先级</div></div>
+  </div>
+</div>
+
+<div class="info-card">
+  <h3>📋 凭证模板清单</h3>
+  <div class="template-list">
+    <div style="font-size:11px;color:#64748b;margin-bottom:4px;font-weight:600">实收收款 (S01~S06)</div>
+    <div class="template-item"><span class="code">S01</span><span class="desc">正常收款核销</span></div>
+    <div class="template-item"><span class="code">S02</span><span class="desc">纯预收款</span></div>
+    <div class="template-item"><span class="code">S03</span><span class="desc">预收转应收</span></div>
+    <div class="template-item"><span class="code">S04</span><span class="desc">提前付款折扣</span></div>
+    <div class="template-item"><span class="code">S05</span><span class="desc">收到承兑汇票</span></div>
+    <div class="template-item"><span class="code">S06</span><span class="desc">汇票贴现/兑现</span></div>
+    
+    <div style="font-size:11px;color:#64748b;margin:6px 0 4px;font-weight:600">实付付款 (P01~P08)</div>
+    <div class="template-item"><span class="code">P01</span><span class="desc">普通银行付款</span></div>
+    <div class="template-item"><span class="code">P02</span><span class="desc">预付货款</span></div>
+    <div class="template-item"><span class="code">P03</span><span class="desc">预付转应付</span></div>
+    <div class="template-item"><span class="code">P04</span><span class="desc">付款折扣/折让</span></div>
+    <div class="template-item"><span class="code">P05</span><span class="desc">承兑背书付款</span></div>
+    <div class="template-item"><span class="code">P06</span><span class="desc">汇票到期兑付</span></div>
+    <div class="template-item"><span class="code">P07</span><span class="desc">现金付款</span></div>
+    <div class="template-item"><span class="code">P08</span><span class="desc">付款冲销/退款</span></div>
+    
+    <div style="font-size:11px;color:#64748b;margin:6px 0 4px;font-weight:600">应收票据 (B01~B08)</div>
+    <div class="template-item"><span class="code">B01</span><span class="desc">票据收取</span></div>
+    <div class="template-item"><span class="code">B02</span><span class="desc">票据背书</span></div>
+    <div class="template-item"><span class="code">B03</span><span class="desc">票据贴现</span></div>
+    <div class="template-item"><span class="code">B04</span><span class="desc">票据质押</span></div>
+    <div class="template-item"><span class="code">B05</span><span class="desc">质押赎回</span></div>
+    <div class="template-item"><span class="code">B06</span><span class="desc">到期兑付</span></div>
+    <div class="template-item"><span class="code">B07</span><span class="desc">退回/追索</span></div>
+    <div class="template-item"><span class="code">B08</span><span class="desc">坏账核销</span></div>
+    
+    <div style="font-size:11px;color:#64748b;margin:6px 0 4px;font-weight:600">应付票据 (PA01~PA07)</div>
+    <div class="template-item"><span class="code">PA01</span><span class="desc">应付票据开立</span></div>
+    <div class="template-item"><span class="code">PA03</span><span class="desc">到期付款</span></div>
+    <div class="template-item"><span class="code">PA04</span><span class="desc">票据展期</span></div>
+    <div class="template-item"><span class="code">PA05</span><span class="desc">背书收票抵付</span></div>
+    <div class="template-item"><span class="code">PA06</span><span class="desc">票据退回</span></div>
+    <div class="template-item"><span class="code">PA07</span><span class="desc">保证金利息</span></div>
+    
+    <div style="font-size:11px;color:#64748b;margin:6px 0 4px;font-weight:600">总账内部 (GL01~GL03)</div>
+    <div class="template-item"><span class="code">GL01</span><span class="desc">损益结转(收入)</span></div>
+    <div class="template-item"><span class="code">GL02</span><span class="desc">损益结转(费用)</span></div>
+    <div class="template-item"><span class="code">GL03</span><span class="desc">本年利润结转</span></div>
+  </div>
+</div>
+
+<div class="info-card">
+  <h3>⚠️ 关键设计决策</h3>
+  <ul>
+    <li>凭证字: 收/付/转 三种</li>
+    <li>制单与审核必须为不同人</li>
+    <li>已过账凭证不可修改，只能冲销</li>
+    <li>辅助核算为科目属性，非分录属性</li>
+    <li>科目余额按期间快照存储</li>
+    <li>支持多币种，本位币为CNY</li>
+    <li>凭证编号 GL+年月+6位序号</li>
+  </ul>
+</div>
+
+<div class="info-card">
+  <h3>🔗 上游模块集成</h3>
+  <div style="font-size:11px;color:#94a3b8">
+    <div style="margin:6px 0;padding:6px 8px;background:#0f172a;border-radius:4px">
+      <span style="color:#4ade80">实收收款</span> → receipt.voucher_id<br>
+      <span style="color:#94a3b8;font-size:10px">审核通过自动调用凭证生成API</span>
+    </div>
+    <div style="margin:6px 0;padding:6px 8px;background:#0f172a;border-radius:4px">
+      <span style="color:#4ade80">实付付款</span> → payment_order.voucher_id<br>
+      <span style="color:#94a3b8;font-size:10px">付款完成自动调用凭证生成API</span>
+    </div>
+    <div style="margin:6px 0;padding:6px 8px;background:#0f172a;border-radius:4px">
+      <span style="color:#4ade80">应收票据</span> → bill_transaction.voucher_id<br>
+      <span style="color:#94a3b8;font-size:10px">票据处置审批通过自动生成</span>
+    </div>
+    <div style="margin:6px 0;padding:6px 8px;background:#0f172a;border-radius:4px">
+      <span style="color:#4ade80">应付票据</span> → payable_bill_settlement.voucher_id<br>
+      <span style="color:#94a3b8;font-size:10px">票据处置审批通过自动生成</span>
+    </div>
+  </div>
+</div>
+
+</div>
+</div>
+</div>
+</body>
+</html>
