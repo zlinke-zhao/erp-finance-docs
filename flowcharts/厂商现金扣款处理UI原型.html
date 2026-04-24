@@ -1,0 +1,1884 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>厂商现金扣款处理 - UI设计稿</title>
+<style>
+  /* ========== CSS Variables ========== */
+  :root {
+    --primary: #1a73e8;
+    --primary-light: #e8f0fe;
+    --success: #0d9f6e;
+    --success-light: #e6f7f1;
+    --warning: #f59e0b;
+    --warning-light: #fef3c7;
+    --danger: #e53e3e;
+    --danger-light: #fee2e2;
+    --info: #3b82f6;
+    --gray-50: #f9fafb;
+    --gray-100: #f3f4f6;
+    --gray-200: #e5e7eb;
+    --gray-300: #d1d5db;
+    --gray-400: #9ca3af;
+    --gray-500: #6b7280;
+    --gray-600: #4b5563;
+    --gray-700: #374151;
+    --gray-800: #1f2937;
+    --gray-900: #111827;
+    --radius: 8px;
+    --shadow: 0 1px 3px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.06);
+    --shadow-md: 0 4px 6px rgba(0,0,0,0.07), 0 2px 4px rgba(0,0,0,0.06);
+    --shadow-lg: 0 10px 15px rgba(0,0,0,0.1), 0 4px 6px rgba(0,0,0,0.05);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    background: var(--gray-100);
+    color: var(--gray-800);
+    line-height: 1.6;
+  }
+
+  /* ========== 顶部导航 ========== */
+  .top-nav {
+    background: #fff;
+    border-bottom: 1px solid var(--gray-200);
+    padding: 0 24px;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: var(--shadow);
+  }
+  .top-nav .logo {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--primary);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .top-nav .logo span { color: var(--gray-700); font-weight: 500; font-size: 15px; }
+  .top-nav .nav-tabs {
+    display: flex;
+    gap: 4px;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  .top-nav .nav-tab {
+    padding: 8px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    color: var(--gray-600);
+    transition: all 0.2s;
+    border: none;
+    background: none;
+  }
+  .top-nav .nav-tab:hover { background: var(--gray-100); }
+  .top-nav .nav-tab.active { background: var(--primary-light); color: var(--primary); font-weight: 600; }
+  .top-nav .user-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: var(--gray-600);
+  }
+  .avatar {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    background: var(--primary);
+    color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; font-weight: 600;
+  }
+
+  /* ========== 页面容器 ========== */
+  .page { display: none; padding: 24px; max-width: 1400px; margin: 0 auto; }
+  .page.active { display: block; }
+
+  /* ========== 面包屑 ========== */
+  .breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: var(--gray-500);
+    margin-bottom: 16px;
+  }
+  .breadcrumb a { color: var(--primary); text-decoration: none; }
+  .breadcrumb a:hover { text-decoration: underline; }
+
+  /* ========== 卡片 ========== */
+  .card {
+    background: #fff;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    margin-bottom: 20px;
+    overflow: hidden;
+  }
+  .card-header {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--gray-200);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .card-header h3 {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--gray-800);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .card-body { padding: 20px; }
+
+  /* ========== 按钮 ========== */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    border: 1px solid transparent;
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+  .btn-primary { background: var(--primary); color: #fff; }
+  .btn-primary:hover { background: #1557b0; }
+  .btn-success { background: var(--success); color: #fff; }
+  .btn-success:hover { background: #0b8a5e; }
+  .btn-warning { background: var(--warning); color: #fff; }
+  .btn-warning:hover { background: #d97706; }
+  .btn-danger { background: var(--danger); color: #fff; }
+  .btn-danger:hover { background: #c53030; }
+  .btn-outline {
+    background: #fff;
+    border: 1px solid var(--gray-300);
+    color: var(--gray-700);
+  }
+  .btn-outline:hover { background: var(--gray-50); border-color: var(--gray-400); }
+  .btn-sm { padding: 5px 12px; font-size: 13px; }
+  .btn-icon {
+    width: 32px; height: 32px;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    border: 1px solid var(--gray-300);
+    background: #fff;
+    cursor: pointer;
+    color: var(--gray-600);
+    font-size: 16px;
+  }
+  .btn-icon:hover { background: var(--gray-50); }
+
+  /* ========== 表单 ========== */
+  .form-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px 24px;
+  }
+  .form-group { display: flex; flex-direction: column; gap: 4px; }
+  .form-group.full { grid-column: 1 / -1; }
+  .form-label {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--gray-700);
+  }
+  .form-label .required { color: var(--danger); margin-left: 2px; }
+  .form-input, .form-select, .form-textarea {
+    padding: 8px 12px;
+    border: 1px solid var(--gray-300);
+    border-radius: 6px;
+    font-size: 14px;
+    color: var(--gray-800);
+    background: #fff;
+    transition: border-color 0.15s;
+    width: 100%;
+  }
+  .form-input:focus, .form-select:focus, .form-textarea:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(26,115,232,0.1);
+  }
+  .form-textarea { resize: vertical; min-height: 80px; }
+  .form-hint { font-size: 12px; color: var(--gray-500); }
+
+  /* ========== 表格 ========== */
+  .table-wrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  thead th {
+    background: var(--gray-50);
+    padding: 10px 12px;
+    text-align: left;
+    font-weight: 600;
+    color: var(--gray-600);
+    border-bottom: 1px solid var(--gray-200);
+    white-space: nowrap;
+    font-size: 13px;
+  }
+  tbody td {
+    padding: 12px;
+    border-bottom: 1px solid var(--gray-100);
+    color: var(--gray-700);
+  }
+  tbody tr:hover { background: var(--gray-50); }
+  .table-actions { display: flex; gap: 4px; }
+
+  /* ========== 状态标签 ========== */
+  .status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  .status-draft { background: var(--gray-100); color: var(--gray-600); }
+  .status-pending { background: var(--warning-light); color: #92400e; }
+  .status-confirming { background: var(--info); color: #fff; background: #dbeafe; color: #1e40af; }
+  .status-done { background: var(--success-light); color: #065f46; }
+  .status-rejected { background: var(--danger-light); color: #991b1b; }
+
+  .direction-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+  }
+  .direction-in { background: var(--success-light); color: #065f46; }
+  .direction-out { background: var(--warning-light); color: #92400e; }
+
+  /* ========== 搜索栏 ========== */
+  .search-bar {
+    display: flex;
+    gap: 12px;
+    align-items: flex-end;
+    flex-wrap: wrap;
+  }
+  .search-bar .form-group { min-width: 180px; flex: 1; }
+
+  /* ========== 分页 ========== */
+  .pagination {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 0 0;
+    font-size: 13px;
+    color: var(--gray-500);
+  }
+  .pagination .pages { display: flex; gap: 4px; }
+  .pagination .page-btn {
+    width: 32px; height: 32px;
+    display: flex; align-items: center; justify-content: center;
+    border: 1px solid var(--gray-300);
+    border-radius: 6px;
+    background: #fff;
+    cursor: pointer;
+    font-size: 13px;
+    color: var(--gray-700);
+  }
+  .pagination .page-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+  .pagination .page-btn:hover:not(.active) { background: var(--gray-50); }
+
+  /* ========== 流程进度条 ========== */
+  .stepper {
+    display: flex;
+    align-items: center;
+    padding: 24px 40px;
+    background: #fff;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    margin-bottom: 20px;
+    overflow-x: auto;
+  }
+  .step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    min-width: 120px;
+    position: relative;
+  }
+  .step-icon {
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px;
+    font-weight: 700;
+    border: 2px solid var(--gray-300);
+    background: #fff;
+    color: var(--gray-400);
+    z-index: 1;
+  }
+  .step.active .step-icon {
+    border-color: var(--primary);
+    background: var(--primary);
+    color: #fff;
+  }
+  .step.done .step-icon {
+    border-color: var(--success);
+    background: var(--success);
+    color: #fff;
+  }
+  .step-label {
+    font-size: 12px;
+    color: var(--gray-500);
+    text-align: center;
+    font-weight: 500;
+  }
+  .step.active .step-label { color: var(--primary); font-weight: 600; }
+  .step.done .step-label { color: var(--success); }
+  .step-line {
+    flex: 1;
+    height: 2px;
+    background: var(--gray-300);
+    min-width: 40px;
+    margin: 0 -8px;
+    margin-bottom: 24px;
+  }
+  .step-line.done { background: var(--success); }
+
+  /* ========== 详情页 ========== */
+  .detail-section { margin-bottom: 24px; }
+  .detail-section h4 {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--gray-700);
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--gray-200);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .detail-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+  }
+  .detail-item {}
+  .detail-label {
+    font-size: 12px;
+    color: var(--gray-500);
+    margin-bottom: 2px;
+  }
+  .detail-value {
+    font-size: 14px;
+    color: var(--gray-800);
+    font-weight: 500;
+  }
+
+  /* ========== 审核记录 ========== */
+  .audit-timeline { padding-left: 24px; position: relative; }
+  .audit-timeline::before {
+    content: '';
+    position: absolute;
+    left: 8px;
+    top: 8px;
+    bottom: 8px;
+    width: 2px;
+    background: var(--gray-300);
+  }
+  .audit-item {
+    position: relative;
+    padding: 0 0 24px 24px;
+  }
+  .audit-item:last-child { padding-bottom: 0; }
+  .audit-dot {
+    position: absolute;
+    left: -20px;
+    top: 4px;
+    width: 12px; height: 12px;
+    border-radius: 50%;
+    border: 2px solid var(--gray-300);
+    background: #fff;
+  }
+  .audit-dot.pass { border-color: var(--success); background: var(--success); }
+  .audit-dot.reject { border-color: var(--danger); background: var(--danger); }
+  .audit-meta { font-size: 13px; color: var(--gray-500); margin-bottom: 4px; }
+  .audit-content { font-size: 14px; color: var(--gray-700); }
+
+  /* ========== 弹窗 ========== */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.4);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+  }
+  .modal-overlay.show { display: flex; }
+  .modal {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: var(--shadow-lg);
+    width: 90%;
+    max-width: 560px;
+    max-height: 80vh;
+    overflow-y: auto;
+  }
+  .modal-header {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--gray-200);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .modal-header h3 { font-size: 16px; font-weight: 600; }
+  .modal-body { padding: 20px; }
+  .modal-footer {
+    padding: 16px 20px;
+    border-top: 1px solid var(--gray-200);
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+  }
+
+  /* ==========  Toast 提示 ========== */
+  .toast-container {
+    position: fixed;
+    top: 70px;
+    right: 24px;
+    z-index: 2000;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .toast {
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    box-shadow: var(--shadow-lg);
+    animation: slideIn 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .toast-success { background: var(--success); color: #fff; }
+  .toast-error { background: var(--danger); color: #fff; }
+  .toast-warning { background: var(--warning); color: #fff; }
+  @keyframes slideIn {
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+  }
+
+  /* ========== 统计卡片 ========== */
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+  .stat-card {
+    background: #fff;
+    border-radius: var(--radius);
+    padding: 20px;
+    box-shadow: var(--shadow);
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .stat-icon {
+    width: 48px; height: 48px;
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+  }
+  .stat-icon.blue { background: var(--primary-light); color: var(--primary); }
+  .stat-icon.green { background: var(--success-light); color: var(--success); }
+  .stat-icon.yellow { background: var(--warning-light); color: var(--warning); }
+  .stat-icon.red { background: var(--danger-light); color: var(--danger); }
+  .stat-info h4 { font-size: 24px; font-weight: 700; color: var(--gray-900); }
+  .stat-info p { font-size: 13px; color: var(--gray-500); }
+
+  /* ========== 凭证预览 ========== */
+  .voucher-preview {
+    background: #fffef5;
+    border: 1px solid #e6d9a2;
+    border-radius: var(--radius);
+    padding: 20px;
+    font-family: "Courier New", monospace;
+  }
+  .voucher-preview h4 {
+    text-align: center;
+    font-size: 16px;
+    margin-bottom: 16px;
+    color: var(--gray-800);
+  }
+  .voucher-table { width: 100%; border-collapse: collapse; }
+  .voucher-table th, .voucher-table td {
+    padding: 8px 12px;
+    border: 1px solid #d4c894;
+    font-size: 13px;
+  }
+  .voucher-table th {
+    background: #f5f0d4;
+    font-weight: 600;
+    text-align: center;
+  }
+  .voucher-table td:last-child { text-align: right; }
+
+  /* ========== 流程图 ========== */
+  .flow-chart {
+    background: #fff;
+    border-radius: var(--radius);
+    padding: 32px;
+    box-shadow: var(--shadow);
+    margin-bottom: 20px;
+    overflow-x: auto;
+  }
+  .flow-step {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    min-width: max-content;
+  }
+  .flow-box {
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    text-align: center;
+    min-width: 130px;
+    border: 2px solid var(--gray-300);
+    background: #fff;
+  }
+  .flow-box.blue { border-color: var(--primary); background: var(--primary-light); color: var(--primary); }
+  .flow-box.green { border-color: var(--success); background: var(--success-light); color: var(--success); }
+  .flow-box.yellow { border-color: var(--warning); background: var(--warning-light); color: #92400e; }
+  .flow-box.purple { border-color: #8b5cf6; background: #f3e8ff; color: #6d28d9; }
+  .flow-arrow {
+    font-size: 20px;
+    color: var(--gray-400);
+    padding: 0 8px;
+    display: flex;
+    align-items: center;
+  }
+
+  /* ========== 响应式 ========== */
+  @media (max-width: 1024px) {
+    .form-grid { grid-template-columns: repeat(2, 1fr); }
+    .detail-grid { grid-template-columns: repeat(2, 1fr); }
+    .stats-row { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 640px) {
+    .form-grid { grid-template-columns: 1fr; }
+    .detail-grid { grid-template-columns: 1fr; }
+    .stats-row { grid-template-columns: 1fr; }
+    .top-nav .nav-tabs { position: static; transform: none; }
+  }
+
+  /* ========== 打印样式 ========== */
+  @media print {
+    .top-nav, .btn, .search-bar, .pagination { display: none !important; }
+    .page { padding: 0; }
+    .card { box-shadow: none; border: 1px solid #ddd; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ===== Toast 容器 ===== -->
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- ===== 顶部导航 ===== -->
+<div class="top-nav">
+  <div class="logo">💰 ERP Finance <span>| 厂商现金扣款处理</span></div>
+  <div class="nav-tabs">
+    <button class="nav-tab active" onclick="switchPage('listPage')">扣款单列表</button>
+    <button class="nav-tab" onclick="switchPage('createPage')">新建扣款单</button>
+    <button class="nav-tab" onclick="switchPage('flowPage')">业务流程图</button>
+    <button class="nav-tab" onclick="switchPage('reportPage')">统计报表</button>
+  </div>
+  <div class="user-info">
+    <div class="avatar">张</div>
+    <span>张三 (采购员)</span>
+  </div>
+</div>
+
+<!-- ============================================ -->
+<!-- 页面1：扣款单列表页 -->
+<!-- ============================================ -->
+<div class="page active" id="listPage">
+
+  <!-- 统计卡片 -->
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="stat-icon blue">📋</div>
+      <div class="stat-info">
+        <h4>156</h4>
+        <p>本月扣款单</p>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon green">✅</div>
+      <div class="stat-info">
+        <h4>128</h4>
+        <p>已完成</p>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon yellow">⏳</div>
+      <div class="stat-info">
+        <h4>18</h4>
+        <p>待处理</p>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon red">💰</div>
+      <div class="stat-info">
+        <h4>¥86.5万</h4>
+        <p>本月扣款总额</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 搜索栏 -->
+  <div class="card">
+    <div class="card-body">
+      <div class="search-bar">
+        <div class="form-group">
+          <label class="form-label">扣款单编号</label>
+          <input class="form-input" placeholder="请输入扣款单编号" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">供应商</label>
+          <input class="form-input" placeholder="请输入供应商名称" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">扣款方向</label>
+          <select class="form-select">
+            <option value="">全部</option>
+            <option>供应商→我方（收款）</option>
+            <option>我方→供应商（付款）</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">状态</label>
+          <select class="form-select">
+            <option value="">全部</option>
+            <option>草稿</option>
+            <option>审核中</option>
+            <option>待确认</option>
+            <option>已完成</option>
+            <option>已驳回</option>
+          </select>
+        </div>
+        <div class="form-group" style="display:flex;align-items:flex-end;gap:8px;">
+          <button class="btn btn-primary" onclick="showToast('成功','查询成功，共找到 12 条记录','success')">🔍 查询</button>
+          <button class="btn btn-outline">↻ 重置</button>
+        </div>
+      </div>
+      <div class="search-bar" style="margin-top:12px;">
+        <div class="form-group">
+          <label class="form-label">扣款日期（起）</label>
+          <input class="form-input" type="date" value="2026-04-01" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">扣款日期（止）</label>
+          <input class="form-input" type="date" value="2026-04-24" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">币种</label>
+          <select class="form-select">
+            <option value="">全部</option>
+            <option>CNY（人民币）</option>
+            <option>VND（越南盾）</option>
+            <option>THB（泰铢）</option>
+            <option>PHP（菲律宾比索）</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 操作按钮栏 -->
+  <div class="card">
+    <div class="card-header">
+      <h3>📄 现金扣款单列表</h3>
+      <div style="display:flex;gap:8px;">
+        <button class="btn btn-primary" onclick="switchPage('createPage')">＋ 新建扣款单</button>
+        <button class="btn btn-outline">📥 导出</button>
+      </div>
+    </div>
+    <div class="card-body" style="padding:0;">
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th style="width:40px;"><input type="checkbox" /></th>
+              <th>扣款单编号</th>
+              <th>扣款日期</th>
+              <th>供应商</th>
+              <th>币种</th>
+              <th>扣款方向</th>
+              <th>扣款金额</th>
+              <th>扣款原因</th>
+              <th>状态</th>
+              <th>操作</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><input type="checkbox" /></td>
+              <td><a href="javascript:void(0)" onclick="switchPage('detailPage')" style="color:var(--primary);font-weight:600;">CASH-20260417-001</a></td>
+              <td>2026-04-15</td>
+              <td>越南ABC电子有限公司</td>
+              <td>VND</td>
+              <td><span class="direction-badge direction-in">↑ 供应商→我方</span></td>
+              <td style="font-weight:700;color:var(--success);">1,000,000</td>
+              <td>品质扣款</td>
+              <td><span class="status-badge status-done">● 已完成</span></td>
+              <td>
+                <div class="table-actions">
+                  <button class="btn btn-sm btn-outline" onclick="switchPage('detailPage')">查看</button>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td><input type="checkbox" /></td>
+              <td><a href="javascript:void(0)" style="color:var(--primary);font-weight:600;">CASH-20260418-002</a></td>
+              <td>2026-04-16</td>
+              <td>泰国XYZ配件公司</td>
+              <td>THB</td>
+              <td><span class="direction-badge direction-in">↑ 供应商→我方</span></td>
+              <td style="font-weight:700;color:var(--success);">5,200.00</td>
+              <td>迟延罚款</td>
+              <td><span class="status-badge status-confirming">● 待确认</span></td>
+              <td>
+                <div class="table-actions">
+                  <button class="btn btn-sm btn-primary" onclick="openModal('confirmModal')">确认收款</button>
+                  <button class="btn btn-sm btn-outline" onclick="switchPage('detailPage')">查看</button>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td><input type="checkbox" /></td>
+              <td><a href="javascript:void(0)" style="color:var(--primary);font-weight:600;">CASH-20260419-003</a></td>
+              <td>2026-04-17</td>
+              <td>菲律宾DEF材料公司</td>
+              <td>PHP</td>
+              <td><span class="direction-badge direction-out">↓ 我方→供应商</span></td>
+              <td style="font-weight:700;color:var(--warning);">12,500.00</td>
+              <td>我方补偿</td>
+              <td><span class="status-badge status-pending">● 审核中</span></td>
+              <td>
+                <div class="table-actions">
+                  <button class="btn btn-sm btn-outline" onclick="switchPage('auditPage')">审核</button>
+                  <button class="btn btn-sm btn-outline" onclick="switchPage('detailPage')">查看</button>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td><input type="checkbox" /></td>
+              <td><a href="javascript:void(0)" style="color:var(--primary);font-weight:600;">CASH-20260420-004</a></td>
+              <td>2026-04-18</td>
+              <td>越南GHI科技股份公司</td>
+              <td>VND</td>
+              <td><span class="direction-badge direction-in">↑ 供应商→我方</span></td>
+              <td style="font-weight:700;color:var(--success);">2,500,000</td>
+              <td>品质扣款</td>
+              <td><span class="status-badge status-draft">● 草稿</span></td>
+              <td>
+                <div class="table-actions">
+                  <button class="btn btn-sm btn-outline">编辑</button>
+                  <button class="btn btn-sm btn-primary">提交审核</button>
+                  <button class="btn btn-sm btn-danger">删除</button>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td><input type="checkbox" /></td>
+              <td><a href="javascript:void(0)" style="color:var(--primary);font-weight:600;">CASH-20260421-005</a></td>
+              <td>2026-04-19</td>
+              <td>泰国JKL工业公司</td>
+              <td>THB</td>
+              <td><span class="direction-badge direction-out">↓ 我方→供应商</span></td>
+              <td style="font-weight:700;color:var(--warning);">8,800.00</td>
+              <td>价格调整</td>
+              <td><span class="status-badge status-rejected">● 已驳回</span></td>
+              <td>
+                <div class="table-actions">
+                  <button class="btn btn-sm btn-outline">重新编辑</button>
+                  <button class="btn btn-sm btn-outline" onclick="switchPage('detailPage')">查看</button>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td><input type="checkbox" /></td>
+              <td><a href="javascript:void(0)" style="color:var(--primary);font-weight:600;">CASH-20260422-006</a></td>
+              <td>2026-04-20</td>
+              <td>越南MNO电子公司</td>
+              <td>VND</td>
+              <td><span class="direction-badge direction-in">↑ 供应商→我方</span></td>
+              <td style="font-weight:700;color:var(--success);">3,200,000</td>
+              <td>迟延罚款</td>
+              <td><span class="status-badge status-done">● 已完成</span></td>
+              <td>
+                <div class="table-actions">
+                  <button class="btn btn-sm btn-outline" onclick="switchPage('detailPage')">查看</button>
+                  <button class="btn btn-sm btn-outline">打印凭证</button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="pagination" style="padding:16px 20px;">
+        <span>共 156 条记录，每页 10 条</span>
+        <div class="pages">
+          <button class="page-btn" style="width:auto;padding:0 10px;">‹ 上一页</button>
+          <button class="page-btn active">1</button>
+          <button class="page-btn">2</button>
+          <button class="page-btn">3</button>
+          <button class="page-btn">...</button>
+          <button class="page-btn">16</button>
+          <button class="page-btn" style="width:auto;padding:0 10px;">下一页 ›</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================ -->
+<!-- 页面2：新建/编辑扣款单 -->
+<!-- ============================================ -->
+<div class="page" id="createPage">
+  <div class="breadcrumb">
+    <a href="javascript:void(0)" onclick="switchPage('listPage')">现金扣款单列表</a>
+    <span>›</span>
+    <span>新建现金扣款单</span>
+  </div>
+
+  <!-- 流程进度 -->
+  <div class="stepper">
+    <div class="step active">
+      <div class="step-icon">1</div>
+      <div class="step-label">填写申请</div>
+    </div>
+    <div class="step-line"></div>
+    <div class="step">
+      <div class="step-icon">2</div>
+      <div class="step-label">财务审核</div>
+    </div>
+    <div class="step-line"></div>
+    <div class="step">
+      <div class="step-icon">3</div>
+      <div class="step-label">收付款确认</div>
+    </div>
+    <div class="step-line"></div>
+    <div class="step">
+      <div class="step-icon">4</div>
+      <div class="step-label">核销完成</div>
+    </div>
+  </div>
+
+  <!-- 基本信息 -->
+  <div class="card">
+    <div class="card-header">
+      <h3>📋 基本信息</h3>
+    </div>
+    <div class="card-body">
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="form-label">扣款单编号</label>
+          <input class="form-input" value="系统自动生成" disabled style="background:var(--gray-50);color:var(--gray-500);" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">扣款日期 <span class="required">*</span></label>
+          <input class="form-input" type="date" value="2026-04-24" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">币种 <span class="required">*</span></label>
+          <select class="form-select">
+            <option>CNY（人民币）</option>
+            <option selected>VND（越南盾）</option>
+            <option>THB（泰铢）</option>
+            <option>PHP（菲律宾比索）</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">供应商 <span class="required">*</span></label>
+          <div style="display:flex;gap:8px;">
+            <input class="form-input" placeholder="请选择供应商" id="supplierInput" />
+            <button class="btn btn-outline" onclick="showToast('提示','弹出供应商选择弹窗','warning')">🔍</button>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">扣款方向 <span class="required">*</span></label>
+          <select class="form-select" onchange="onDirectionChange(this)">
+            <option value="">请选择</option>
+            <option value="in">供应商→我方（我们收款）</option>
+            <option value="out">我方→供应商（我们付款）</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">扣款金额 <span class="required">*</span></label>
+          <input class="form-input" placeholder="请输入金额" type="number" />
+          <span class="form-hint">原币种金额，精度保留2位小数</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 扣款信息 -->
+  <div class="card">
+    <div class="card-header">
+      <h3>💰 扣款信息</h3>
+    </div>
+    <div class="card-body">
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="form-label">扣款原因 <span class="required">*</span></label>
+          <select class="form-select">
+            <option value="">请选择扣款原因</option>
+            <option>品质扣款</option>
+            <option>迟延罚款</option>
+            <option>我方补偿</option>
+            <option>价格调整</option>
+            <option>其他</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">扣款原因备注</label>
+          <input class="form-input" placeholder="选填，补充说明扣款原因" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">支付方式 <span class="required">*</span></label>
+          <select class="form-select">
+            <option value="">请选择支付方式</option>
+            <option>现金</option>
+            <option>银行转账</option>
+            <option>支票</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">收付款账号 <span class="required">*</span></label>
+          <select class="form-select">
+            <option value="">请选择账号</option>
+            <option>VND-CASH-001（越南盾现金账户）</option>
+            <option>VND-BANK-001（越南盾银行账户）</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group full" style="margin-top:16px;">
+        <label class="form-label">扣款说明</label>
+        <textarea class="form-textarea" placeholder="请输入扣款的详细说明..."></textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- 关联单据 -->
+  <div class="card">
+    <div class="card-header">
+      <h3>🔗 关联单据信息</h3>
+    </div>
+    <div class="card-body">
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="form-label">来源单据类型 <span class="required">*</span></label>
+          <select class="form-select">
+            <option value="">请选择</option>
+            <option>采购发票</option>
+            <option>对账单</option>
+            <option>采购订单</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">来源单据 <span class="required">*</span></label>
+          <div style="display:flex;gap:8px;">
+            <input class="form-input" placeholder="请选择关联单据" />
+            <button class="btn btn-outline" onclick="showToast('提示','弹出来源单据选择弹窗','warning')">🔍</button>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">原应付金额</label>
+          <input class="form-input" placeholder="自动填充" disabled style="background:var(--gray-50);color:var(--gray-500);" />
+          <span class="form-hint">关联单据的原应付金额，自动带出</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 附件上传 -->
+  <div class="card">
+    <div class="card-header">
+      <h3>📎 附件上传</h3>
+    </div>
+    <div class="card-body">
+      <div style="border:2px dashed var(--gray-300);border-radius:8px;padding:32px;text-align:center;cursor:pointer;transition:all 0.2s;" onmouseover="this.style.borderColor='var(--primary)';this.style.background='var(--primary-light)'" onmouseout="this.style.borderColor='var(--gray-300)';this.style.background='transparent'">
+        <div style="font-size:32px;margin-bottom:8px;">📤</div>
+        <div style="font-size:14px;color:var(--gray-600);">点击或拖拽文件到此区域上传</div>
+        <div style="font-size:12px;color:var(--gray-400);margin-top:4px;">支持 PDF、JPG、PNG 格式，单个文件不超过 10MB</div>
+        <div style="font-size:12px;color:var(--warning);margin-top:4px;">⚠️ 越南/泰国业务建议上传双方确认的扣款协议</div>
+      </div>
+      <!-- 已上传附件列表 -->
+      <div style="margin-top:16px;">
+        <div style="display:flex;align-items:center;gap:12px;padding:10px 14px;background:var(--gray-50);border-radius:6px;font-size:13px;">
+          <span style="font-size:18px;">📄</span>
+          <span style="flex:1;color:var(--gray-700);">扣款协议_VietnamABC_20260415.pdf</span>
+          <span style="color:var(--gray-400);font-size:12px;">2.3 MB</span>
+          <button class="btn-icon" style="color:var(--danger);border-color:transparent;" title="删除">✕</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 操作按钮 -->
+  <div style="display:flex;justify-content:flex-end;gap:12px;padding:20px 0;">
+    <button class="btn btn-outline" onclick="switchPage('listPage')">取消</button>
+    <button class="btn btn-outline" onclick="showToast('成功','已保存为草稿','success')">💾 保存草稿</button>
+    <button class="btn btn-primary" onclick="showToast('成功','扣款单已提交审核！','success');setTimeout(()=>switchPage('listPage'),1500)">📨 提交审核</button>
+  </div>
+</div>
+
+<!-- ============================================ -->
+<!-- 页面3：扣款单详情页 -->
+<!-- ============================================ -->
+<div class="page" id="detailPage">
+  <div class="breadcrumb">
+    <a href="javascript:void(0)" onclick="switchPage('listPage')">现金扣款单列表</a>
+    <span>›</span>
+    <span>扣款单详情</span>
+  </div>
+
+  <!-- 单据状态横幅 -->
+  <div style="background:linear-gradient(135deg,var(--success-light),#d1fae5);border:1px solid #a7f3d0;border-radius:var(--radius);padding:20px 24px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;">
+    <div style="display:flex;align-items:center;gap:16px;">
+      <div style="font-size:40px;">✅</div>
+      <div>
+        <div style="font-size:20px;font-weight:700;color:#065f46;">扣款单已完成</div>
+        <div style="font-size:13px;color:#059669;margin-top:2px;">CASH-20260417-001 · 最后更新：2026-04-17 14:30</div>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;">
+      <button class="btn btn-outline" style="border-color:#059669;color:#059669;">🖨️ 打印</button>
+      <button class="btn btn-outline" style="border-color:#059669;color:#059669;" onclick="openModal('voucherModal')">📄 查看凭证</button>
+    </div>
+  </div>
+
+  <!-- 流程进度 -->
+  <div class="stepper">
+    <div class="step done">
+      <div class="step-icon">✓</div>
+      <div class="step-label">填写申请</div>
+    </div>
+    <div class="step-line done"></div>
+    <div class="step done">
+      <div class="step-icon">✓</div>
+      <div class="step-label">财务审核</div>
+    </div>
+    <div class="step-line done"></div>
+    <div class="step done">
+      <div class="step-icon">✓</div>
+      <div class="step-label">收付款确认</div>
+    </div>
+    <div class="step-line done"></div>
+    <div class="step done">
+      <div class="step-icon">✓</div>
+      <div class="step-label">核销完成</div>
+    </div>
+  </div>
+
+  <!-- 基本信息 -->
+  <div class="card">
+    <div class="card-header"><h3>📋 基本信息</h3></div>
+    <div class="card-body">
+      <div class="detail-grid">
+        <div class="detail-item">
+          <div class="detail-label">扣款单编号</div>
+          <div class="detail-value" style="color:var(--primary);font-weight:600;">CASH-20260417-001</div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-label">扣款日期</div>
+          <div class="detail-value">2026-04-15</div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-label">币种</div>
+          <div class="detail-value">VND（越南盾）</div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-label">供应商</div>
+          <div class="detail-value">越南ABC电子有限公司</div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-label">扣款方向</div>
+          <div class="detail-value"><span class="direction-badge direction-in">↑ 供应商→我方（收款）</span></div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-label">单据状态</div>
+          <div class="detail-value"><span class="status-badge status-done">● 已完成</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 扣款信息 -->
+  <div class="card">
+    <div class="card-header"><h3>💰 扣款信息</h3></div>
+    <div class="card-body">
+      <div class="detail-grid">
+        <div class="detail-item">
+          <div class="detail-label">扣款金额</div>
+          <div class="detail-value" style="font-size:18px;font-weight:700;color:var(--success);">1,000,000 VND</div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-label">扣款原因</div>
+          <div class="detail-value">品质扣款</div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-label">扣款原因备注</div>
+          <div class="detail-value">货物批次#20240410 存在外观瑕疵，按合同约定扣款</div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-label">支付方式</div>
+          <div class="detail-value">银行转账</div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-label">收付款账号</div>
+          <div class="detail-value">VND-BANK-001（越南盾银行账户）</div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-label">核销状态</div>
+          <div class="detail-value"><span class="status-badge status-done">● 已核销</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 关联单据 -->
+  <div class="card">
+    <div class="card-header"><h3>🔗 关联单据信息</h3></div>
+    <div class="card-body">
+      <div class="detail-grid">
+        <div class="detail-item">
+          <div class="detail-label">来源单据类型</div>
+          <div class="detail-value">采购发票</div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-label">来源单据编号</div>
+          <div class="detail-value" style="color:var(--primary);cursor:pointer;">INV-20240410-008</div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-label">原应付金额</div>
+          <div class="detail-value">50,000,000 VND</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 审核记录 -->
+  <div class="card">
+    <div class="card-header"><h3>📝 审核记录</h3></div>
+    <div class="card-body">
+      <div class="audit-timeline">
+        <div class="audit-item">
+          <div class="audit-dot pass"></div>
+          <div class="audit-meta">张三（采购员）· 2026-04-15 09:32</div>
+          <div class="audit-content">发起现金扣款申请，关联发票 INV-20240410-008，扣款金额 1,000,000 VND。</div>
+        </div>
+        <div class="audit-item">
+          <div class="audit-dot pass"></div>
+          <div class="audit-meta">李四（财务主管）· 2026-04-15 14:20</div>
+          <div class="audit-content"><strong style="color:var(--success);">审核通过</strong> — 扣款事由合理，金额与协议一致，附件齐全，同意扣款。</div>
+        </div>
+        <div class="audit-item">
+          <div class="audit-dot pass"></div>
+          <div class="audit-meta">王五（出纳）· 2026-04-16 10:15</div>
+          <div class="audit-content"><strong style="color:var(--success);">收款确认</strong> — 已收到供应商银行转账 1,000,000 VND，账号 VND-BANK-001。</div>
+        </div>
+        <div class="audit-item">
+          <div class="audit-dot pass"></div>
+          <div class="audit-meta">系统自动 · 2026-04-16 10:16</div>
+          <div class="audit-content"><strong style="color:var(--success);">核销完成</strong> — 已更新应付余额，生成核销记录，凭证已推送总账。</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 凭证信息 -->
+  <div class="card">
+    <div class="card-header">
+      <h3>📄 凭证信息</h3>
+      <button class="btn btn-sm btn-outline" onclick="openModal('voucherModal')">查看完整凭证</button>
+    </div>
+    <div class="card-body">
+      <div class="voucher-preview">
+        <h4>记账凭证</h4>
+        <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--gray-500);margin-bottom:12px;">
+          <span>凭证号：VCH-20260416-0001</span>
+          <span>凭证日期：2026-04-16</span>
+        </div>
+        <table class="voucher-table">
+          <tr>
+            <th style="width:40%;">摘要</th>
+            <th>科目代码</th>
+            <th>科目名称</th>
+            <th style="width:15%;">借方金额</th>
+            <th style="width:15%;">贷方金额</th>
+          </tr>
+          <tr>
+            <td>收到越南ABC电子品质扣款补偿</td>
+            <td>1002</td>
+            <td>银行存款-VND账户</td>
+            <td>1,000,000</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td>收到越南ABC电子品质扣款补偿</td>
+            <td>2202</td>
+            <td>应付账款-越南ABC电子</td>
+            <td></td>
+            <td>1,000,000</td>
+          </tr>
+          <tr style="font-weight:700;">
+            <td>合计</td>
+            <td></td>
+            <td></td>
+            <td>1,000,000</td>
+            <td>1,000,000</td>
+          </tr>
+        </table>
+        <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--gray-500);margin-top:12px;">
+          <span>制单人：王五</span>
+          <span>审核人：李四</span>
+          <span>模板：CASH_DEDUCT_A</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 附件 -->
+  <div class="card">
+    <div class="card-header"><h3>📎 附件</h3></div>
+    <div class="card-body">
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <div style="display:flex;align-items:center;gap:12px;padding:10px 14px;background:var(--gray-50);border-radius:6px;font-size:13px;">
+          <span style="font-size:18px;">📄</span>
+          <span style="flex:1;color:var(--gray-700);cursor:pointer;" onmouseover="this.style.color='var(--primary)'" onmouseout="this.style.color='var(--gray-700)'">扣款协议_VietnamABC_20240415.pdf</span>
+          <span style="color:var(--gray-400);font-size:12px;">2.3 MB</span>
+          <button class="btn btn-sm btn-outline">下载</button>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px;padding:10px 14px;background:var(--gray-50);border-radius:6px;font-size:13px;">
+          <span style="font-size:18px;">🖼️</span>
+          <span style="flex:1;color:var(--gray-700);cursor:pointer;">品质问题照片_批次20240410.jpg</span>
+          <span style="color:var(--gray-400);font-size:12px;">1.1 MB</span>
+          <button class="btn btn-sm btn-outline">下载</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="display:flex;justify-content:flex-start;gap:12px;padding:20px 0;">
+    <button class="btn btn-outline" onclick="switchPage('listPage')">← 返回列表</button>
+  </div>
+</div>
+
+<!-- ============================================ -->
+<!-- 页面4：审核页 -->
+<!-- ============================================ -->
+<div class="page" id="auditPage">
+  <div class="breadcrumb">
+    <a href="javascript:void(0)" onclick="switchPage('listPage')">现金扣款单列表</a>
+    <span>›</span>
+    <span>审核扣款单</span>
+  </div>
+
+  <!-- 审核状态横幅 -->
+  <div style="background:var(--warning-light);border:1px solid #fcd34d;border-radius:var(--radius);padding:20px 24px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;">
+    <div style="display:flex;align-items:center;gap:16px;">
+      <div style="font-size:40px;">⏳</div>
+      <div>
+        <div style="font-size:20px;font-weight:700;color:#92400e;">待审核</div>
+        <div style="font-size:13px;color:#b45309;margin-top:2px;">CASH-20260419-003 · 请审核该现金扣款申请</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 流程进度 -->
+  <div class="stepper">
+    <div class="step done">
+      <div class="step-icon">✓</div>
+      <div class="step-label">填写申请</div>
+    </div>
+    <div class="step-line done"></div>
+    <div class="step active">
+      <div class="step-icon">2</div>
+      <div class="step-label">财务审核</div>
+    </div>
+    <div class="step-line"></div>
+    <div class="step">
+      <div class="step-icon">3</div>
+      <div class="step-label">收付款确认</div>
+    </div>
+    <div class="step-line"></div>
+    <div class="step">
+      <div class="step-icon">4</div>
+      <div class="step-label">核销完成</div>
+    </div>
+  </div>
+
+  <!-- 申请信息（只读） -->
+  <div class="card">
+    <div class="card-header"><h3>📋 申请信息</h3></div>
+    <div class="card-body">
+      <div class="detail-grid">
+        <div class="detail-item">
+          <div class="detail-label">扣款单编号</div>
+          <div class="detail-value" style="color:var(--primary);font-weight:600;">CASH-20260419-003</div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-label">扣款日期</div>
+          <div class="detail-value">2026-04-17</div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-label">币种</div>
+          <div class="detail-value">PHP（菲律宾比索）</div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-label">供应商</div>
+          <div class="detail-value">菲律宾DEF材料公司</div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-label">扣款方向</div>
+          <div class="detail-value"><span class="direction-badge direction-out">↓ 我方→供应商（付款）</span></div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-label">扣款金额</div>
+          <div class="detail-value" style="font-size:18px;font-weight:700;color:var(--warning);">12,500.00 PHP</div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-label">扣款原因</div>
+          <div class="detail-value">我方补偿</div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-label">扣款说明</div>
+          <div class="detail-value">我方生产计划变更，主动赔偿供应商已备货损失</div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-label">支付方式</div>
+          <div class="detail-value">银行转账</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 审核表单 -->
+  <div class="card">
+    <div class="card-header"><h3>✍️ 审核意见</h3></div>
+    <div class="card-body">
+      <div class="form-group" style="margin-bottom:16px;">
+        <label class="form-label">审核结果 <span class="required">*</span></label>
+        <div style="display:flex;gap:16px;margin-top:4px;">
+          <label style="display:flex;align-items:center;gap:6px;cursor:pointer;">
+            <input type="radio" name="auditResult" value="pass" checked />
+            <span style="color:var(--success);font-weight:600;">✓ 审核通过</span>
+          </label>
+          <label style="display:flex;align-items:center;gap:6px;cursor:pointer;">
+            <input type="radio" name="auditResult" value="reject" />
+            <span style="color:var(--danger);font-weight:600;">✕ 审核驳回</span>
+          </label>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">审核意见</label>
+        <textarea class="form-textarea" placeholder="请输入审核意见（驳回时必填）..."></textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- 附件 -->
+  <div class="card">
+    <div class="card-header"><h3>📎 附件</h3></div>
+    <div class="card-body">
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <div style="display:flex;align-items:center;gap:12px;padding:10px 14px;background:var(--gray-50);border-radius:6px;font-size:13px;">
+          <span style="font-size:18px;">📄</span>
+          <span style="flex:1;color:var(--gray-700);">补偿协议_PhilippinesDEF_20240417.pdf</span>
+          <span style="color:var(--gray-400);font-size:12px;">1.8 MB</span>
+          <button class="btn btn-sm btn-outline">预览</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 操作按钮 -->
+  <div style="display:flex;justify-content:flex-end;gap:12px;padding:20px 0;">
+    <button class="btn btn-outline" onclick="switchPage('listPage')">取消</button>
+    <button class="btn btn-danger" onclick="showToast('成功','扣款单已驳回','error')">✕ 驳回</button>
+    <button class="btn btn-success" onclick="showToast('成功','审核通过！扣款单已进入收付款确认环节','success');setTimeout(()=>switchPage('listPage'),1500)">✓ 审核通过</button>
+  </div>
+</div>
+
+<!-- ============================================ -->
+<!-- 页面5：业务流程图 -->
+<!-- ============================================ -->
+<div class="page" id="flowPage">
+  <div class="breadcrumb">
+    <a href="javascript:void(0)" onclick="switchPage('listPage')">首页</a>
+    <span>›</span>
+    <span>业务流程图</span>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <h3>🔄 厂商现金扣款处理业务流程图</h3>
+    </div>
+    <div class="card-body">
+      <div class="flow-chart">
+        <div class="flow-step">
+          <div class="flow-box blue">① 采购对账<br/>发现扣款项</div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-box blue">② 发起现金<br/>扣款申请</div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-box yellow">③ 财务<br/>审核确认</div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-box purple">④ 生成现金<br/>扣款单</div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-box blue">⑤ 现金收/付<br/>确认</div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-box green">⑥ 往来核销<br/>+生成凭证</div>
+        </div>
+      </div>
+
+      <!-- 方向分支说明 -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:24px;">
+        <div class="card" style="border:2px solid var(--success);">
+          <div class="card-header" style="background:var(--success-light);">
+            <h3 style="color:var(--success);">↑ 方向A：供应商→我方（收款）</h3>
+          </div>
+          <div class="card-body">
+            <div style="font-size:14px;color:var(--gray-700);line-height:2;">
+              <div>📌 <strong>业务场景：</strong>品质扣款、迟延罚款</div>
+              <div>📌 <strong>会计凭证：</strong>模板 CASH_DEDUCT_A</div>
+              <div style="background:var(--gray-50);padding:12px;border-radius:6px;margin-top:8px;font-family:monospace;font-size:13px;">
+                借：库存现金/银行存款<br/>
+                　　&emsp;贷：应付账款-XX供应商
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card" style="border:2px solid var(--warning);">
+          <div class="card-header" style="background:var(--warning-light);">
+            <h3 style="color:#92400e;">↓ 方向B：我方→供应商（付款）</h3>
+          </div>
+          <div class="card-body">
+            <div style="font-size:14px;color:var(--gray-700);line-height:2;">
+              <div>📌 <strong>业务场景：</strong>我方补偿、价格调整</div>
+              <div>📌 <strong>会计凭证：</strong>模板 CASH_DEDUCT_B</div>
+              <div style="background:var(--gray-50);padding:12px;border-radius:6px;margin-top:8px;font-family:monospace;font-size:13px;">
+                借：应付账款-XX供应商<br/>
+                　　&emsp;贷：库存现金/银行存款
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 状态流转说明 -->
+      <div class="card" style="margin-top:20px;">
+        <div class="card-header"><h3>📊 单据状态流转说明</h3></div>
+        <div class="card-body">
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:14px;">
+            <span class="status-badge status-draft">● 草稿</span>
+            <span style="color:var(--gray-400);">──→</span>
+            <span class="status-badge status-pending">● 审核中</span>
+            <span style="color:var(--gray-400);">──→</span>
+            <span class="status-badge status-confirming">● 待确认</span>
+            <span style="color:var(--gray-400);">──→</span>
+            <span class="status-badge status-done">● 已完成</span>
+            <span style="color:var(--gray-400);margin-left:16px;">───</span>
+            <span class="status-badge status-rejected">● 已驳回</span>
+          </div>
+          <table style="width:100%;margin-top:16px;font-size:13px;border-collapse:collapse;">
+            <tr style="background:var(--gray-50);">
+              <th style="padding:8px 12px;text-align:left;font-weight:600;color:var(--gray-600);border-bottom:1px solid var(--gray-200);">状态</th>
+              <th style="padding:8px 12px;text-align:left;font-weight:600;color:var(--gray-600);border-bottom:1px solid var(--gray-200);">说明</th>
+              <th style="padding:8px 12px;text-align:left;font-weight:600;color:var(--gray-600);border-bottom:1px solid var(--gray-200);">可执行操作</th>
+            </tr>
+            <tr>
+              <td style="padding:8px 12px;border-bottom:1px solid var(--gray-100);"><span class="status-badge status-draft">● 草稿</span></td>
+              <td style="padding:8px 12px;border-bottom:1px solid var(--gray-100);color:var(--gray-600);">申请人创建，尚未提交</td>
+              <td style="padding:8px 12px;border-bottom:1px solid var(--gray-100);color:var(--gray-600);">编辑、提交审核、删除</td>
+            </tr>
+            <tr>
+              <td style="padding:8px 12px;border-bottom:1px solid var(--gray-100);"><span class="status-badge status-pending">● 审核中</span></td>
+              <td style="padding:8px 12px;border-bottom:1px solid var(--gray-100);color:var(--gray-600);">已提交，等待财务审核</td>
+              <td style="padding:8px 12px;border-bottom:1px solid var(--gray-100);color:var(--gray-600);">审核通过、审核驳回</td>
+            </tr>
+            <tr>
+              <td style="padding:8px 12px;border-bottom:1px solid var(--gray-100);"><span class="status-badge status-confirming">● 待确认</span></td>
+              <td style="padding:8px 12px;border-bottom:1px solid var(--gray-100);color:var(--gray-600);">审核通过，等待收付款确认</td>
+              <td style="padding:8px 12px;border-bottom:1px solid var(--gray-100);color:var(--gray-600);">确认收款、确认付款</td>
+            </tr>
+            <tr>
+              <td style="padding:8px 12px;"><span class="status-badge status-done">● 已完成</span></td>
+              <td style="padding:8px 12px;color:var(--gray-600);">收付款确认完毕，核销完成</td>
+              <td style="padding:8px 12px;color:var(--gray-600);">查看详情、打印凭证</td>
+            </tr>
+          </table>
+        </div>
+      </div>
+
+      <!-- 海外特殊说明 -->
+      <div class="card" style="margin-top:20px;border:2px solid var(--danger);">
+        <div class="card-header" style="background:var(--danger-light);">
+          <h3 style="color:var(--danger);">⚠️ 海外税法特殊说明</h3>
+        </div>
+        <div class="card-body">
+          <table style="width:100%;font-size:14px;border-collapse:collapse;">
+            <tr style="background:var(--gray-50);">
+              <th style="padding:10px 14px;text-align:left;font-weight:600;color:var(--gray-700);">国家</th>
+              <th style="padding:10px 14px;text-align:left;font-weight:600;color:var(--gray-700);">特殊要求</th>
+              <th style="padding:10px 14px;text-align:left;font-weight:600;color:var(--gray-700);">系统处理</th>
+            </tr>
+            <tr>
+              <td style="padding:10px 14px;border-bottom:1px solid var(--gray-100);font-weight:600;">🇻🇳 越南</td>
+              <td style="padding:10px 14px;border-bottom:1px solid var(--gray-100);color:var(--gray-600);">已开票且已对账的金额，不能直接从应付中扣减</td>
+              <td style="padding:10px 14px;border-bottom:1px solid var(--gray-100);"><span style="color:var(--primary);font-weight:600;">必须通过现金扣款处理</span></td>
+            </tr>
+            <tr>
+              <td style="padding:10px 14px;border-bottom:1px solid var(--gray-100);font-weight:600;">🇹🇭 泰国</td>
+              <td style="padding:10px 14px;border-bottom:1px solid var(--gray-100);color:var(--gray-600);">需双方书面确认扣款金额</td>
+              <td style="padding:10px 14px;border-bottom:1px solid var(--gray-100);"><span style="color:var(--primary);font-weight:600;">支持附件上传扣款协议</span></td>
+            </tr>
+            <tr>
+              <td style="padding:10px 14px;font-weight:600;">🇵🇭 菲律宾</td>
+              <td style="padding:10px 14px;color:var(--gray-600);">无特殊要求</td>
+              <td style="padding:10px 14px;color:var(--gray-600);">按正常流程处理</td>
+            </tr>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================ -->
+<!-- 页面6：统计报表页 -->
+<!-- ============================================ -->
+<div class="page" id="reportPage">
+  <div class="breadcrumb">
+    <a href="javascript:void(0)" onclick="switchPage('listPage')">首页</a>
+    <span>›</span>
+    <span>统计报表</span>
+  </div>
+
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="stat-icon blue">📊</div>
+      <div class="stat-info">
+        <h4>156</h4>
+        <p>本月扣款单数</p>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon green">↑</div>
+      <div class="stat-info">
+        <h4>98</h4>
+        <p>收款（供应商→我方）</p>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon yellow">↓</div>
+      <div class="stat-info">
+        <h4>58</h4>
+        <p>付款（我方→供应商）</p>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon red">💰</div>
+      <div class="stat-info">
+        <h4>¥86.5万</h4>
+        <p>净扣款金额</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 按供应商统计 -->
+  <div class="card">
+    <div class="card-header">
+      <h3>📊 按供应商统计（本月）</h3>
+      <button class="btn btn-sm btn-outline">📥 导出报表</button>
+    </div>
+    <div class="card-body" style="padding:0;">
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>排名</th>
+              <th>供应商</th>
+              <th>币种</th>
+              <th>扣款笔数</th>
+              <th>收款金额</th>
+              <th>付款金额</th>
+              <th>净扣款</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="background:#f0f9ff;">
+              <td style="font-weight:700;color:var(--primary);">1</td>
+              <td>越南ABC电子有限公司</td>
+              <td>VND</td>
+              <td>12</td>
+              <td style="color:var(--success);font-weight:600;">15,000,000</td>
+              <td style="color:var(--gray-400);">—</td>
+              <td style="color:var(--success);font-weight:700;">+15,000,000</td>
+            </tr>
+            <tr>
+              <td style="font-weight:700;">2</td>
+              <td>泰国XYZ配件公司</td>
+              <td>THB</td>
+              <td>8</td>
+              <td style="color:var(--success);font-weight:600;">32,500</td>
+              <td style="color:var(--gray-400);">—</td>
+              <td style="color:var(--success);font-weight:700;">+32,500</td>
+            </tr>
+            <tr style="background:#f0f9ff;">
+              <td style="font-weight:700;color:var(--primary);">3</td>
+              <td>菲律宾DEF材料公司</td>
+              <td>PHP</td>
+              <td>6</td>
+              <td style="color:var(--gray-400);">—</td>
+              <td style="color:var(--warning);font-weight:600;">45,000</td>
+              <td style="color:var(--danger);font-weight:700;">-45,000</td>
+            </tr>
+            <tr>
+              <td style="font-weight:700;">4</td>
+              <td>越南GHI科技股份公司</td>
+              <td>VND</td>
+              <td>5</td>
+              <td style="color:var(--success);font-weight:600;">8,200,000</td>
+              <td style="color:var(--gray-400);">—</td>
+              <td style="color:var(--success);font-weight:700;">+8,200,000</td>
+            </tr>
+            <tr style="background:#f0f9ff;">
+              <td style="font-weight:700;color:var(--primary);">5</td>
+              <td>泰国JKL工业公司</td>
+              <td>THB</td>
+              <td>4</td>
+              <td style="color:var(--gray-400);">—</td>
+              <td style="color:var(--warning);font-weight:600;">18,800</td>
+              <td style="color:var(--danger);font-weight:700;">-18,800</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- 按原因统计 -->
+  <div class="card">
+    <div class="card-header"><h3>📈 按扣款原因统计（本月）</h3></div>
+    <div class="card-body">
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;">
+        <div style="padding:16px;background:var(--success-light);border-radius:8px;text-align:center;">
+          <div style="font-size:13px;color:var(--gray-600);">品质扣款</div>
+          <div style="font-size:22px;font-weight:700;color:var(--success);margin:8px 0;">62笔</div>
+          <div style="font-size:12px;color:var(--gray-500);">占比 39.7%</div>
+        </div>
+        <div style="padding:16px;background:var(--warning-light);border-radius:8px;text-align:center;">
+          <div style="font-size:13px;color:var(--gray-600);">迟延罚款</div>
+          <div style="font-size:22px;font-weight:700;color:var(--warning);margin:8px 0;">45笔</div>
+          <div style="font-size:12px;color:var(--gray-500);">占比 28.8%</div>
+        </div>
+        <div style="padding:16px;background:var(--primary-light);border-radius:8px;text-align:center;">
+          <div style="font-size:13px;color:var(--gray-600);">我方补偿</div>
+          <div style="font-size:22px;font-weight:700;color:var(--primary);margin:8px 0;">32笔</div>
+          <div style="font-size:12px;color:var(--gray-500);">占比 20.5%</div>
+        </div>
+        <div style="padding:16px;background:var(--gray-100);border-radius:8px;text-align:center;">
+          <div style="font-size:13px;color:var(--gray-600);">其他</div>
+          <div style="font-size:22px;font-weight:700;color:var(--gray-500);margin:8px 0;">17笔</div>
+          <div style="font-size:12px;color:var(--gray-500);">占比 10.9%</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================ -->
+<!-- 弹窗：收付款确认 -->
+<!-- ============================================ -->
+<div class="modal-overlay" id="confirmModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>💰 确认收款</h3>
+      <button class="btn-icon" onclick="closeModal('confirmModal')" style="font-size:18px;">✕</button>
+    </div>
+    <div class="modal-body">
+      <div style="background:var(--gray-50);padding:16px;border-radius:8px;margin-bottom:20px;font-size:14px;line-height:2;">
+        <div><strong>扣款单号：</strong>CASH-20260418-002</div>
+        <div><strong>供应商：</strong>泰国XYZ配件公司</div>
+        <div><strong>扣款金额：</strong><span style="color:var(--success);font-weight:700;font-size:16px;">5,200.00 THB</span></div>
+        <div><strong>扣款方向：</strong>供应商→我方（收款）</div>
+      </div>
+      <div class="form-group" style="margin-bottom:16px;">
+        <label class="form-label">实际收款方式 <span class="required">*</span></label>
+        <select class="form-select">
+          <option value="">请选择实际收款方式</option>
+          <option>现金</option>
+          <option selected>银行转账</option>
+          <option>支票</option>
+        </select>
+      </div>
+      <div class="form-group" style="margin-bottom:16px;">
+        <label class="form-label">实际收款账号 <span class="required">*</span></label>
+        <select class="form-select">
+          <option value="">请选择收款账号</option>
+          <option selected>THB-BANK-001（泰铢银行账户）</option>
+          <option>THB-CASH-001（泰铢现金账户）</option>
+        </select>
+      </div>
+      <div class="form-group" style="margin-bottom:16px;">
+        <label class="form-label">实际收款金额</label>
+        <input class="form-input" value="5,200.00" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">确认备注</label>
+        <textarea class="form-textarea" placeholder="选填，输入收款确认说明..."></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('confirmModal')">取消</button>
+      <button class="btn btn-success" onclick="closeModal('confirmModal');showToast('成功','收款确认成功！已进入核销环节','success');">✓ 确认收款</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================ -->
+<!-- 弹窗：凭证预览 -->
+<!-- ============================================ -->
+<div class="modal-overlay" id="voucherModal">
+  <div class="modal" style="max-width:700px;">
+    <div class="modal-header">
+      <h3>📄 凭证预览</h3>
+      <button class="btn-icon" onclick="closeModal('voucherModal')" style="font-size:18px;">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="voucher-preview">
+        <h4>记账凭证</h4>
+        <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--gray-500);margin-bottom:12px;">
+          <span>凭证号：VCH-20260416-0001</span>
+          <span>凭证日期：2026-04-16</span>
+          <span>附单据：3 张</span>
+        </div>
+        <table class="voucher-table">
+          <tr>
+            <th style="width:35%;">摘要</th>
+            <th>科目代码</th>
+            <th>科目名称</th>
+            <th style="width:15%;">借方金额</th>
+            <th style="width:15%;">贷方金额</th>
+          </tr>
+          <tr>
+            <td>收到越南ABC电子品质扣款补偿</td>
+            <td>1002</td>
+            <td>银行存款-VND账户</td>
+            <td>1,000,000</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td>收到越南ABC电子品质扣款补偿</td>
+            <td>2202</td>
+            <td>应付账款-越南ABC电子</td>
+            <td></td>
+            <td>1,000,000</td>
+          </tr>
+          <tr style="font-weight:700;background:var(--gray-50);">
+            <td>合计</td>
+            <td></td>
+            <td></td>
+            <td>1,000,000</td>
+            <td>1,000,000</td>
+          </tr>
+        </table>
+        <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--gray-500);margin-top:12px;">
+          <span>制单人：王五</span>
+          <span>审核人：李四</span>
+          <span>过账人：系统自动</span>
+          <span>模板：CASH_DEDUCT_A</span>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('voucherModal')">关闭</button>
+      <button class="btn btn-primary">🖨️ 打印凭证</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ===== 页面切换 =====
+  function switchPage(pageId) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+    document.getElementById(pageId).classList.add('active');
+    const tabMap = {
+      'listPage': 0,
+      'createPage': 1,
+      'flowPage': 2,
+      'reportPage': 3,
+      'detailPage': -1,
+      'auditPage': -1
+    };
+    const idx = tabMap[pageId];
+    if (idx >= 0) {
+      document.querySelectorAll('.nav-tab')[idx].classList.add('active');
+    }
+    window.scrollTo(0, 0);
+  }
+
+  // ===== 弹窗 =====
+  function openModal(id) { document.getElementById(id).classList.add('show'); }
+  function closeModal(id) { document.getElementById(id).classList.remove('show'); }
+  document.querySelectorAll('.modal-overlay').forEach(overlay => {
+    overlay.addEventListener('click', e => { if (e.target === overlay) closeModal(overlay.id); });
+  });
+
+  // ===== Toast 提示 =====
+  function showToast(title, message, type) {
+    const container = document.getElementById('toastContainer');
+    const icons = { success: '✅', error: '❌', warning: '⚠️' };
+    const toast = document.createElement('div');
+    toast.className = `toast toast-${type}`;
+    toast.innerHTML = `<span>${icons[type]||''}</span><div><strong>${title}</strong><br/>${message}</div>`;
+    container.appendChild(toast);
+    setTimeout(() => { toast.style.opacity = '0'; toast.style.transform = 'translateX(100%)'; setTimeout(() => toast.remove(), 300); }, 3000);
+  }
+
+  // ===== 扣款方向变化 =====
+  function onDirectionChange(select) {
+    const val = select.value;
+    const titleEl = document.querySelector('#createPage .card-header h3');
+    if (val === 'in') {
+      titleEl.innerHTML = '📋 基本信息 <span style="font-size:13px;color:var(--success);margin-left:8px;">↑ 收款方向：供应商→我方</span>';
+    } else if (val === 'out') {
+      titleEl.innerHTML = '📋 基本信息 <span style="font-size:13px;color:var(--warning);margin-left:8px;">↓ 付款方向：我方→供应商</span>';
+    } else {
+      titleEl.innerHTML = '📋 基本信息';
+    }
+  }
+</script>
+</body>
+</html>
