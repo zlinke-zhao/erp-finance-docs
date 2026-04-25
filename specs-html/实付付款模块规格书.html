@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>实付付款模块规格书</title>
+<title>实付付款模块</title>
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
 body {
@@ -50,6 +50,7 @@ body {
 .content h1 { font-size: 1.4rem; margin: 2rem 0 1rem; color: #6366f1; border-bottom: 2px solid #e2e8f0; padding-bottom: 0.5rem; }
 .content h2 { font-size: 1.2rem; margin: 1.75rem 0 0.75rem; color: #1e293b; }
 .content h3 { font-size: 1.05rem; margin: 1.25rem 0 0.5rem; color: #475569; }
+.content h4 { font-size: 1rem; margin: 1rem 0 0.5rem; color: #64748b; }
 .content p { margin: 0.75rem 0; }
 .content ul, .content ol { margin: 0.75rem 0; padding-left: 1.75rem; }
 .content li { margin: 0.4rem 0; }
@@ -92,37 +93,44 @@ body {
   color: inherit;
   padding: 0;
 }
-.toc { background: #f8fafc; padding: 1.5rem; border-radius: 8px; margin: 1.5rem 0; }
-.toc h3 { margin-top: 0 !important; }
-.toc ul { margin: 0.5rem 0; }
+.content blockquote {
+  border-left: 4px solid #6366f1;
+  margin: 1rem 0;
+  padding: 0.75rem 1.25rem;
+  background: #f8fafc;
+  color: #475569;
+}
+.content strong { color: #1e293b; }
+.content hr { border: none; border-top: 2px solid #e2e8f0; margin: 2rem 0; }
 </style>
 </head>
 <body>
 <div class="container">
-  <a href="../index.html" class="back-link">← 返回目录</a>
+  <a href="../index.html" class="back-link">&larr; 返回目录</a>
   <div class="doc-header">
-    <h1>实付付款模块规格书</h1>
+    <h1>实付付款模块</h1>
     <div class="doc-meta">
       <span>📋 V1.0</span>
-      <span>📅 2026-04-08</span>
+      <span>📅 2026-04-20</span>
       <span>🏢 Dev_Dept</span>
     </div>
   </div>
   <div class="content">
-    <h1>实付付款模块 — 需求分析与技术规格说明书</h1>
-<p>> <strong>项目</strong>: Dev_Dept ERP 财务管理系统  </p>
-<p>> <strong>模块</strong>: 实付付款管理 (Payment Management, PM)  </p>
-<p>> <strong>版本</strong>: v1.0  </p>
-<p>> <strong>日期</strong>: 2026-04-15  </p>
-<p>> <strong>对标系统</strong>: 金蝶云星空 → 应付管理 → 付款单/核销处理  </p>
-<p>> <strong>优先级</strong>: P1（效率提升+资金安全） — 与实收收款同级  </p>
-<p>> <strong>状态</strong>: 规格设计阶段  </p>
-<p>---</p>
-<h2>1. 模块定位与业务目标</h2>
-<h3>1.1 一句话定义</h3>
-<p><strong>实付付款模块是ERP系统中"资金流出"的核心枢纽，负责从采购应付款项出发，经过付款申请、多级审批、资金执行、应付核销、凭证生成，最终写入总账的全流程管理。</strong></p>
-<h3>1.2 在整体流程中的位置</h3>
-<pre><code>采购申请 → 采购订单 → 收货验收 → 应付对账 ─┐
+<h1>实付付款模块 — 需求分析与技术规格说明书</h1>
+<blockquote><p><strong>项目</strong>: Dev_Dept ERP 财务管理系统</p></blockquote>
+<blockquote><p><strong>模块</strong>: 实付付款管理 (Payment Management, PM)</p></blockquote>
+<blockquote><p><strong>版本</strong>: v1.0</p></blockquote>
+<blockquote><p><strong>日期</strong>: 2026-04-15</p></blockquote>
+<blockquote><p><strong>对标系统</strong>: 金蝶云星空 → 应付管理 → 付款单/核销处理</p></blockquote>
+<blockquote><p><strong>优先级</strong>: P1（效率提升+资金安全） — 与实收收款同级</p></blockquote>
+<blockquote><p><strong>状态</strong>: 规格设计阶段</p></blockquote>
+<hr>
+<h2>1. 模块定位与业务目标</h2>
+<h3>1.1 一句话定义</h3>
+<p><strong>实付付款模块是ERP系统中"资金流出"的核心枢纽，负责从采购应付款项出发，经过付款申请、多级审批、资金执行、应付核销、凭证生成，最终写入总账的全流程管理。</strong></p>
+<h3>1.2 在整体流程中的位置</h3>
+<pre><code>
+采购申请 → 采购订单 → 收货验收 → 应付对账 ─┐
                                           │
 进项发票 → 发票录入/查验 ────────────────┤
                                           ▼
@@ -137,31 +145,37 @@ body {
                                   │              │
                                   │ 借:应付账款   │
                                   │ 贷:银行存款   │
-                                  └──────────────┘</code></pre>
-<h3>1.3 与实收收款的镜像关系</h3>
-<table>
+                                  └──────────────┘
+</pre>
+<h3>1.3 与实收收款的镜像关系</h3>
+<table><thead>
 <tr><th>维度</th><th>实收收款（资金流入）</th><th>实付付款（资金流出）</th></tr>
-<tr><th>方向</th><th>钱进来 → 分配给应收</th><th>应付确认 → 申请审批 → 钱出去</th></tr>
-<tr><th>核心动作</th><th>核销（分钱）</th><th>核销（分单）</th></tr>
-<tr><th>审批需求</th><th>低（已到账的钱）</th><th>**高（未出的钱需审批）**</th></tr>
-<tr><th>资金安全</th><th>被动接收，风险低</th><th>**主动划出，风险高**</th></tr>
-<tr><th>预收/预付</th><th>客户多付 → 预收</th><th>多付给供应商 → 预付</th></tr>
-<tr><th>票据</th><th>收到承兑汇票（应收票据）</th><th>付出承兑汇票（应付票据）</th></tr>
+</thead><tbody>
+<tr><td>方向</td><td>钱进来 → 分配给应收</td><td>应付确认 → 申请审批 → 钱出去</td></tr>
+<tr><td>核心动作</td><td>核销（分钱）</td><td>核销（分单）</td></tr>
+<tr><td>审批需求</td><td>低（已到账的钱）</td><td><strong>高（未出的钱需审批）</strong></td></tr>
+<tr><td>资金安全</td><td>被动接收，风险低</td><td><strong>主动划出，风险高</strong></td></tr>
+<tr><td>预收/预付</td><td>客户多付 → 预收</td><td>多付给供应商 → 预付</td></tr>
+<tr><td>票据</td><td>收到承兑汇票（应收票据）</td><td>付出承兑汇票（应付票据）</td></tr>
+</tbody>
 </table>
-<h3>1.4 核心业务目标</h3>
-<table>
+<h3>1.4 核心业务目标</h3>
+<table><thead>
 <tr><th>目标</th><th>指标</th><th>当前痛点</th></tr>
-<tr><th>**付款可控**</th><th>100%付款经过审批流，无越权支付</th><th>口头通知出纳付款，无留痕</th></tr>
-<tr><th>**资金安全**</th><th>付款信息（账户/金额/收款方）三重校验</th><th>手工填网银，容易输错</th></tr>
-<tr><th>**核销准确**</th><th>应付余额与实际付款实时同步</th><th>付了款但应付余额没更新</th></tr>
-<tr><th>**预付透明**</th><th>预付余额实时可见，到期自动提醒</th><th>预付了多少钱不知道，容易遗忘</th></tr>
-<tr><th>**凭证自动化**</th><th>付款确认后自动生成凭证</th><th>手工做分录</th></tr>
-<tr><th>**供应商账龄**</th><th>准确的供应商应付账龄分析</th><th>月末才统计，平时不准</th></tr>
+</thead><tbody>
+<tr><td><strong>付款可控</strong></td><td>100%付款经过审批流，无越权支付</td><td>口头通知出纳付款，无留痕</td></tr>
+<tr><td><strong>资金安全</strong></td><td>付款信息（账户/金额/收款方）三重校验</td><td>手工填网银，容易输错</td></tr>
+<tr><td><strong>核销准确</strong></td><td>应付余额与实际付款实时同步</td><td>付了款但应付余额没更新</td></tr>
+<tr><td><strong>预付透明</strong></td><td>预付余额实时可见，到期自动提醒</td><td>预付了多少钱不知道，容易遗忘</td></tr>
+<tr><td><strong>凭证自动化</strong></td><td>付款确认后自动生成凭证</td><td>手工做分录</td></tr>
+<tr><td><strong>供应商账龄</strong></td><td>准确的供应商应付账龄分析</td><td>月末才统计，平时不准</td></tr>
+</tbody>
 </table>
-<p>---</p>
-<h2>2. 功能全景图</h2>
-<h3>2.1 功能域总览（6大域，35+功能点）</h3>
-<pre><code>┌─────────────────────────────────────────────────────────────────┐
+<hr>
+<h2>2. 功能全景图</h2>
+<h3>2.1 功能域总览（6大域，35+功能点）</h3>
+<pre><code>
+┌─────────────────────────────────────────────────────────────────┐
 │                    实付付款模块功能全景                           │
 ├────────────┬────────────┬────────────┬────────────┬────────────┤
 │  F1 付款   │  F2 预付   │  F3 核销   │  F4 审批   │  F5 银企   │
@@ -179,53 +193,57 @@ body {
 │                                                                 │
 │ ·付款台账  ·应付余额表  ·预付余额表  ·供应商账龄  ·付款分析报表  │
 │ ·审批效率  ·资金计划  ·到期日历  ·导出Excel  ·打印付款单         │
-└─────────────────────────────────────────────────────────────────┘</code></pre>
-<h3>2.2 功能清单与优先级</h3>
-<table>
+└─────────────────────────────────────────────────────────────────┘
+</pre>
+<h3>2.2 功能清单与优先级</h3>
+<table><thead>
 <tr><th>编号</th><th>功能</th><th>域</th><th>优先级</th><th>说明</th></tr>
-<tr><th>F1-01</th><th>付款申请新建</th><th>F1</th><th>P1-A</th><th>支持关联应付单/采购订单/合同</th></tr>
-<tr><th>F1-02</th><th>应付单据自动带出</th><th>F1</th><th>P1-A</th><th>选择供应商后自动展示未核销应付列表</th></tr>
-<tr><th>F1-03</th><th>付款金额校验</th><th>F1</th><th>P1-A</th><th>本次付款≤应付余额（预付除外）</th></tr>
-<tr><th>F1-04</th><th>付款方式选择</th><th>F1</th><th>P1-A</th><th>银行转账/承兑汇票/现金/POS</th></tr>
-<tr><th>F1-05</th><th>附件上传</th><th>F1</th><th>P1-B</th><th>合同/发票/收据扫描件</th></tr>
-<tr><th>F1-06</th><th>批量付款</th><th>F1</th><th>P2-A</th><th>同一供应商多笔应付一次性合并付款</th></tr>
-<tr><th>F1-07</th><th>草稿/提交/撤回</th><th>F1</th><th>P1-A</th><th>付款申请单生命周期管理</th></tr>
-<tr><th>F1-08</th><th>付款单编号规则</th><th>F1</th><th>P1-A</th><th>FK+年月+4位序号，如FK2026040001</th></tr>
-<tr><th>F2-01</th><th>预付申请</th><th>F2</th><th>P1-B</th><th>关联采购订单/合同，≤约定预付比例</th></tr>
-<tr><th>F2-02</th><th>预付登记</th><th>F2</th><th>P1-A</th><th>审批通过后登记预付账款</th></tr>
-<tr><th>F2-03</th><th>到货自动抵扣</th><th>F2</th><th>P1-A</th><th>收货验收后系统提示可用预付余额</th></tr>
-<tr><th>F2-04</th><th>手动部分抵扣</th><th>F2</th><th>P1-B</th><th>选择抵扣金额，支持部分抵扣</th></tr>
-<tr><th>F2-05</th><th>预付余额查询</th><th>F2</th><th>P1-A</th><th>按供应商汇总预付余额</th></tr>
-<tr><th>F2-06</th><th>超期预警</th><th>F2</th><th>P1-B</th><th>预付超过3个月未抵扣自动预警</th></tr>
-<tr><th>F2-07</th><th>预付退款</th><th>F2</th><th>P2-A</th><th>供应商退款冲回预付</th></tr>
-<tr><th>F3-01</th><th>自动核销匹配</th><th>F3</th><th>P1-A</th><th>四维权重算法推荐核销方案</th></tr>
-<tr><th>F3-02</th><th>手动核销</th><th>F3</th><th>P1-A</th><th>手动选择核销的应付单及金额</th></tr>
-<tr><th>F3-03</th><th>部分核销</th><th>F3</th><th>P1-A</th><th>本次只付一部分，余款保留</th></tr>
-<tr><th>F3-04</th><th>多对多核销</th><th>F3</th><th>P1-B</th><th>多笔付款对应多张应付</th></tr>
-<tr><th>F3-05</th><th>尾差自动处理</th><th>F3</th><th>P1-A</th><th>≤¥1自动计入财务费用</th></tr>
-<tr><th>F3-06</th><th>核销冲销</th><th>F3</th><th>P2-A</th><th>付错了，冲回原核销记录</th></tr>
-<tr><th>F3-07</th><th>智能推荐弹窗</th><th>F3</th><th>P1-B</th><th>置信度评分+一键采纳</th></tr>
-<tr><th>F4-01</th><th>多级审批配置</th><th>F4</th><th>P1-A</th><th>4级阈值+可自定义</th></tr>
-<tr><th>F4-02</th><th>审批/驳回/退回</th><th>F4</th><th>P1-A</th><th>审批操作+意见填写</th></tr>
-<tr><th>F4-03</th><th>审批超时催办</th><th>F4</th><th>P1-B</th><th>超过阈值自动催办通知</th></tr>
-<tr><th>F4-04</th><th>委托审批/加签</th><th>F4</th><th>P2-B</th><th>审批人不在时委托他人</th></tr>
-<tr><th>F4-05</th><th>审批历史查询</th><th>F4</th><th>P1-A</th><th>每笔付款的完整审批轨迹</th></tr>
-<tr><th>F5-01</th><th>银企付款指令</th><th>F5</th><th>P2-A</th><th>调用银企API生成转账指令</th></tr>
-<tr><th>F5-02</th><th>付款状态回传</th><th>F5</th><th>P2-A</th><th>银行处理结果自动回写</th></tr>
-<tr><th>F5-03</th><th>银行流水查询</th><th>F5</th><th>P2-A</th><th>拉取银行付款流水做对账</th></tr>
-<tr><th>F5-04</th><th>批量代发</th><th>F5</th><th>P2-B</th><th>工资/报销批量代发</th></tr>
-<tr><th>F5-05</th><th>ECDS电子汇票</th><th>F5</th><th>P2-B</th><th>承兑汇票ECDS系统对接</th></tr>
-<tr><th>F6-01</th><th>付款台账</th><th>F6</th><th>P1-A</th><th>全部付款记录查询筛选</th></tr>
-<tr><th>F6-02</th><th>应付余额表</th><th>F6</th><th>P1-A</th><th>供应商应付未付余额汇总</th></tr>
-<tr><th>F6-03</th><th>供应商账龄分析</th><th>F6</th><th>P1-B</th><th>30/60/90/180天+账龄分布</th></tr>
-<tr><th>F6-04</th><th>付款统计报表</th><th>F6</th><th>P1-B</th><th>月度/季度/年度付款汇总</th></tr>
-<tr><th>F6-05</th><th>到期日历</th><th>F6</th><th>P1-B</th><th>未来30天应付到期提醒</th></tr>
-<tr><th>F6-06</th><th>导出/打印</th><th>F6</th><th>P2-A</th><th>Excel导出+付款单打印</th></tr>
+</thead><tbody>
+<tr><td>F1-01</td><td>付款申请新建</td><td>F1</td><td>P1-A</td><td>支持关联应付单/采购订单/合同</td></tr>
+<tr><td>F1-02</td><td>应付单据自动带出</td><td>F1</td><td>P1-A</td><td>选择供应商后自动展示未核销应付列表</td></tr>
+<tr><td>F1-03</td><td>付款金额校验</td><td>F1</td><td>P1-A</td><td>本次付款≤应付余额（预付除外）</td></tr>
+<tr><td>F1-04</td><td>付款方式选择</td><td>F1</td><td>P1-A</td><td>银行转账/承兑汇票/现金/POS</td></tr>
+<tr><td>F1-05</td><td>附件上传</td><td>F1</td><td>P1-B</td><td>合同/发票/收据扫描件</td></tr>
+<tr><td>F1-06</td><td>批量付款</td><td>F1</td><td>P2-A</td><td>同一供应商多笔应付一次性合并付款</td></tr>
+<tr><td>F1-07</td><td>草稿/提交/撤回</td><td>F1</td><td>P1-A</td><td>付款申请单生命周期管理</td></tr>
+<tr><td>F1-08</td><td>付款单编号规则</td><td>F1</td><td>P1-A</td><td>FK+年月+4位序号，如FK2026040001</td></tr>
+<tr><td>F2-01</td><td>预付申请</td><td>F2</td><td>P1-B</td><td>关联采购订单/合同，≤约定预付比例</td></tr>
+<tr><td>F2-02</td><td>预付登记</td><td>F2</td><td>P1-A</td><td>审批通过后登记预付账款</td></tr>
+<tr><td>F2-03</td><td>到货自动抵扣</td><td>F2</td><td>P1-A</td><td>收货验收后系统提示可用预付余额</td></tr>
+<tr><td>F2-04</td><td>手动部分抵扣</td><td>F2</td><td>P1-B</td><td>选择抵扣金额，支持部分抵扣</td></tr>
+<tr><td>F2-05</td><td>预付余额查询</td><td>F2</td><td>P1-A</td><td>按供应商汇总预付余额</td></tr>
+<tr><td>F2-06</td><td>超期预警</td><td>F2</td><td>P1-B</td><td>预付超过3个月未抵扣自动预警</td></tr>
+<tr><td>F2-07</td><td>预付退款</td><td>F2</td><td>P2-A</td><td>供应商退款冲回预付</td></tr>
+<tr><td>F3-01</td><td>自动核销匹配</td><td>F3</td><td>P1-A</td><td>四维权重算法推荐核销方案</td></tr>
+<tr><td>F3-02</td><td>手动核销</td><td>F3</td><td>P1-A</td><td>手动选择核销的应付单及金额</td></tr>
+<tr><td>F3-03</td><td>部分核销</td><td>F3</td><td>P1-A</td><td>本次只付一部分，余款保留</td></tr>
+<tr><td>F3-04</td><td>多对多核销</td><td>F3</td><td>P1-B</td><td>多笔付款对应多张应付</td></tr>
+<tr><td>F3-05</td><td>尾差自动处理</td><td>F3</td><td>P1-A</td><td>≤¥1自动计入财务费用</td></tr>
+<tr><td>F3-06</td><td>核销冲销</td><td>F3</td><td>P2-A</td><td>付错了，冲回原核销记录</td></tr>
+<tr><td>F3-07</td><td>智能推荐弹窗</td><td>F3</td><td>P1-B</td><td>置信度评分+一键采纳</td></tr>
+<tr><td>F4-01</td><td>多级审批配置</td><td>F4</td><td>P1-A</td><td>4级阈值+可自定义</td></tr>
+<tr><td>F4-02</td><td>审批/驳回/退回</td><td>F4</td><td>P1-A</td><td>审批操作+意见填写</td></tr>
+<tr><td>F4-03</td><td>审批超时催办</td><td>F4</td><td>P1-B</td><td>超过阈值自动催办通知</td></tr>
+<tr><td>F4-04</td><td>委托审批/加签</td><td>F4</td><td>P2-B</td><td>审批人不在时委托他人</td></tr>
+<tr><td>F4-05</td><td>审批历史查询</td><td>F4</td><td>P1-A</td><td>每笔付款的完整审批轨迹</td></tr>
+<tr><td>F5-01</td><td>银企付款指令</td><td>F5</td><td>P2-A</td><td>调用银企API生成转账指令</td></tr>
+<tr><td>F5-02</td><td>付款状态回传</td><td>F5</td><td>P2-A</td><td>银行处理结果自动回写</td></tr>
+<tr><td>F5-03</td><td>银行流水查询</td><td>F5</td><td>P2-A</td><td>拉取银行付款流水做对账</td></tr>
+<tr><td>F5-04</td><td>批量代发</td><td>F5</td><td>P2-B</td><td>工资/报销批量代发</td></tr>
+<tr><td>F5-05</td><td>ECDS电子汇票</td><td>F5</td><td>P2-B</td><td>承兑汇票ECDS系统对接</td></tr>
+<tr><td>F6-01</td><td>付款台账</td><td>F6</td><td>P1-A</td><td>全部付款记录查询筛选</td></tr>
+<tr><td>F6-02</td><td>应付余额表</td><td>F6</td><td>P1-A</td><td>供应商应付未付余额汇总</td></tr>
+<tr><td>F6-03</td><td>供应商账龄分析</td><td>F6</td><td>P1-B</td><td>30/60/90/180天+账龄分布</td></tr>
+<tr><td>F6-04</td><td>付款统计报表</td><td>F6</td><td>P1-B</td><td>月度/季度/年度付款汇总</td></tr>
+<tr><td>F6-05</td><td>到期日历</td><td>F6</td><td>P1-B</td><td>未来30天应付到期提醒</td></tr>
+<tr><td>F6-06</td><td>导出/打印</td><td>F6</td><td>P2-A</td><td>Excel导出+付款单打印</td></tr>
+</tbody>
 </table>
-<p>---</p>
-<h2>3. 数据模型设计</h2>
-<h3>3.1 ER关系图</h3>
-<pre><code>┌──────────────────┐       ┌──────────────────┐
+<hr>
+<h2>3. 数据模型设计</h2>
+<h3>3.1 ER关系图</h3>
+<pre><code>
+┌──────────────────┐       ┌──────────────────┐
 │  payment_order   │       │  payment_writeoff │
 │  付款申请单       │ 1───N │  付款核销记录     │
 │                  │       │                  │
@@ -235,166 +253,181 @@ body {
 │ 供应商预付余额    │       │  应付单据(引用)   │
 │                  │       │                  │
 │ SP2026040001    │       │                  │
-└──────────────────┘       └──────────────────┘</code></pre>
-<h3>3.2 表结构DDL</h3>
-<p>#### 表1: payment_order（付款申请单主表）</p>
-<pre><code>CREATE TABLE payment_order (
-    id              BIGINT PRIMARY KEY AUTO_INCREMENT COMMENT '主键ID',
-    payment_no      VARCHAR(20) NOT NULL UNIQUE COMMENT '付款单号 FK+年月+序号',
+└──────────────────┘       └──────────────────┘
+</pre>
+<h3>3.2 表结构DDL</h3>
+<h4>表1: payment_order（付款申请单主表）</h4>
+<pre><code>
+CREATE TABLE payment_order (
+    id              BIGINT PRIMARY KEY AUTO_INCREMENT COMMENT &#x27;主键ID&#x27;,
+    payment_no      VARCHAR(20) NOT NULL UNIQUE COMMENT &#x27;付款单号 FK+年月+序号&#x27;,
     
     -- 基本信息
-    supplier_id     BIGINT NOT NULL COMMENT '供应商ID',
-    supplier_name   VARCHAR(200) NOT NULL COMMENT '供应商名称（冗余）',
-    payment_type    TINYINT NOT NULL DEFAULT 1 COMMENT '付款类型: 1=普通付款 2=预付款 3=合同付款',
-    payment_method  TINYINT NOT NULL DEFAULT 1 COMMENT '付款方式: 1=银行转账 2=承兑汇票 3=现金 4=POS/扫码',
+    supplier_id     BIGINT NOT NULL COMMENT &#x27;供应商ID&#x27;,
+    supplier_name   VARCHAR(200) NOT NULL COMMENT &#x27;供应商名称（冗余）&#x27;,
+    payment_type    TINYINT NOT NULL DEFAULT 1 COMMENT &#x27;付款类型: 1=普通付款 2=预付款 3=合同付款&#x27;,
+    payment_method  TINYINT NOT NULL DEFAULT 1 COMMENT &#x27;付款方式: 1=银行转账 2=承兑汇票 3=现金 4=POS/扫码&#x27;,
     
     -- 金额信息
-    total_amount    DECIMAL(14,2) NOT NULL COMMENT '付款总金额',
-    unverified_amt  DECIMAL(14,2) DEFAULT 0 COMMENT '待核销金额',
-    verified_amt    DECIMAL(14,2) DEFAULT 0 COMMENT '已核销金额',
-    discount_amt    DECIMAL(14,2) DEFAULT 0 COMMENT '折扣/折让金额',
+    total_amount    DECIMAL(14,2) NOT NULL COMMENT &#x27;付款总金额&#x27;,
+    unverified_amt  DECIMAL(14,2) DEFAULT 0 COMMENT &#x27;待核销金额&#x27;,
+    verified_amt    DECIMAL(14,2) DEFAULT 0 COMMENT &#x27;已核销金额&#x27;,
+    discount_amt    DECIMAL(14,2) DEFAULT 0 COMMENT &#x27;折扣/折让金额&#x27;,
     
     -- 银行信息
-    pay_bank_account VARCHAR(30) COMMENT '付款银行账号',
-    pay_bank_name   VARCHAR(100) COMMENT '付款银行名称',
-    recv_bank_account VARCHAR(30) COMMENT '收款方银行账号',
-    recv_bank_name  VARCHAR(100) COMMENT '收款方银行名称',
-    recv_account_name VARCHAR(200) COMMENT '收款方户名',
+    pay_bank_account VARCHAR(30) COMMENT &#x27;付款银行账号&#x27;,
+    pay_bank_name   VARCHAR(100) COMMENT &#x27;付款银行名称&#x27;,
+    recv_bank_account VARCHAR(30) COMMENT &#x27;收款方银行账号&#x27;,
+    recv_bank_name  VARCHAR(100) COMMENT &#x27;收款方银行名称&#x27;,
+    recv_account_name VARCHAR(200) COMMENT &#x27;收款方户名&#x27;,
     
     -- 票据信息(承兑汇票场景)
-    bill_no         VARCHAR(50) COMMENT '票据编号(票据付款时填写)',
-    bill_type       TINYINT COMMENT '票据类型: 1=银行承兑 2=商业承兑',
+    bill_no         VARCHAR(50) COMMENT &#x27;票据编号(票据付款时填写)&#x27;,
+    bill_type       TINYINT COMMENT &#x27;票据类型: 1=银行承兑 2=商业承兑&#x27;,
     
     -- 状态与审批
-    status          TINYINT NOT NULL DEFAULT 0 COMMENT '状态: 0=草稿 1=待审 2=审批中 3=已审(待付) 4=付款中 5=已完成 6=已驳回 7=已取消',
-    approval_level  TINYINT DEFAULT 0 COMMENT '当前审批层级',
-    creator_id      BIGINT NOT NULL COMMENT '创建人ID',
-    creator_name    VARCHAR(50) COMMENT '创建人姓名',
+    status          TINYINT NOT NULL DEFAULT 0 COMMENT &#x27;状态: 0=草稿 1=待审 2=审批中 3=已审(待付) 4=付款中 5=已完成 6=已驳回 7=已取消&#x27;,
+    approval_level  TINYINT DEFAULT 0 COMMENT &#x27;当前审批层级&#x27;,
+    creator_id      BIGINT NOT NULL COMMENT &#x27;创建人ID&#x27;,
+    creator_name    VARCHAR(50) COMMENT &#x27;创建人姓名&#x27;,
     
     -- 时间
-    plan_pay_date   DATE COMMENT '预计付款日期',
-    actual_pay_date DATE COMMENT '实际付款日期',
-    approved_at     DATETIME COMMENT '审批通过时间',
+    plan_pay_date   DATE COMMENT &#x27;预计付款日期&#x27;,
+    actual_pay_date DATE COMMENT &#x27;实际付款日期&#x27;,
+    approved_at     DATETIME COMMENT &#x27;审批通过时间&#x27;,
     
     -- 凭证
-    voucher_id      BIGINT COMMENT '关联凭证ID(总账凭证表)',
+    voucher_id      BIGINT COMMENT &#x27;关联凭证ID(总账凭证表)&#x27;,
     
     -- 附件与备注
-    attachments     JSON COMMENT '附件列表(文件名+路径)',
-    remark          VARCHAR(500) COMMENT '备注',
+    attachments     JSON COMMENT &#x27;附件列表(文件名+路径)&#x27;,
+    remark          VARCHAR(500) COMMENT &#x27;备注&#x27;,
     
     -- 关联
-    related_po_id   BIGINT COMMENT '关联采购订单ID',
-    related_contract_id BIGINT COMMENT '关联采购合同ID',
+    related_po_id   BIGINT COMMENT &#x27;关联采购订单ID&#x27;,
+    related_contract_id BIGINT COMMENT &#x27;关联采购合同ID&#x27;,
     
     created_at      DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at      DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    deleted_at      DATETIME COMMENT '软删除时间',
+    deleted_at      DATETIME COMMENT &#x27;软删除时间&#x27;,
     
     INDEX idx_supplier (supplier_id),
     INDEX idx_status (status),
     INDEX idx_plan_date (plan_pay_date),
     INDEX idx_creator (creator_id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='付款申请单';</code></pre>
-<p>#### 表2: payment_writeoff（付款核销记录表）</p>
-<pre><code>CREATE TABLE payment_writeoff (
-    id              BIGINT PRIMARY KEY AUTO_INCREMENT COMMENT '主键ID',
-    writeoff_no     VARCHAR(20) NOT NULL UNIQUE COMMENT '核销编号 WO+年月+序号',
-    payment_id      BIGINT NOT NULL COMMENT '付款单ID',
-    payment_no      VARCHAR(20) NOT NULL COMMENT '付款单号(冗余)',
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT=&#x27;付款申请单&#x27;;
+</pre>
+<h4>表2: payment_writeoff（付款核销记录表）</h4>
+<pre><code>
+CREATE TABLE payment_writeoff (
+    id              BIGINT PRIMARY KEY AUTO_INCREMENT COMMENT &#x27;主键ID&#x27;,
+    writeoff_no     VARCHAR(20) NOT NULL UNIQUE COMMENT &#x27;核销编号 WO+年月+序号&#x27;,
+    payment_id      BIGINT NOT NULL COMMENT &#x27;付款单ID&#x27;,
+    payment_no      VARCHAR(20) NOT NULL COMMENT &#x27;付款单号(冗余)&#x27;,
     
     -- 核销对象
-    ap_bill_id      BIGINT NOT NULL COMMENT '应付单据ID',
-    ap_bill_no      VARCHAR(20) NOT NULL COMMENT '应付单据编号(冗余)',
-    ap_bill_type    TINYINT COMMENT '应付类型: 1=采购入库 2=服务费 3=其他',
+    ap_bill_id      BIGINT NOT NULL COMMENT &#x27;应付单据ID&#x27;,
+    ap_bill_no      VARCHAR(20) NOT NULL COMMENT &#x27;应付单据编号(冗余)&#x27;,
+    ap_bill_type    TINYINT COMMENT &#x27;应付类型: 1=采购入库 2=服务费 3=其他 4=进项发票&#x27;,
+    ap_invoice_id   BIGINT DEFAULT NULL COMMENT &#x27;关联AP进项发票ID(当ap_bill_type=4时必填)&#x27;,
     
     -- 核销金额
-    writeoff_amount DECIMAL(14,2) NOT NULL COMMENT '本次核销金额',
-    ap_original_amt DECIMAL(14,2) COMMENT '应付原始金额(冗余)',
-    ap_before_amt   DECIMAL(14,2) COMMENT '核销前应付余额(冗余)',
-    ap_after_amt    DECIMAL(14,2) COMMENT '核销后应付余额(冗余)',
+    writeoff_amount DECIMAL(14,2) NOT NULL COMMENT &#x27;本次核销金额(不含税)&#x27;,
+    writeoff_tax    DECIMAL(14,2) DEFAULT 0 COMMENT &#x27;本次核销税额(进项发票时)&#x27;,
+    writeoff_total  DECIMAL(14,2) DEFAULT 0 COMMENT &#x27;本次核销价税合计(进项发票时)&#x27;,
+    ap_original_amt DECIMAL(14,2) COMMENT &#x27;应付原始金额(冗余)&#x27;,
+    ap_before_amt   DECIMAL(14,2) COMMENT &#x27;核销前应付余额(冗余)&#x27;,
+    ap_after_amt    DECIMAL(14,2) COMMENT &#x27;核销后应付余额(冗余)&#x27;,
     
     -- 匹配信息
-    match_type      TINYINT DEFAULT 1 COMMENT '核销方式: 1=自动 2=手动',
-    confidence      DECIMAL(5,2) COMMENT '匹配置信度(自动核销时)',
+    match_type      TINYINT DEFAULT 1 COMMENT &#x27;核销方式: 1=自动 2=手动&#x27;,
+    confidence      DECIMAL(5,2) COMMENT &#x27;匹配置信度(自动核销时)&#x27;,
     
     -- 尾差
-    diff_amount     DECIMAL(14,2) DEFAULT 0 COMMENT '尾差金额',
-    diff_account    VARCHAR(50) DEFAULT '6603-01' COMMENT '尾差计入科目',
+    diff_amount     DECIMAL(14,2) DEFAULT 0 COMMENT &#x27;尾差金额&#x27;,
+    diff_account    VARCHAR(50) DEFAULT &#x27;6603-01&#x27; COMMENT &#x27;尾差计入科目&#x27;,
     
-    status          TINYINT NOT NULL DEFAULT 1 COMMENT '状态: 0=已冲销 1=有效',
+    status          TINYINT NOT NULL DEFAULT 1 COMMENT &#x27;状态: 0=已冲销 1=有效&#x27;,
     
-    creator_id      BIGINT COMMENT '核销人ID',
+    creator_id      BIGINT COMMENT &#x27;核销人ID&#x27;,
     created_at      DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     
     INDEX idx_payment (payment_id),
     INDEX idx_ap_bill (ap_bill_id),
     INDEX idx_status (status)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='付款核销记录';</code></pre>
-<p>#### 表3: supplier_prepay（供应商预付余额表）</p>
-<pre><code>CREATE TABLE supplier_prepay (
-    id              BIGINT PRIMARY KEY AUTO_INCREMENT COMMENT '主键ID',
-    supplier_id     BIGINT NOT NULL COMMENT '供应商ID',
-    supplier_name   VARCHAR(200) NOT NULL COMMENT '供应商名称(冗余)',
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT=&#x27;付款核销记录&#x27;;
+</pre>
+<h4>表3: supplier_prepay（供应商预付余额表）</h4>
+<pre><code>
+CREATE TABLE supplier_prepay (
+    id              BIGINT PRIMARY KEY AUTO_INCREMENT COMMENT &#x27;主键ID&#x27;,
+    supplier_id     BIGINT NOT NULL COMMENT &#x27;供应商ID&#x27;,
+    supplier_name   VARCHAR(200) NOT NULL COMMENT &#x27;供应商名称(冗余)&#x27;,
     
     -- 余额信息
-    prepay_balance  DECIMAL(14,2) NOT NULL DEFAULT 0 COMMENT '当前预付余额',
-    total_prepaid   DECIMAL(14,2) DEFAULT 0 COMMENT '累计预付金额',
-    total_deducted  DECIMAL(14,2) DEFAULT 0 COMMENT '累计已抵扣金额',
-    total_refunded  DECIMAL(14,2) DEFAULT 0 COMMENT '累计已退款金额',
+    prepay_balance  DECIMAL(14,2) NOT NULL DEFAULT 0 COMMENT &#x27;当前预付余额&#x27;,
+    total_prepaid   DECIMAL(14,2) DEFAULT 0 COMMENT &#x27;累计预付金额&#x27;,
+    total_deducted  DECIMAL(14,2) DEFAULT 0 COMMENT &#x27;累计已抵扣金额&#x27;,
+    total_refunded  DECIMAL(14,2) DEFAULT 0 COMMENT &#x27;累计已退款金额&#x27;,
     
     -- 预警
-    first_prepay_date DATE COMMENT '最早一笔未抵扣预付日期',
-    unverified_count INT DEFAULT 0 COMMENT '未抵扣笔数',
-    overdue_days    INT DEFAULT 0 COMMENT '最长超期天数',
+    first_prepay_date DATE COMMENT &#x27;最早一笔未抵扣预付日期&#x27;,
+    unverified_count INT DEFAULT 0 COMMENT &#x27;未抵扣笔数&#x27;,
+    overdue_days    INT DEFAULT 0 COMMENT &#x27;最长超期天数&#x27;,
     
-    status          TINYINT DEFAULT 1 COMMENT '状态: 0=冻结 1=正常',
+    status          TINYINT DEFAULT 1 COMMENT &#x27;状态: 0=冻结 1=正常&#x27;,
     
     updated_at      DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     
     UNIQUE INDEX idx_supplier (supplier_id),
     INDEX idx_overdue (overdue_days)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='供应商预付余额';</code></pre>
-<p>#### 表4: prepay_transaction（预付流水表）</p>
-<pre><code>CREATE TABLE prepay_transaction (
-    id              BIGINT PRIMARY KEY AUTO_INCREMENT COMMENT '主键ID',
-    supplier_id     BIGINT NOT NULL COMMENT '供应商ID',
-    transaction_no  VARCHAR(30) NOT NULL UNIQUE COMMENT '流水号',
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT=&#x27;供应商预付余额&#x27;;
+</pre>
+<h4>表4: prepay_transaction（预付流水表）</h4>
+<pre><code>
+CREATE TABLE prepay_transaction (
+    id              BIGINT PRIMARY KEY AUTO_INCREMENT COMMENT &#x27;主键ID&#x27;,
+    supplier_id     BIGINT NOT NULL COMMENT &#x27;供应商ID&#x27;,
+    transaction_no  VARCHAR(30) NOT NULL UNIQUE COMMENT &#x27;流水号&#x27;,
     
     -- 交易信息
-    trans_type      TINYINT NOT NULL COMMENT '交易类型: 1=预付入账 2=到货抵扣 3=手动抵扣 4=退款冲回',
-    amount          DECIMAL(14,2) NOT NULL COMMENT '交易金额(正数)',
+    trans_type      TINYINT NOT NULL COMMENT &#x27;交易类型: 1=预付入账 2=到货抵扣 3=手动抵扣 4=退款冲回&#x27;,
+    amount          DECIMAL(14,2) NOT NULL COMMENT &#x27;交易金额(正数)&#x27;,
     
     -- 关联
-    payment_id      BIGINT COMMENT '关联付款单ID(预付入账时)',
-    writeoff_id     BIGINT COMMENT '关联核销记录ID(抵扣时)',
-    ap_bill_id      BIGINT COMMENT '关联应付单ID(抵扣时)',
-    refund_payment_id BIGINT COMMENT '关联退款付款单ID(退款时)',
+    payment_id      BIGINT COMMENT &#x27;关联付款单ID(预付入账时)&#x27;,
+    writeoff_id     BIGINT COMMENT &#x27;关联核销记录ID(抵扣时)&#x27;,
+    ap_bill_id      BIGINT COMMENT &#x27;关联应付单ID(抵扣时)&#x27;,
+    refund_payment_id BIGINT COMMENT &#x27;关联退款付款单ID(退款时)&#x27;,
     
     -- 余额快照
-    before_balance  DECIMAL(14,2) COMMENT '交易前余额',
-    after_balance   DECIMAL(14,2) COMMENT '交易后余额',
+    before_balance  DECIMAL(14,2) COMMENT &#x27;交易前余额&#x27;,
+    after_balance   DECIMAL(14,2) COMMENT &#x27;交易后余额&#x27;,
     
-    remark          VARCHAR(500) COMMENT '备注',
+    remark          VARCHAR(500) COMMENT &#x27;备注&#x27;,
     
-    creator_id      BIGINT COMMENT '操作人ID',
+    creator_id      BIGINT COMMENT &#x27;操作人ID&#x27;,
     created_at      DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     
     INDEX idx_supplier (supplier_id),
     INDEX idx_type (trans_type),
     INDEX idx_created (created_at)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='预付流水';</code></pre>
-<p>---</p>
-<h2>4. 业务规则引擎</h2>
-<h3>4.1 编号规则</h3>
-<table>
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT=&#x27;预付流水&#x27;;
+</pre>
+<hr>
+<h2>4. 业务规则引擎</h2>
+<h3>4.1 编号规则</h3>
+<table><thead>
 <tr><th>单据</th><th>前缀</th><th>格式</th><th>示例</th></tr>
-<tr><th>付款申请单</th><th>FK</th><th>FK + yyyyMM + 4位序号</th><th>FK2026040001</th></tr>
-<tr><th>核销记录</th><th>WO</th><th>WO + yyyyMM + 4位序号</th><th>WO2026040001</th></tr>
-<tr><th>预付流水</th><th>PP</th><th>PP + yyyyMMdd + 4位序号</th><th>PP202604150001</th></tr>
+</thead><tbody>
+<tr><td>付款申请单</td><td>FK</td><td>FK + yyyyMM + 4位序号</td><td>FK2026040001</td></tr>
+<tr><td>核销记录</td><td>WO</td><td>WO + yyyyMM + 4位序号</td><td>WO2026040001</td></tr>
+<tr><td>预付流水</td><td>PP</td><td>PP + yyyyMMdd + 4位序号</td><td>PP202604150001</td></tr>
+</tbody>
 </table>
-<h3>4.2 付款状态机</h3>
-<pre><code>        ┌─── 提交 ───→ 待审
+<h3>4.2 付款状态机</h3>
+<pre><code>
+        ┌─── 提交 ───→ 待审
         │                  │
       草稿                  │ 审批中
         │                  │
@@ -408,27 +441,31 @@ body {
         │            │
         │         已完成 ──→ 凭证生成
         │
-        └── 取消 ──→ 已取消</code></pre>
-<h3>4.3 审批阈值规则</h3>
-<pre><code>class ApprovalThreshold:
-    """付款审批阈值配置"""
+        └── 取消 ──→ 已取消
+</pre>
+<h3>4.3 审批阈值规则</h3>
+<pre><code>
+class ApprovalThreshold:
+    &quot;&quot;&quot;付款审批阈值配置&quot;&quot;&quot;
     LEVELS = [
-        (5000,      "部门经理",   2),     # ≤5千, 部门经理, 2小时内
-        (50000,     "财务主管",   4),     # ≤5万, 财务主管, 4小时内
-        (200000,    "总经理",     8),     # ≤20万, 总经理, 8小时内(1工作日)
-        (float('inf'), "董事会",  16),    # >20万, 董事会, 16小时内(2工作日)
+        (5000,      &quot;部门经理&quot;,   2),     # ≤5千, 部门经理, 2小时内
+        (50000,     &quot;财务主管&quot;,   4),     # ≤5万, 财务主管, 4小时内
+        (200000,    &quot;总经理&quot;,     8),     # ≤20万, 总经理, 8小时内(1工作日)
+        (float(&#x27;inf&#x27;), &quot;董事会&quot;,  16),    # &gt;20万, 董事会, 16小时内(2工作日)
     ]
     
     @staticmethod
-    def get_level(amount: float) -> tuple:
-        """根据金额返回(角色, 超时小时数)"""
+    def get_level(amount: float) -&gt; tuple:
+        &quot;&quot;&quot;根据金额返回(角色, 超时小时数)&quot;&quot;&quot;
         for threshold, role, hours in ApprovalThreshold.LEVELS:
-            if amount <= threshold:
+            if amount &lt;= threshold:
                 return role, hours
-        return "董事会", 16</code></pre>
-<h3>4.4 核销规则引擎</h3>
-<pre><code>class PayWriteoffEngine:
-    """付款核销规则引擎"""
+        return &quot;董事会&quot;, 16
+</pre>
+<h3>4.4 核销规则引擎</h3>
+<pre><code>
+class PayWriteoffEngine:
+    &quot;&quot;&quot;付款核销规则引擎&quot;&quot;&quot;
     
     # 匹配权重
     WEIGHT_SUPPLIER = 0.40  # 供应商匹配 40%
@@ -442,11 +479,11 @@ body {
     # 置信度等级
     CONFIDENCE_AUTO = 90     # ≥90%: 自动推荐
     CONFIDENCE_CONFIRM = 70  # ≥70%: 提示确认
-    # <70%: 手动选择
+    # &lt;70%: 手动选择
     
     @staticmethod
-    def calculate_confidence(payment, ap_bill) -> float:
-        """计算核销匹配置信度"""
+    def calculate_confidence(payment, ap_bill) -&gt; float:
+        &quot;&quot;&quot;计算核销匹配置信度&quot;&quot;&quot;
         score = 0.0
         # 供应商必须一致
         if payment.supplier_id == ap_bill.supplier_id:
@@ -455,212 +492,292 @@ body {
             return 0.0  # 供应商不同直接排除
         
         # 金额接近度
-        if payment.total_amount > 0:
+        if payment.total_amount &gt; 0:
             amount_ratio = min(ap_bill.balance / payment.total_amount, 1.0)
             score += PayWriteoffEngine.WEIGHT_AMOUNT * amount_ratio * 100
         
         # 摘要关键词匹配 (简化)
         # ...
         
-        return round(score, 2)</code></pre>
-<h3>4.5 预付FIFO抵扣规则</h3>
-<pre><code>class PrepayDeductionRule:
-    """预付抵扣FIFO规则"""
+        return round(score, 2)
+</pre>
+<h3>4.4b 核销后自动回调AP进项发票</h3>
+<pre><code>
+class InvoiceWriteoffCallback:
+    &quot;&quot;&quot;核销成功后自动回调AP进项发票模块&quot;&quot;&quot;
+    
+    @staticmethod
+    async def after_writeoff(writeoff_record):
+        &quot;&quot;&quot;
+        核销成功后的回调处理
+        在 payment_writeoff 写入后触发
+        &quot;&quot;&quot;
+        # 仅当核销对象是进项发票时触发回调
+        if writeoff_record.ap_bill_type != 4 or not writeoff_record.ap_invoice_id:
+            return
+        
+        # 调用AP进项发票模块核销回调接口
+        callback_url = f&quot;/api/v1/ap-invoice/{writeoff_record.ap_invoice_id}/payment-writeoff&quot;
+        payload = {
+            &quot;payment_id&quot;: writeoff_record.payment_id,
+            &quot;payment_no&quot;: writeoff_record.payment_no,
+            &quot;writeoff_no&quot;: writeoff_record.writeoff_no,
+            &quot;writeoff_amount&quot;: writeoff_record.writeoff_amount,
+            &quot;writeoff_tax&quot;: writeoff_record.writeoff_tax or 0,
+            &quot;writeoff_total&quot;: writeoff_record.writeoff_total or writeoff_record.writeoff_amount,
+            &quot;writeoff_type&quot;: &quot;AUTO&quot; if writeoff_record.match_type == 1 else &quot;MANUAL&quot;
+        }
+        
+        # 异步调用，失败进入重试队列
+        response = await http_client.put(callback_url, json=payload)
+        if response.code != 0:
+            # 记录到重试队列，最多重试3次
+            retry_queue.push(callback_url, payload, max_retries=3)
+    
+    @staticmethod
+    async def after_writeoff_reverse(writeoff_record):
+        &quot;&quot;&quot;
+        核销冲销后的回调处理
+        &quot;&quot;&quot;
+        if writeoff_record.ap_bill_type != 4 or not writeoff_record.ap_invoice_id:
+            return
+        
+        callback_url = f&quot;/api/v1/ap-invoice/{writeoff_record.ap_invoice_id}/writeoff-reverse&quot;
+        payload = {
+            &quot;writeoff_no&quot;: writeoff_record.writeoff_no,
+            &quot;writeoff_amount&quot;: writeoff_record.writeoff_amount,
+            &quot;writeoff_total&quot;: writeoff_record.writeoff_total or writeoff_record.writeoff_amount
+        }
+        
+        response = await http_client.put(callback_url, json=payload)
+        if response.code != 0:
+            retry_queue.push(callback_url, payload, max_retries=3)
+</pre>
+<h3>4.5 预付FIFO抵扣规则</h3>
+<pre><code>
+class PrepayDeductionRule:
+    &quot;&quot;&quot;预付抵扣FIFO规则&quot;&quot;&quot;
     
     MAX_UNVERIFIED_DAYS = 90  # 超过90天预警
     
     @staticmethod
-    def get_deduction_order(supplier_id: int) -> list:
-        """获取FIFO抵扣顺序（最早的先扣）"""
+    def get_deduction_order(supplier_id: int) -&gt; list:
+        &quot;&quot;&quot;获取FIFO抵扣顺序（最早的先扣）&quot;&quot;&quot;
         # SELECT * FROM prepay_transaction 
         # WHERE supplier_id = ? AND trans_type = 1 
-        # AND amount - COALESCE(deducted, 0) > 0
+        # AND amount - COALESCE(deducted, 0) &gt; 0
         # ORDER BY created_at ASC
-        # 即：按预付入账时间升序，余额>0的排在前面
+        # 即：按预付入账时间升序，余额&gt;0的排在前面
         pass
     
     @staticmethod
-    def check_overdue(supplier_id: int) -> list:
-        """检查超期预付"""
+    def check_overdue(supplier_id: int) -&gt; list:
+        &quot;&quot;&quot;检查超期预付&quot;&quot;&quot;
         # 超过90天未抵扣的预付流水自动预警
-        pass</code></pre>
-<h3>4.6 付款方式枚举</h3>
-<pre><code>class PaymentMethod:
+        pass
+</pre>
+<h3>4.6 付款方式枚举</h3>
+<pre><code>
+class PaymentMethod:
     BANK_TRANSFER = 1    # 银行转账
     ACCEPTANCE_BILL = 2  # 承兑汇票
     CASH = 3             # 现金
     POS_SCAN = 4         # POS/扫码支付
-    OTHER = 9            # 其他</code></pre>
-<p>---</p>
-<h2>5. 凭证模板矩阵</h2>
-<h3>5.1 八种付款场景的会计分录</h3>
-<table>
+    OTHER = 9            # 其他
+</pre>
+<hr>
+<h2>5. 凭证模板矩阵</h2>
+<h3>5.1 八种付款场景的会计分录</h3>
+<table><thead>
 <tr><th>编号</th><th>场景</th><th>借方</th><th>贷方</th><th>触发条件</th></tr>
-<tr><th>**P01**</th><th>普通银行付款</th><th>应付账款</th><th>银行存款</th><th>银行转账+全额核销</th></tr>
-<tr><th>**P02**</th><th>预付货款</th><th>预付账款</th><th>银行存款</th><th>付款类型=预付</th></tr>
-<tr><th>**P03**</th><th>预付转应付</th><th>应付账款</th><th>预付账款</th><th>核销时使用了预付余额抵扣</th></tr>
-<tr><th>**P04**</th><th>付款折扣/折让</th><th>应付账款</th><th>银行存款 + 财务费用-购货折扣</th><th>实付<应付，有折扣</th></tr>
-<tr><th>**P05**</th><th>承兑汇票背书付款</th><th>应付账款</th><th>应付票据</th><th>付款方式=承兑汇票</th></tr>
-<tr><th>**P06**</th><th>汇票到期兑付</th><th>应付票据</th><th>银行存款</th><th>应付票据到期付款</th></tr>
-<tr><th>**P07**</th><th>现金付款</th><th>应付账款</th><th>库存现金</th><th>付款方式=现金</th></tr>
-<tr><th>**P08**</th><th>付款冲销/退款</th><th>应付账款(红字)</th><th>银行存款(红字)</th><th>冲销/退货退款</th></tr>
+</thead><tbody>
+<tr><td><strong>P01</strong></td><td>普通银行付款</td><td>应付账款</td><td>银行存款</td><td>银行转账+全额核销</td></tr>
+<tr><td><strong>P02</strong></td><td>预付货款</td><td>预付账款</td><td>银行存款</td><td>付款类型=预付</td></tr>
+<tr><td><strong>P03</strong></td><td>预付转应付</td><td>应付账款</td><td>预付账款</td><td>核销时使用了预付余额抵扣</td></tr>
+<tr><td><strong>P04</strong></td><td>付款折扣/折让</td><td>应付账款</td><td>银行存款 + 财务费用-购货折扣</td><td>实付<应付，有折扣</td></tr>
+<tr><td><strong>P05</strong></td><td>承兑汇票背书付款</td><td>应付账款</td><td>应付票据</td><td>付款方式=承兑汇票</td></tr>
+<tr><td><strong>P06</strong></td><td>汇票到期兑付</td><td>应付票据</td><td>银行存款</td><td>应付票据到期付款</td></tr>
+<tr><td><strong>P07</strong></td><td>现金付款</td><td>应付账款</td><td>库存现金</td><td>付款方式=现金</td></tr>
+<tr><td><strong>P08</strong></td><td>付款冲销/退款</td><td>应付账款(红字)</td><td>银行存款(红字)</td><td>冲销/退货退款</td></tr>
+</tbody>
 </table>
-<h3>5.2 凭证模板详细示例</h3>
-<p><strong>P01 普通银行付款（最常用）</strong></p>
-<table>
+<h3>5.2 凭证模板详细示例</h3>
+<p><strong>P01 普通银行付款（最常用）</strong></p>
+<table><thead>
 <tr><th>摘要</th><th>科目代码</th><th>科目名称</th><th>借方金额</th><th>贷方金额</th><th>辅助核算</th></tr>
-<tr><th>付[供应商名]货款-FK2026040001</th><th>2202</th><th>应付账款</th><th>50,000.00</th><th>供应商:XX公司</th></tr>
-<tr><th>付[供应商名]货款-FK2026040001</th><th>1002</th><th>银行存款-工行XX</th><th>50,000.00</th></tr>
+</thead><tbody>
+<tr><td>付[供应商名]货款-FK2026040001</td><td>2202</td><td>应付账款</td><td>50,000.00</td><td></td><td>供应商:XX公司</td></tr>
+<tr><td>付[供应商名]货款-FK2026040001</td><td>1002</td><td>银行存款-工行XX</td><td></td><td>50,000.00</td><td></td></tr>
+</tbody>
 </table>
-<p><strong>P03 预付转应付（混合核销）</strong></p>
-<table>
+<p><strong>P03 预付转应付（混合核销）</strong></p>
+<table><thead>
 <tr><th>摘要</th><th>科目代码</th><th>科目名称</th><th>借方金额</th><th>贷方金额</th><th>辅助核算</th></tr>
-<tr><th>付[供应商名]货款(含预付抵扣)-FK2026040002</th><th>2202</th><th>应付账款</th><th>80,000.00</th><th>供应商:XX公司</th></tr>
-<tr><th>付[供应商名]货款(含预付抵扣)-FK2026040002</th><th>1123</th><th>预付账款</th><th>30,000.00</th><th>供应商:XX公司</th></tr>
-<tr><th>付[供应商名]货款(含预付抵扣)-FK2026040002</th><th>1002</th><th>银行存款-工行XX</th><th>50,000.00</th></tr>
+</thead><tbody>
+<tr><td>付[供应商名]货款(含预付抵扣)-FK2026040002</td><td>2202</td><td>应付账款</td><td>80,000.00</td><td></td><td>供应商:XX公司</td></tr>
+<tr><td>付[供应商名]货款(含预付抵扣)-FK2026040002</td><td>1123</td><td>预付账款</td><td></td><td>30,000.00</td><td>供应商:XX公司</td></tr>
+<tr><td>付[供应商名]货款(含预付抵扣)-FK2026040002</td><td>1002</td><td>银行存款-工行XX</td><td></td><td>50,000.00</td><td></td></tr>
+</tbody>
 </table>
-<p>---</p>
-<h2>6. 内部API设计</h2>
-<h3>6.1 API列表</h3>
-<table>
+<hr>
+<h2>6. 内部API设计</h2>
+<h3>6.1 API列表</h3>
+<table><thead>
 <tr><th>方法</th><th>路径</th><th>说明</th></tr>
-<tr><th>POST</th><th>`/api/payment/orders`</th><th>新建付款申请单</th></tr>
-<tr><th>GET</th><th>`/api/payment/orders`</th><th>查询付款单列表(分页+筛选)</th></tr>
-<tr><th>GET</th><th>`/api/payment/orders/:id`</th><th>获取付款单详情</th></tr>
-<tr><th>PUT</th><th>`/api/payment/orders/:id`</th><th>更新付款单(草稿态)</th></tr>
-<tr><th>POST</th><th>`/api/payment/orders/:id/submit`</th><th>提交审批</th></tr>
-<tr><th>POST</th><th>`/api/payment/orders/:id/approve`</th><th>审批通过</th></tr>
-<tr><th>POST</th><th>`/api/payment/orders/:id/reject`</th><th>审批驳回</th></tr>
-<tr><th>POST</th><th>`/api/payment/orders/:id/cancel`</th><th>取消付款单</th></tr>
-<tr><th>POST</th><th>`/api/payment/writeoff`</th><th>执行核销</th></tr>
-<tr><th>POST</th><th>`/api/payment/writeoff/suggest`</th><th>智能核销推荐</th></tr>
-<tr><th>POST</th><th>`/api/payment/prepay`</th><th>预付申请</th></tr>
-<tr><th>GET</th><th>`/api/payment/prepay/balance`</th><th>预付余额查询</th></tr>
-<tr><th>POST</th><th>`/api/payment/prepay/deduct`</th><th>预付抵扣</th></tr>
-<tr><th>POST</th><th>`/api/payment/bank/instruction`</th><th>生成付款指令</th></tr>
-<tr><th>GET</th><th>`/api/payment/bank/status/:id`</th><th>查询付款状态</th></tr>
+</thead><tbody>
+<tr><td>POST</td><td><code>/api/payment/orders</code></td><td>新建付款申请单</td></tr>
+<tr><td>GET</td><td><code>/api/payment/orders</code></td><td>查询付款单列表(分页+筛选)</td></tr>
+<tr><td>GET</td><td><code>/api/payment/orders/:id</code></td><td>获取付款单详情</td></tr>
+<tr><td>PUT</td><td><code>/api/payment/orders/:id</code></td><td>更新付款单(草稿态)</td></tr>
+<tr><td>POST</td><td><code>/api/payment/orders/:id/submit</code></td><td>提交审批</td></tr>
+<tr><td>POST</td><td><code>/api/payment/orders/:id/approve</code></td><td>审批通过</td></tr>
+<tr><td>POST</td><td><code>/api/payment/orders/:id/reject</code></td><td>审批驳回</td></tr>
+<tr><td>POST</td><td><code>/api/payment/orders/:id/cancel</code></td><td>取消付款单</td></tr>
+<tr><td>POST</td><td><code>/api/payment/writeoff</code></td><td>执行核销</td></tr>
+<tr><td>POST</td><td><code>/api/payment/writeoff/suggest</code></td><td>智能核销推荐</td></tr>
+<tr><td>POST</td><td><code>/api/payment/prepay</code></td><td>预付申请</td></tr>
+<tr><td>GET</td><td><code>/api/payment/prepay/balance</code></td><td>预付余额查询</td></tr>
+<tr><td>POST</td><td><code>/api/payment/prepay/deduct</code></td><td>预付抵扣</td></tr>
+<tr><td>POST</td><td><code>/api/payment/bank/instruction</code></td><td>生成付款指令</td></tr>
+<tr><td>GET</td><td><code>/api/payment/bank/status/:id</code></td><td>查询付款状态</td></tr>
+</tbody>
 </table>
-<h3>6.2 核心API定义</h3>
-<p>#### POST /api/payment/orders（新建付款申请单）</p>
-<p><strong>请求体：</strong></p>
-<pre><code>{
-  "supplierId": 1001,
-  "paymentType": 1,
-  "paymentMethod": 1,
-  "totalAmount": 50000.00,
-  "planPayDate": "2026-04-20",
-  "payBankAccount": "6222XXXXXXXX1234",
-  "payBankName": "中国工商银行XX支行",
-  "recvBankAccount": "3302XXXXXXXX5678",
-  "recvBankName": "中国建设银行XX支行",
-  "recvAccountName": "XX供应商有限公司",
-  "remark": "付4月份采购货款",
-  "attachments": ["contract_001.pdf", "invoice_002.pdf"],
-  "writeoffs": [
+<h3>6.2 核心API定义</h3>
+<h4>POST /api/payment/orders（新建付款申请单）</h4>
+<p><strong>请求体：</strong></p>
+<pre><code>
+{
+  &quot;supplierId&quot;: 1001,
+  &quot;paymentType&quot;: 1,
+  &quot;paymentMethod&quot;: 1,
+  &quot;totalAmount&quot;: 50000.00,
+  &quot;planPayDate&quot;: &quot;2026-04-20&quot;,
+  &quot;payBankAccount&quot;: &quot;6222XXXXXXXX1234&quot;,
+  &quot;payBankName&quot;: &quot;中国工商银行XX支行&quot;,
+  &quot;recvBankAccount&quot;: &quot;3302XXXXXXXX5678&quot;,
+  &quot;recvBankName&quot;: &quot;中国建设银行XX支行&quot;,
+  &quot;recvAccountName&quot;: &quot;XX供应商有限公司&quot;,
+  &quot;remark&quot;: &quot;付4月份采购货款&quot;,
+  &quot;attachments&quot;: [&quot;contract_001.pdf&quot;, &quot;invoice_002.pdf&quot;],
+  &quot;writeoffs&quot;: [
     {
-      "apBillId": 2001,
-      "apBillNo": "AP2026040001",
-      "amount": 30000.00
+      &quot;apBillId&quot;: 2001,
+      &quot;apBillNo&quot;: &quot;AP2026040001&quot;,
+      &quot;amount&quot;: 30000.00
     },
     {
-      "apBillId": 2002,
-      "apBillNo": "AP2026040002",
-      "amount": 20000.00
+      &quot;apBillId&quot;: 2002,
+      &quot;apBillNo&quot;: &quot;AP2026040002&quot;,
+      &quot;amount&quot;: 20000.00
     }
   ]
-}</code></pre>
-<p><strong>响应体：</strong></p>
-<pre><code>{
-  "code": 0,
-  "message": "success",
-  "data": {
-    "paymentId": 3001,
-    "paymentNo": "FK2026040001",
-    "status": 0,
-    "totalAmount": 50000.00,
-    "unverifiedAmt": 0.00,
-    "approvalLevel": "财务主管",
-    "createdAt": "2026-04-15T10:30:00"
+}
+</pre>
+<p><strong>响应体：</strong></p>
+<pre><code>
+{
+  &quot;code&quot;: 0,
+  &quot;message&quot;: &quot;success&quot;,
+  &quot;data&quot;: {
+    &quot;paymentId&quot;: 3001,
+    &quot;paymentNo&quot;: &quot;FK2026040001&quot;,
+    &quot;status&quot;: 0,
+    &quot;totalAmount&quot;: 50000.00,
+    &quot;unverifiedAmt&quot;: 0.00,
+    &quot;approvalLevel&quot;: &quot;财务主管&quot;,
+    &quot;createdAt&quot;: &quot;2026-04-15T10:30:00&quot;
   }
-}</code></pre>
-<p>#### POST /api/payment/writeoff/suggest（智能核销推荐）</p>
-<p><strong>请求体：</strong></p>
-<pre><code>{
-  "paymentId": 3001,
-  "paymentAmount": 50000.00,
-  "supplierId": 1001
-}</code></pre>
-<p><strong>响应体：</strong></p>
-<pre><code>{
-  "code": 0,
-  "data": {
-    "suggestions": [
+}
+</pre>
+<h4>POST /api/payment/writeoff/suggest（智能核销推荐）</h4>
+<p><strong>请求体：</strong></p>
+<pre><code>
+{
+  &quot;paymentId&quot;: 3001,
+  &quot;paymentAmount&quot;: 50000.00,
+  &quot;supplierId&quot;: 1001
+}
+</pre>
+<p><strong>响应体：</strong></p>
+<pre><code>
+{
+  &quot;code&quot;: 0,
+  &quot;data&quot;: {
+    &quot;suggestions&quot;: [
       {
-        "apBillId": 2001,
-        "apBillNo": "AP2026040001",
-        "apBillType": "采购入库",
-        "balance": 30000.00,
-        "dueDate": "2026-04-25",
-        "suggestAmount": 30000.00,
-        "confidence": 95.5
+        &quot;apBillId&quot;: 2001,
+        &quot;apBillNo&quot;: &quot;AP2026040001&quot;,
+        &quot;apBillType&quot;: &quot;采购入库&quot;,
+        &quot;balance&quot;: 30000.00,
+        &quot;dueDate&quot;: &quot;2026-04-25&quot;,
+        &quot;suggestAmount&quot;: 30000.00,
+        &quot;confidence&quot;: 95.5
       },
       {
-        "apBillId": 2002,
-        "apBillNo": "AP2026040002",
-        "apBillType": "采购入库",
-        "balance": 25000.00,
-        "dueDate": "2026-04-30",
-        "suggestAmount": 20000.00,
-        "confidence": 82.3
+        &quot;apBillId&quot;: 2002,
+        &quot;apBillNo&quot;: &quot;AP2026040002&quot;,
+        &quot;apBillType&quot;: &quot;采购入库&quot;,
+        &quot;balance&quot;: 25000.00,
+        &quot;dueDate&quot;: &quot;2026-04-30&quot;,
+        &quot;suggestAmount&quot;: 20000.00,
+        &quot;confidence&quot;: 82.3
       }
     ],
-    "totalSuggested": 50000.00,
-    "remaining": 0.00,
-    "hasPrepay": true,
-    "prepayBalance": 5000.00
+    &quot;totalSuggested&quot;: 50000.00,
+    &quot;remaining&quot;: 0.00,
+    &quot;hasPrepay&quot;: true,
+    &quot;prepayBalance&quot;: 5000.00
   }
-}</code></pre>
-<p>---</p>
-<h2>7. 测试用例</h2>
-<h3>7.1 核心测试场景</h3>
-<table>
+}
+</pre>
+<hr>
+<h2>7. 测试用例</h2>
+<h3>7.1 核心测试场景</h3>
+<table><thead>
 <tr><th>#</th><th>场景</th><th>输入</th><th>预期结果</th><th>优先级</th></tr>
-<tr><th>T01</th><th>普通付款全流程</th><th>供应商A应付3万→新建付款→审批→付款→核销</th><th>应付余额清零，凭证自动生成</th><th>P0</th></tr>
-<tr><th>T02</th><th>部分核销</th><th>应付5万→本次付3万</th><th>应付余额=2万，状态=部分核销</th><th>P0</th></tr>
-<tr><th>T03</th><th>尾差处理</th><th>应付30000.50→付30000.00</th><th>差额0.50元计入财务费用</th><th>P1</th></tr>
-<tr><th>T04</th><th>超额付款转预付</th><th>应付3万→付5万</th><th>应付清零，差额2万转入预付余额</th><th>P1</th></tr>
-<tr><th>T05</th><th>预付→到货抵扣</th><th>预付2万→到货应付5万→核销时选预付抵扣</th><th>预付余额减少2万，应付余额=3万</th><th>P0</th></tr>
-<tr><th>T06</th><th>预付FIFO抵扣</th><th>同一供应商3笔预付(1月/2月/3月)→抵扣3万</th><th>先扣1月那笔，再扣2月那笔</th><th>P1</th></tr>
-<tr><th>T07</th><th>审批驳回退回</th><th>付款5万→财务主管驳回</th><th>状态=已驳回，可修改后重新提交</th><th>P0</th></tr>
-<tr><th>T08</th><th>多级审批流转</th><th>付款25万→总经理→通过</th><th>经过财务主管+总经理两级审批</th><th>P0</th></tr>
-<tr><th>T09</th><th>承兑汇票付款</th><th>付款方式=承兑→关联票据号</th><th>凭证借:应付 贷:应付票据</th><th>P1</th></tr>
-<tr><th>T10</th><th>付款冲销</th><th>已完成付款→发现错误→冲销</th><th>红字凭证冲回，应付余额恢复</th><th>P1</th></tr>
+</thead><tbody>
+<tr><td>T01</td><td>普通付款全流程</td><td>供应商A应付3万→新建付款→审批→付款→核销</td><td>应付余额清零，凭证自动生成</td><td>P0</td></tr>
+<tr><td>T02</td><td>部分核销</td><td>应付5万→本次付3万</td><td>应付余额=2万，状态=部分核销</td><td>P0</td></tr>
+<tr><td>T03</td><td>尾差处理</td><td>应付30000.50→付30000.00</td><td>差额0.50元计入财务费用</td><td>P1</td></tr>
+<tr><td>T04</td><td>超额付款转预付</td><td>应付3万→付5万</td><td>应付清零，差额2万转入预付余额</td><td>P1</td></tr>
+<tr><td>T05</td><td>预付→到货抵扣</td><td>预付2万→到货应付5万→核销时选预付抵扣</td><td>预付余额减少2万，应付余额=3万</td><td>P0</td></tr>
+<tr><td>T06</td><td>预付FIFO抵扣</td><td>同一供应商3笔预付(1月/2月/3月)→抵扣3万</td><td>先扣1月那笔，再扣2月那笔</td><td>P1</td></tr>
+<tr><td>T07</td><td>审批驳回退回</td><td>付款5万→财务主管驳回</td><td>状态=已驳回，可修改后重新提交</td><td>P0</td></tr>
+<tr><td>T08</td><td>多级审批流转</td><td>付款25万→总经理→通过</td><td>经过财务主管+总经理两级审批</td><td>P0</td></tr>
+<tr><td>T09</td><td>承兑汇票付款</td><td>付款方式=承兑→关联票据号</td><td>凭证借:应付 贷:应付票据</td><td>P1</td></tr>
+<tr><td>T10</td><td>付款冲销</td><td>已完成付款→发现错误→冲销</td><td>红字凭证冲回，应付余额恢复</td><td>P1</td></tr>
+</tbody>
 </table>
-<p>---</p>
-<h2>8. 安全与风控</h2>
-<h3>8.1 资金安全规则</h3>
-<table>
+<hr>
+<h2>8. 安全与风控</h2>
+<h3>8.1 资金安全规则</h3>
+<table><thead>
 <tr><th>规则</th><th>说明</th><th>实现方式</th></tr>
-<tr><th>**三岗分离**</th><th>制单人、审批人、付款人必须不同</th><th>角色权限校验</th></tr>
-<tr><th>**大额双签**</th><th>≥10万需财务主管+总经理双签</th><th>审批流自动配置</th></tr>
-<tr><th>**收款方校验**</th><th>首次付款需供应商确认银行信息</th><th>供应商档案冻结前3次</th></tr>
-<tr><th>**重复检测**</th><th>同供应商同金额同日≤1笔自动检测</th><th>实时校验+预警</th></tr>
-<tr><th>**操作留痕**</th><th>所有操作完整记录（操作人+时间+IP）</th><th>审计日志表</th></tr>
-<tr><th>**数据加密**</th><th>银行账号等敏感信息加密存储</th><th>AES-256</th></tr>
+</thead><tbody>
+<tr><td><strong>三岗分离</strong></td><td>制单人、审批人、付款人必须不同</td><td>角色权限校验</td></tr>
+<tr><td><strong>大额双签</strong></td><td>≥10万需财务主管+总经理双签</td><td>审批流自动配置</td></tr>
+<tr><td><strong>收款方校验</strong></td><td>首次付款需供应商确认银行信息</td><td>供应商档案冻结前3次</td></tr>
+<tr><td><strong>重复检测</strong></td><td>同供应商同金额同日≤1笔自动检测</td><td>实时校验+预警</td></tr>
+<tr><td><strong>操作留痕</strong></td><td>所有操作完整记录（操作人+时间+IP）</td><td>审计日志表</td></tr>
+<tr><td><strong>数据加密</strong></td><td>银行账号等敏感信息加密存储</td><td>AES-256</td></tr>
+</tbody>
 </table>
-<h3>8.2 预警规则</h3>
-<table>
+<h3>8.2 预警规则</h3>
+<table><thead>
 <tr><th>预警</th><th>条件</th><th>通知方式</th></tr>
-<tr><th>审批超时</th><th>超过阈值时长未审批</th><th>系统消息+邮件/企业微信</th></tr>
-<tr><th>预付超期</th><th>预付超过90天未抵扣</th><th>每周一推送到财务主管</th></tr>
-<tr><th>应付逾期</th><th>应付单超过约定付款日</th><th>到期前3天+到期日+逾期每天</th></tr>
-<tr><th>银行失败</th><th>付款指令银行返回失败</th><th>实时推送到出纳</th></tr>
-<tr><th>重复风险</th><th>检测到疑似重复付款</th><th>弹窗确认+需主管二次确认</th></tr>
+</thead><tbody>
+<tr><td>审批超时</td><td>超过阈值时长未审批</td><td>系统消息+邮件/企业微信</td></tr>
+<tr><td>预付超期</td><td>预付超过90天未抵扣</td><td>每周一推送到财务主管</td></tr>
+<tr><td>应付逾期</td><td>应付单超过约定付款日</td><td>到期前3天+到期日+逾期每天</td></tr>
+<tr><td>银行失败</td><td>付款指令银行返回失败</td><td>实时推送到出纳</td></tr>
+<tr><td>重复风险</td><td>检测到疑似重复付款</td><td>弹窗确认+需主管二次确认</td></tr>
+</tbody>
 </table>
-<p>---</p>
-<h2>9. 实施路线图</h2>
-<h3>9.1 MVP阶段（约15天）</h3>
-<pre><code>┌─────────────────────────────────────────────────────────────┐
+<hr>
+<h2>9. 实施路线图</h2>
+<h3>9.1 MVP阶段（约15天）</h3>
+<pre><code>
+┌─────────────────────────────────────────────────────────────┐
 │                     实付付款 MVP 路线图                       │
 ├──────────┬────────────────────────────┬──────────┬──────────┤
 │ 阶段     │ 交付物                     │ 工期     │ 依赖     │
@@ -691,31 +808,62 @@ body {
 │          │ 端到端测试                 │          │          │
 ├──────────┼────────────────────────────┼──────────┼──────────┤
 │          │ **合计**                   │ **15天** │          │
-└──────────┴────────────────────────────┴──────────┴──────────┘</code></pre>
-<h3>9.2 P2阶段（后续迭代）</h3>
-<table>
+└──────────┴────────────────────────────┴──────────┴──────────┘
+</pre>
+<h3>9.2 P2阶段（后续迭代）</h3>
+<table><thead>
 <tr><th>阶段</th><th>内容</th><th>预计工期</th></tr>
-<tr><th>P2-A 银企对接</th><th>银企API对接+付款指令推送+状态回传</th><th>5天</th></tr>
-<tr><th>P2-B 批量付款</th><th>同一供应商多笔应付合并付款</th><th>2天</th></tr>
-<tr><th>P2-C 承兑汇票</th><th>ECDS对接+票据池联动</th><th>5天</th></tr>
-<tr><th>P2-D 移动审批</th><th>企业微信/钉钉移动端审批</th><th>3天</th></tr>
-<tr><th>P2-E 高级报表</th><th>付款趋势分析+资金计划+供应商信用评分</th><th>5天</th></tr>
+</thead><tbody>
+<tr><td>P2-A 银企对接</td><td>银企API对接+付款指令推送+状态回传</td><td>5天</td></tr>
+<tr><td>P2-B 批量付款</td><td>同一供应商多笔应付合并付款</td><td>2天</td></tr>
+<tr><td>P2-C 承兑汇票</td><td>ECDS对接+票据池联动</td><td>5天</td></tr>
+<tr><td>P2-D 移动审批</td><td>企业微信/钉钉移动端审批</td><td>3天</td></tr>
+<tr><td>P2-E 高级报表</td><td>付款趋势分析+资金计划+供应商信用评分</td><td>5天</td></tr>
+</tbody>
 </table>
-<p>---</p>
-<h2>附录A：与实收收款模块的差异对照</h2>
-<table>
+<hr>
+<h2>附录A：与实收收款模块的差异对照</h2>
+<table><thead>
 <tr><th>对比维度</th><th>实收收款 (CRM)</th><th>实付付款 (PM)</th></tr>
-<tr><th>单据前缀</th><th>SK (收款)</th><th>FK (付款)</th></tr>
-<tr><th>核销前缀</th><th>RW (收入核销)</th><th>WO (付款核销)</th></tr>
-<tr><th>预收/预付科目</th><th>2203 预收账款</th><th>1123 预付账款</th></tr>
-<tr><th>应收/应付科目</th><th>1122 应收账款</th><th>2202 应付账款</th></tr>
-<tr><th>审批复杂度</th><th>低（已到账）</th><th>**高（多级+金额阈值）**</th></tr>
-<tr><th>资金安全</th><th>被动接收</th><th>**主动划出，需三岗分离**</th></tr>
-<tr><th>异常等级</th><th>中（少收/延迟）</th><th>**高（多付/重复/错付）**</th></tr>
-<tr><th>银企对接</th><th>拉取流水（读）</th><th>**推送指令（写）**</th></tr>
-<tr><th>票据关联</th><th>应收票据（收到）</th><th>应付票据（付出）</th></tr>
+</thead><tbody>
+<tr><td>单据前缀</td><td>SK (收款)</td><td>FK (付款)</td></tr>
+<tr><td>核销前缀</td><td>RW (收入核销)</td><td>WO (付款核销)</td></tr>
+<tr><td>预收/预付科目</td><td>2203 预收账款</td><td>1123 预付账款</td></tr>
+<tr><td>应收/应付科目</td><td>1122 应收账款</td><td>2202 应付账款</td></tr>
+<tr><td>审批复杂度</td><td>低（已到账）</td><td><strong>高（多级+金额阈值）</strong></td></tr>
+<tr><td>资金安全</td><td>被动接收</td><td><strong>主动划出，需三岗分离</strong></td></tr>
+<tr><td>异常等级</td><td>中（少收/延迟）</td><td><strong>高（多付/重复/错付）</strong></td></tr>
+<tr><td>银企对接</td><td>拉取流水（读）</td><td><strong>推送指令（写）</strong></td></tr>
+<tr><td>票据关联</td><td>应收票据（收到）</td><td>应付票据（付出）</td></tr>
+</tbody>
 </table>
+<hr>
+<h2>附录B：与AP进项发票模块的核销联动</h2>
+<h3>B.1 联动场景</h3>
+<pre><code>
+进项发票(已入账) → 实付付款(核销) → 自动回调更新发票核销状态
 
+业务闭环:
+  采购发票入账 → 产生应付 → 付款申请 → 审批通过 → 付款核销 → 
+  → 自动更新发票payment_status → 发票显示&quot;已付清/部分付款&quot;
+</pre>
+<h3>B.2 数据流转</h3>
+<table><thead>
+<tr><th>流转方向</th><th>接口</th><th>说明</th></tr>
+</thead><tbody>
+<tr><td>AP → PM</td><td><code>GET /api/v1/ap-invoice/unpaid-list?supplier_id=</code></td><td>获取供应商未付款发票列表</td></tr>
+<tr><td>AP → PM</td><td><code>GET /api/v1/ap-invoice/{id}/payable-detail</code></td><td>获取单张发票应付明细</td></tr>
+<tr><td>PM → AP</td><td><code>PUT /api/v1/ap-invoice/{id}/payment-writeoff</code></td><td>核销成功后回调更新发票</td></tr>
+<tr><td>PM → AP</td><td><code>PUT /api/v1/ap-invoice/{id}/writeoff-reverse</code></td><td>核销冲销后回调恢复发票</td></tr>
+</tbody>
+</table>
+<h3>B.3 关键约束</h3>
+<ol>
+<li><strong>ap_bill_type=4</strong> 的核销记录必须携带 <code>ap_invoice_id</code></li>
+<li>核销回调为<strong>异步调用</strong>，失败进入重试队列（最多3次）</li>
+<li>发票的 <code>payment_status</code> 由AP模块维护，PM模块不可直接修改</li>
+<li>支持同一张发票多次部分核销（累计计算）</li>
+</ol>
   </div>
 </div>
 </body>
