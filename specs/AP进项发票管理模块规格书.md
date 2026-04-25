@@ -213,6 +213,11 @@ AP进项发票管理
 │  红字信息表       │          │  税额拆分明细     │
 │                  │          │                  │
 │  红冲原票关联     │          │  进项税/销项税    │
+├──────────────────┤          ├──────────────────┤
+│  ap_invoice_writeoff        │                  │
+│  发票核销明细     │ N────────│ (来自实付付款)   │
+│                  │          │                  │
+│  WO:核销¥5k      │          │                  │
 └──────────────────┘          └──────────────────┘
 ```
 
@@ -264,6 +269,14 @@ CREATE TABLE ap_invoice (
     accounting_date   DATE           DEFAULT NULL    COMMENT '入账日期',
     voucher_id        BIGINT         DEFAULT NULL    COMMENT '关联凭证ID',
     
+    -- 付款核销状态（与实付付款模块联动）
+    payment_status    TINYINT        NOT NULL DEFAULT 0 
+        COMMENT '付款核销状态: 0未付款/1部分付款/2已付清',
+    total_paid_amount DECIMAL(14,2)  NOT NULL DEFAULT 0.00 
+        COMMENT '累计已付金额(由实付付款核销回调累计)',
+    total_writeoff_amt DECIMAL(14,2) NOT NULL DEFAULT 0.00 
+        COMMENT '累计已核销金额(由实付付款核销回调累计)',
+    
     -- 认证状态
     cert_status       TINYINT        NOT NULL DEFAULT 0 
         COMMENT '认证状态: 0未认证/1已勾选/2已抵扣/3进项转出/4不可抵扣',
@@ -297,6 +310,7 @@ CREATE TABLE ap_invoice (
     INDEX idx_verify_status (verify_status),
     INDEX idx_match_status (match_status),
     INDEX idx_accounting_status (accounting_status),
+    INDEX idx_payment_status (payment_status),
     INDEX idx_cert_status (cert_status),
     INDEX idx_invoice_date (invoice_date),
     INDEX idx_invoice_kind (invoice_kind),
@@ -508,6 +522,45 @@ CREATE TABLE ap_invoice_attachment (
 COMMENT='进项发票附件表';
 ```
 
+#### 表7: ap_invoice_writeoff（进项发票核销明细表）
+
+```sql
+CREATE TABLE ap_invoice_writeoff (
+    id                BIGINT PRIMARY KEY AUTO_INCREMENT,
+    writeoff_no       VARCHAR(20)    NOT NULL UNIQUE COMMENT '核销编号 WO+年月+序号(与实付付款模块同源)',
+    invoice_id        BIGINT         NOT NULL        COMMENT '关联进项发票ID',
+    invoice_no        VARCHAR(20)    NOT NULL        COMMENT '发票号码(冗余)',
+    payment_id        BIGINT         NOT NULL        COMMENT '关联实付付款单ID',
+    payment_no        VARCHAR(20)    NOT NULL        COMMENT '付款单号(冗余)',
+    
+    -- 核销金额
+    writeoff_amount   DECIMAL(14,2)  NOT NULL        COMMENT '本次核销金额(不含税)',
+    writeoff_tax      DECIMAL(14,2)  DEFAULT 0.00    COMMENT '本次核销税额',
+    writeoff_total    DECIMAL(14,2)  NOT NULL        COMMENT '本次核销价税合计',
+    
+    -- 核销前快照
+    invoice_before_paid DECIMAL(14,2) DEFAULT 0.00  COMMENT '核销前发票已付金额(冗余)',
+    invoice_after_paid  DECIMAL(14,2) DEFAULT 0.00  COMMENT '核销后发票已付金额(冗余)',
+    
+    -- 核销方式
+    writeoff_type     VARCHAR(16)    NOT NULL DEFAULT 'AUTO'
+        COMMENT '核销方式: AUTO自动/MANUAL手工/PREPAY预付抵扣',
+    
+    -- 状态
+    status            TINYINT        NOT NULL DEFAULT 1 
+        COMMENT '状态: 0已冲销/1有效',
+    
+    -- 审计字段
+    created_by        BIGINT         NOT NULL        COMMENT '核销操作人',
+    created_at        DATETIME       DEFAULT CURRENT_TIMESTAMP COMMENT '核销时间',
+    
+    INDEX idx_invoice (invoice_id),
+    INDEX idx_payment (payment_id),
+    INDEX idx_status (status)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 
+COMMENT='进项发票核销明细表 - 记录每笔付款对发票的核销，支持多次部分核销';
+```
+
 ---
 
 ## 4. 业务规则与凭证模板
@@ -538,6 +591,23 @@ COMMENT='进项发票附件表';
                                         ├──进项转出──▶ [已转出] ──生成凭证
                                         │
                                         └──不可抵扣──▶ [不可抵扣]
+```
+
+```
+  [已入账] 付款核销状态（独立于认证状态，并行管理）:
+
+  ┌──────────┐  首次核销   ┌──────────┐  付清   ┌──────────┐
+  │  未付款   │ ─────────▶ │ 部分付款  │ ──────▶ │  已付清   │
+  │ status=0 │            │ status=1 │         │ status=2 │
+  └──────────┘            └────┬─────┘         └──────────┘
+                               │                     │
+                               │ 继续核销             │ 核销冲销
+                               │                     │
+                               ▼                     ▼
+                          [部分付款]              [部分付款/未付款]
+                          
+  核销冲销: 按冲销金额逆向扣减 total_paid_amount，重算 payment_status
+  触发方: 实付付款模块 writeoff_reverse 回调
 ```
 
 ### 4.2 三单匹配规则
@@ -855,6 +925,61 @@ PUT    /api/v1/ap-red-letter/{id}/confirm        # 供应商确认
 PUT    /api/v1/ap-red-letter/{id}/red-invoice    # 回填红字发票号
 ```
 
+### 6.6b 付款核销（实付付款模块回调）
+
+```
+# 实付付款模块核销成功后回调本模块，自动更新发票核销状态
+PUT    /api/v1/ap-invoice/{id}/payment-writeoff  # 核销回调：更新已付/核销金额和状态
+POST   /api/v1/ap-invoice/batch-payment-writeoff # 批量核销回调
+
+# 查询发票核销明细
+GET    /api/v1/ap-invoice/{id}/writeoff-detail   # 单张发票核销明细列表
+GET    /api/v1/ap-invoice/{id}/payment-status    # 发票付款核销状态汇总
+
+# 反核销（冲销回调）
+PUT    /api/v1/ap-invoice/{id}/writeoff-reverse  # 核销冲销回调：恢复已付金额
+```
+
+#### 核销回调接口详细说明
+
+```
+PUT /api/v1/ap-invoice/{id}/payment-writeoff
+  由实付付款模块在 payment_writeoff 核销成功后自动调用
+  
+Request:
+{
+  "payment_id": 20001,
+  "payment_no": "FK2026040001",
+  "writeoff_no": "WO2026040001",
+  "writeoff_amount": 10000.00,
+  "writeoff_tax": 1300.00,
+  "writeoff_total": 11300.00,
+  "writeoff_type": "AUTO"
+}
+
+处理逻辑:
+  1. 写入 ap_invoice_writeoff 核销明细记录
+  2. 更新 ap_invoice 主表:
+     - total_paid_amount += writeoff_total
+     - total_writeoff_amt += writeoff_amount
+     - IF total_paid_amount >= amount_with_tax: payment_status = 2(已付清)
+     - ELIF total_paid_amount > 0: payment_status = 1(部分付款)
+  3. 返回更新后的发票核销状态
+
+Response:
+{
+  "code": 0,
+  "data": {
+    "invoice_id": 10086,
+    "payment_status": 1,
+    "total_paid_amount": 11300.00,
+    "total_writeoff_amt": 10000.00,
+    "unpaid_amount": 0.00,
+    "writeoff_count": 1
+  }
+}
+```
+
 ### 6.7 台账与报表
 
 ```
@@ -901,22 +1026,78 @@ ap_invoice.verify_log_id → invoice_verification_log.id
   → 走异常池处理流程(复用查验模块的异常池)
 ```
 
-### 7.2 与实付付款模块集成
+### 7.2 与实付付款模块集成（核销联动）
 
 ```
-本模块产出 → 实付付款模块消费:
+═══════════════════════════════════════════════════════════
+  AP进项发票 ←→ 实付付款 核销联动规范（双向集成）
+═══════════════════════════════════════════════════════════
+
+【本模块 → 实付付款】提供应付数据:
 
 入账确认后(ap_invoice.accounting_status=1):
-  产生应付记录 → 可创建付款申请
-  关联字段: ap_invoice.id → payment的source_ref_id
-  
+  产生应付记录 → 实付付款模块可创建付款申请
+
 数据接口:
 GET /api/v1/ap-invoice/{id}/payable-detail
-  返回: 应付金额、供应商、到期日、已付金额、未付余额
+  返回: {
+    "invoice_id": 10086,
+    "invoice_no": "API202604000001",
+    "supplier_id": 100,
+    "supplier_name": "XX公司",
+    "amount_with_tax": 11300.00,
+    "amount_no_tax": 10000.00,
+    "tax_amount": 1300.00,
+    "total_paid_amount": 0.00,
+    "unpaid_amount": 11300.00,
+    "payment_status": 0,
+    "accounting_date": "2026-04-15"
+  }
+
+查询某供应商全部待付款发票:
+GET /api/v1/ap-invoice/unpaid-list?supplier_id=100
+  返回: 该供应商所有 payment_status != 2 的已入账发票列表
+
+───────────────────────────────────────────────────────────
+
+【实付付款 → 本模块】核销回调（新增完整联动）:
+
+实付付款模块 payment_writeoff 核销成功后，自动回调本模块:
+
+PUT /api/v1/ap-invoice/{id}/payment-writeoff
+  触发时机: 实付付款核销引擎匹配到本发票并核销成功时
+  调用方: 实付付款模块(服务端内部调用)
   
-实付付款核销后回调:
-PUT /api/v1/ap-invoice/{id}/payment-status
-  更新: 已付金额、付款状态
+  处理流程:
+  ┌────────────────────────────────────────────────────┐
+  │  实付付款核销成功                                     │
+  │    ↓                                               │
+  │  1. 写入 ap_invoice_writeoff 核销明细               │
+  │  2. 累加 ap_invoice.total_paid_amount              │
+  │  3. 累加 ap_invoice.total_writeoff_amt             │
+  │  4. 判断并更新 payment_status:                      │
+  │     - 已付 >= 价税合计 → 2(已付清)                  │
+  │     - 已付 > 0 → 1(部分付款)                       │
+  │     - 已付 = 0 → 0(未付款)                         │
+  └────────────────────────────────────────────────────┘
+
+反核销回调:
+PUT /api/v1/ap-invoice/{id}/writeoff-reverse
+  触发时机: 实付付款核销冲销时
+  处理流程: 逆向扣减 total_paid_amount 和 total_writeoff_amt
+            重算 payment_status
+
+───────────────────────────────────────────────────────────
+
+【关联字段映射】
+
+实付付款模块 payment_writeoff 表:
+  ap_bill_id     → ap_invoice.id         (发票主键)
+  ap_bill_no     → ap_invoice.invoice_no  (发票号码)
+  ap_bill_type   → 'PURCHASE_INVOICE'    (应付类型=采购进项发票)
+
+注意: ap_bill_type 需扩展一个值 'PURCHASE_INVOICE' 来标识
+      核销对象是AP进项发票（区别于无发票的应付单据）
 ```
 
 ### 7.3 与总账凭证引擎集成
