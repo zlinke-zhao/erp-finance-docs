@@ -167,11 +167,11 @@
         <h1>💰 实收收款模块 — UI设计原型</h1>
         <div style="opacity:0.85; margin-top:4px;">交互式界面原型 · 对标金蝶云星空应收收款管理</div>
     </div>
-    <span class="badge">📐 v1.0 Prototype · 共6个核心页面</span>
+    <span class="badge">📐 v1.1 Prototype · 共7个核心页面</span>
 </div>
 
 <div class="note-callout">
-    <strong>📌 设计说明：</strong>本原型展示了实收收款模块的6个核心页面布局。所有数据为示例数据，颜色/间距可根据实际开发调整。
+    <strong>📌 设计说明：</strong>本原型展示了实收收款模块的7个核心页面布局（含F07供应商现金扣款收款）。所有数据为示例数据，颜色/间距可根据实际开发调整。
     核心设计原则：<b>信息密度适中</b> → <b>操作路径最短</b> → <b>核销过程可视化</b>
 </div>
 
@@ -729,7 +729,7 @@
             <span style="font-weight:600;">统计周期：</span>
             <button class="btn btn-sm btn-primary">本月</button>
             <button class="btn btn-sm">本季</button>
-            <button class="btn sm">本年</button>
+            <button class="btn btn-sm">本年</button>
             <span style="color:#ddd;">|</span>
             <input type="date" class="form-control" value="2026-04-01" style="width:145px;padding:5px 8px;font-size:0.85em;">
             <span>至</span>
@@ -784,7 +784,7 @@
                     <div style="flex:1;background:#42a5f5;border-radius:4px 4px 0 0;height:100%;position:relative;" title="04-10: ¥126k"></div>
                     <div style="flex:1;background:#bbdefb;border-radius:4px 4px 0 0;height:58%;position:relative;" title="04-11: ¥70k"></div>
                     <div style="flex:1;background:#bbdefb;border-radius:4px 4px 0 0;height:48%;position:relative;" title="04-12: ¥58k"></div>
-                    <div style="flex:1;background:#bbdefb;border-radius:4px 4px 0 0;height:52%;position-relative;" title="04-13: ¥63k"></div>
+                    <div style="flex:1;background:#bbdefb;border-radius:4px 4px 0 0;height:52%;position:relative;" title="04-13: ¥63k"></div>
                     <div style="flex:1;background:#1e88e5;border-radius:4px 4px 0 0;height:75%;position:relative;" title="04-14(今日): ¥91k"></div>
                 </div>
             </div>
@@ -852,13 +852,234 @@
                     <div style="flex:1;display:flex;align-items:center;gap:8px;">
                         <span style="width:80px;text-align:right;font-size:0.85em;">&gt;90天 ⚠️</span>
                         <div style="flex:1;height:28px;background:#ffcdd2;border-radius:14px;position:relative;">
-                            <div style="height:100%;width;7%;background:#c62828;border-radius:14px;"></div>
+                            <div style="height:100%;width:7%;background:#c62828;border-radius:14px;"></div>
                             <span style="position:absolute;right:-50px;top:50%;transform:translateY(-50%);font-size:0.8em;font-weight:600;color:#c62828;">¥ 56,500 (7%)</span>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
+</div>
+
+
+<!-- ============================================================
+     页面7: 供应商现金扣款收款（F07）
+============================================================ -->
+<div class="screen">
+    <div class="screen-title">💸 页面7 — 供应商现金扣款收款（F07）<span class="tag" style="background:#fff3e0;color:#e65100;">供应商扣款</span></div>
+
+    <div class="form-section">
+
+        <!-- 业务说明 -->
+        <div class="note-callout" style="background:linear-gradient(135deg,#fff3e0,#ffe0b2);border-left-color:#e65100;">
+            <strong>📌 F07 业务说明：</strong>供应商品质扣款/迟延罚款由供应商以<b>现金</b>形式缴纳，不走应付对账、不开红字发票。
+            收款登记后关联自研系统<b>供应商扣款审批单号</b>形成闭环。凭证独立入总账（借:1001库存现金 贷:6301营业外收入），不与税务模块对账。
+        </div>
+
+        <!-- === A: 扣款收款登记表单 === -->
+        <div class="panel" style="border-top:3px solid #e65100;">
+            <div class="panel-header" style="background:linear-gradient(to right,#fff3e0,#ffe0b2);">
+                💸 供应商扣款收款登记
+                <span class="tag-orange" style="font-weight:normal;font-size:0.8em;">source_type = DEDUCTION</span>
+            </div>
+            <div class="panel-body">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>供应商 <span class="required">*</span></label>
+                        <select class="form-control" style="border-color:#e65100;">
+                            <option value="">请选择供应商...</option>
+                            <option selected>VN-胡志明市-XX电子零件厂</option>
+                            <option>VN-平阳省-YY塑胶制品厂</option>
+                            <option>TH-曼谷-ZZ金属冲压厂</option>
+                        </select>
+                        <span class="form-hint">来源: 供应商主数据模块（只读）</span>
+                    </div>
+                    <div class="form-group">
+                        <label>供应商扣款单号 <span class="required">*</span></label>
+                        <input type="text" class="form-control" value="SUP-DED-20260425-001" style="font-weight:600;color:#e65100;border-color:#e65100;">
+                        <span class="form-hint">必填，关联自研系统供应商扣款审批流程（不可重复使用）</span>
+                    </div>
+                    <div class="form-group">
+                        <label>扣款原因 <span class="required">*</span></label>
+                        <select class="form-control" style="border-color:#e65100;">
+                            <option selected>品质扣款（QUALITY）</option>
+                            <option>迟延罚款（DELAY）</option>
+                            <option>其他（OTHER）</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>扣款金额 <span class="required">*</span></label>
+                        <input type="text" class="form-control" value="5,000,000" style="font-weight:700;color:#e65100;font-size:1.1em;">
+                    </div>
+                    <div class="form-group">
+                        <label>币种</label>
+                        <select class="form-control">
+                            <option selected>VND（越南盾）</option>
+                            <option>THB（泰铢）</option>
+                            <option>USD（美元）</option>
+                            <option>CNY（人民币）</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>收款方式</label>
+                        <input type="text" class="form-control" value="现金（CASH）" disabled style="background:#fff3e0;color:#e65100;font-weight:600;">
+                        <span class="form-hint">供应商扣款固定为现金收款方式，不可修改</span>
+                    </div>
+                    <div class="form-group">
+                        <label>收款日期 <span class="required">*</span></label>
+                        <input type="date" class="form-control" value="2026-04-25">
+                    </div>
+                    <div class="form-group">
+                        <label>收款人</label>
+                        <input type="text" class="form-control" value="阮文才（财务部）" placeholder="实际收取现金的人员">
+                    </div>
+                    <div class="form-group" style="grid-column: span 2;">
+                        <label>扣款原因说明</label>
+                        <textarea class="form-control" placeholder="详细描述扣款原因">批次B2026-04来料抽检不合格率12%，超过合同约定的3%上限。按合同第8.3条款扣除品质保证金。</textarea>
+                    </div>
+                    <div class="form-group" style="grid-column: span 2;">
+                        <label>备注</label>
+                        <textarea class="form-control" placeholder="选填">供应商已现场确认并签字，现金当面点清</textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- === B: 关联的扣款审批单信息 === -->
+        <div class="panel" style="margin-top:16px;border:2px dashed #e65100;">
+            <div class="panel-header" style="background:linear-gradient(to right,#fce4ec,#ffcdd2);">
+                🔗 关联扣款审批单信息
+                <span style="font-size:0.82em;font-weight:normal;color:#888;">从自研系统自动读取（只读）</span>
+            </div>
+            <div class="panel-body">
+                <table style="font-size:0.88em;">
+                    <tr>
+                        <td style="color:#888;width:140px;padding:8px 0;">扣款单号</td>
+                        <td style="padding:8px 0;"><strong style="color:#e65100;">SUP-DED-20260425-001</strong></td>
+                        <td style="color:#888;width:140px;padding:8px 0;">审批状态</td>
+                        <td style="padding:8px 0;"><span style="background:#e8f5e9;color:#2e7d32;padding:2px 10px;border-radius:10px;font-size:0.85em;font-weight:500;">✅ 已审批</span></td>
+                    </tr>
+                    <tr>
+                        <td style="color:#888;padding:8px 0;">关联采购单</td>
+                        <td style="padding:8px 0;">PO20260400012</td>
+                        <td style="color:#888;padding:8px 0;">关联物料批次</td>
+                        <td style="padding:8px 0;">B2026-04</td>
+                    </tr>
+                    <tr>
+                        <td style="color:#888;padding:8px 0;">审批金额</td>
+                        <td style="padding:8px 0;font-weight:700;color:#e65100;">VND 5,000,000</td>
+                        <td style="color:#888;padding:8px 0;">审批日期</td>
+                        <td style="padding:8px 0;">2026-04-23</td>
+                    </tr>
+                    <tr>
+                        <td style="color:#888;padding:8px 0;">审批人</td>
+                        <td style="padding:8px 0;">陈经理（品管部）→ 林总（总经理）</td>
+                        <td style="color:#888;padding:8px 0;">收款状态</td>
+                        <td style="padding:8px 0;"><span style="background:#fff3e0;color:#e65100;padding:2px 10px;border-radius:10px;font-size:0.85em;font-weight:500;">⏳ 待收款</span></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <!-- === C: 预览凭证 === -->
+        <div class="panel" style="margin-top:16px;">
+            <div class="panel-header" style="background:linear-gradient(to right,#e8eaf6,#c5cae9);">
+                🧾 预览生成凭证（S07模板）
+                <span style="font-size:0.82em;font-weight:normal;color:#888;">审核通过后自动生成</span>
+            </div>
+            <div class="panel-body">
+                <div style="background:white;padding:16px;border-radius:8px;border:1px solid #c5cae9;font-family:'Consolas',monospace;font-size:0.9em;line-height:2;">
+                    <div style="color:#666;margin-bottom:8px;">凭证字：收 &nbsp;&nbsp; 凭证号：自动编号 &nbsp;&nbsp; 日期：2026-04-25</div>
+                    <div style="display:flex;gap:40px;">
+                        <div style="flex:1;">
+                            <div style="color:#c62828;font-weight:600;margin-bottom:4px;">借方：</div>
+                            <div>&nbsp;&nbsp;1001 &nbsp;库存现金 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <strong style="color:#c62828;">5,000,000.00</strong></div>
+                        </div>
+                        <div style="flex:1;">
+                            <div style="color:#2e7d32;font-weight:600;margin-bottom:4px;">贷方：</div>
+                            <div>&nbsp;&nbsp;6301 &nbsp;营业外收入-供应商赔偿 &nbsp;&nbsp;&nbsp;&nbsp; <strong style="color:#2e7d32;">5,000,000.00</strong></div>
+                        </div>
+                    </div>
+                    <div style="margin-top:10px;padding-top:10px;border-top:1px dashed #ccc;color:#888;font-size:0.85em;">
+                        摘要：供应商品质扣款收款 | 扣款单号: SUP-DED-20260425-001 | 供应商: VN-胡志明市-XX电子零件厂
+                    </div>
+                </div>
+                <div style="margin-top:10px;display:flex;gap:16px;font-size:0.82em;color:#888;">
+                    <span>⚠️ 此凭证<b>不经过</b>应付账款科目</span>
+                    <span>⚠️ 此凭证<b>不与</b>税务模块对账</span>
+                    <span>✅ 审核后自动回调更新审批单状态为"已收款"</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 操作按钮 -->
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:20px;">
+            <div>
+                <button class="btn">💾 保存草稿</button>
+                <span class="text-muted" style="margin-left:12px;">草稿可修改，扣款单号暂不锁定</span>
+            </div>
+            <div style="display:flex;gap:10px;">
+                <button class="btn">预览凭证</button>
+                <button class="btn btn-success" style="padding:8px 28px;font-size:0.95em;">✔ 提交审核</button>
+            </div>
+        </div>
+
+        <!-- 分隔 -->
+        <div style="margin-top:30px;border-top:2px dashed #ddd;padding-top:20px;">
+            <div style="font-weight:700;color:#555;margin-bottom:14px;font-size:1em;">📋 历史扣款收款记录</div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>收款单号</th>
+                        <th>供应商</th>
+                        <th>扣款单号</th>
+                        <th>扣款原因</th>
+                        <th class="text-right">金额</th>
+                        <th>币种</th>
+                        <th>收款日期</th>
+                        <th>状态</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><a href="#" style="color:#1565c0;text-decoration:none;font-weight:600;">SK20260400085</a></td>
+                        <td>VN-平阳省-YY塑胶制品厂</td>
+                        <td style="font-weight:600;color:#e65100;">SUP-DED-20260420-003</td>
+                        <td><span class="tag-orange">迟延罚款</span></td>
+                        <td class="text-right amount" style="color:#e65100;">3,200,000</td>
+                        <td>VND</td>
+                        <td>2026-04-20</td>
+                        <td><span class="status-verified">✅ 已审核</span></td>
+                        <td><button class="btn btn-sm">查看</button></td>
+                    </tr>
+                    <tr>
+                        <td><a href="#" style="color:#1565c0;text-decoration:none;font-weight:600;">SK20260400078</a></td>
+                        <td>VN-胡志明市-XX电子零件厂</td>
+                        <td style="font-weight:600;color:#e65100;">SUP-DED-20260418-001</td>
+                        <td><span class="tag-orange">品质扣款</span></td>
+                        <td class="text-right amount" style="color:#e65100;">8,500,000</td>
+                        <td>VND</td>
+                        <td>2026-04-18</td>
+                        <td><span class="status-verified">✅ 已审核</span></td>
+                        <td><button class="btn btn-sm">查看</button></td>
+                    </tr>
+                    <tr>
+                        <td><a href="#" style="color:#1565c0;text-decoration:none;font-weight:600;">SK20260400071</a></td>
+                        <td>TH-曼谷-ZZ金属冲压厂</td>
+                        <td style="font-weight:600;color:#e65100;">SUP-DED-20260415-002</td>
+                        <td><span class="tag-orange">品质扣款</span></td>
+                        <td class="text-right amount" style="color:#e65100;">15,000</td>
+                        <td>THB</td>
+                        <td>2026-04-15</td>
+                        <td><span class="status-verified">✅ 已审核</span></td>
+                        <td><button class="btn btn-sm">查看</button></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
     </div>
 </div>
 
