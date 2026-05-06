@@ -1,0 +1,1307 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AR销项发票管理 — UI设计原型</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, "Microsoft YaHei", "Segoe UI", sans-serif;
+            background: #f0f2f5; color: #333; font-size: 14px; line-height: 1.5;
+        }
+        .container { max-width: 1400px; margin: 0 auto; padding: 16px; }
+
+        /* Header */
+        .page-header {
+            background: linear-gradient(135deg, #4a148c 0%, #7b1fa2 40%, #ab47bc 100%);
+            color: white; padding: 24px 28px; border-radius: 12px; margin-bottom: 20px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .page-header h1 { font-size: 1.6em; }
+        .page-header .badge { background: rgba(255,255,255,0.2); padding: 4px 14px; border-radius: 20px; font-size: 0.85em; }
+
+        /* Tab Navigation */
+        .page-tabs {
+            display: flex; gap: 0; background: white; border-radius: 10px 10px 0 0;
+            overflow-x: auto; border-bottom: 2px solid #e0e0e0;
+            box-shadow: 0 1px 6px rgba(0,0,0,0.06);
+        }
+        .page-tab {
+            padding: 12px 22px; cursor: pointer; font-size: 0.92em;
+            color: #666; border-bottom: 3px solid transparent;
+            transition: all 0.2s; white-space: nowrap; font-weight: 500;
+            background: none; border-top: none; border-left: none; border-right: none;
+        }
+        .page-tab:hover { color: #7b1fa2; background: #faf5ff; }
+        .page-tab.active { color: #7b1fa2; border-bottom-color: #7b1fa2; font-weight: 600; background: #faf5ff; }
+
+        /* Page Container */
+        .page-container { display: none; }
+        .page-container.active { display: block; }
+
+        /* Screen */
+        .screen { background: white; border-radius: 0 0 12px 12px; overflow: hidden;
+                   box-shadow: 0 2px 12px rgba(0,0,0,0.08); margin-bottom: 20px; }
+        .screen-title {
+            background: #f8f9fa; padding: 10px 18px; border-bottom: 1px solid #e9ecef;
+            font-weight: 600; color: #495057; font-size: 0.95em;
+            display: flex; align-items: center; gap: 8px;
+        }
+        .screen-title .tag { background: #f3e5f5; color: #7b1fa2; padding: 2px 10px; border-radius: 10px; font-size: 0.8em; font-weight: normal; }
+
+        /* Toolbar */
+        .toolbar { padding: 14px 18px; border-bottom: 1px solid #eee; display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+        .btn {
+            padding: 7px 16px; border-radius: 6px; border: 1px solid #d0d0d0; background: white;
+            cursor: pointer; font-size: 0.88em; transition: all 0.2s; display: inline-flex; align-items: center; gap: 4px;
+        }
+        .btn:hover { background: #f5f5f5; border-color: #bbb; }
+        .btn-primary { background: #7b1fa2; color: white; border-color: #7b1fa2; }
+        .btn-primary:hover { background: #6a1b9a; border-color: #6a1b9a; }
+        .btn-success { background: #2e7d32; color: white; border-color: #2e7d32; }
+        .btn-success:hover { background: #1b5e20; }
+        .btn-warning { background: #ef6c00; color: white; border-color: #ef6c00; }
+        .btn-danger { background: #c62828; color: white; border-color: #c62828; }
+        .btn-sm { padding: 4px 10px; font-size: 0.82em; }
+        .search-input {
+            padding: 6px 12px; border: 1px solid #ddd; border-radius: 6px; width: 200px; font-size: 0.88em;
+        }
+        .search-input:focus { outline: none; border-color: #7b1fa2; box-shadow: 0 0 0 2px rgba(123,31,162,0.15); }
+
+        /* Table */
+        table { width: 100%; border-collapse: collapse; font-size: 0.88em; }
+        thead th { background: #f8f9fa; padding: 10px 12px; text-align: left; font-weight: 600; color: #555;
+                    border-bottom: 2px solid #dee2e6; white-space: nowrap; }
+        tbody td { padding: 10px 12px; border-bottom: 1px solid #f0f0f0; vertical-align: middle; }
+        tbody tr:hover { background: #fdf8ff; }
+        .amount { font-family: "Consolas", monospace; font-weight: 600; color: #7b1fa2; }
+        .amount-green { color: #2e7d32; }
+        .amount-red { color: #c62828; }
+        .text-muted { color: #999; font-size: 0.85em; }
+        .text-center { text-align: center; }
+        .text-right { text-align: right; }
+
+        /* Form */
+        .form-section { padding: 20px 24px; }
+        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px 24px; }
+        .form-group { display: flex; flex-direction: column; gap: 4px; }
+        .form-group label { font-size: 0.85em; color: #666; font-weight: 500; }
+        .form-group label .required { color: #c62828; margin-left: 2px; }
+        .form-control {
+            padding: 8px 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 0.92em; transition: all 0.2s;
+        }
+        .form-control:focus { outline: none; border-color: #7b1fa2; box-shadow: 0 0 0 3px rgba(123,31,162,0.1); }
+        select.form-control { cursor: pointer; appearance: auto; }
+        textarea.form-control { resize: vertical; min-height: 60px; }
+        .form-hint { font-size: 0.78em; color: #aaa; }
+
+        /* Panels */
+        .panel { border: 1px solid #e9ecef; border-radius: 8px; overflow: hidden; margin-bottom: 16px; }
+        .panel-header {
+            background: linear-gradient(to right, #f8f9fa, #fff); padding: 10px 16px;
+            font-weight: 600; font-size: 0.9em; border-bottom: 1px solid #e9ecef;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .panel-body { padding: 14px 16px; }
+
+        /* Invoice Type Tags */
+        .type-tag { display: inline-block; padding: 3px 10px; border-radius: 4px; font-size: 0.8em; font-weight: 600; }
+        .type-enterprise { background: #e3f2fd; color: #1565c0; }   /* 企业收据-蓝色 */
+        .type-special { background: #f3e5f5; color: #7b1fa2; }       /* 专票-紫色 */
+        .type-common { background: #e8f5e9; color: #2e7d32; }        /* 普票-绿色 */
+        .type-fullelec { background: #fff3e0; color: #e65100; }      /* 全电-橙色 */
+        .type-zerotax { background: #eceff1; color: #546e7a; }       /* 免税-灰色 */
+
+        /* Status Tags */
+        .status-draft { background: #fff3e0; color: #e65100; padding: 2px 10px; border-radius: 10px; font-size: 0.82em; font-weight: 500; }
+        .status-pending { background: #fff8e1; color: #f57f17; padding: 2px 10px; border-radius: 10px; font-size: 0.82em; font-weight: 500; }
+        .status-invoiced { background: #e8f5e9; color: #2e7d32; padding: 2px 10px; border-radius: 10px; font-size: 0.82em; font-weight: 500; }
+        .status-delivered { background: #e3f2fd; color: #1565c0; padding: 2px 10px; border-radius: 10px; font-size: 0.82em; font-weight: 500; }
+        .status-confirmed { background: #f3e5f5; color: #7b1fa2; padding: 2px 10px; border-radius: 10px; font-size: 0.82em; font-weight: 500; }
+        .status-voided { background: #ffebee; color: #c62828; padding: 2px 10px; border-radius: 10px; font-size: 0.82em; font-weight: 500; }
+        .status-converted { background: #e0f2f1; color: #00695c; padding: 2px 10px; border-radius: 10px; font-size: 0.82em; font-weight: 500; }
+
+        /* Filter Chips */
+        .filter-chip {
+            display: inline-flex; align-items: center; padding: 5px 14px; border-radius: 20px;
+            font-size: 0.84em; cursor: pointer; border: 1px solid #d0d0d0; background: white;
+            transition: all 0.15s; gap: 4px;
+        }
+        .filter-chip:hover { border-color: #7b1fa2; color: #7b1fa2; }
+        .filter-chip.active { background: #7b1fa2; color: white; border-color: #7b1fa2; }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.45); z-index: 100;
+            display: none; align-items: center; justify-content: center;
+        }
+        .modal-overlay.show { display: flex; }
+        .modal-dialog {
+            background: white; border-radius: 12px; width: 780px; max-height: 85vh;
+            overflow-y: auto; box-shadow: 0 12px 48px rgba(0,0,0,0.25);
+        }
+        .modal-header {
+            padding: 16px 22px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center;
+            background: #fafbfc; border-radius: 12px 12px 0 0;
+        }
+        .modal-header h3 { font-size: 1.05em; }
+        .modal-body { padding: 20px 22px; }
+        .modal-footer {
+            padding: 14px 22px; border-top: 1px solid #eee; display: flex; justify-content: flex-end; gap: 10px;
+            background: #fafbfc; border-radius: 0 0 12px 12px;
+        }
+        .modal-close { font-size: 1.4em; cursor: pointer; color: #999; background: none; border: none; line-height: 1; }
+        .modal-close:hover { color: #333; }
+
+        /* Toast */
+        .toast-container { position: fixed; top: 20px; right: 20px; z-index: 200; display: flex; flex-direction: column; gap: 8px; }
+        .toast {
+            background: white; border-radius: 8px; padding: 14px 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            display: flex; align-items: center; gap: 10px; min-width: 280px;
+            animation: toastIn 0.3s ease-out; font-size: 0.9em;
+        }
+        .toast.success { border-left: 4px solid #2e7d32; }
+        .toast.info { border-left: 4px solid #7b1fa2; }
+        .toast.warning { border-left: 4px solid #ef6c00; }
+        .toast-exit { animation: toastOut 0.3s ease-in forwards; }
+        @keyframes toastIn { from { opacity: 0; transform: translateX(60px); } to { opacity: 1; transform: translateX(0); } }
+        @keyframes toastOut { from { opacity: 1; transform: translateX(0); } to { opacity: 0; transform: translateX(60px); } }
+
+        /* Note Callout */
+        .note-callout {
+            background: linear-gradient(135deg, #fff8e1, #ffecb3); border-left: 4px solid #ff8f00;
+            padding: 14px 18px; border-radius: 0 8px 8px 0; margin: 16px 0; font-size: 0.88em;
+        }
+        .note-callout strong { color: #e65100; }
+
+        /* Summary bar */
+        .summary-bar {
+            display: flex; justify-content: space-between; align-items: center;
+            background: linear-gradient(135deg, #f3e5f5, #e1bee7); padding: 12px 20px;
+            border-radius: 8px; margin: 16px 0; font-size: 0.92em;
+        }
+        .summary-bar .total-label { color: #6a1b9a; font-weight: 600; }
+        .summary-bar .total-value { font-size: 1.4em; font-weight: 700; color: #4a148c; }
+
+        /* Stat Cards */
+        .stat-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; padding: 16px 0; }
+        .stat-card {
+            background: white; border-radius: 10px; padding: 18px; border-left: 4px solid;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+        }
+        .stat-card .stat-num { font-size: 1.6em; font-weight: 700; }
+        .stat-card .stat-label { font-size: 0.85em; color: #888; margin-top: 4px; }
+        .stat-card.purple { border-left-color: #7b1fa2; }
+        .stat-card.purple .stat-num { color: #7b1fa2; }
+        .stat-card.blue { border-left-color: #1565c0; }
+        .stat-card.blue .stat-num { color: #1565c0; }
+        .stat-card.green { border-left-color: #2e7d32; }
+        .stat-card.green .stat-num { color: #2e7d32; }
+        .stat-card.orange { border-left-color: #ef6c00; }
+        .stat-card.orange .stat-num { color: #ef6c00; }
+        .stat-card.red { border-left-color: #c62828; }
+        .stat-card.red .stat-num { color: #c62828; }
+        .stat-card.teal { border-left-color: #00897b; }
+        .stat-card.teal .stat-num { color: #00897b; }
+
+        /* Dynamic form fields */
+        .tax-fields { display: none; }
+        .tax-fields.visible { display: block; }
+
+        /* Red letter timeline */
+        .timeline { padding: 0 0 0 24px; border-left: 3px solid #e0e0e0; }
+        .timeline-item { position: relative; padding: 12px 0 12px 20px; }
+        .timeline-item::before {
+            content: ''; position: absolute; left: -31px; top: 16px;
+            width: 12px; height: 12px; border-radius: 50%; background: #7b1fa2; border: 2px solid white;
+            box-shadow: 0 0 0 2px #7b1fa2;
+        }
+        .timeline-item.done::before { background: #2e7d32; box-shadow: 0 0 0 2px #2e7d32; }
+        .timeline-item.pending::before { background: #fff; box-shadow: 0 0 0 2px #bdbdbd; }
+
+        /* Chart placeholder */
+        .chart-area { background: #fafafa; border: 1px dashed #ddd; border-radius: 8px; min-height: 200px; display: flex; align-items: flex-end; justify-content: space-around; padding: 20px 16px 12px; }
+        .bar { border-radius: 4px 4px 0 0; min-width: 40px; transition: height 0.5s ease; }
+        .bar-label { text-align: center; font-size: 0.75em; color: #888; margin-top: 4px; }
+
+        .footer-note { text-align: center; padding: 16px; color: #999; font-size: 0.82em; }
+    </style>
+</head>
+<body>
+<div class="container">
+
+<!-- ==================== HEADER ==================== -->
+<div class="page-header">
+    <div>
+        <h1>🧾 AR销项发票管理 — UI设计原型</h1>
+        <div style="opacity:0.85; margin-top:4px;">交互式界面原型 · 对标金蝶云星空应收管理-销项发票</div>
+    </div>
+    <span class="badge">📐 v2.0 Interactive · 含企业收据+税控发票</span>
+</div>
+
+<div class="note-callout">
+    <strong>设计说明：</strong>本原型覆盖AR销项发票管理的6个核心页面。企业收据(ENTERPRISE)与税控发票统一管理，通过"发票类型"字段区分。
+    核心设计原则：<b>同画面统一管理</b> → <b>类型标签色彩区分</b> → <b>表单动态字段</b> → <b>企业收据可转正式</b>
+</div>
+
+<!-- ==================== TAB NAVIGATION ==================== -->
+<div class="page-tabs" id="pageTabs">
+    <div class="page-tab active" data-tab="list" onclick="switchPage('list')">📋 ① 发票列表</div>
+    <div class="page-tab" data-tab="new" onclick="switchPage('new')">📝 ② 新增开票</div>
+    <div class="page-tab" data-tab="detail" onclick="switchPage('detail')">🔍 ③ 发票详情</div>
+    <div class="page-tab" data-tab="red" onclick="switchPage('red')">🔴 ④ 红字冲红</div>
+    <div class="page-tab" data-tab="stats" onclick="switchPage('stats')">📊 ⑤ 开票统计</div>
+    <div class="page-tab" data-tab="config" onclick="switchPage('config')">⚙️ ⑥ 基础配置</div>
+</div>
+
+<!-- ==================== PAGE 1: 发票列表 ==================== -->
+<div class="page-container active" id="page-list">
+    <div class="screen">
+        <div class="screen-title">
+            📋 发票/收据列表
+            <span class="tag">含企业收据+税控发票</span>
+        </div>
+        <div class="toolbar">
+            <div style="display:flex; gap:6px; flex-wrap:wrap;">
+                <div class="filter-chip active" onclick="filterByType('all', this)">全部</div>
+                <div class="filter-chip" onclick="filterByType('ENTERPRISE', this)">企业收据</div>
+                <div class="filter-chip" onclick="filterByType('SPECIAL', this)">专票</div>
+                <div class="filter-chip" onclick="filterByType('COMMON', this)">普票</div>
+                <div class="filter-chip" onclick="filterByType('FULL_ELEC', this)">全电发票</div>
+                <div class="filter-chip" onclick="filterByType('ZERO_TAX', this)">免税</div>
+            </div>
+            <div style="margin-left:auto; display:flex; gap:8px; align-items:center;">
+                <input class="search-input" placeholder="搜索单号/客户名..." id="searchInput" oninput="filterTable()">
+                <button class="btn btn-primary" onclick="switchPage('new')">+ 新增开票</button>
+                <button class="btn" onclick="showToast('数据已导出为Excel', 'success')">📥 导出</button>
+            </div>
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th style="width:40px;"><input type="checkbox" onchange="toggleCheckAll(this)"></th>
+                    <th>单据号</th>
+                    <th>发票类型</th>
+                    <th>客户名称</th>
+                    <th class="text-right">金额(不含税)</th>
+                    <th class="text-right">税额</th>
+                    <th class="text-right">价税合计</th>
+                    <th>开票日期</th>
+                    <th>状态</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody id="invoiceTable">
+                <tr data-type="ENTERPRISE">
+                    <td><input type="checkbox"></td>
+                    <td><b>RCP-202605-001</b></td>
+                    <td><span class="type-tag type-enterprise">企业收据</span></td>
+                    <td>深圳远航科技有限公司</td>
+                    <td class="text-right amount">50,000.00</td>
+                    <td class="text-right text-muted">—</td>
+                    <td class="text-right amount">50,000.00</td>
+                    <td>2026-05-05</td>
+                    <td><span class="status-invoiced">已交付</span></td>
+                    <td>
+                        <button class="btn btn-sm" onclick="switchPage('detail')">详情</button>
+                        <button class="btn btn-sm btn-warning" onclick="convertToOfficial('RCP-202605-001')">转正式</button>
+                    </td>
+                </tr>
+                <tr data-type="SPECIAL">
+                    <td><input type="checkbox"></td>
+                    <td><b>AR-INV-202605-001</b></td>
+                    <td><span class="type-tag type-special">专票</span></td>
+                    <td>广州市鑫达贸易公司</td>
+                    <td class="text-right amount">100,000.00</td>
+                    <td class="text-right amount">13,000.00</td>
+                    <td class="text-right amount">113,000.00</td>
+                    <td>2026-05-04</td>
+                    <td><span class="status-confirmed">已确认收入</span></td>
+                    <td>
+                        <button class="btn btn-sm" onclick="switchPage('detail')">详情</button>
+                        <button class="btn btn-sm" onclick="showVoucherModal('AR01', '专票')">凭证</button>
+                    </td>
+                </tr>
+                <tr data-type="COMMON">
+                    <td><input type="checkbox"></td>
+                    <td><b>AR-INV-202605-002</b></td>
+                    <td><span class="type-tag type-common">普票</span></td>
+                    <td>东莞恒美电子厂</td>
+                    <td class="text-right amount">30,000.00</td>
+                    <td class="text-right amount">3,900.00</td>
+                    <td class="text-right amount">33,900.00</td>
+                    <td>2026-05-03</td>
+                    <td><span class="status-invoiced">已开票</span></td>
+                    <td>
+                        <button class="btn btn-sm" onclick="switchPage('detail')">详情</button>
+                        <button class="btn btn-sm btn-success" onclick="showToast('发票已交付至客户邮箱', 'success')">交付</button>
+                    </td>
+                </tr>
+                <tr data-type="ENTERPRISE">
+                    <td><input type="checkbox"></td>
+                    <td><b>RCP-202605-002</b></td>
+                    <td><span class="type-tag type-enterprise">企业收据</span></td>
+                    <td>佛山美居装饰公司</td>
+                    <td class="text-right amount">85,000.00</td>
+                    <td class="text-right text-muted">—</td>
+                    <td class="text-right amount">85,000.00</td>
+                    <td>2026-05-02</td>
+                    <td><span class="status-invoiced">已交付</span></td>
+                    <td>
+                        <button class="btn btn-sm" onclick="switchPage('detail')">详情</button>
+                        <button class="btn btn-sm btn-warning" onclick="convertToOfficial('RCP-202605-002')">转正式</button>
+                    </td>
+                </tr>
+                <tr data-type="FULL_ELEC">
+                    <td><input type="checkbox"></td>
+                    <td><b>AR-INV-202605-003</b></td>
+                    <td><span class="type-tag type-fullelec">全电专票</span></td>
+                    <td>上海智联信息技术公司</td>
+                    <td class="text-right amount">200,000.00</td>
+                    <td class="text-right amount">26,000.00</td>
+                    <td class="text-right amount">226,000.00</td>
+                    <td>2026-05-01</td>
+                    <td><span class="status-delivered">已交付</span></td>
+                    <td>
+                        <button class="btn btn-sm" onclick="switchPage('detail')">详情</button>
+                        <button class="btn btn-sm" onclick="showVoucherModal('AR01', '全电专票')">凭证</button>
+                    </td>
+                </tr>
+                <tr data-type="ZERO_TAX">
+                    <td><input type="checkbox"></td>
+                    <td><b>AR-INV-202604-015</b></td>
+                    <td><span class="type-tag type-zerotax">免税</span></td>
+                    <td>Hong Kong Trade Ltd.</td>
+                    <td class="text-right amount">68,500.00</td>
+                    <td class="text-right text-muted">0.00</td>
+                    <td class="text-right amount">68,500.00</td>
+                    <td>2026-04-28</td>
+                    <td><span class="status-confirmed">已确认收入</span></td>
+                    <td>
+                        <button class="btn btn-sm" onclick="switchPage('detail')">详情</button>
+                        <button class="btn btn-sm" onclick="showVoucherModal('AR05', '免税')">凭证</button>
+                    </td>
+                </tr>
+                <tr data-type="ENTERPRISE">
+                    <td><input type="checkbox"></td>
+                    <td><b>RCP-202604-018</b></td>
+                    <td><span class="type-tag type-enterprise">企业收据</span></td>
+                    <td>中山市嘉诚五金厂</td>
+                    <td class="text-right amount">22,400.00</td>
+                    <td class="text-right text-muted">—</td>
+                    <td class="text-right amount">22,400.00</td>
+                    <td>2026-04-25</td>
+                    <td><span class="status-converted">已转正式</span></td>
+                    <td>
+                        <button class="btn btn-sm" onclick="switchPage('detail')">详情</button>
+                        <button class="btn btn-sm" disabled style="opacity:0.4;">已转换</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <div style="padding:14px 18px; display:flex; justify-content:space-between; align-items:center; border-top:1px solid #eee; color:#888; font-size:0.85em;">
+            <span>共 7 条记录（当前显示全部类型）</span>
+            <span>第 1/1 页</span>
+        </div>
+    </div>
+</div>
+
+<!-- ==================== PAGE 2: 新增开票 ==================== -->
+<div class="page-container" id="page-new">
+    <div class="screen">
+        <div class="screen-title">
+            📝 新增开票申请
+            <span class="tag">第一步: 选择发票类型</span>
+        </div>
+        <div class="form-section">
+            <!-- 发票类型选择 (核心区分点) -->
+            <div class="panel" style="margin-bottom:20px; border: 2px solid #7b1fa2;">
+                <div class="panel-header" style="background: #f3e5f5;">
+                    <span>发票类型选择 <span style="color:#c62828;">*</span></span>
+                </div>
+                <div class="panel-body">
+                    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:12px;">
+                        <label style="display:flex; align-items:center; gap:10px; padding:14px; border:2px solid #1565c0; border-radius:8px; cursor:pointer; background:#e3f2fd;">
+                            <input type="radio" name="invoiceType" value="ENTERPRISE" checked onchange="toggleInvoiceType(this.value)">
+                            <div>
+                                <div style="font-weight:600; color:#1565c0;">企业收据/商业发票</div>
+                                <div style="font-size:0.78em; color:#666;">不走税控，系统自动生成</div>
+                            </div>
+                        </label>
+                        <label style="display:flex; align-items:center; gap:10px; padding:14px; border:2px solid #ddd; border-radius:8px; cursor:pointer;">
+                            <input type="radio" name="invoiceType" value="SPECIAL" onchange="toggleInvoiceType(this.value)">
+                            <div>
+                                <div style="font-weight:600;">增值税专用发票</div>
+                                <div style="font-size:0.78em; color:#888;">金税盘/全电开票</div>
+                            </div>
+                        </label>
+                        <label style="display:flex; align-items:center; gap:10px; padding:14px; border:2px solid #ddd; border-radius:8px; cursor:pointer;">
+                            <input type="radio" name="invoiceType" value="COMMON" onchange="toggleInvoiceType(this.value)">
+                            <div>
+                                <div style="font-weight:600;">增值税普通发票</div>
+                                <div style="font-size:0.78em; color:#888;">金税盘/全电开票</div>
+                            </div>
+                        </label>
+                        <label style="display:flex; align-items:center; gap:10px; padding:14px; border:2px solid #ddd; border-radius:8px; cursor:pointer;">
+                            <input type="radio" name="invoiceType" value="FULL_ELEC_S" onchange="toggleInvoiceType(this.value)">
+                            <div>
+                                <div style="font-weight:600;">全电发票(专用)</div>
+                                <div style="font-size:0.78em; color:#888;">电子税务局</div>
+                            </div>
+                        </label>
+                        <label style="display:flex; align-items:center; gap:10px; padding:14px; border:2px solid #ddd; border-radius:8px; cursor:pointer;">
+                            <input type="radio" name="invoiceType" value="ZERO_TAX" onchange="toggleInvoiceType(this.value)">
+                            <div>
+                                <div style="font-weight:600;">零税率/免税发票</div>
+                                <div style="font-size:0.78em; color:#888;">出口/免税业务</div>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 通用字段 -->
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>客户名称 <span class="required">*</span></label>
+                    <input class="form-control" placeholder="输入或选择客户" value="深圳远航科技有限公司">
+                </div>
+                <div class="form-group">
+                    <label>关联销售订单</label>
+                    <input class="form-control" placeholder="SO号（可选）" value="SO-202604-0088">
+                </div>
+                <div class="form-group">
+                    <label>金额(不含税) <span class="required">*</span></label>
+                    <input class="form-control" type="number" placeholder="0.00" value="50000.00" id="amountInput">
+                </div>
+                <div class="form-group">
+                    <label>币种</label>
+                    <select class="form-control">
+                        <option selected>CNY 人民币</option>
+                        <option>USD 美元</option>
+                        <option>VND 越南盾</option>
+                        <option>THB 泰铢</option>
+                    </select>
+                </div>
+                <div class="form-group" style="grid-column: 1 / -1;">
+                    <label>备注</label>
+                    <textarea class="form-control" placeholder="开票备注"></textarea>
+                </div>
+            </div>
+
+            <!-- 税控专有字段 (选择企业收据时隐藏) -->
+            <div class="tax-fields" id="taxFields">
+                <div class="panel" style="margin-top:16px; border-color:#7b1fa2;">
+                    <div class="panel-header" style="background:#f3e5f5;">
+                        <span>税控开票信息 <span style="color:#c62828;">*</span></span>
+                        <span style="font-size:0.78em; color:#888;">仅税控发票需填写</span>
+                    </div>
+                    <div class="panel-body">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>纳税人识别号 <span class="required">*</span></label>
+                                <input class="form-control" placeholder="客户税号" value="91440300MA5F2XK89L">
+                            </div>
+                            <div class="form-group">
+                                <label>税率 <span class="required">*</span></label>
+                                <select class="form-control" id="taxRateSelect" onchange="calcTax()">
+                                    <option value="0.13" selected>13%</option>
+                                    <option value="0.09">9%</option>
+                                    <option value="0.06">6%</option>
+                                    <option value="0.03">3%</option>
+                                    <option value="0">0% (免税)</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>税额(自动计算)</label>
+                                <input class="form-control" id="taxAmount" value="6,500.00" readonly style="background:#f5f5f5;">
+                            </div>
+                            <div class="form-group">
+                                <label>价税合计(自动计算)</label>
+                                <input class="form-control" id="totalAmount" value="56,500.00" readonly style="background:#f5f5f5;">
+                            </div>
+                            <div class="form-group">
+                                <label>开票方式</label>
+                                <select class="form-control">
+                                    <option>金税盘</option>
+                                    <option>全电发票平台</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>商品税收分类编码</label>
+                                <input class="form-control" placeholder="如: 1090101010000000000" value="1090101010000000000">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 发票明细 -->
+                <div class="panel" style="margin-top:16px; border-color:#7b1fa2;">
+                    <div class="panel-header" style="background:#f3e5f5; display:flex; justify-content:space-between; align-items:center;">
+                        <span>发票明细行</span>
+                        <button class="btn btn-sm btn-primary" onclick="showToast('已添加明细行', 'info')">+ 添加行</button>
+                    </div>
+                    <div class="panel-body" style="padding:0;">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>商品名称</th>
+                                    <th>规格型号</th>
+                                    <th class="text-right">数量</th>
+                                    <th class="text-right">单价(不含税)</th>
+                                    <th class="text-right">金额</th>
+                                    <th>税率</th>
+                                    <th class="text-right">税额</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>ERP管理软件-标准版</td>
+                                    <td>V3.0</td>
+                                    <td class="text-right">1</td>
+                                    <td class="text-right">50,000.00</td>
+                                    <td class="text-right amount">50,000.00</td>
+                                    <td>13%</td>
+                                    <td class="text-right amount">6,500.00</td>
+                                    <td><button class="btn btn-sm btn-danger">删除</button></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 企业收据摘要区 (选择企业收据时显示) -->
+            <div id="receiptSummary" class="panel" style="margin-top:16px; border-color:#1565c0;">
+                <div class="panel-header" style="background:#e3f2fd;">
+                    <span>企业收据预览</span>
+                    <span style="font-size:0.78em; color:#888;">提交后系统自动生成PDF</span>
+                </div>
+                <div class="panel-body" style="text-align:center; padding:30px;">
+                    <div style="font-size:1.2em; font-weight:600; color:#1565c0; margin-bottom:16px;">企 业 收 据</div>
+                    <div style="max-width:400px; margin:0 auto; text-align:left; line-height:2.2; font-size:0.95em;">
+                        <div>收据编号: <b>RCP-202605-003</b></div>
+                        <div>客户名称: <b>深圳远航科技有限公司</b></div>
+                        <div>关联订单: <b>SO-202604-0088</b></div>
+                        <div style="font-size:1.3em; font-weight:700; color:#1565c0; padding:8px 0;">人民币: 50,000.00 元</div>
+                        <div style="color:#888;">（大写）伍万元整</div>
+                        <div>备注: —</div>
+                        <div style="margin-top:12px; display:flex; justify-content:space-between;">
+                            <div>开票人: ________</div>
+                            <div>日期: 2026-05-06</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 提交区 -->
+            <div class="summary-bar" style="margin-top:20px;">
+                <div class="total-label">应收金额(含税)</div>
+                <div class="total-value" id="submitTotal">50,000.00</div>
+                <div>
+                    <button class="btn" onclick="switchPage('list')">取消</button>
+                    <button class="btn" onclick="showToast('已保存为草稿', 'info')">存草稿</button>
+                    <button class="btn btn-primary" onclick="submitInvoice()">提交审核</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ==================== PAGE 3: 发票详情 ==================== -->
+<div class="page-container" id="page-detail">
+    <div class="screen">
+        <div class="screen-title">
+            🔍 发票详情 — AR-INV-202605-001
+            <span class="tag">增值税专用发票</span>
+            <button class="btn btn-sm" style="margin-left:auto;" onclick="switchPage('list')">返回列表</button>
+        </div>
+        <div class="form-section">
+            <!-- 基本信息卡片 -->
+            <div class="panel">
+                <div class="panel-header">
+                    <span>基本信息</span>
+                    <span class="status-confirmed">已确认收入</span>
+                </div>
+                <div class="panel-body">
+                    <div class="form-grid">
+                        <div><b style="color:#888;">发票号码:</b> <span style="font-family:monospace;">01234567</span></div>
+                        <div><b style="color:#888;">发票代码:</b> <span style="font-family:monospace;">4400232130</span></div>
+                        <div><b style="color:#888;">发票类型:</b> <span class="type-tag type-special">专票</span></div>
+                        <div><b style="color:#888;">开票方式:</b> 金税盘</div>
+                        <div><b style="color:#888;">客户名称:</b> 广州市鑫达贸易公司</div>
+                        <div><b style="color:#888;">纳税人识别号:</b> 91440101MA5CXXX3X</div>
+                        <div><b style="color:#888;">开票日期:</b> 2026-05-04</div>
+                        <div><b style="color:#888;">归属期间:</b> 2026-05</div>
+                        <div><b style="color:#888;">关联SO:</b> SO-202604-0076</div>
+                        <div><b style="color:#888;">凭证号:</b> GL-2026-05-0012 (AR01)</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 金额信息 -->
+            <div class="panel">
+                <div class="panel-header"><span>金额信息</span></div>
+                <div class="panel-body">
+                    <div class="form-grid" style="max-width:600px;">
+                        <div><b style="color:#888;">不含税金额:</b> <span class="amount">100,000.00</span></div>
+                        <div><b style="color:#888;">税率:</b> 13%</div>
+                        <div><b style="color:#888;">税额:</b> <span class="amount">13,000.00</span></div>
+                        <div><b style="color:#888;">价税合计:</b> <span class="amount" style="font-size:1.2em;">113,000.00</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 发票明细 -->
+            <div class="panel">
+                <div class="panel-header"><span>发票明细</span></div>
+                <div class="panel-body" style="padding:0;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>商品名称</th>
+                                <th>规格型号</th>
+                                <th>税收分类编码</th>
+                                <th class="text-right">数量</th>
+                                <th class="text-right">单价</th>
+                                <th class="text-right">金额</th>
+                                <th>税率</th>
+                                <th class="text-right">税额</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>工业传感器模块-A型</td>
+                                <td>ISM-A200</td>
+                                <td style="font-size:0.8em;">1090101010000000000</td>
+                                <td class="text-right">500</td>
+                                <td class="text-right">200.00</td>
+                                <td class="text-right amount">100,000.00</td>
+                                <td>13%</td>
+                                <td class="text-right amount">13,000.00</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- 交付信息 -->
+            <div class="panel">
+                <div class="panel-header"><span>交付信息</span></div>
+                <div class="panel-body">
+                    <div class="form-grid" style="max-width:600px;">
+                        <div><b style="color:#888;">交付方式:</b> 邮寄</div>
+                        <div><b style="color:#888;">快递公司:</b> 顺丰速运</div>
+                        <div><b style="color:#888;">快递单号:</b> SF1234567890123</div>
+                        <div><b style="color:#888;">签收状态:</b> <span style="color:#2e7d32; font-weight:600;">已签收</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 操作按钮 -->
+            <div style="display:flex; gap:10px; padding:10px 0;">
+                <button class="btn" onclick="showVoucherModal('AR01', '专票')">查看凭证</button>
+                <button class="btn" onclick="showToast('发票PDF已下载', 'success')">下载PDF</button>
+                <button class="btn btn-danger" onclick="showToast('已提交作废申请', 'warning')">申请作废</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ==================== PAGE 4: 红字冲红 ==================== -->
+<div class="page-container" id="page-red">
+    <div class="screen">
+        <div class="screen-title">
+            🔴 红字冲红管理
+            <span class="tag">含企业收据直接冲销</span>
+        </div>
+        <div class="toolbar">
+            <button class="btn btn-danger" onclick="showToast('请先选择需要冲红的原发票', 'warning')">+ 申请新红字冲红</button>
+            <input class="search-input" placeholder="搜索红字信息表编号...">
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>红字信息表编号</th>
+                    <th>原发票号</th>
+                    <th>原发票类型</th>
+                    <th>客户</th>
+                    <th class="text-right">红冲金额</th>
+                    <th>红冲原因</th>
+                    <th>状态</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><b>RL-202605-001</b></td>
+                    <td style="font-family:monospace;">01234567</td>
+                    <td><span class="type-tag type-special">专票</span></td>
+                    <td>广州市鑫达贸易公司</td>
+                    <td class="text-right amount-red">-100,000.00</td>
+                    <td>全额退货</td>
+                    <td>
+                        <div class="timeline" style="margin:0;">
+                            <div class="timeline-item done"><span style="font-size:0.82em;">已申请</span></div>
+                        </div>
+                    </td>
+                    <td>
+                        <button class="btn btn-sm btn-warning" onclick="showToast('等待购买方确认中(剩余36小时)', 'info')">催确认</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td><b>RL-202605-002</b></td>
+                    <td><b>RCP-202604-010</b></td>
+                    <td><span class="type-tag type-enterprise">企业收据</span></td>
+                    <td>中山市嘉诚五金厂</td>
+                    <td class="text-right amount-red">-15,000.00</td>
+                    <td>开票金额有误</td>
+                    <td><span class="status-invoiced">已冲销</span></td>
+                    <td>
+                        <button class="btn btn-sm" onclick="showVoucherModal('AR06', '红字冲回')">凭证</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- 红字冲红流程说明 -->
+        <div class="panel" style="margin-top:20px;">
+            <div class="panel-header"><span>红字冲红流程说明</span></div>
+            <div class="panel-body">
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px;">
+                    <div style="background:#fff3e0; padding:16px; border-radius:8px;">
+                        <div style="font-weight:600; color:#e65100; margin-bottom:8px;">企业收据 — 直接冲销</div>
+                        <div style="font-size:0.88em; color:#555; line-height:1.8;">
+                            1. 销售方发起冲销申请<br>
+                            2. 填写冲销原因和金额<br>
+                            3. 系统直接冲销，无需购买方确认<br>
+                            4. 自动生成AR06冲回凭证
+                        </div>
+                    </div>
+                    <div style="background:#f3e5f5; padding:16px; border-radius:8px;">
+                        <div style="font-weight:600; color:#7b1fa2; margin-bottom:8px;">税控发票 — 红字信息表流程</div>
+                        <div style="font-size:0.88em; color:#555; line-height:1.8;">
+                            1. 申请红字信息表<br>
+                            2. 专票: 购买方48小时内确认<br>
+                            3. 普票: 销售方单方确认<br>
+                            4. 审核通过后开具红字发票<br>
+                            5. 自动生成AR06冲回凭证
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ==================== PAGE 5: 开票统计 ==================== -->
+<div class="page-container" id="page-stats">
+    <div class="screen">
+        <div class="screen-title">📊 开票统计仪表盘</div>
+        <div style="padding:16px 18px;">
+            <!-- 统计卡片 -->
+            <div class="stat-cards">
+                <div class="stat-card purple">
+                    <div class="stat-num">2,858,000</div>
+                    <div class="stat-label">本月开票总额(含税)</div>
+                </div>
+                <div class="stat-card blue">
+                    <div class="stat-num">18</div>
+                    <div class="stat-label">本月开票笔数</div>
+                </div>
+                <div class="stat-card green">
+                    <div class="stat-num">371,540</div>
+                    <div class="stat-label">本月销项税额</div>
+                </div>
+                <div class="stat-card orange">
+                    <div class="stat-num">3</div>
+                    <div class="stat-label">待审核申请</div>
+                </div>
+                <div class="stat-card red">
+                    <div class="stat-num">1</div>
+                    <div class="stat-label">红字冲红中</div>
+                </div>
+                <div class="stat-card teal">
+                    <div class="stat-num">5</div>
+                    <div class="stat-label">企业收据(已转正式:2)</div>
+                </div>
+            </div>
+
+            <!-- 月度开票趋势 -->
+            <div class="panel" style="margin-top:20px;">
+                <div class="panel-header">
+                    <span>月度开票趋势（近6个月）</span>
+                    <div style="display:flex; gap:12px; font-size:0.8em; color:#888;">
+                        <span><span style="display:inline-block;width:10px;height:10px;background:#7b1fa2;border-radius:2px;margin-right:4px;"></span>企业收据</span>
+                        <span><span style="display:inline-block;width:10px;height:10px;background:#1565c0;border-radius:2px;margin-right:4px;"></span>税控发票</span>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <div class="chart-area">
+                        <div style="text-align:center; flex:1;">
+                            <div style="display:flex; align-items:flex-end; justify-content:center; gap:16px; height:160px;">
+                                <div style="text-align:center;">
+                                    <div class="bar" style="width:30px; height:80px; background:#7b1fa2;"></div>
+                                    <div style="font-size:0.7em; color:#888; margin-top:4px;">企业</div>
+                                </div>
+                                <div style="text-align:center;">
+                                    <div class="bar" style="width:50px; height:140px; background:#1565c0;"></div>
+                                    <div style="font-size:0.7em; color:#888; margin-top:4px;">税控</div>
+                                </div>
+                            </div>
+                            <div class="bar-label">12月</div>
+                        </div>
+                        <div style="text-align:center; flex:1;">
+                            <div style="display:flex; align-items:flex-end; justify-content:center; gap:16px; height:160px;">
+                                <div style="text-align:center;">
+                                    <div class="bar" style="width:30px; height:60px; background:#7b1fa2;"></div>
+                                    <div style="font-size:0.7em; color:#888; margin-top:4px;">企业</div>
+                                </div>
+                                <div style="text-align:center;">
+                                    <div class="bar" style="width:50px; height:120px; background:#1565c0;"></div>
+                                    <div style="font-size:0.7em; color:#888; margin-top:4px;">税控</div>
+                                </div>
+                            </div>
+                            <div class="bar-label">1月</div>
+                        </div>
+                        <div style="text-align:center; flex:1;">
+                            <div style="display:flex; align-items:flex-end; justify-content:center; gap:16px; height:160px;">
+                                <div style="text-align:center;">
+                                    <div class="bar" style="width:30px; height:90px; background:#7b1fa2;"></div>
+                                    <div style="font-size:0.7em; color:#888; margin-top:4px;">企业</div>
+                                </div>
+                                <div style="text-align:center;">
+                                    <div class="bar" style="width:50px; height:150px; background:#1565c0;"></div>
+                                    <div style="font-size:0.7em; color:#888; margin-top:4px;">税控</div>
+                                </div>
+                            </div>
+                            <div class="bar-label">2月</div>
+                        </div>
+                        <div style="text-align:center; flex:1;">
+                            <div style="display:flex; align-items:flex-end; justify-content:center; gap:16px; height:160px;">
+                                <div style="text-align:center;">
+                                    <div class="bar" style="width:30px; height:70px; background:#7b1fa2;"></div>
+                                    <div style="font-size:0.7em; color:#888; margin-top:4px;">企业</div>
+                                </div>
+                                <div style="text-align:center;">
+                                    <div class="bar" style="width:50px; height:130px; background:#1565c0;"></div>
+                                    <div style="font-size:0.7em; color:#888; margin-top:4px;">税控</div>
+                                </div>
+                            </div>
+                            <div class="bar-label">3月</div>
+                        </div>
+                        <div style="text-align:center; flex:1;">
+                            <div style="display:flex; align-items:flex-end; justify-content:center; gap:16px; height:160px;">
+                                <div style="text-align:center;">
+                                    <div class="bar" style="width:30px; height:100px; background:#7b1fa2;"></div>
+                                    <div style="font-size:0.7em; color:#888; margin-top:4px;">企业</div>
+                                </div>
+                                <div style="text-align:center;">
+                                    <div class="bar" style="width:50px; height:155px; background:#1565c0;"></div>
+                                    <div style="font-size:0.7em; color:#888; margin-top:4px;">税控</div>
+                                </div>
+                            </div>
+                            <div class="bar-label">4月</div>
+                        </div>
+                        <div style="text-align:center; flex:1;">
+                            <div style="display:flex; align-items:flex-end; justify-content:center; gap:16px; height:160px;">
+                                <div style="text-align:center;">
+                                    <div class="bar" style="width:30px; height:50px; background:#7b1fa2;"></div>
+                                    <div style="font-size:0.7em; color:#888; margin-top:4px;">企业</div>
+                                </div>
+                                <div style="text-align:center;">
+                                    <div class="bar" style="width:50px; height:160px; background:#1565c0;"></div>
+                                    <div style="font-size:0.7em; color:#888; margin-top:4px;">税控</div>
+                                </div>
+                            </div>
+                            <div class="bar-label" style="font-weight:600; color:#7b1fa2;">5月(进行中)</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 发票类型分布 -->
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:16px;">
+                <div class="panel">
+                    <div class="panel-header"><span>按发票类型分布(本月)</span></div>
+                    <div class="panel-body">
+                        <table>
+                            <thead><tr><th>类型</th><th class="text-right">笔数</th><th class="text-right">金额</th><th class="text-right">占比</th></tr></thead>
+                            <tbody>
+                                <tr><td><span class="type-tag type-enterprise">企业收据</span></td><td class="text-right">5</td><td class="text-right amount">235,000</td><td class="text-right">8.2%</td></tr>
+                                <tr><td><span class="type-tag type-special">专票</span></td><td class="text-right">8</td><td class="text-right amount">1,850,000</td><td class="text-right">64.7%</td></tr>
+                                <tr><td><span class="type-tag type-common">普票</span></td><td class="text-right">3</td><td class="text-right amount">453,000</td><td class="text-right">15.9%</td></tr>
+                                <tr><td><span class="type-tag type-fullelec">全电发票</span></td><td class="text-right">1</td><td class="text-right amount">226,000</td><td class="text-right">7.9%</td></tr>
+                                <tr><td><span class="type-tag type-zerotax">免税</span></td><td class="text-right">1</td><td class="text-right amount">94,000</td><td class="text-right">3.3%</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="panel">
+                    <div class="panel-header"><span>税负率分析</span></div>
+                    <div class="panel-body" style="text-align:center; padding:30px;">
+                        <div style="font-size:2.5em; font-weight:700; color:#7b1fa2;">13.0%</div>
+                        <div style="color:#888; margin:8px 0;">综合税负率 (销项税 / 含税收入)</div>
+                        <div style="display:flex; gap:20px; justify-content:center; margin-top:16px; font-size:0.88em;">
+                            <div><span style="color:#888;">销项税:</span> <b style="color:#c62828;">371,540</b></div>
+                            <div><span style="color:#888;">进项税:</span> <b style="color:#2e7d32;">328,000</b></div>
+                            <div><span style="color:#888;">应纳税:</span> <b style="color:#7b1fa2;">43,540</b></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ==================== PAGE 6: 基础配置 ==================== -->
+<div class="page-container" id="page-config">
+    <div class="screen">
+        <div class="screen-title">⚙️ 基础配置</div>
+        <div style="padding:16px 18px;">
+            <div class="panel" style="margin-bottom:16px;">
+                <div class="panel-header">
+                    <span>税码配置</span>
+                    <button class="btn btn-sm btn-primary">+ 新增税码</button>
+                </div>
+                <div class="panel-body" style="padding:0;">
+                    <table>
+                        <thead><tr><th>税码</th><th>名称</th><th>税率</th><th>默认科目</th><th>状态</th></tr></thead>
+                        <tbody>
+                            <tr><td>VAT13</td><td>增值税(一般货物13%)</td><td>13%</td><td>2221-01-01 销项税额</td><td><span class="status-invoiced">启用</span></td></tr>
+                            <tr><td>VAT9</td><td>增值税(运输/建筑9%)</td><td>9%</td><td>2221-01-01 销项税额</td><td><span class="status-invoiced">启用</span></td></tr>
+                            <tr><td>VAT6</td><td>增值税(现代服务6%)</td><td>6%</td><td>2221-01-01 销项税额</td><td><span class="status-invoiced">启用</span></td></tr>
+                            <tr><td>VAT0</td><td>零税率/免税</td><td>0%</td><td>—</td><td><span class="status-invoiced">启用</span></td></tr>
+                            <tr><td>ENT</td><td>企业收据(不涉税)</td><td>—</td><td>6001 主营业务收入</td><td><span class="status-invoiced">启用</span></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="panel" style="margin-bottom:16px;">
+                <div class="panel-header">
+                    <span>开票限额配置</span>
+                    <button class="btn btn-sm" onclick="showToast('配置已保存', 'success')">保存</button>
+                </div>
+                <div class="panel-body">
+                    <div class="form-grid" style="max-width:800px;">
+                        <div class="form-group">
+                            <label>单张开票限额(金税盘)</label>
+                            <input class="form-control" value="1,000,000.00">
+                            <span class="form-hint">超过此金额需拆分开票</span>
+                        </div>
+                        <div class="form-group">
+                            <label>月度开票限额预警阈值</label>
+                            <input class="form-control" value="80%">
+                            <span class="form-hint">达到月限额的80%时触发预警</span>
+                        </div>
+                        <div class="form-group">
+                            <label>大额开票审批阈值</label>
+                            <input class="form-control" value="500,000.00">
+                            <span class="form-hint">单张超过此金额需财务主管审批</span>
+                        </div>
+                        <div class="form-group">
+                            <label>红字确认超时(小时)</label>
+                            <input class="form-control" value="48">
+                            <span class="form-hint">购买方超时未确认则自动通过</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="panel">
+                <div class="panel-header"><span>企业收据编号规则</span></div>
+                <div class="panel-body">
+                    <div class="form-grid" style="max-width:800px;">
+                        <div class="form-group">
+                            <label>编号前缀</label>
+                            <input class="form-control" value="RCP">
+                        </div>
+                        <div class="form-group">
+                            <label>编号格式</label>
+                            <input class="form-control" value="RCP-YYYYMM-NNN" readonly style="background:#f5f5f5;">
+                            <span class="form-hint">系统自动分配，不可修改</span>
+                        </div>
+                        <div class="form-group">
+                            <label>PDF模板</label>
+                            <select class="form-control">
+                                <option selected>默认企业收据模板</option>
+                                <option>公司Logo版模板</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>自动生成PDF</label>
+                            <select class="form-control">
+                                <option selected>是 - 提交后自动生成</option>
+                                <option>否 - 手动触发</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ==================== MODAL: 凭证预览 ==================== -->
+<div class="modal-overlay" id="voucherModal">
+    <div class="modal-dialog">
+        <div class="modal-header">
+            <h3 id="voucherTitle">凭证预览</h3>
+            <button class="modal-close" onclick="closeModal('voucherModal')">&times;</button>
+        </div>
+        <div class="modal-body" id="voucherBody">
+            <!-- 动态填充 -->
+        </div>
+        <div class="modal-footer">
+            <button class="btn" onclick="closeModal('voucherModal')">关闭</button>
+            <button class="btn btn-primary" onclick="showToast('凭证已推送到总账', 'success')">推送总账</button>
+        </div>
+    </div>
+</div>
+
+<!-- ==================== MODAL: 转正式开票确认 ==================== -->
+<div class="modal-overlay" id="convertModal">
+    <div class="modal-dialog" style="width:560px;">
+        <div class="modal-header">
+            <h3>企业收据 → 转正式开票</h3>
+            <button class="modal-close" onclick="closeModal('convertModal')">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="note-callout" style="margin:0 0 16px 0;">
+                <strong>请注意：</strong>转正式开票后，原企业收据将被标记为"已转正式"状态，金额将自动带入新开票申请。
+            </div>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>原企业收据编号</label>
+                    <input class="form-control" id="convertFromNo" readonly style="background:#f5f5f5;">
+                </div>
+                <div class="form-group">
+                    <label>转为发票类型</label>
+                    <select class="form-control">
+                        <option>增值税专用发票</option>
+                        <option>增值税普通发票</option>
+                        <option>全电发票(专用)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>客户纳税人识别号 <span class="required">*</span></label>
+                    <input class="form-control" placeholder="税控发票必填">
+                </div>
+                <div class="form-group">
+                    <label>税率</label>
+                    <select class="form-control">
+                        <option value="0.13" selected>13%</option>
+                        <option value="0.09">9%</option>
+                        <option value="0.06">6%</option>
+                        <option value="0.03">3%</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn" onclick="closeModal('convertModal')">取消</button>
+            <button class="btn btn-primary" onclick="doConvert()">确认转正式</button>
+        </div>
+    </div>
+</div>
+
+<!-- ==================== Toast Container ==================== -->
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- ==================== FOOTER ==================== -->
+<div class="footer-note">
+    AR销项发票管理 UI原型 v2.0 · 含企业收据+税控发票统一管理 · 对标金蝶云星空应收管理 · Dev_Dept ERP 财务管理系统
+</div>
+
+</div><!-- end container -->
+
+<script>
+// ===== Tab Switching =====
+function switchPage(tab) {
+    document.querySelectorAll('.page-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.page-container').forEach(p => p.classList.remove('active'));
+    document.querySelector('[data-tab="' + tab + '"]').classList.add('active');
+    document.getElementById('page-' + tab).classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ===== Filter by Invoice Type =====
+function filterByType(type, el) {
+    document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+    el.classList.add('active');
+    const rows = document.querySelectorAll('#invoiceTable tr[data-type]');
+    let count = 0;
+    rows.forEach(row => {
+        if (type === 'all') {
+            row.style.display = '';
+            count++;
+        } else if (type === 'FULL_ELEC') {
+            row.style.display = row.dataset.type === 'FULL_ELEC' ? '' : 'none';
+            if (row.dataset.type === 'FULL_ELEC') count++;
+        } else {
+            row.style.display = row.dataset.type === type ? '' : 'none';
+            if (row.dataset.type === type) count++;
+        }
+    });
+    // Update count text
+    const typeNames = { all: '全部类型', ENTERPRISE: '企业收据', SPECIAL: '专票', COMMON: '普票', FULL_ELEC: '全电发票', ZERO_TAX: '免税' };
+    document.querySelector('#page-list .screen div:last-child span:first-child').textContent =
+        '共 ' + count + ' 条记录（当前显示: ' + typeNames[type] + '）';
+}
+
+// ===== Table Search =====
+function filterTable() {
+    const q = document.getElementById('searchInput').value.toLowerCase();
+    document.querySelectorAll('#invoiceTable tr').forEach(row => {
+        const text = row.textContent.toLowerCase();
+        row.style.display = text.includes(q) ? '' : 'none';
+    });
+}
+
+// ===== Check All =====
+function toggleCheckAll(el) {
+    document.querySelectorAll('#invoiceTable input[type="checkbox"]').forEach(cb => cb.checked = el.checked);
+}
+
+// ===== Invoice Type Toggle (New Form) =====
+function toggleInvoiceType(type) {
+    const taxFields = document.getElementById('taxFields');
+    const receiptSummary = document.getElementById('receiptSummary');
+    const radioLabels = document.querySelectorAll('input[name="invoiceType"]');
+    
+    // Reset all label borders
+    radioLabels.forEach(radio => {
+        radio.closest('label').style.borderColor = '#ddd';
+        radio.closest('label').style.background = 'white';
+    });
+    // Highlight selected
+    const selected = document.querySelector('input[name="invoiceType"]:checked');
+    selected.closest('label').style.borderColor = '#1565c0';
+    selected.closest('label').style.background = '#e3f2fd';
+
+    if (type === 'ENTERPRISE') {
+        taxFields.classList.remove('visible');
+        receiptSummary.style.display = 'block';
+        document.getElementById('submitTotal').textContent = '50,000.00';
+    } else {
+        taxFields.classList.add('visible');
+        receiptSummary.style.display = 'none';
+        calcTax();
+    }
+}
+
+// ===== Tax Calculation =====
+function calcTax() {
+    const amount = parseFloat(document.getElementById('amountInput').value) || 0;
+    const rate = parseFloat(document.getElementById('taxRateSelect').value) || 0;
+    const tax = amount * rate;
+    const total = amount + tax;
+    document.getElementById('taxAmount').value = tax.toLocaleString('zh-CN', { minimumFractionDigits: 2 });
+    document.getElementById('totalAmount').value = total.toLocaleString('zh-CN', { minimumFractionDigits: 2 });
+    document.getElementById('submitTotal').textContent = total.toLocaleString('zh-CN', { minimumFractionDigits: 2 });
+}
+
+// ===== Submit Invoice =====
+function submitInvoice() {
+    const type = document.querySelector('input[name="invoiceType"]:checked').value;
+    const typeNames = { ENTERPRISE: '企业收据', SPECIAL: '专票', COMMON: '普票', FULL_ELEC_S: '全电专票', ZERO_TAX: '免税' };
+    showToast(typeNames[type] + '开票申请已提交，等待审核', 'success');
+    setTimeout(() => switchPage('list'), 1200);
+}
+
+// ===== Convert to Official =====
+function convertToOfficial(receiptNo) {
+    document.getElementById('convertFromNo').value = receiptNo;
+    document.getElementById('convertModal').classList.add('show');
+}
+
+function doConvert() {
+    const no = document.getElementById('convertFromNo').value;
+    closeModal('convertModal');
+    showToast(no + ' 已提交转正式开票申请，等待审核', 'success');
+}
+
+// ===== Modal =====
+function openModal(id) { document.getElementById(id).classList.add('show'); }
+function closeModal(id) { document.getElementById(id).classList.remove('show'); }
+
+// Close modal on overlay click
+document.querySelectorAll('.modal-overlay').forEach(overlay => {
+    overlay.addEventListener('click', function(e) {
+        if (e.target === this) this.classList.remove('show');
+    });
+});
+
+// ===== Voucher Modal =====
+function showVoucherModal(template, desc) {
+    const titles = {
+        'AR01': 'AR01 销项发票入账（专票）',
+        'AR05': 'AR05 零税率/免税发票入账',
+        'AR06': 'AR06 红字冲回凭证',
+        'AR08': 'AR08 企业收据入账'
+    };
+    document.getElementById('voucherTitle').textContent = titles[template] || '凭证预览 - ' + template;
+    
+    const vouchers = {
+        'AR01': `<div style="background:#fafafa; border:1px solid #ddd; border-radius:8px; padding:20px; font-family:monospace; font-size:0.92em; line-height:2;">
+            <div style="text-align:center; font-weight:700; margin-bottom:12px; font-family:sans-serif;">记账凭证</div>
+            <div style="color:#888;">日期: 2026-05-04 &nbsp;&nbsp; 凭证号: GL-2026-05-0012 &nbsp;&nbsp; 模板: <b style="color:#7b1fa2;">AR01</b></div>
+            <table style="width:100%; margin:12px 0; border:1px solid #ddd;">
+                <tr style="background:#f0f0f0;"><th style="padding:8px; border:1px solid #ddd;">摘要</th><th style="padding:8px; border:1px solid #ddd;">科目</th><th style="padding:8px; border:1px solid #ddd; text-align:right;">借方</th><th style="padding:8px; border:1px solid #ddd; text-align:right;">贷方</th></tr>
+                <tr><td style="padding:8px; border:1px solid #ddd;">销售专票-鑫达贸易</td><td style="padding:8px; border:1px solid #ddd;">1122 应收账款-鑫达贸易</td><td style="padding:8px; border:1px solid #ddd; text-align:right; color:#c62828;">113,000.00</td><td style="padding:8px; border:1px solid #ddd;"></td></tr>
+                <tr><td style="padding:8px; border:1px solid #ddd;"></td><td style="padding:8px; border:1px solid #ddd;">6001 主营业务收入</td><td style="padding:8px; border:1px solid #ddd;"></td><td style="padding:8px; border:1px solid #ddd; text-align:right; color:#2e7d32;">100,000.00</td></tr>
+                <tr><td style="padding:8px; border:1px solid #ddd;"></td><td style="padding:8px; border:1px solid #ddd;">2221 应交税费-销项税额</td><td style="padding:8px; border:1px solid #ddd;"></td><td style="padding:8px; border:1px solid #ddd; text-align:right; color:#2e7d32;">13,000.00</td></tr>
+                <tr style="background:#f5f5f5;"><td style="padding:8px; border:1px solid #ddd; font-weight:700;">合计</td><td style="padding:8px; border:1px solid #ddd;"></td><td style="padding:8px; border:1px solid #ddd; text-align:right; font-weight:700;">113,000.00</td><td style="padding:8px; border:1px solid #ddd; text-align:right; font-weight:700;">113,000.00</td></tr>
+            </table></div>`,
+        'AR05': `<div style="background:#fafafa; border:1px solid #ddd; border-radius:8px; padding:20px; font-family:monospace; font-size:0.92em; line-height:2;">
+            <div style="text-align:center; font-weight:700; margin-bottom:12px; font-family:sans-serif;">记账凭证</div>
+            <div style="color:#888;">日期: 2026-04-28 &nbsp;&nbsp; 模板: <b style="color:#7b1fa2;">AR05</b></div>
+            <table style="width:100%; margin:12px 0; border:1px solid #ddd;">
+                <tr style="background:#f0f0f0;"><th style="padding:8px; border:1px solid #ddd;">摘要</th><th style="padding:8px; border:1px solid #ddd;">科目</th><th style="padding:8px; border:1px solid #ddd; text-align:right;">借方</th><th style="padding:8px; border:1px solid #ddd; text-align:right;">贷方</th></tr>
+                <tr><td style="padding:8px; border:1px solid #ddd;">免税出口-HK Trade</td><td style="padding:8px; border:1px solid #ddd;">1122 应收账款-HK Trade</td><td style="padding:8px; border:1px solid #ddd; text-align:right; color:#c62828;">68,500.00</td><td style="padding:8px; border:1px solid #ddd;"></td></tr>
+                <tr><td style="padding:8px; border:1px solid #ddd;"></td><td style="padding:8px; border:1px solid #ddd;">6001 主营业务收入</td><td style="padding:8px; border:1px solid #ddd;"></td><td style="padding:8px; border:1px solid #ddd; text-align:right; color:#2e7d32;">68,500.00</td></tr>
+            </table></div>`,
+        'AR06': `<div style="background:#fafafa; border:1px solid #ddd; border-radius:8px; padding:20px; font-family:monospace; font-size:0.92em; line-height:2;">
+            <div style="text-align:center; font-weight:700; margin-bottom:12px; font-family:sans-serif;">记账凭证 (红字)</div>
+            <div style="color:#888;">日期: 2026-05-06 &nbsp;&nbsp; 模板: <b style="color:#c62828;">AR06</b></div>
+            <table style="width:100%; margin:12px 0; border:1px solid #ddd;">
+                <tr style="background:#f0f0f0;"><th style="padding:8px; border:1px solid #ddd;">摘要</th><th style="padding:8px; border:1px solid #ddd;">科目</th><th style="padding:8px; border:1px solid #ddd; text-align:right;">借方(红字)</th><th style="padding:8px; border:1px solid #ddd; text-align:right;">贷方(红字)</th></tr>
+                <tr><td style="padding:8px; border:1px solid #ddd;">红字冲回-嘉诚五金</td><td style="padding:8px; border:1px solid #ddd;">6001 主营业务收入</td><td style="padding:8px; border:1px solid #ddd; text-align:right; color:#c62828;">15,000.00</td><td style="padding:8px; border:1px solid #ddd;"></td></tr>
+                <tr><td style="padding:8px; border:1px solid #ddd;"></td><td style="padding:8px; border:1px solid #ddd;">1122 应收账款-嘉诚五金</td><td style="padding:8px; border:1px solid #ddd;"></td><td style="padding:8px; border:1px solid #ddd; text-align:right; color:#2e7d32;">15,000.00</td></tr>
+            </table></div>`,
+        'AR08': `<div style="background:#fafafa; border:1px solid #ddd; border-radius:8px; padding:20px; font-family:monospace; font-size:0.92em; line-height:2;">
+            <div style="text-align:center; font-weight:700; margin-bottom:12px; font-family:sans-serif;">记账凭证</div>
+            <div style="color:#888;">日期: 2026-05-05 &nbsp;&nbsp; 模板: <b style="color:#1565c0;">AR08</b> (企业收据)</div>
+            <table style="width:100%; margin:12px 0; border:1px solid #ddd;">
+                <tr style="background:#f0f0f0;"><th style="padding:8px; border:1px solid #ddd;">摘要</th><th style="padding:8px; border:1px solid #ddd;">科目</th><th style="padding:8px; border:1px solid #ddd; text-align:right;">借方</th><th style="padding:8px; border:1px solid #ddd; text-align:right;">贷方</th></tr>
+                <tr><td style="padding:8px; border:1px solid #ddd;">企业收据-远航科技</td><td style="padding:8px; border:1px solid #ddd;">1122 应收账款-远航科技</td><td style="padding:8px; border:1px solid #ddd; text-align:right; color:#c62828;">50,000.00</td><td style="padding:8px; border:1px solid #ddd;"></td></tr>
+                <tr><td style="padding:8px; border:1px solid #ddd;"></td><td style="padding:8px; border:1px solid #ddd;">6001 主营业务收入</td><td style="padding:8px; border:1px solid #ddd;"></td><td style="padding:8px; border:1px solid #ddd; text-align:right; color:#2e7d32;">50,000.00</td></tr>
+            </table>
+            <div style="margin-top:8px; padding:8px; background:#e3f2fd; border-radius:4px; font-size:0.85em; font-family:sans-serif; color:#1565c0;">
+                企业收据不涉及销项税，直接借应收、贷收入
+            </div></div>`
+    };
+    document.getElementById('voucherBody').innerHTML = vouchers[template] || '<p>凭证模板加载中...</p>';
+    openModal('voucherModal');
+}
+
+// ===== Toast =====
+function showToast(msg, type) {
+    const container = document.getElementById('toastContainer');
+    const toast = document.createElement('div');
+    toast.className = 'toast ' + (type || 'info');
+    const icons = { success: '&#10003;', info: '&#8505;', warning: '&#9888;' };
+    toast.innerHTML = '<span style="font-size:1.2em;">' + (icons[type] || icons.info) + '</span> ' + msg;
+    container.appendChild(toast);
+    setTimeout(() => { toast.classList.add('toast-exit'); setTimeout(() => toast.remove(), 300); }, 2500);
+}
+
+// ===== Init =====
+document.addEventListener('DOMContentLoaded', function() {
+    toggleInvoiceType('ENTERPRISE');
+});
+</script>
+</body>
+</html>
