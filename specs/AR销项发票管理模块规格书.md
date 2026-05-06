@@ -4,8 +4,8 @@
 
 > **项目**: Dev_Dept ERP 财务管理系统  
 > **模块**: AR销项发票管理 (Accounts Receivable Sales Invoice Management)  
-> **版本**: v1.0  
-> **日期**: 2026-04-20  
+> **版本**: v1.1
+> **日期**: 2026-04-20（初版）→ 2026-05-06（v1.1 补充企业收据/商业发票类型）
 > **对标系统**: 金蝶云星空 → 应收管理 → 销项发票/销售开票  
 > **关联模块**: 实收收款模块规格书.md（下游收款）→ 本模块（全流程）→ 税务管理模块规格书.md（销项税申报）→ 总账凭证引擎规格书.md（凭证落地）  
 > **优先级**: **P0（核心缺失）** — 连接销售业务与税务开票的关键桥梁  
@@ -213,7 +213,7 @@ CREATE TABLE ar_invoice_apply (
     customer_id       BIGINT NOT NULL COMMENT '客户ID',
     customer_name     VARCHAR(200) NOT NULL COMMENT '客户名称',
     taxpayer_no       VARCHAR(30) COMMENT '客户纳税人识别号',
-    invoice_type      VARCHAR(20) NOT NULL COMMENT '发票类型: SPECIAL/COMMON/FULL_ELECTRONIC',
+    invoice_type      VARCHAR(20) NOT NULL COMMENT '发票类型: ENTERPRISE企业收据/SPECIAL专票/COMMON普票/FULL_ELECTRONIC_S全电专票/FULL_ELECTRONIC_C全电普票/ZERO_TAX免税',
     invoice_region    CHAR(2) DEFAULT 'CN' COMMENT '开票区域: CN国内/海外走海外模块',
     apply_amount      DECIMAL(18,2) NOT NULL COMMENT '申请开票金额(含税)',
     tax_amount        DECIMAL(18,2) NOT NULL COMMENT '申请税额',
@@ -268,10 +268,11 @@ CREATE TABLE ar_invoice (
     apply_id          BIGINT COMMENT '关联开票申请ID',
     invoice_no        VARCHAR(30) COMMENT '发票号码(开票后回填)',
     invoice_code      VARCHAR(20) COMMENT '发票代码(纸质发票)',
-    invoice_type      VARCHAR(20) NOT NULL COMMENT '发票类型: SPECIAL/COMMON/FULL_ELECTRONIC',
+    invoice_type      VARCHAR(20) NOT NULL COMMENT '发票类型: ENTERPRISE企业收据/SPECIAL专票/COMMON普票/FULL_ELECTRONIC_S全电专票/FULL_ELECTRONIC_C全电普票/ZERO_TAX免税',
     invoice_category  VARCHAR(20) NOT NULL DEFAULT 'BLUE' COMMENT '发票种类: BLUE蓝字/RED红字',
-    red_letter_id     BIGINT COMMENT '关联红字信息表ID',
+    red_letter_id     BIGINT COMMENT '关联红字信息表ID(仅税控发票)',
     original_invoice_id BIGINT COMMENT '原蓝字发票ID(红字关联)',
+    converted_from_id BIGINT COMMENT '从企业收据转入的原始ID(转正式开票时)',
     customer_id       BIGINT NOT NULL COMMENT '客户ID',
     customer_name     VARCHAR(200) NOT NULL COMMENT '客户名称',
     taxpayer_no       VARCHAR(30) NOT NULL COMMENT '纳税人识别号',
@@ -282,7 +283,7 @@ CREATE TABLE ar_invoice (
     tax_rate          DECIMAL(6,4) NOT NULL COMMENT '主税率',
     invoice_date      DATE COMMENT '开票日期',
     invoice_method    VARCHAR(20) COMMENT '开票方式: GOLDEN_TAX金税盘/ELECTRONIC全电',
-    status            VARCHAR(20) NOT NULL DEFAULT 'DRAFT' COMMENT '状态: DRAFT/INVOICED/DELIVERED/REVENUE_CONFIRMED/VOIDED/RED_REVERSED',
+    status            VARCHAR(20) NOT NULL DEFAULT 'DRAFT' COMMENT '状态: DRAFT/INVOICED/DELIVERED/REVENUE_CONFIRMED/VOIDED/RED_REVERSED/CONVERTED(企业收据已转正式)',
     void_flag         TINYINT DEFAULT 0 COMMENT '作废标志 0否1是',
     void_date         DATE COMMENT '作废日期',
     period            VARCHAR(7) COMMENT '归属期间 YYYY-MM',
@@ -417,29 +418,50 @@ CREATE TABLE ar_red_letter (
 
 ### 4.1 开票类型与税率规则
 
-| 发票类型 | 适用场景 | 税率 | 开票方式 | 交付方式 |
-|:---|:---|:---|:---|:---|
-| 增值税专用发票 | B2B一般纳税人客户 | 13%/9%/6% | 金税盘/全电 | 邮寄/电子 |
-| 增值税普通发票 | B2B小规模/B2C | 13%/9%/6% | 金税盘/全电 | 邮寄/电子 |
-| 全电发票(专用) | B2B一般纳税人 | 13%/9%/6% | 电子税务局 | 即时推送 |
-| 全电发票(普通) | B2B小规模/B2C | 13%/9%/6% | 电子税务局 | 即时推送 |
-| 电子发票(普通) | B2C/小额 | 13%/9%/6% | 金税盘 | 邮件推送 |
-| 免税发票 | 出口/免税业务 | 0% | 全电/金税 | 邮寄/电子 |
+> **v1.1更新**：新增"企业收据/商业发票"(ENTERPRISE)类型，支持企业自行出具的收款凭证，不走税控系统。企业收据与税控发票统一在同模块管理，通过`invoice_type`字段区分。
+
+| 发票类型 | 枚举值 | 适用场景 | 税率 | 开票方式 | 交付方式 | 纳入税务申报 |
+|:---|:---|:---|:---|:---|:---|:---|
+| **企业收据/商业发票** | `ENTERPRISE` | 客户不需增值税发票、内部结算、对账凭证 | 不涉及 | 系统自动生成编号+PDF | 即时推送/打印 | ❌ 否 |
+| 增值税专用发票 | `SPECIAL` | B2B一般纳税人客户 | 13%/9%/6% | 金税盘/全电 | 邮寄/电子 | ✅ 是 |
+| 增值税普通发票 | `COMMON` | B2B小规模/B2C | 13%/9%/6% | 金税盘/全电 | 邮寄/电子 | ✅ 是 |
+| 全电发票(专用) | `FULL_ELECTRONIC_S` | B2B一般纳税人 | 13%/9%/6% | 电子税务局 | 即时推送 | ✅ 是 |
+| 全电发票(普通) | `FULL_ELECTRONIC_C` | B2B小规模/B2C | 13%/9%/6% | 电子税务局 | 即时推送 | ✅ 是 |
+| 免税发票 | `ZERO_TAX` | 出口/免税业务 | 0% | 全电/金税 | 邮寄/电子 | ✅ 是(零税) |
+
+#### 4.1.1 企业收据(ENTERPRISE)详细说明
+
+企业收据是企业在不需要开具国家增值税发票时，自行出具的**收款凭证/结算凭证**，在金蝶云星空中对应"应收单"概念。
+
+| 维度 | 企业收据 ENTERPRISE | 税控发票 SPECIAL/COMMON/... |
+|:---|:---|:---|
+| 开票方式 | 系统自动生成编号+PDF，无需税控接口 | 调用金税盘/电子税务局接口 |
+| 必填字段 | 客户+金额+摘要即可 | 还需纳税人识别号、商品税收编码、税率 |
+| 审批流 | 金额≥阈值才需审批 | 所有税控发票都需财务审核 |
+| 凭证模板 | AR08（企业收据入账） | AR01~AR07 |
+| 税务申报 | ❌ 不纳入销项税申报 | ✅ 纳入 |
+| 发票号码 | 系统自动编号（RCP-YYYYMM-NNN） | 税控系统分配号码 |
+| 转税控发票 | ✅ 支持"转正式开票" | — |
+| 红字冲红 | 直接冲销（无需红字信息表） | 走红字信息表流程 |
+| 核销收款 | ✅ 与税控发票一视同仁 | ✅ |
 
 ### 4.2 开票金额校验规则
 
 | 校验项 | 规则 | 异常处理 |
 |:---|:---|:---|
-| 累计开票≤合同金额 | 累计已开票金额 + 本次申请 ≤ SO总金额 | 超额拦截，需特殊审批 |
-| 单张开票限额 | 不超过金税盘授权单张限额 | 超额需拆分开票 |
-| 月度开票限额 | 月累计 ≤ 月度授权限额 | 接近限额预警(80%/90%/95%) |
-| 税额校验 | 金额 × 税率 = 税额（尾差≤¥0.01） | 尾差自动调整到最后一行 |
+| 累计开票≤合同金额 | 累计已开票金额(含企业收据+税控发票) + 本次申请 ≤ SO总金额 | 超额拦截，需特殊审批 |
+| **企业收据+税控互斥** | **同一SO+DN，企业收据金额 + 税控发票金额 ≤ 合同总金额，防止重复开票** | **超额拦截+提示已有企业收据** |
+| **企业收据→转正式** | **转正式开票后，原企业收据金额从累计中移除，税控发票金额加入** | **原子操作，不允许部分转换** |
+| 单张开票限额 | 不超过金税盘授权单张限额（仅税控发票校验） | 超额需拆分开票 |
+| 月度开票限额 | 月累计 ≤ 月度授权限额（仅税控发票统计） | 接近限额预警(80%/90%/95%) |
+| 税额校验 | 金额 × 税率 = 税额（尾差≤¥0.01）（仅税控发票校验） | 尾差自动调整到最后一行 |
 | 退货红冲≤原票 | 红冲金额 ≤ 原发票金额 | 超额拦截 |
 
 ### 4.3 红字发票业务规则
 
 | 场景 | 申请方 | 流程 | 时效 |
 |:---|:---|:---|:---|
+| **企业收据冲销** | 销售方单方 | **直接冲销原企业收据，无需红字信息表，无需购买方确认** | 即时 |
 | 专用发票-购买方已认证 | 购买方申请 | 购买方填红字信息表→销售方确认→开红字 | 48小时确认 |
 | 专用发票-购买方未认证 | 销售方申请 | 销售方填红字信息表→自动通过→开红字 | 即时 |
 | 普通发票 | 销售方单方 | 销售方直接开红字（无需购买方确认） | 即时 |
@@ -448,7 +470,7 @@ CREATE TABLE ar_red_letter (
 
 ### 4.4 凭证模板矩阵
 
-本模块新增 **7套凭证模板**，编码前缀 `AR`：
+本模块新增 **8套凭证模板**，编码前缀 `AR`（v1.1新增AR08）：
 
 | 编码 | 凭证名称 | 借方 | 贷方 | 说明 |
 |:---|:---|:---|:---|:---|
@@ -459,6 +481,7 @@ CREATE TABLE ar_red_letter (
 | **AR05** | 零税率/免税发票 | 应收账款-XX客户 | 主营业务收入 | 出口/免税无销项税 |
 | **AR06** | 红字冲回 | 主营业务收入 + 应交税费-销项税额 | 应收账款-XX客户 | 红字全额/部分冲回 |
 | **AR07** | 收入调整/折让 | 主营业务收入(红字) / 销售折让 | 应收账款-XX客户(红字) | 销售折让单独入账 |
+| **AR08** | **企业收据入账** | 应收账款-XX客户 | 主营业务收入 | 企业自行出具收据，不涉及销项税 |
 
 #### AR01 详细分录（标准销项入账）
 
@@ -498,7 +521,8 @@ CREATE TABLE ar_red_letter (
   "AR.INVOICE.FOREIGN": "AR04",
   "AR.INVOICE.ZERO_TAX": "AR05",
   "AR.INVOICE.RED_REVERSAL": "AR06",
-  "AR.INVOICE.ADJUSTMENT": "AR07"
+  "AR.INVOICE.ADJUSTMENT": "AR07",
+  "AR.INVOICE.ENTERPRISE": "AR08"
 }
 ```
 
@@ -513,6 +537,7 @@ CREATE TABLE ar_red_letter (
 | 零税率/免税确认 | AR.INVOICE.ZERO_TAX | AR05 | 出口免税 |
 | 红字冲回确认 | AR.INVOICE.RED_REVERSAL | AR06 | 红字冲销 |
 | 销售折让确认 | AR.INVOICE.ADJUSTMENT | AR07 | 折让调整 |
+| **企业收据确认** | **AR.INVOICE.ENTERPRISE** | **AR08** | **企业收据入账（不涉及销项税）** |
 
 ---
 
@@ -537,6 +562,7 @@ CREATE TABLE ar_red_letter (
 | POST | `/api/ar/invoice/{id}/deliver` | 发票交付 | 财务会计+ |
 | POST | `/api/ar/invoice/{id}/confirm-revenue` | 收入确认 | 财务会计+ |
 | POST | `/api/ar/invoice/{id}/reverse-revenue` | 收入确认撤回 | 财务主管+ |
+| POST | `/api/ar/invoice/{id}/convert-official` | 企业收据转正式开票 | 财务会计+ |
 | POST | `/api/ar/red-letter` | 申请红字信息表 | 财务会计+ |
 | GET | `/api/ar/red-letter/{id}` | 红字信息表详情 | 全部只读 |
 | POST | `/api/ar/red-letter/{id}/buyer-confirm` | 购买方确认 | 外部接口 |
@@ -629,7 +655,7 @@ CREATE TABLE ar_red_letter (
 
 ### 8.2 凭证总览更新
 
-本模块完成后，系统总凭证模板从 **37套** 增至 **44套**：
+本模块完成后，系统总凭证模板从 **37套** 增至 **45套**（v1.1 AR从7→8套）：
 
 | 模块 | 编码 | 数量 |
 |:---|:---|:---:|
@@ -638,12 +664,11 @@ CREATE TABLE ar_red_letter (
 | 票据往来 | B01~B08 | 8 |
 | 应付票据 | PA01~PA07 | 7 |
 | AP进项发票 | AP01~AP07 | 7 |
-| **AR销项发票** | **AR01~AR07** | **7** |
+| **AR销项发票** | **AR01~AR08** | **8** |
 | 海外发票 | OP01/OS01/FX01 | 3 |
 | 总账 | GL01~GL03 | 3 |
-| **合计** | | **49→ 减海外OP01重复=44→ 加AR=51→ 不对** |
-
-修正：之前AP进项7套(37)，现在AR销项7套，合计 **44套**。
+| 供应商扣款 | CT01~CT08 | 8 |
+| **合计** | | **50** |
 
 ---
 
@@ -681,6 +706,26 @@ DRAFT → INVOICED → DELIVERED → REVENUE_CONFIRMED
   └── CANCELLED
 ```
 
+**企业收据状态流(ENTERPRISE):**
+```
+DRAFT → INVOICED(自动生成PDF) → DELIVERED → REVENUE_CONFIRMED
+  │         │
+  │         ├── CONVERTED (已转正式税控发票，原收据标记)
+  │         └── RED_REVERSED (直接冲销，无需红字信息表)
+  └── CANCELLED
+```
+
+**企业收据→转正式开票流程:**
+```
+企业收据(REVENUE_CONFIRMED)
+       │
+       ▼  操作: "转正式开票"
+生成新开票申请(自动关联原SO/DN，金额=原收据金额)
+       │
+       ▼  审核通过 → 金税/全电开票
+生成税控发票 → 原企业收据状态标记为 CONVERTED
+```
+
 **红字信息表状态流:**
 ```
 DRAFT → PENDING_CONFIRM → APPROVED → INVOICED
@@ -692,6 +737,7 @@ DRAFT → PENDING_CONFIRM → APPROVED → INVOICED
 
 | 发票类型 | 号码格式 | 示例 | 说明 |
 |:---|:---|:---|:---|
+| **企业收据** | **RCP-YYYYMM-NNN** | **RCP-202605-001** | **系统自动分配** |
 | 增值税专用发票 | 8位数字 | 01234567 | 金税盘分配 |
 | 增值税普通发票 | 8位数字 | 87654321 | 金税盘分配 |
 | 全电发票(专票) | 20位 | 0_20260420_12345678 | 电子税局分配 |
